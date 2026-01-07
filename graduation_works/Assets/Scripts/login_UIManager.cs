@@ -1,79 +1,166 @@
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
+using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 public class login_UIManager : MonoBehaviour
 {
-    // 로그인 / 비밀번호 찾기 / 회원가입 패널 
+    [Header("로그인")]
     public GameObject loginPanel;
-    public GameObject pwFindPanel;
-    public GameObject registerPanel;
-    public GameObject registerPopup;
+    public GameObject loginErrorPanel;
 
+    [Header("비밀번호 찾기")]
+    public GameObject pwFindPanel;
+
+    [Header("ID 중복확인")]
+    public GameObject registerIDCheckPanel;
+    public TMP_Text registerIDCheckText;
+
+    [Header("회원 가입")]
+    public GameObject registerPanel;
+    public GameObject registerSuccessPanel;
+    public GameObject registerErrorPanel;
+    public TMP_Text registerErrorText;
+
+    //DOTween 활용으로 애니메이션 추가용 변환
+    [Header("DOTween용 RectTransform 추가")]
     public RectTransform loginTitle;
     public RectTransform registerPanelRect;
+    public RectTransform registerSuccessPanelRect;
 
-    // 회원가입 패널 높이 조절용 벡터값 저장
-    private Vector2 originalRegisterSize = new Vector2(500, 380); // 기본 높이
-    private Vector2 expandedRegisterSize = new Vector2(500, 600); // 확장 높이
+    private Vector2 originalRegisterSize = new Vector2(500, 380);
+    private Vector2 expandedRegisterSize = new Vector2(500, 600);
 
-    // 시작 시 로그인 패널 제외 나머지 숨김 처리
+    private Dictionary<GameObject, Coroutine> hideRoutines = new();
+
     void Start()
     {
         loginPanel.SetActive(true);
+        loginErrorPanel.SetActive(false);
         pwFindPanel.SetActive(false);
         registerPanel.SetActive(false);
-        registerPopup.SetActive(false);
-        
-        registerPanelRect.sizeDelta = originalRegisterSize;
+        registerSuccessPanel.SetActive(false);
+        registerIDCheckPanel.SetActive(false);
+        registerErrorPanel.SetActive(false);
 
-        // pivot을 아래 고정
+        registerPanelRect.sizeDelta = originalRegisterSize;
         registerPanelRect.pivot = new Vector2(0.5f, 0f);
     }
 
-    public void ShowRegisterPanel()
+    // ================= 공용 =================
+    public void ShowTempPanel(GameObject panel)
     {
-        // 로고 올라감
-        loginTitle.DOKill();
-        DOVirtual.DelayedCall(0, () => {
-            loginTitle.DOAnchorPosY(320, 0.2f).SetEase(Ease.InOutSine);
-        });
+        if (panel == null) return;
 
-        // 로그인 패널 끄고 회원가입 패널 활성화
-        loginPanel.SetActive(false);
-        pwFindPanel.SetActive(false);
-        registerPanel.SetActive(true);
+        panel.SetActive(true);
 
-        // 패널 크기 리셋 후 0.3초 뒤 확장
-        registerPanelRect.sizeDelta = originalRegisterSize;
-        DOVirtual.DelayedCall(0.2f, () => {
-            registerPanelRect.DOSizeDelta(expandedRegisterSize, 0.5f).SetEase(Ease.OutCubic);
-        });
+        if (hideRoutines.TryGetValue(panel, out var running) && running != null)
+            StopCoroutine(running);
+
+        hideRoutines[panel] = StartCoroutine(AutoHide(panel, 1f));
     }
 
+    IEnumerator AutoHide(GameObject panel, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if (panel != null) panel.SetActive(false);
+        hideRoutines[panel] = null;
+    }
+
+    //로그인 패널
     public void ShowLoginPanel()
     {
-        // 회원가입 패널 크기 줄이기
-        registerPanelRect.DOKill();
-        registerPanelRect.DOSizeDelta(originalRegisterSize, 0.3f).SetEase(Ease.InOutCubic)
-        .OnComplete(() => {
-            loginPanel.SetActive(true);
-            pwFindPanel.SetActive(false);
-            registerPanel.SetActive(false);
+        RectTransform closingRect = null;
 
-            // ✅ 현재 위치에서 자연스럽게 떨어지게
-            loginTitle.DOKill();
+        // 🔍 어떤 패널이 열려있는지 판단
+        if (registerPanel.activeSelf)
+            closingRect = registerPanelRect;
+        else if (registerSuccessPanel.activeSelf)
+            closingRect = registerSuccessPanelRect;
 
-            float currentY = loginTitle.anchoredPosition.y; // 현재 위치
-            loginTitle.anchoredPosition = new Vector2(0, currentY); // 굳이 다시 설정해도 되고
-
-            loginTitle.DOAnchorPosY(90f, 1.2f).SetEase(Ease.OutBounce);
-        });
+        if (closingRect != null) {
+            closingRect.DOKill();
+            closingRect
+                .DOSizeDelta(originalRegisterSize, 0.3f)
+                .SetEase(Ease.InOutCubic)
+                .OnComplete(ActivateLoginPanel);
+        }
+        else {
+            ActivateLoginPanel();
+        }
     }
 
+    private void ActivateLoginPanel()
+    {
+        loginPanel.SetActive(true);
+        loginErrorPanel.SetActive(false);
+
+        pwFindPanel.SetActive(false);
+
+        registerPanel.SetActive(false);
+        registerIDCheckPanel.SetActive(false);
+        registerSuccessPanel.SetActive(false);
+        registerErrorPanel.SetActive(false);
+
+        loginTitle.DOKill();
+        loginTitle.DOAnchorPosY(90f, 1.2f).SetEase(Ease.OutBounce);
+    }
+
+    public void ShowLoginError()
+    {
+        ShowTempPanel(loginErrorPanel);
+    }
+
+    //비밀번호 찾기 패널
     public void ShowPwFindPanel()
     {
         loginPanel.SetActive(false);
         pwFindPanel.SetActive(true);
         registerPanel.SetActive(false);
+    }
+
+    // ================= 회원가입 =================
+    public void ShowRegisterPanel()
+    {
+        loginTitle.DOKill();
+        loginTitle.DOAnchorPosY(320, 0.2f).SetEase(Ease.InOutSine);
+
+        loginPanel.SetActive(false);
+        pwFindPanel.SetActive(false);
+        registerPanel.SetActive(true);
+
+        registerPanelRect.sizeDelta = originalRegisterSize;
+        DOVirtual.DelayedCall(0.2f, () =>
+        {
+            registerPanelRect.DOSizeDelta(expandedRegisterSize, 0.5f).SetEase(Ease.OutCubic);
+        });
+    }
+
+    public void ShowRegisterIdCheckResult(bool available)
+    {
+        registerIDCheckText.text = available
+            ? "<color=#4CAF50>사용 가능한 ID입니다.</color>"
+            : "<color=#FF5A5A>사용 불가능한 ID입니다.</color>";
+
+        ShowTempPanel(registerIDCheckPanel);
+    }
+
+    public void HideRegisterIdCheckPanel()
+    {
+        registerIDCheckPanel.SetActive(false);
+    }
+
+    public void ShowRegisterError(string message)
+    {
+        registerErrorText.text = message;
+        ShowTempPanel(registerErrorPanel);
+    }
+
+    public void ShowRegisterSuccess()
+    {
+        registerPanel.SetActive(false);
+        registerSuccessPanel.SetActive(true);
     }
 }

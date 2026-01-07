@@ -1992,6 +1992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d7de2b603db29c44a283cf8bddb3ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 0}
 --- !u!225 &486880975
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2425,6 +2426,8 @@ MonoBehaviour:
   registerPwField: {fileID: 1633470916}
   registerPwCheckField: {fileID: 229166703}
   registerButton: {fileID: 1136576889}
+  isIdChecked: 0
+  lastCheckedId: 
 --- !u!4 &661839345
 Transform:
   m_ObjectHideFlags: 0
@@ -3220,6 +3223,8 @@ MonoBehaviour:
   loginTitle: {fileID: 486880971}
   registerPanelRect: {fileID: 621571286}
   registerSuccessPanelRect: {fileID: 737466040}
+  originalRegisterSize: {x: 500, y: 380}
+  expandedRegisterSize: {x: 500, y: 600}
 --- !u!4 &880979704
 Transform:
   m_ObjectHideFlags: 0
