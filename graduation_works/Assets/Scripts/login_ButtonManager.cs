@@ -3,9 +3,10 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.Collections;
 
 
-public class UI_ButtonManager : MonoBehaviour
+public class login_ButtonManager : MonoBehaviour
 {
     public login_UIManager uiManager;
 
@@ -22,14 +23,6 @@ public class UI_ButtonManager : MonoBehaviour
     public TMP_InputField registerPwField;
     public TMP_InputField registerPwCheckField;
     public Button registerButton;
-
-    private Dictionary<string, string> fakeDB = new()
-    {
-        { "user01", "pass1234" },
-        { "admin", "adminPW" },
-        { "gpt", "airocks" }
-    };
-
     private bool isIdChecked = false;
     private string lastCheckedId = "";
 
@@ -39,12 +32,28 @@ public class UI_ButtonManager : MonoBehaviour
         string id = loginIdField.text.Trim();
         string pw = loginPwField.text.Trim();
 
-        if (fakeDB.ContainsKey(id) && fakeDB[id] == pw) {
-            UserSession.UserId = id;   // ✅ 여기서 저장
-            SceneManager.LoadScene("Menu_Scene");
+        // 입력값 검증
+        if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(pw))
+        {
+            uiManager.ShowLoginError(); 
+            return;
         }
-        else
-            uiManager.ShowLoginError();
+        WWWForm form = new WWWForm();
+        form.AddField("id", id);
+        form.AddField("password", pw);
+
+        StartCoroutine(login_DbManager.Instance.SendPostRequest("/login", form, (response) =>
+        {
+            if (response.Trim() == "LOGIN_SUCCESS")
+            {
+                UserSession.UserId = id;   // ✅ 여기서 저장
+                SceneManager.LoadScene("Menu_Scene");
+            }
+            else
+            {
+                uiManager.ShowLoginError();
+            }
+        }));
     }
 
     // ================= 비밀번호 찾기 =================
@@ -52,10 +61,25 @@ public class UI_ButtonManager : MonoBehaviour
     {
         string id = pwFindIdField.text.Trim();
 
-        if (fakeDB.ContainsKey(id))
-            pwFindResultText.text = $"비밀번호: {fakeDB[id]}";
-        else
-            pwFindResultText.text = "<color=#FF5A5A>존재하지 않는 ID입니다.</color>";
+        if (string.IsNullOrEmpty(id)) return;
+        WWWForm form = new WWWForm();
+        form.AddField("id", id);
+
+        StartCoroutine(login_DbManager.Instance.SendPostRequest("/find_pw", form, (response) =>
+        {
+            if (response.Trim() == "USER_NOT_FOUND")
+            {
+                pwFindResultText.text = "<color=#FF5A5A>존재하지 않는 ID입니다.</color>";
+            }
+            else if (response.Trim() == "ERROR")
+            {
+                pwFindResultText.text = "<color=#FF5A5A>오류가 발생했습니다.</color>";
+            }
+            else
+            {
+                pwFindResultText.text = $"비밀번호: {response}";
+            }
+        }));
     }
 
     // ================= 회원가입 =================
@@ -63,34 +87,46 @@ public class UI_ButtonManager : MonoBehaviour
     {
         string id = registerIdField.text.Trim();
 
-        if (id.Length < 4 || id.Length > 16) {
+        if (id.Length < 4 || id.Length > 16)
+        {
             uiManager.ShowRegisterIdCheckResult(false);
             uiManager.ShowRegisterError("4자 이상, 16자 이하만 가능합니다.");
             isIdChecked = false;
             return;
         }
 
-        if (string.IsNullOrEmpty(id)) {
+        if (string.IsNullOrEmpty(id))
+        {
             uiManager.ShowRegisterIdCheckResult(false);
             isIdChecked = false;
             return;
         }
 
-        if (fakeDB.ContainsKey(id)) {
-            uiManager.ShowRegisterIdCheckResult(false);
-            isIdChecked = false;
-        }
-        else {
-            uiManager.ShowRegisterIdCheckResult(true);
-            isIdChecked = true;
-            lastCheckedId = id;
-        }
+        WWWForm form = new WWWForm();
+        form.AddField("id", id);
+        StartCoroutine(login_DbManager.Instance.SendPostRequest("/check_duplicate", form, (response) =>
+        {
+            if (response.Trim() == "ID_SAFE")
+            {
+                uiManager.ShowRegisterIdCheckResult(true);
+                isIdChecked = true;
+                lastCheckedId = id;
+            }
+            else
+            {
+                uiManager.ShowRegisterIdCheckResult(false);
+                isIdChecked = false;
+            }
+        }));
     }
 
     public void OnRegisterIdChanged(string value)
     {
-        isIdChecked = false;
-        uiManager.HideRegisterIdCheckPanel();
+        if (isIdChecked)
+        {
+            isIdChecked = false;
+            uiManager.HideRegisterIdCheckPanel();
+        }
     }
 
     public void OnRegisterButtonClicked()
@@ -99,29 +135,45 @@ public class UI_ButtonManager : MonoBehaviour
         string pw = registerPwField.text.Trim();
         string pwCheck = registerPwCheckField.text.Trim();
 
-        if (!isIdChecked || lastCheckedId != id) {
+        // 유효성 검사
+        if (!isIdChecked || lastCheckedId != id)
+        {
             uiManager.ShowRegisterError("ID 중복확인이 필요합니다.");
             return;
         }
 
-        if (pw.Length < 4 || pw.Length > 32) {
+        if (pw.Length < 4 || pw.Length > 32)
+        {
             uiManager.ShowRegisterError("비밀번호는 4자 이상 32자 이하로 입력해주세요.");
             return;
         }
 
-        if (pw != pwCheck) {
+        if (pw != pwCheck)
+        {
             uiManager.ShowRegisterError("비밀번호가 서로 다릅니다.");
             return;
         }
 
-        if (fakeDB.ContainsKey(id)) {
-            uiManager.ShowRegisterError("이미 사용 중인 ID입니다.");
-            return;
-        }
+        // 서버 회원가입 요청
+        WWWForm form = new WWWForm();
+        form.AddField("id", id);
+        form.AddField("password", pw);
 
-        fakeDB.Add(id, pw);
-        isIdChecked = false;
-
-        uiManager.ShowRegisterSuccess();
+        StartCoroutine(login_DbManager.Instance.SendPostRequest("/register", form, (response) =>
+        {
+            if (response.Trim() == "REGISTER_SUCCESS")
+            {
+                uiManager.ShowRegisterSuccess();
+                
+                registerIdField.text = "";
+                registerPwField.text = "";
+                registerPwCheckField.text = "";
+                isIdChecked = false;
+            }
+            else
+            {
+                uiManager.ShowRegisterError("회원가입 실패: " + response);
+            }
+        }));
     }
 }

@@ -159,8 +159,9 @@ public class login_UIManager : MonoBehaviour
     }
 
     public void ShowRegisterSuccess()
-    {
-        registerPanel.SetActive(false);
-        registerSuccessPanel.SetActive(true);
-    }
+{
+    registerPanel.SetActive(false);
+    registerSuccessPanelRect.sizeDelta = expandedRegisterSize; // 두번째 가입시 글자 안뜬거 수정
+    registerSuccessPanel.SetActive(true);
+}
 }
