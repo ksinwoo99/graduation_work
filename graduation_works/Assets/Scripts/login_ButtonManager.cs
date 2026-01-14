@@ -65,7 +65,7 @@ public class UI_ButtonManager : MonoBehaviour
 
         if (id.Length < 4 || id.Length > 16) {
             uiManager.ShowRegisterIdCheckResult(false);
-            uiManager.ShowRegisterError("4자 이상, 16자 이하만 가능합니다.");
+            uiManager.ShowRegisterError("4자 이상, 16자 이하만\n가능합니다.");
             isIdChecked = false;
             return;
         }
