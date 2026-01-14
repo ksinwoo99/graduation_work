@@ -134,7 +134,9 @@ public class login_UIManager : MonoBehaviour
         registerPanelRect.sizeDelta = originalRegisterSize;
         DOVirtual.DelayedCall(0.2f, () =>
         {
-            registerPanelRect.DOSizeDelta(expandedRegisterSize, 0.5f).SetEase(Ease.OutCubic);
+            registerPanelRect
+                .DOSizeDelta(expandedRegisterSize, 0.5f)
+                .SetEase(Ease.OutCubic);
         });
     }
 
