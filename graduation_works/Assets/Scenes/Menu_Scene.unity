@@ -206,8 +206,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2114104159}
-        m_TargetAssemblyTypeName: Menu_ButtonManager, Assembly-CSharp
-        m_MethodName: OnClickPlayAround
+        m_TargetAssemblyTypeName: Menu_Manager_Button, Assembly-CSharp
+        m_MethodName: OnClick_PlayAround
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -551,7 +551,7 @@ MonoBehaviour:
   m_text: "\uB85C\uADF8\uC778 \uC131\uACF5"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -709,8 +709,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2114104159}
-        m_TargetAssemblyTypeName: Menu_ButtonManager, Assembly-CSharp
-        m_MethodName: OnClickContinue
+        m_TargetAssemblyTypeName: Menu_Manager_Button, Assembly-CSharp
+        m_MethodName: OnClick_Continue
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -818,7 +818,7 @@ MonoBehaviour:
   m_text: "\uC0C8\uB85C\uD558\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -903,7 +903,7 @@ GameObject:
   - component: {fileID: 692998595}
   - component: {fileID: 692998596}
   m_Layer: 0
-  m_Name: Menu_UIManager
+  m_Name: Manager_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -933,7 +933,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 692998593}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31dc00eca7455343a6fefc15ec185d9, type: 3}
+  m_Script: {fileID: 11500000, guid: c9f54d48cf5a9a64dbce3497591560c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   loginSuccessPanel: {fileID: 1748649518}
@@ -1304,7 +1304,7 @@ MonoBehaviour:
   m_text: "\uB180\uB7EC\uAC00\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1526,7 +1526,7 @@ MonoBehaviour:
   m_text: "\uD658\uC601\uD569\uB2C8\uB2E4!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1684,8 +1684,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2114104159}
-        m_TargetAssemblyTypeName: Menu_ButtonManager, Assembly-CSharp
-        m_MethodName: OnClickNewGame
+        m_TargetAssemblyTypeName: Menu_Manager_Button, Assembly-CSharp
+        m_MethodName: OnClick_NewGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2061,7 +2061,7 @@ MonoBehaviour:
   m_text: "\uC5EC\uAE30\uC5D0 \uC544\uC774\uB514 \uB098\uC634"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2350,7 +2350,7 @@ MonoBehaviour:
   m_text: "\uC774\uC5B4\uD558\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2435,7 +2435,7 @@ GameObject:
   - component: {fileID: 2114104158}
   - component: {fileID: 2114104159}
   m_Layer: 0
-  m_Name: Menu_ButtonManager
+  m_Name: Manager_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2465,7 +2465,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2114104157}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bbc1c00ef92c574c8dad32004380b61, type: 3}
+  m_Script: {fileID: 11500000, guid: 38deca0d3904d6649b902954e2af2610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 692998596}

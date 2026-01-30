@@ -232,7 +232,7 @@ MonoBehaviour:
   m_text: "\uBE44\uBC00\uBC88\uD638 \uC7AC\uC785\uB825"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -389,8 +389,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 661839344}
-        m_TargetAssemblyTypeName: UI_ButtonManager, Assembly-CSharp
+      - m_Target: {fileID: 661839346}
+        m_TargetAssemblyTypeName: Login_Manager_Button, Assembly-CSharp
         m_MethodName: OnClickCheckDuplicateId
         m_Mode: 1
         m_Arguments:
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_text: "\uC911\uBCF5 \uD655\uC778"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -708,8 +708,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 880979703}
-        m_TargetAssemblyTypeName: login_UIManager, Assembly-CSharp
+      - m_Target: {fileID: 880979705}
+        m_TargetAssemblyTypeName: Login_Manager_UI, Assembly-CSharp
         m_MethodName: ShowLoginPanel
         m_Mode: 1
         m_Arguments:
@@ -1647,8 +1647,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 661839344}
-        m_TargetAssemblyTypeName: UI_ButtonManager, Assembly-CSharp
+      - m_Target: {fileID: 661839346}
+        m_TargetAssemblyTypeName: Login_Manager_Button, Assembly-CSharp
         m_MethodName: OnPwFindButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -1708,8 +1708,8 @@ GameObject:
   - component: {fileID: 486880971}
   - component: {fileID: 486880973}
   - component: {fileID: 486880972}
-  - component: {fileID: 486880974}
   - component: {fileID: 486880975}
+  - component: {fileID: 486880976}
   m_Layer: 5
   m_Name: login_Title
   m_TagString: Untagged
@@ -1774,18 +1774,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 486880970}
   m_CullTransparentMesh: 1
---- !u!114 &486880974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 486880970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d7de2b603db29c44a283cf8bddb3ce4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!225 &486880975
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1798,6 +1786,18 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &486880976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 486880970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2f075444265be348a29445259c7a370, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1950,7 +1950,7 @@ MonoBehaviour:
   m_text: "\uCD5C\uC18C 4\uC790 ~ \uCD5C\uB300 16\uC790"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2084,7 +2084,7 @@ MonoBehaviour:
   m_text: "\uD68C\uC6D0\uAC00\uC785"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2241,8 +2241,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 880979703}
-        m_TargetAssemblyTypeName: login_UIManager, Assembly-CSharp
+      - m_Target: {fileID: 880979705}
+        m_TargetAssemblyTypeName: Login_Manager_UI, Assembly-CSharp
         m_MethodName: ShowLoginPanel
         m_Mode: 1
         m_Arguments:
@@ -2378,7 +2378,7 @@ GameObject:
   - component: {fileID: 621571288}
   - component: {fileID: 621571287}
   m_Layer: 5
-  m_Name: register_InputPanel
+  m_Name: register_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2458,7 +2458,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 661839345}
-  - component: {fileID: 661839344}
+  - component: {fileID: 661839346}
   m_Layer: 0
   m_Name: Login_ButtonManager
   m_TagString: Untagged
@@ -2466,27 +2466,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &661839344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 661839343}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00ba946c97c326b4d94800db739689f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiManager: {fileID: 880979703}
-  loginIdField: {fileID: 895701170}
-  loginPwField: {fileID: 1823358340}
-  pwFindIdField: {fileID: 1251590768}
-  pwFindResultText: {fileID: 1605303583}
-  registerIdField: {fileID: 1164325686}
-  registerPwField: {fileID: 1633470916}
-  registerPwCheckField: {fileID: 229166703}
-  registerButton: {fileID: 1136576889}
 --- !u!4 &661839345
 Transform:
   m_ObjectHideFlags: 0
@@ -2502,6 +2481,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &661839346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661839343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a9fd1a1f391a7c4fb73eafb30fedcf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiManager: {fileID: 880979705}
+  loginIdField: {fileID: 895701170}
+  loginPwField: {fileID: 1823358340}
+  pwFindIdField: {fileID: 1251590768}
+  pwFindResultText: {fileID: 1605303583}
+  registerIdField: {fileID: 1164325686}
+  registerPwField: {fileID: 1633470916}
+  registerPwCheckField: {fileID: 229166703}
+  registerButton: {fileID: 1136576889}
 --- !u!1 &683420168
 GameObject:
   m_ObjectHideFlags: 0
@@ -2566,7 +2566,7 @@ GameObject:
   - component: {fileID: 686277001}
   - component: {fileID: 686277000}
   m_Layer: 5
-  m_Name: login_InputPanel
+  m_Name: login_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3280,7 +3280,7 @@ MonoBehaviour:
   m_text: "\uB85C\uADF8\uC778 \uD654\uBA74\uC73C\uB85C \uB3CC\uC544\uAC00\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3414,7 +3414,7 @@ MonoBehaviour:
   m_text: "\uB85C\uADF8\uC778"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3572,7 +3572,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 880979704}
-  - component: {fileID: 880979703}
+  - component: {fileID: 880979705}
   m_Layer: 0
   m_Name: Login_UIManager
   m_TagString: Untagged
@@ -3580,30 +3580,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &880979703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880979702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c96d4bc7eb24e384387504ea02818ac2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  loginPanel: {fileID: 686276998}
-  loginErrorPanel: {fileID: 1449572385}
-  pwFindPanel: {fileID: 1977567754}
-  registerIDCheckPanel: {fileID: 1368951124}
-  registerIDCheckText: {fileID: 1795664912}
-  registerPanel: {fileID: 621571285}
-  registerSuccessPanel: {fileID: 737466039}
-  registerErrorPanel: {fileID: 1590353335}
-  registerErrorText: {fileID: 1941508473}
-  loginTitle: {fileID: 486880971}
-  registerPanelRect: {fileID: 621571286}
-  registerSuccessPanelRect: {fileID: 737466040}
 --- !u!4 &880979704
 Transform:
   m_ObjectHideFlags: 0
@@ -3619,6 +3595,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &880979705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880979702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca8c513805c0d141a930b06befe0d29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loginPanel: {fileID: 686276998}
+  loginErrorPanel: {fileID: 1449572385}
+  pwFindPanel: {fileID: 1977567754}
+  registerIDCheckPanel: {fileID: 1368951124}
+  registerIDCheckText: {fileID: 1795664912}
+  registerPanel: {fileID: 621571285}
+  registerSuccessPanel: {fileID: 737466039}
+  registerErrorPanel: {fileID: 1368951124}
+  registerErrorText: {fileID: 1605303583}
+  loginTitle: {fileID: 486880971}
+  registerPanelRect: {fileID: 621571286}
+  registerSuccessPanelRect: {fileID: 737466040}
 --- !u!1 &895701168
 GameObject:
   m_ObjectHideFlags: 0
@@ -4265,8 +4265,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 661839344}
-        m_TargetAssemblyTypeName: UI_ButtonManager, Assembly-CSharp
+      - m_Target: {fileID: 661839346}
+        m_TargetAssemblyTypeName: Login_Manager_Button, Assembly-CSharp
         m_MethodName: OnRegisterButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -5093,7 +5093,7 @@ MonoBehaviour:
   m_text: "\uBE44\uBC00\uBC88\uD638 \uCC3E\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5452,8 +5452,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 880979703}
-        m_TargetAssemblyTypeName: login_UIManager, Assembly-CSharp
+      - m_Target: {fileID: 880979705}
+        m_TargetAssemblyTypeName: Login_Manager_UI, Assembly-CSharp
         m_MethodName: ShowRegisterPanel
         m_Mode: 1
         m_Arguments:
@@ -5661,8 +5661,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 661839344}
-        m_TargetAssemblyTypeName: UI_ButtonManager, Assembly-CSharp
+      - m_Target: {fileID: 661839346}
+        m_TargetAssemblyTypeName: Login_Manager_Button, Assembly-CSharp
         m_MethodName: OnLoginButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -5794,8 +5794,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 880979703}
-        m_TargetAssemblyTypeName: login_UIManager, Assembly-CSharp
+      - m_Target: {fileID: 880979705}
+        m_TargetAssemblyTypeName: Login_Manager_UI, Assembly-CSharp
         m_MethodName: ShowLoginPanel
         m_Mode: 1
         m_Arguments:
@@ -6649,8 +6649,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "ID\uB97C \uC785\uB825 \uD6C4 \uBC84\uD2BC\uC744 \uB204\uB974\uC138\uC694."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 864d7ef92c2fbe74bbf6a8672e1df687, type: 2}
-  m_sharedMaterial: {fileID: 2191314766659614343, guid: 864d7ef92c2fbe74bbf6a8672e1df687, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7147,7 +7147,7 @@ MonoBehaviour:
   m_text: "\uB85C\uADF8\uC778\uC5D0 \uBB38\uC81C\uAC00 \uC788\uB098\uC694?"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7281,7 +7281,7 @@ MonoBehaviour:
   m_text: "\uB85C\uADF8\uC778 \uD654\uBA74\uC73C\uB85C \uB3CC\uC544\uAC00\uAE30\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7471,7 +7471,7 @@ MonoBehaviour:
   m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7624,7 +7624,7 @@ MonoBehaviour:
   m_text: "\uD68C\uC6D0 \uAC00\uC785"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7758,7 +7758,7 @@ MonoBehaviour:
   m_text: "\uCD5C\uC18C 4\uC790 ~ \uCD5C\uB300 32\uC790"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8223,7 +8223,7 @@ MonoBehaviour:
   m_text: "\uBE44\uBC00\uBC88\uD638 \uD655\uC778"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
-  m_sharedMaterial: {fileID: -7860747204502730775, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8598,7 +8598,7 @@ GameObject:
   - component: {fileID: 1977567757}
   - component: {fileID: 1977567756}
   m_Layer: 5
-  m_Name: pwFind_InputPanel
+  m_Name: pwFind_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8749,8 +8749,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 880979703}
-        m_TargetAssemblyTypeName: login_UIManager, Assembly-CSharp
+      - m_Target: {fileID: 880979705}
+        m_TargetAssemblyTypeName: Login_Manager_UI, Assembly-CSharp
         m_MethodName: ShowPwFindPanel
         m_Mode: 1
         m_Arguments:
