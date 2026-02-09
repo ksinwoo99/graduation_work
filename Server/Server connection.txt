@@ -1,1 +1,76 @@
-ssh -i "키파일경로\내키이름.pem" ubuntu@13.237.51.219
+node.js > FastAPI
+pip install fastapi uvicorn mysql-connector-python pydantic
+
+==
+
+최신 유니티는 기본적으로 https만 허용, 보안 때문에 http 주소 접속을 막아서 생기는 문제
+유니티 메뉴 상단에서 [Edit] → [Project Settings] 를 클릭합니다.
+왼쪽 메뉴 [Player] 선택
+[Other Settings] 탭을 펼친 후 
+[Configuration] Allow downloads over HTTP : Not Allowed > Always Allowed
+
+==
+
+키 파일 보안 경고 해결
+탐색기에서 키 파일(graduation key.pem)을 우클릭 -> [속성] 클릭.
+[보안] 탭으로 이동 -> 오른쪽 아래 [고급] 버튼 클릭.
+[상속 사용 안 함] 버튼 클릭 -> "이 개체에서 상속된 사용 권한을 모두 제거합니다" 선택.
+[추가] 버튼 클릭.
+상단에 "보안 주체 선택" 클릭.
+입력창에 본인의 윈도우 계정 이름(예: lmj, user 등)을 적고 [이름 확인] 누르기 -> 확인.
+권한 목록에서 [읽기 및 실행], **[읽기]**만 체크하고 확인. (쓰기 권한 없어도 됨)
+[확인] -> [확인] 눌러서 창 닫기.
+
+==
+
+서버 들어가기
+0. 아마존 서버 
+cmd
+ssh -i "졸작폴더\graduation key.pem" ubuntu@13.237.51.219
+
+1. 프로젝트 폴더로 이동
+cd myproject
+
+2. 가상환경 켜기
+source venv/bin/activate
+
+3. 파이썬 서버 실행
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+==
+
+SQLyog > HeidiSQL
+HeidiSQL 설치
+
+호스트명/IP 13.237.51.219
+MYSQL 비번 REDACTED_DB_PASSWORD
+
+==
+
+VS Code 설정
+왼쪽 메뉴 중 블록 모양 아이콘(Extensions) 클릭 -> Remote - SSH 검색 -> 설치.
+설치 후 왼쪽 맨 아래에 생긴 녹색 아이콘(><) 클릭 -> Connect to Host... 클릭.
+Configure SSH Hosts... 클릭 -> 첫 번째 파일(C:\Users\...\.ssh\config) 선택.
+메모장이 열리면 아래 내용을 복사해서 붙여넣고 저장
+
+Host GameServer
+HostName 13.237.51.219
+User ubuntu
+IdentityFile "졸작폴더\Server\graduation key.pem"
+
+다시 왼쪽 아래 녹색 아이콘 클릭 -> Connect to Host -> GameServer 선택.
+
+연결 > [File] -> [Open Folder] 하고 /home/ubuntu/myproject를 선택
+
+==
+
+WinSCP 설치
+다운로드/설치.
+
+실행 후 설정:
+파일 프로토콜: SFTP (기본값)
+호스트 이름: 13.237.51.219
+사용자 이름: ubuntu
+비밀번호: (비워둠)
+[고급] 버튼 클릭 -> 왼쪽 메뉴 [SSH] - [인증] -> 개인키 파일(...) 클릭해서 graduation key.ppk 선택.
+[로그인] 버튼 클릭.

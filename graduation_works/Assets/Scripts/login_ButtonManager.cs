@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
-
+using System;
 
 public class login_ButtonManager : MonoBehaviour
 {
@@ -26,6 +26,13 @@ public class login_ButtonManager : MonoBehaviour
     private bool isIdChecked = false;
     private string lastCheckedId = "";
 
+    [Serializable]
+    public class UserAuthData
+    {
+        public string user_id;
+        public string password;
+    }
+
     // ================= 로그인 =================
     public void OnLoginButtonClicked()
     {
@@ -35,18 +42,19 @@ public class login_ButtonManager : MonoBehaviour
         // 입력값 검증
         if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(pw))
         {
-            uiManager.ShowLoginError(); 
+            uiManager.ShowLoginError();
             return;
         }
-        WWWForm form = new WWWForm();
-        form.AddField("id", id);
-        form.AddField("password", pw);
+        UserAuthData data = new UserAuthData();
+        data.user_id = id;
+        data.password = pw;
 
-        StartCoroutine(login_DbManager.Instance.SendPostRequest("/login", form, (response) =>
+        StartCoroutine(login_DbManager.Instance.SendJsonRequest("/login", data, (response) =>
         {
-            if (response.Trim() == "LOGIN_SUCCESS")
+            if (response != null && response.status == "LOGIN_SUCCESS")
             {
-                UserSession.UserId = id;   // ✅ 여기서 저장
+                UserSession.UserId = id; 
+                UserSession.UserPk = response.user_pk;
                 SceneManager.LoadScene("Menu_Scene");
             }
             else
@@ -60,24 +68,23 @@ public class login_ButtonManager : MonoBehaviour
     public void OnPwFindButtonClicked()
     {
         string id = pwFindIdField.text.Trim();
-
         if (string.IsNullOrEmpty(id)) return;
-        WWWForm form = new WWWForm();
-        form.AddField("id", id);
+        UserAuthData data = new UserAuthData();
+        data.user_id = id;
 
-        StartCoroutine(login_DbManager.Instance.SendPostRequest("/find_pw", form, (response) =>
+        StartCoroutine(login_DbManager.Instance.SendJsonRequest("/find_pw", data, (response) =>
         {
-            if (response.Trim() == "USER_NOT_FOUND")
+            if (response != null && response.status == "SUCCESS")
+            {
+                pwFindResultText.text = $"비밀번호: {response.password}";
+            }
+            else if (response != null && response.status == "USER_NOT_FOUND")
             {
                 pwFindResultText.text = "<color=#FF5A5A>존재하지 않는 ID입니다.</color>";
             }
-            else if (response.Trim() == "ERROR")
-            {
-                pwFindResultText.text = "<color=#FF5A5A>오류가 발생했습니다.</color>";
-            }
             else
             {
-                pwFindResultText.text = $"비밀번호: {response}";
+                pwFindResultText.text = "<color=#FF5A5A>오류가 발생했습니다.</color>";
             }
         }));
     }
@@ -95,18 +102,12 @@ public class login_ButtonManager : MonoBehaviour
             return;
         }
 
-        if (string.IsNullOrEmpty(id))
-        {
-            uiManager.ShowRegisterIdCheckResult(false);
-            isIdChecked = false;
-            return;
-        }
+        UserAuthData data = new UserAuthData();
+        data.user_id = id;
 
-        WWWForm form = new WWWForm();
-        form.AddField("id", id);
-        StartCoroutine(login_DbManager.Instance.SendPostRequest("/check_duplicate", form, (response) =>
+        StartCoroutine(login_DbManager.Instance.SendJsonRequest("/check_duplicate", data, (response) =>
         {
-            if (response.Trim() == "ID_SAFE")
+            if (response != null && response.status == "ID_SAFE")
             {
                 uiManager.ShowRegisterIdCheckResult(true);
                 isIdChecked = true;
@@ -114,6 +115,7 @@ public class login_ButtonManager : MonoBehaviour
             }
             else
             {
+                // ID_EXIST 등
                 uiManager.ShowRegisterIdCheckResult(false);
                 isIdChecked = false;
             }
@@ -129,13 +131,13 @@ public class login_ButtonManager : MonoBehaviour
         }
     }
 
+    // ================= 회원가입 완료 버튼 =================
     public void OnRegisterButtonClicked()
     {
         string id = registerIdField.text.Trim();
         string pw = registerPwField.text.Trim();
         string pwCheck = registerPwCheckField.text.Trim();
 
-        // 유효성 검사
         if (!isIdChecked || lastCheckedId != id)
         {
             uiManager.ShowRegisterError("ID 중복확인이 필요합니다.");
@@ -154,14 +156,13 @@ public class login_ButtonManager : MonoBehaviour
             return;
         }
 
-        // 서버 회원가입 요청
-        WWWForm form = new WWWForm();
-        form.AddField("id", id);
-        form.AddField("password", pw);
+        UserAuthData data = new UserAuthData();
+        data.user_id = id;
+        data.password = pw;
 
-        StartCoroutine(login_DbManager.Instance.SendPostRequest("/register", form, (response) =>
+        StartCoroutine(login_DbManager.Instance.SendJsonRequest("/register", data, (response) =>
         {
-            if (response.Trim() == "REGISTER_SUCCESS")
+            if (response != null && response.status == "REGISTER_SUCCESS")
             {
                 uiManager.ShowRegisterSuccess();
                 
@@ -172,7 +173,8 @@ public class login_ButtonManager : MonoBehaviour
             }
             else
             {
-                uiManager.ShowRegisterError("회원가입 실패: " + response);
+                string msg = (response != null) ? response.msg : "알 수 없는 오류";
+                uiManager.ShowRegisterError("회원가입 실패: " + msg);
             }
         }));
     }
