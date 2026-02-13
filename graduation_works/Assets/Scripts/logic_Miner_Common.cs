@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class logic_Miner_Common : logic_CodingBase {
@@ -7,7 +8,7 @@ public class logic_Miner_Common : logic_CodingBase {
     [Header("채굴 설정")]
     public GameObject droppedItemPrefab; 
     public GameObject machinePrefab;     
-    public float miningInterval = 5.0f;  
+    public float miningInterval = 3.0f;  
     public ResourceType myResourceType = ResourceType.Common; 
     
     [Header("애니메이션 설정")]
@@ -124,8 +125,55 @@ public class logic_Miner_Common : logic_CodingBase {
     }
 
     void SpawnResource() {
-        if (droppedItemPrefab != null) {
-            Instantiate(droppedItemPrefab, transform.position, Quaternion.identity);
+        if (droppedItemPrefab == null || Ingame_Manager_Build.Instance == null) return;
+
+        var buildMgr = Ingame_Manager_Build.Instance;
+        Vector3Int myCell = buildMgr.tilemapInstallations.WorldToCell(transform.position);
+        
+        // 1차 시도: 3x3 범위 (거리 1)
+        Vector3Int targetCell = FindEmptyTile(myCell, 1);
+
+        // 2차 시도: 3x3가 꽉 찼다면 5x5 범위 (거리 2)
+        if (targetCell == myCell) {
+            targetCell = FindEmptyTile(myCell, 2);
         }
+
+        // 3. 찾은 위치로 아이템 생성 및 발사
+        // 만약 5x5도 꽉 찼다면(targetCell == myCell) 그냥 제자리(기계 위)에 생성됨
+        Vector3 targetWorldPos = buildMgr.tilemapInstallations.GetCellCenterWorld(targetCell);
+        targetWorldPos.z = -2f; 
+
+        GameObject itemObj = Instantiate(droppedItemPrefab, transform.position, Quaternion.identity);
+        Ingame_Item_Dropped itemScript = itemObj.GetComponent<Ingame_Item_Dropped>();
+        
+        if (itemScript != null) {
+            itemScript.SetDropTarget(targetWorldPos);
+        }
+    }
+
+    // 빈 타일 찾는 함수 (range: 1이면 3x3, 2면 5x5 테두리)
+    Vector3Int FindEmptyTile(Vector3Int center, int range) {
+        var buildMgr = Ingame_Manager_Build.Instance;
+        List<Vector3Int> candidates = new List<Vector3Int>();
+
+        for (int x = -range; x <= range; x++) {
+            for (int y = -range; y <= range; y++) {
+                // 안쪽 범위는 이미 검사했으므로 건너뜀 (5x5 검사 시 3x3 영역 제외)
+                if (Mathf.Abs(x) < range && Mathf.Abs(y) < range) continue;
+                if (x == 0 && y == 0) continue; 
+
+                Vector3Int checkPos = center + new Vector3Int(x, y, 0);
+
+                // 설치물이 없는 곳만 후보로 등록
+                if (!buildMgr.IsOccupied(checkPos)) {
+                    candidates.Add(checkPos);
+                }
+            }
+        }
+
+        if (candidates.Count > 0) {
+            return candidates[Random.Range(0, candidates.Count)];
+        }
+        return center; // 실패 시 자기 위치 반환
     }
 }
