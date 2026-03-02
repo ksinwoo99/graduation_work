@@ -13,8 +13,9 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     public TextMeshProUGUI txtResourceRare;
 
     [Header("골드 설정")]
-    public int currentGold = 500;
+    public int currentGold = 300;
     public int maxGold = 1000;
+    public int totalEarnedGold = 0;
 
     [Header("자원 설정")]
     public int resCommon = 0;
@@ -34,6 +35,13 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     }
 
     public void EarnGold(int amount) {
+        currentGold += amount;
+        totalEarnedGold += amount;
+        if (currentGold > maxGold) currentGold = maxGold;
+        UpdateUI();
+    }
+
+    public void RefundGold(int amount) {
         currentGold += amount;
         if (currentGold > maxGold) currentGold = maxGold;
         UpdateUI();
@@ -64,6 +72,45 @@ public class Ingame_Manager_Resource : MonoBehaviour {
                 break;
         }
         UpdateUI();
+    }
+
+    // =====================================
+    // 🔥 [새로 추가] 복합 자원 결제를 위한 검사/차감 함수들
+    // =====================================
+    
+    // 1. 골드가 충분히 있는지 '검사만' 하는 함수
+    public bool HasEnoughGold(int amount) {
+        return currentGold >= amount; 
+    }
+
+    // 2. 특정 자원이 충분히 있는지 '검사만' 하는 함수
+    public bool HasEnoughResource(ResourceType type, int amount) {
+        switch(type) {
+            case ResourceType.Common: return resCommon >= amount;
+            case ResourceType.Uncommon: return resUncommon >= amount;
+            case ResourceType.Rare: return resRare >= amount;
+            // (Legendary는 아직 보관 변수가 없으므로 무조건 false 처리)
+            default: return false;
+        }
+    }
+
+    // 3. 특정 자원을 '차감'하는 함수 (AddResource의 반대 역할)
+    public void ConsumeResource(ResourceType type, int amount) {
+        switch(type) {
+            case ResourceType.Common: 
+                resCommon -= amount; 
+                if (resCommon < 0) resCommon = 0; // 혹시 모를 마이너스 방지
+                break;
+            case ResourceType.Uncommon: 
+                resUncommon -= amount; 
+                if (resUncommon < 0) resUncommon = 0;
+                break;
+            case ResourceType.Rare: 
+                resRare -= amount; 
+                if (resRare < 0) resRare = 0;
+                break;
+        }
+        UpdateUI(); // 자원이 깎였으니 UI 텍스트 즉시 갱신
     }
 
     void UpdateUI() {

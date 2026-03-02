@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Mining_Uncommon
+  m_Name: Storage
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 713e2eeecc83cd44f8e63ea8f7ec57a1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e2cc2eb0758ae824784883db7d6e967c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

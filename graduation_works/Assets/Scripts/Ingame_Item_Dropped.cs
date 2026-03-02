@@ -5,7 +5,7 @@ using System.Collections;
 public class Ingame_Item_Dropped : MonoBehaviour
 {
     [Header("모드 설정")]
-    public bool isProduct = false; // 체크하면 '상품(골드)', 끄면 '자원'
+    public bool isProduct = false; 
 
     [Header("자원 모드 (Is Product = false)")]
     public ResourceType resourceType = ResourceType.Common;
@@ -17,6 +17,10 @@ public class Ingame_Item_Dropped : MonoBehaviour
     [Header("연출 설정")]
     public float popHeight = 0.8f;   
     public float popDuration = 0.5f; 
+    
+    // 🔥 [추가] 컨베이어 이동 설정
+    [Header("컨베이어 이동 설정")]
+    public float conveyorMoveSpeed = 1.0f; // 한 칸 이동하는 데 걸리는 시간
 
     private Vector3? forcedTargetPos = null;
 
@@ -26,7 +30,6 @@ public class Ingame_Item_Dropped : MonoBehaviour
 
     void Start() {
         Vector3 startPos = transform.position;
-        // 목표 지점이 있으면 거기로, 없으면 랜덤 (기존 로직 유지)
         Vector3 targetPos = forcedTargetPos.HasValue 
                             ? forcedTargetPos.Value 
                             : startPos + (Vector3)Random.insideUnitCircle * 0.8f;
@@ -35,33 +38,32 @@ public class Ingame_Item_Dropped : MonoBehaviour
     }
 
     private void OnMouseDown() {
+        CollectItem();
+    }
+
+    public void CollectItem() {
         if (Ingame_Manager_Build.Instance == null) {
             Destroy(gameObject);
             return;
         }
 
         if (isProduct) {
-            // 💰 [상품] 클릭 시 골드 획득
             if (Ingame_Manager_Resource.Instance != null)
                 Ingame_Manager_Resource.Instance.EarnGold(sellPrice);
-
-            string msg = $"<color=#FFD700>+{sellPrice} G</color>"; // 금색 텍스트
+            string msg = $"<color=#FFD700>+{sellPrice} G</color>"; 
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
         else {
-            // ⛏️ [자원] 클릭 시 자원 획득
             if (Ingame_Manager_Resource.Instance != null)
                 Ingame_Manager_Resource.Instance.AddResource(resourceType, amount);
-
             string krName = GetKoreanName(resourceType);
             string colorCode = (resourceType == ResourceType.Common) ? "#00FF00" : "#FFFFFF";
             if (resourceType == ResourceType.Rare) colorCode = "#00FFFF";
-
             string msg = $"<color={colorCode}>{krName} +{amount}</color>";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
-
-        Destroy(gameObject);
+        
+        Destroy(gameObject); // 아이템 삭제
     }
 
     string GetKoreanName(ResourceType type) {
@@ -78,12 +80,74 @@ public class Ingame_Item_Dropped : MonoBehaviour
         Vector3 startPos = transform.position;
         float timer = 0;
         while (timer < popDuration) {
-            timer += Time.deltaTime;
-            float progress = timer / popDuration;
-            float height = Mathf.Sin(progress * Mathf.PI) * popHeight;
-            transform.position = Vector3.Lerp(startPos, targetPos, progress) + Vector3.up * height;
+            //빌드 모드이거나 일시정지일 땐 공중에 뜬 상태로 멈춰 있도록!
+            bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
+            bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
+            
+            if (!isBuildMode && !isPaused) {
+                timer += Time.deltaTime;
+                float progress = timer / popDuration;
+                float height = Mathf.Sin(progress * Mathf.PI) * popHeight;
+                transform.position = Vector3.Lerp(startPos, targetPos, progress) + Vector3.up * height;
+            }
             yield return null;
         }
         transform.position = targetPos;
+        
+        //팝 애니메이션이 끝나면 타일 바닥을 검사하는 컨베이어 탑승 루틴 시작
+        StartCoroutine(ConveyorRideRoutine(targetPos));
+    }
+
+    IEnumerator ConveyorRideRoutine(Vector3 startBasePos) {
+        var buildMgr = Ingame_Manager_Build.Instance;
+        if (buildMgr == null) yield break;
+
+        Vector3 basePos = startBasePos; 
+
+        while (true) {
+            Vector3Int currentCell = buildMgr.tilemapInstallations.WorldToCell(basePos);
+            var installed = buildMgr.GetInstalledObjects();
+
+            bool moved = false;
+
+            if (installed.ContainsKey(currentCell)) {
+                logic_Conveyor conveyor = installed[currentCell].GetComponent<logic_Conveyor>();
+                
+                if (conveyor != null && conveyor.isWorking) {
+                    Vector3Int pushDir = conveyor.GetPushDirection();
+                    Vector3Int nextCell = currentCell + pushDir;
+                    
+                    Vector3 startLerpPos = basePos;
+                    Vector3 nextWorldPos = buildMgr.tilemapInstallations.GetCellCenterWorld(nextCell);
+                    nextWorldPos.z = startLerpPos.z;
+
+                    float moveTimer = 0f;
+                    while (moveTimer < conveyorMoveSpeed) {
+                        bool isBuildMode = buildMgr.isBuildMode;
+                        bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
+                        
+                        if (!isBuildMode && !isPaused) {
+                            moveTimer += Time.deltaTime;
+                            float t = moveTimer / conveyorMoveSpeed;
+                            basePos = Vector3.Lerp(startLerpPos, nextWorldPos, t);
+                        }
+                        
+                        //타일 바닥을 따라 부드럽게 직진만 함
+                        transform.position = basePos;
+                        yield return null;
+                    }
+                    basePos = nextWorldPos; 
+                    transform.position = basePos; // 한 칸 도착 후 위치 고정
+                    moved = true;
+                }
+            }
+
+            // 컨베이어가 끊겼거나 아무것도 없을 때
+            if (!moved) {
+                //제자리에 가만히 대기
+                transform.position = basePos;
+                yield return null;
+            }
+        }
     }
 }

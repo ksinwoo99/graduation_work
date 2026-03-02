@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class logic_Productor_Common : logic_CodingBase
 {
     [Header("가공 설정")]
-    public GameObject productPrefab; // Ingame_Item_Dropped가 붙고 IsProduct가 체크된 프리팹
+    public GameObject productPrefab; 
     public int requireResourceAmount = 50; 
     public float checkInterval = 1.0f; 
     public float processingTime = 5.0f; 
@@ -33,9 +33,20 @@ public class logic_Productor_Common : logic_CodingBase
     }
 
     IEnumerator CheckResourceRoutine() {
+        float timer = 0f;
         while (true) {
-            if (!isProcessing) TryStartProcessing();
-            yield return new WaitForSeconds(checkInterval);
+            bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
+            bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
+
+            // 건설 모드가 아니고 일시정지가 아니며, 가공 중이 아닐 때만 체크 타이머 증가
+            if (!isBuildMode && !isPaused && !isProcessing) {
+                timer += Time.deltaTime;
+                if (timer >= checkInterval) {
+                    timer = 0f;
+                    TryStartProcessing();
+                }
+            }
+            yield return null;
         }
     }
 
@@ -44,7 +55,7 @@ public class logic_Productor_Common : logic_CodingBase
 
         if (Ingame_Manager_Resource.Instance.resCommon >= requireResourceAmount) {
             Ingame_Manager_Resource.Instance.resCommon -= requireResourceAmount;
-            Ingame_Manager_Resource.Instance.EarnGold(0); // UI Refresh
+            Ingame_Manager_Resource.Instance.EarnGold(0); // UI 갱신용
             StartCoroutine(ProcessingRoutine());
         }
     }
@@ -56,14 +67,20 @@ public class logic_Productor_Common : logic_CodingBase
         bool isSpriteA = true;
 
         while (timer < processingTime) {
-            timer += Time.deltaTime;
-            animTimer += Time.deltaTime;
+            bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
+            bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
 
-            if (animTimer >= 0.5f) {
-                animTimer = 0f;
-                isSpriteA = !isSpriteA;
-                if (spriteRenderer != null) 
-                    spriteRenderer.sprite = isSpriteA ? spriteIdle : spriteActive;
+            // 시간이 제대로 흐르고 있을 때만 가공 진행
+            if (!isBuildMode && !isPaused) {
+                timer += Time.deltaTime;
+                animTimer += Time.deltaTime;
+
+                if (animTimer >= 0.5f) {
+                    animTimer = 0f;
+                    isSpriteA = !isSpriteA;
+                    if (spriteRenderer != null) 
+                        spriteRenderer.sprite = isSpriteA ? spriteIdle : spriteActive;
+                }
             }
             yield return null;
         }
@@ -74,42 +91,27 @@ public class logic_Productor_Common : logic_CodingBase
         if (spriteRenderer != null) spriteRenderer.sprite = spriteIdle;
     }
 
+    // 🔥 [수정] 무작위 3x3 탐색 대신, 매니저의 방향 계산 로직을 사용하도록 변경
     void SpawnProduct() {
         if (productPrefab == null || Ingame_Manager_Build.Instance == null) return;
 
         var buildMgr = Ingame_Manager_Build.Instance;
         Vector3Int myCell = buildMgr.tilemapInstallations.WorldToCell(transform.position);
         
-        Vector3Int targetCell = FindEmptyTile(myCell, 1);
-        if (targetCell == myCell) targetCell = FindEmptyTile(myCell, 2);
+        // 🔥 매니저에게 '최종적으로 떨어질 목적지 월드 좌표'를 계산해달라고 요청
+        Vector3 targetDropPos = buildMgr.GetDropPosition(myCell);
 
-        Vector3 targetWorldPos = buildMgr.tilemapInstallations.GetCellCenterWorld(targetCell);
-        targetWorldPos.z = -2f; 
+        Vector3 spawnPos = transform.position;
+        spawnPos.y -= 0.5f; // 약간 아래쪽에서 튀어나오게 연출
+        spawnPos.z = -1f;
 
-        GameObject productObj = Instantiate(productPrefab, transform.position, Quaternion.identity);
+        GameObject productObj = Instantiate(productPrefab, spawnPos, Quaternion.identity);
         
-        // 이름이 Ingame_Item_Dropped로 유지됨
         Ingame_Item_Dropped itemScript = productObj.GetComponent<Ingame_Item_Dropped>();
         if (itemScript != null) {
-            itemScript.SetDropTarget(targetWorldPos);
+            itemScript.SetDropTarget(targetDropPos);
         }
     }
 
-    Vector3Int FindEmptyTile(Vector3Int center, int range) {
-        var buildMgr = Ingame_Manager_Build.Instance;
-        List<Vector3Int> candidates = new List<Vector3Int>();
-
-        for (int x = -range; x <= range; x++) {
-            for (int y = -range; y <= range; y++) {
-                if (Mathf.Abs(x) < range && Mathf.Abs(y) < range) continue;
-                if (x == 0 && y == 0) continue; 
-
-                Vector3Int checkPos = center + new Vector3Int(x, y, 0);
-                if (!buildMgr.IsOccupied(checkPos)) candidates.Add(checkPos);
-            }
-        }
-
-        if (candidates.Count > 0) return candidates[Random.Range(0, candidates.Count)];
-        return center;
-    }
+    // 🔥 기존에 있던 FindEmptyTile 함수는 이제 필요 없으므로 삭제!
 }
