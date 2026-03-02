@@ -128,9 +128,9 @@ public class Login_Manager_UI : MonoBehaviour {
         registerErrorText.text = message;
         ShowTempPanel(registerErrorPanel);
     }
-
     public void ShowRegisterSuccess() {
         registerPanel.SetActive(false);
+        registerSuccessPanelRect.sizeDelta = expandedRegisterSize; // 두번째 가입시 글자 안뜬거 수정 반영
         registerSuccessPanel.SetActive(true);
     }
 }
