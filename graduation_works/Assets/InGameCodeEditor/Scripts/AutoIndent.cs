@@ -139,7 +139,7 @@ namespace InGameCodeEditor
         private void AppendIndentString(int amount)
         {
             for (int i = 0; i < amount; i++)
-                indentBuilder.Append("\t");
+                indentBuilder.Append("    ");
         }
     }
 }
