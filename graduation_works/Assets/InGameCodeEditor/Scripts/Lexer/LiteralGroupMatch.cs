@@ -88,23 +88,23 @@ namespace InGameCodeEditor.Lexer
         /// </summary>
         /// <param name="lexer">The input lexer to check</param>
         /// <returns>True if the stream has a literal or false if not</returns>
-        public override bool IsImplicitMatch(ILexer lexer)
+public override bool IsImplicitMatch(ILexer lexer)
+{
+    if (highlightLiterals == false) return false;
+
+    char next = lexer.ReadNext();
+    // " 와 ' 를 모두 인식하도록 수정
+    if(next == '"' || next == '\'') 
+    {
+        char quoteType = next; 
+        while (lexer.EndOfStream == false)
         {
-            // Skip highlighting
-            if (highlightLiterals == false)
-                return false;
-
-            // Check for quote
-            if(lexer.ReadNext() == '"')
-            {
-                // Read all characters inside the quote
-                while (IsClosingQuoteOrEndFile(lexer, lexer.ReadNext()) == false) ;
-
-                // Found a valid literal 
-                return true;
-            }
-            return false;
+            if (lexer.ReadNext() == quoteType) break; 
         }
+        return true;
+    }
+    return false;
+}
 
         private bool IsClosingQuoteOrEndFile(ILexer lexer, char character)
         {

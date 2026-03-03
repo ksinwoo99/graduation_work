@@ -300,68 +300,83 @@ namespace InGameCodeEditor
         /// <summary>
         /// Called by Unity.
         /// </summary>
-        public void LateUpdate()
+public void LateUpdate()
+{
+    // 1. 스크롤 및 하이라이트 업데이트 (기본 기능 유지)
+    if (Input.mouseScrollDelta != Vector2.zero || inputField.verticalScrollbar.value != lastScrollValue)
+    {
+        UpdateCurrentLineHighlight();
+        lastScrollValue = inputField.verticalScrollbar.value;
+    }
+
+    // 2. 포커스가 있을 때만 Tab / Backspace / Return 처리
+    if (inputField.isFocused == true)
+    {
+        inputHighlightText.text = inputField.text + Input.compositionString;
+        inputField.textComponent.ForceMeshUpdate();
+        inputHighlightText.ForceMeshUpdate();
+        // [Tab 키 처리] 4칸 공백 삽입
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (Input.mouseScrollDelta != Vector2.zero || inputField.verticalScrollbar.value != lastScrollValue)
+            int pos = inputField.stringPosition;
+            inputField.text = inputField.text.Insert(pos, "    ");
+            inputField.stringPosition = pos + 4;
+            
+            // 유니티가 다음 UI로 포커스를 옮기지 못하게 강제 고정
+            inputField.ActivateInputField(); 
+            Refresh(true);
+        }
+
+        // [Backspace 처리] 앞의 4글자가 공백이면 한꺼번에 삭제
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            int pos = inputField.stringPosition;
+            if (pos >= 4 && inputField.text.Substring(pos - 4, 4) == "    ")
             {
-                UpdateCurrentLineHighlight();
-                lastScrollValue = inputField.verticalScrollbar.value;
-            }
-
-            // Auto indent
-            if (languageTheme != null && languageTheme.autoIndent.autoIndentMode != AutoIndent.IndentMode.None)// languageTheme.autoIndent.allowAutoIndent == true)
-            {
-                // Check for new line
-                if (Input.GetKeyDown(KeyCode.Return) == true)
-                {
-                    // Auto indent for new line
-                    AutoIndentCaret(false);
-                }
-                else if (Input.anyKeyDown == true && Input.inputString.Contains(languageTheme.autoIndent.IndentDecreaseString) == true)
-                {
-                    // Auto indent for closing token
-                    AutoIndentCaret(true);
-                }
-            }
-
-            // Make sure the input field is focused
-            if (inputField.isFocused == true || delayedRefresh == true)
-            {
-                // Check for delayed refresh caused by pasting text
-                if (delayedRefresh == true)
-                {
-                    delayedRefresh = false;
-                    Refresh(true, false);
-                }
-
-                // Check for paste text
-                if (Input.GetKey(KeyCode.LeftControl) == true && Input.GetKeyDown(KeyCode.V) == true)
-                {
-                    // Refresh full text on the next frame after tmp has updated its text infos
-                    delayedRefresh = true;
-                }
-
-                // Check if we are typing
-                if (Input.anyKey == true)
-                    Refresh();
-
-                bool focusKeyPressed = false;
-
-                // Check for any focus key pressed
-                foreach (KeyCode key in focusKeys)
-                {
-                    if (Input.GetKey(key) == true)
-                    {
-                        focusKeyPressed = true;
-                        break;
-                    }
-                }
-
-                // Update line highlight
-                if (focusKeyPressed == true || Input.GetMouseButton(0))
-                    UpdateCurrentLineHighlight();
+                inputField.text = inputField.text.Remove(pos - 4, 4);
+                inputField.stringPosition = pos - 4;
+                Refresh(true);
             }
         }
+
+        // [Return 처리] 이미 수정하신 AutoIndentCaret 호출
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            AutoIndentCaret(false);
+        }
+        else if (Input.anyKeyDown && Input.inputString.Contains(languageTheme.autoIndent.IndentDecreaseString))
+        {
+            AutoIndentCaret(true);
+        }
+    }
+
+    // 3. 텍스트 갱신 및 붙여넣기 처리 (기본 기능 유지)
+    if (inputField.isFocused || delayedRefresh)
+    {
+        if (delayedRefresh)
+        {
+            delayedRefresh = false;
+            Refresh(true, false);
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.V))
+        {
+            delayedRefresh = true;
+        }
+
+        if (Input.anyKey) Refresh();
+
+        // 방향키나 마우스 클릭 시 라인 하이라이트 업데이트
+        bool focusKeyPressed = false;
+        foreach (KeyCode key in focusKeys)
+        {
+            if (Input.GetKey(key)) { focusKeyPressed = true; break; }
+        }
+
+        if (focusKeyPressed || Input.GetMouseButton(0))
+            UpdateCurrentLineHighlight();
+    }
+}
 
         /// <summary>
         /// Causes the displayed text content to be refreshed and rehighlighted if it has changed.
@@ -637,154 +652,114 @@ namespace InGameCodeEditor
             return inputText;
         }
 
-        private void AutoIndentCaret(bool isClosingToken = false)
+ private void AutoIndentCaret(bool isClosingToken = false)
+{
+    // 1. 엔터 키(Return) 입력 감지
+    if (Input.GetKeyDown(KeyCode.Return) == true)
+    {
+        // 2. 현재 문맥상의 기본 들여쓰기 레벨을 먼저 계산합니다.
+        // 이 함수가 실행되면 클래스 내 'currentIndent' 변수가 갱신됩니다.
+        UpdateCurrentLineColumnIndent();
+
+        // 3. 파이썬 콜론(:) 체크 로직 추가
+        string currentText = inputField.text;
+        int caretPos = inputField.stringPosition;
+
+        // 커서가 텍스트 시작점이 아닐 때만 이전 라인 확인
+        if (caretPos >= 2)
         {
-            // Check for new line
-            if (Input.GetKeyDown(KeyCode.Return) == true)
+            // 현재 줄 바로 윗줄(방금 엔터를 친 줄)의 시작 위치를 찾습니다.
+            int lastNewLine = currentText.LastIndexOf('\n', caretPos - 2);
+            int start = lastNewLine + 1;
+            int length = (caretPos - 1) - start;
+
+            if (length > 0)
             {
-                // Update line column and indent positions
-                UpdateCurrentLineColumnIndent();
-
-                // Build indent string
-                string indent = string.Empty;
-
-                // Make sure we have some text
-                if (inputField.caretPosition < inputField.text.Length)
+                // 이전 줄의 끝에 콜론이 있는지 확인 (공백 무시)
+                string lastLine = currentText.Substring(start, length).TrimEnd();
+                if (lastLine.EndsWith(":"))
                 {
-                    // Check for tabs before caret
-                    int beforeIndentCount = 0;
-                    int caretIndentCount = 0;
-                    for (int i = inputField.caretPosition; i >= 0; i--)
-                    {
-                        // Check for tab characters
-                        if (inputField.text[i] == '\t')
-                            beforeIndentCount++;
-
-                        // Check for previous line or spaces
-                        if (inputField.text[i] == '\n' || (languageTheme.autoIndent.autoIndentMode == AutoIndent.IndentMode.AutoTabContextual && inputField.text[i] != ' '))
-                            if(i != inputField.caretPosition)
-                                break;
-                    }
-
-                    if (languageTheme.autoIndent.autoIndentMode == AutoIndent.IndentMode.AutoTabContextual)
-                    {
-                        // Take into account any previous tab characters
-                        caretIndentCount = currentIndent - caretIndentCount;
-                    }
-                    else 
-                    {
-                        caretIndentCount = beforeIndentCount;
-                    }
-
-                    indent = GetAutoIndentTab(caretIndentCount);
-
-                    //int length = 0;
-
-                    //for(int i = inputField.caretPosition + 1; i < inputField.text.Length; i++, length++)
-                    //{
-                    //    if (inputField.text[i] == '\n')
-                    //        break;
-                    //}
-
-                    //int caret = 0;
-                    //string formatted = languageTheme.autoIndent.GetAutoIndentedFormattedString(inputField.text.Substring(inputField.caretPosition + 1, length), currentIndent, out caret);
-
-                    //inputField.text = inputField.text.Remove(inputField.caretPosition + 1, length);
-                    //inputField.text = inputField.text.Insert(inputField.caretPosition + 1, formatted);
-
-                    //inputField.stringPosition = inputField.stringPosition + caret;
-                    //return;
-                }
-
-
-                if (indent.Length > 0)
-                {
-                    // Get caret position
-                    inputField.text = inputField.text.Insert(inputField.caretPosition + 1, indent);
-
-                    // Move to the end of the new line
-                    inputField.stringPosition = inputField.stringPosition + indent.Length;
-                }
-
-                //if (languageTheme.autoIndent.autoIndentMode == AutoIndent.IndentMode.AutoTabContextual)
-                //{
-                    // Check for closing bracket
-                    bool immediateClosing = false;
-                    int closingOffset = -1;
-
-                    for (int i = inputField.caretPosition + 1; i < inputField.text.Length; i++)
-                    {
-                        if (inputField.text[i] == languageTheme.autoIndent.indentDecreaseCharacter)
-                        {
-                            // Set the closing flag
-                            immediateClosing = true;
-                            closingOffset = i - (inputField.caretPosition + 1);
-                            break;
-                        }
-
-                        // Check for any other character
-                        if (char.IsWhiteSpace(inputField.text[i]) == false || inputField.text[i] == '\n')
-                            break;
-                    }
-
-                    if (immediateClosing == true)
-                    {
-                        // Remove unnecessary white space
-                        inputField.text = inputField.text.Remove(inputField.caretPosition + 1, closingOffset);
-
-                        string localIndent = (string.IsNullOrEmpty(indent) == true) ? string.Empty : indent.Remove(0, 1);
-
-
-                        // Insert new line
-                        inputField.text = inputField.text.Insert(inputField.caretPosition + 1, GetAutoIndentTab(currentIndent) + "\n" + localIndent);
-
-                        //inputField.stringPosition -= 1;
-
-                        if (string.IsNullOrEmpty(localIndent) == false)
-                        {
-                            //inputField.stringPosition -= localIndent.Length;
-                        }
-
-
-                        // Update line column and indent positions
-                        UpdateCurrentLineColumnIndent();
-                    }
-                }
-            //}
-
-            // Check for closing token
-            if (isClosingToken == true)
-            {
-                if (inputField.caretPosition > 0)
-                {
-                    // Check for tab before caret
-                    if (inputField.text[inputField.caretPosition - 1] == '\t')
-                    {
-                        // Remove 1 tab because we have received a closing token
-                        inputField.text = inputField.text.Remove(inputField.caretPosition - 1, 1);
-
-                        inputField.stringPosition = inputField.stringPosition - 1;
-                    }
+                    // 콜론으로 끝난다면 들여쓰기 레벨을 한 단계(+4칸) 높입니다.
+                    currentIndent++;
                 }
             }
-
-            inputText.text = inputField.text;
-            inputText.SetText(inputField.text, true);
-            inputText.Rebuild(CanvasUpdate.Prelayout);
-            inputField.ForceLabelUpdate();
-            inputField.Rebuild(CanvasUpdate.Prelayout);
-            Refresh(true);
-            delayedRefresh = true;
         }
+
+        // 4. 최종 계산된 레벨만큼 들여쓰기 문자열 생성
+        // (앞서 수정한 GetAutoIndentTab이 4칸 공백을 반환합니다.)
+        string indent = GetAutoIndentTab(currentIndent);
+
+        // 5. 계산된 들여쓰기 문자열을 새 줄에 삽입
+        if (indent.Length > 0)
+        {
+            // 커서 다음 위치에 들여쓰기 삽입
+            inputField.text = inputField.text.Insert(inputField.caretPosition + 1, indent);
+
+            // 커서 위치를 들여쓰기 끝으로 이동
+            inputField.stringPosition = inputField.stringPosition + indent.Length;
+        }
+
+        // 6. 즉시 닫는 문자 처리 (파이썬에서는 빈번하지 않지만 기본 로직 유지)
+        bool immediateClosing = false;
+        int closingOffset = -1;
+
+        for (int i = inputField.caretPosition + 1; i < inputField.text.Length; i++)
+        {
+            if (inputField.text[i] == languageTheme.autoIndent.indentDecreaseCharacter)
+            {
+                immediateClosing = true;
+                closingOffset = i - (inputField.caretPosition + 1);
+                break;
+            }
+            if (char.IsWhiteSpace(inputField.text[i]) == false || inputField.text[i] == '\n')
+                break;
+        }
+
+        if (immediateClosing == true)
+        {
+            inputField.text = inputField.text.Remove(inputField.caretPosition + 1, closingOffset);
+            string localIndent = (string.IsNullOrEmpty(indent) == true) ? string.Empty : indent;
+
+            // 닫는 기호가 있는 경우 들여쓰기를 조절하여 삽입
+            inputField.text = inputField.text.Insert(inputField.caretPosition + 1, GetAutoIndentTab(currentIndent) + "\n" + localIndent);
+            UpdateCurrentLineColumnIndent();
+        }
+
+        // 7. UI 및 텍스트 메쉬 강제 갱신 (한글 띄어쓰기 문제 방지 포함)
+        inputText.text = inputField.text;
+        inputText.SetText(inputField.text, true);
+        inputText.Rebuild(CanvasUpdate.Prelayout);
+        inputField.ForceLabelUpdate();
+        inputField.Rebuild(CanvasUpdate.Prelayout);
+        Refresh(true);
+        delayedRefresh = true;
+    }
+
+    // 8. 닫는 토큰 입력 시 들여쓰기 삭제 로직
+    if (isClosingToken == true)
+    {
+        if (inputField.caretPosition >= 4) // 공백 4칸 기준
+        {
+            // 커서 바로 앞 4글자가 공백인지 확인
+            string lastFour = inputField.text.Substring(inputField.caretPosition - 4, 4);
+            if (lastFour == "    ")
+            {
+                inputField.text = inputField.text.Remove(inputField.caretPosition - 4, 4);
+                inputField.stringPosition = inputField.stringPosition - 4;
+            }
+        }
+    }
+}
 
         private string GetAutoIndentTab(int amount)
         {
-            string tab = string.Empty;
+            string indentUnit = "    "; // 4칸 공백 (탭 대신 사용)
+            string totalIndent = string.Empty;
 
             for (int i = 0; i < amount; i++)
-                tab += '\t';
+                totalIndent += indentUnit;
 
-            return tab;
+            return totalIndent;
         }
 
         private void ApplyTheme()
