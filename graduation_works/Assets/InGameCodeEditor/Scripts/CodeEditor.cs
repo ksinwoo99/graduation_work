@@ -295,6 +295,18 @@ namespace InGameCodeEditor
             // Apply the theme
             ApplyTheme();
             ApplyLanguage();
+
+            // ========================================================
+            // 🔥 [핵심 추가] TMP 기본 탭(\t) 입력 차단!
+            // 이 스크립트의 LateUpdate에서 스페이스 4칸을 알아서 넣어주므로,
+            // TMP가 중복으로 탭을 넣으려고 하는 것만 원천 차단합니다.
+            // ========================================================
+            if (inputField != null)
+            {
+                inputField.onValidateInput += (string text, int charIndex, char addedChar) => {
+                    return addedChar == '\t' ? '\0' : addedChar;
+                };
+            }
         }
 
         /// <summary>
@@ -652,104 +664,98 @@ public void LateUpdate()
             return inputText;
         }
 
- private void AutoIndentCaret(bool isClosingToken = false)
-{
-    // 1. 엔터 키(Return) 입력 감지
-    if (Input.GetKeyDown(KeyCode.Return) == true)
+private void AutoIndentCaret(bool isClosingToken = false)
     {
-        // 2. 현재 문맥상의 기본 들여쓰기 레벨을 먼저 계산합니다.
-        // 이 함수가 실행되면 클래스 내 'currentIndent' 변수가 갱신됩니다.
-        UpdateCurrentLineColumnIndent();
-
-        // 3. 파이썬 콜론(:) 체크 로직 추가
-        string currentText = inputField.text;
-        int caretPos = inputField.stringPosition;
-
-        // 커서가 텍스트 시작점이 아닐 때만 이전 라인 확인
-        if (caretPos >= 2)
+        // 1. 엔터 키(Return) 입력 감지
+        if (Input.GetKeyDown(KeyCode.Return) == true)
         {
-            // 현재 줄 바로 윗줄(방금 엔터를 친 줄)의 시작 위치를 찾습니다.
-            int lastNewLine = currentText.LastIndexOf('\n', caretPos - 2);
-            int start = lastNewLine + 1;
-            int length = (caretPos - 1) - start;
+            UpdateCurrentLineColumnIndent();
 
-            if (length > 0)
+            string currentText = inputField.text;
+            int caretPos = inputField.stringPosition;
+
+            // 3. 파이썬 콜론(:) 체크 로직
+            if (caretPos >= 2)
             {
-                // 이전 줄의 끝에 콜론이 있는지 확인 (공백 무시)
-                string lastLine = currentText.Substring(start, length).TrimEnd();
-                if (lastLine.EndsWith(":"))
+                int lastNewLine = currentText.LastIndexOf('\n', caretPos - 2);
+                int start = lastNewLine + 1;
+                int length = (caretPos - 1) - start;
+
+                if (length > 0)
                 {
-                    // 콜론으로 끝난다면 들여쓰기 레벨을 한 단계(+4칸) 높입니다.
-                    currentIndent++;
+                    string lastLine = currentText.Substring(start, length).TrimEnd();
+                    if (lastLine.EndsWith(":"))
+                    {
+                        currentIndent++;
+                    }
+                }
+            }
+
+            string indent = GetAutoIndentTab(currentIndent);
+
+            // =====================================================================
+            // 🔥 [핵심 해결] +1 하던 시한폭탄 제거! 
+            // 커서의 '현재' 위치(이미 엔터를 쳐서 다음 줄로 내려온 첫 칸)에 안전하게 넣습니다.
+            // =====================================================================
+            if (indent.Length > 0)
+            {
+                // 글자 수 범위를 절대 벗어나지 않도록 강제 고정(Clamp)하는 안전장치
+                int insertPos = Mathf.Clamp(inputField.stringPosition, 0, inputField.text.Length);
+
+                inputField.text = inputField.text.Insert(insertPos, indent);
+                inputField.stringPosition = insertPos + indent.Length;
+            }
+
+            // 6. 닫는 문자 처리 (여기 숨어있던 +1 에러도 같이 수정함)
+            bool immediateClosing = false;
+            int closingOffset = -1;
+            int checkPos = Mathf.Clamp(inputField.stringPosition, 0, inputField.text.Length);
+
+            for (int i = checkPos; i < inputField.text.Length; i++)
+            {
+                if (inputField.text[i] == languageTheme.autoIndent.indentDecreaseCharacter)
+                {
+                    immediateClosing = true;
+                    closingOffset = i - checkPos;
+                    break;
+                }
+                if (char.IsWhiteSpace(inputField.text[i]) == false || inputField.text[i] == '\n')
+                    break;
+            }
+
+            if (immediateClosing == true)
+            {
+                inputField.text = inputField.text.Remove(checkPos, closingOffset);
+                string localIndent = (string.IsNullOrEmpty(indent) == true) ? string.Empty : indent;
+
+                inputField.text = inputField.text.Insert(checkPos, GetAutoIndentTab(currentIndent) + "\n" + localIndent);
+                UpdateCurrentLineColumnIndent();
+            }
+
+            // 7. UI 강제 갱신
+            inputText.text = inputField.text;
+            inputText.SetText(inputField.text, true);
+            inputText.Rebuild(CanvasUpdate.Prelayout);
+            inputField.ForceLabelUpdate();
+            inputField.Rebuild(CanvasUpdate.Prelayout);
+            Refresh(true);
+            delayedRefresh = true;
+        }
+
+        // 8. 닫는 토큰 입력 시 들여쓰기 삭제 로직
+        if (isClosingToken == true)
+        {
+            if (inputField.stringPosition >= 4) 
+            {
+                string lastFour = inputField.text.Substring(inputField.stringPosition - 4, 4);
+                if (lastFour == "    ")
+                {
+                    inputField.text = inputField.text.Remove(inputField.stringPosition - 4, 4);
+                    inputField.stringPosition = inputField.stringPosition - 4;
                 }
             }
         }
-
-        // 4. 최종 계산된 레벨만큼 들여쓰기 문자열 생성
-        // (앞서 수정한 GetAutoIndentTab이 4칸 공백을 반환합니다.)
-        string indent = GetAutoIndentTab(currentIndent);
-
-        // 5. 계산된 들여쓰기 문자열을 새 줄에 삽입
-        if (indent.Length > 0)
-        {
-            // 커서 다음 위치에 들여쓰기 삽입
-            inputField.text = inputField.text.Insert(inputField.caretPosition + 1, indent);
-
-            // 커서 위치를 들여쓰기 끝으로 이동
-            inputField.stringPosition = inputField.stringPosition + indent.Length;
-        }
-
-        // 6. 즉시 닫는 문자 처리 (파이썬에서는 빈번하지 않지만 기본 로직 유지)
-        bool immediateClosing = false;
-        int closingOffset = -1;
-
-        for (int i = inputField.caretPosition + 1; i < inputField.text.Length; i++)
-        {
-            if (inputField.text[i] == languageTheme.autoIndent.indentDecreaseCharacter)
-            {
-                immediateClosing = true;
-                closingOffset = i - (inputField.caretPosition + 1);
-                break;
-            }
-            if (char.IsWhiteSpace(inputField.text[i]) == false || inputField.text[i] == '\n')
-                break;
-        }
-
-        if (immediateClosing == true)
-        {
-            inputField.text = inputField.text.Remove(inputField.caretPosition + 1, closingOffset);
-            string localIndent = (string.IsNullOrEmpty(indent) == true) ? string.Empty : indent;
-
-            // 닫는 기호가 있는 경우 들여쓰기를 조절하여 삽입
-            inputField.text = inputField.text.Insert(inputField.caretPosition + 1, GetAutoIndentTab(currentIndent) + "\n" + localIndent);
-            UpdateCurrentLineColumnIndent();
-        }
-
-        // 7. UI 및 텍스트 메쉬 강제 갱신 (한글 띄어쓰기 문제 방지 포함)
-        inputText.text = inputField.text;
-        inputText.SetText(inputField.text, true);
-        inputText.Rebuild(CanvasUpdate.Prelayout);
-        inputField.ForceLabelUpdate();
-        inputField.Rebuild(CanvasUpdate.Prelayout);
-        Refresh(true);
-        delayedRefresh = true;
     }
-
-    // 8. 닫는 토큰 입력 시 들여쓰기 삭제 로직
-    if (isClosingToken == true)
-    {
-        if (inputField.caretPosition >= 4) // 공백 4칸 기준
-        {
-            // 커서 바로 앞 4글자가 공백인지 확인
-            string lastFour = inputField.text.Substring(inputField.caretPosition - 4, 4);
-            if (lastFour == "    ")
-            {
-                inputField.text = inputField.text.Remove(inputField.caretPosition - 4, 4);
-                inputField.stringPosition = inputField.stringPosition - 4;
-            }
-        }
-    }
-}
 
         private string GetAutoIndentTab(int amount)
         {
