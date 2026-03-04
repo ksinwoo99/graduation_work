@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 
 public enum BuildDirection { Down = 0, Left = 1, Up = 2, Right = 3 }
@@ -87,9 +88,25 @@ public class Ingame_Manager_Build : MonoBehaviour {
             return;
         }
 
+        // ========================================================
+        // 🔥 [핵심 수정] R키 방향 회전 + UI 입력창 포커스 방어막 추가
+        // ========================================================
         if (Input.GetKeyDown(KeyCode.R) && !isDemolishMode) {
-            currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
+            bool isTyping = false;
+            
+            // 현재 선택된 UI가 있고, 그게 텍스트 입력창(TMP_InputField)인지 확인
+            if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null) {
+                if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) {
+                    isTyping = true; // 코딩창에서 타자를 치는 중임!
+                }
+            }
+
+            // 타자를 치고 있지 않을 때만 기계를 회전시킴
+            if (!isTyping) {
+                currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
+            }
         }
+        // ========================================================
 
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         worldPos.z = 0;

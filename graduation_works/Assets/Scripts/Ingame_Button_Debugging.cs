@@ -1,12 +1,12 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Collections;
 using System.Text;
 using System;
 
-// == 1. 데이터 요청/응답 구조체 (이 부분들이 있어야 CS0246 에러가 사라집니다) ==
 [System.Serializable]
 public class CodeRequest
 {
@@ -16,13 +16,12 @@ public class CodeRequest
 }
 
 [System.Serializable]
-public class DebuggingResponse // 에러 메시지에 맞춰 이름을 수정했습니다.
+public class DebuggingResponse 
 {
     public string output;
     public string status;
 }
 
-// == 2. 메인 클래스 ==
 public class Ingame_Button_Debugging : MonoBehaviour
 {
     [Header("UI References")]
@@ -33,11 +32,10 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
     [Header("Transparency Settings")]
     [Range(0f, 1f)]
-    public float bgAlpha = 0.2f; // 인스펙터 슬라이더로 연하게 조절 가능
+    public float bgAlpha = 0.2f; 
 
     private void Start()
     {
-        // 입력창 클릭 시 결과창 숨기기
         if (inputField != null)
         {
             inputField.onSelect.AddListener(delegate { HideResult(); });
@@ -45,8 +43,24 @@ public class Ingame_Button_Debugging : MonoBehaviour
         HideResult();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            if (inputField != null && inputField.gameObject.activeInHierarchy)
+            {
+                Debugging();
+            }
+        }
+    }
+
     public void Debugging()
     {
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+
         string code = inputField.text;
         string currentId = string.IsNullOrEmpty(UserSession.UserId) ? "guest" : UserSession.UserId;
         StartCoroutine(SendToServer(currentId, code));
@@ -64,6 +78,8 @@ public class Ingame_Button_Debugging : MonoBehaviour
         string json = JsonUtility.ToJson(requestData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(json);
 
+        Debug.Log($"[프론트엔드 -> 백엔드] 전송하는 코드 원본:\n{code}");
+
         UnityWebRequest www = new UnityWebRequest(url, "POST");
         www.uploadHandler = new UploadHandlerRaw(jsonToSend);
         www.downloadHandler = new DownloadHandlerBuffer();
@@ -73,16 +89,55 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            // 여기서 DebuggingResponse를 사용하여 에러를 해결합니다.
+            Debug.Log($"[백엔드 -> 프론트엔드] 서버 응답 원본:\n{www.downloadHandler.text}");
+
             DebuggingResponse response = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
             
-            if (response.status == "success") SetUI(response.output, Color.green, false);
-            else SetUI(response.output, Color.red, true);
+            if (response.status == "success") 
+            {
+                bool isLogicValid = TryApplyCodeToMachine(code);
+
+                if (isLogicValid) {
+                    SetUI("정상 작동 및 적용 완료!\n" + response.output, Color.green, false);
+                } else {
+                    SetUI("서버 문법은 통과했으나, 기계 조건(형식)에 맞지 않습니다.", Color.red, true);
+                }
+            }
+            else 
+            {
+                SetUI(response.output, Color.red, true);
+            }
         }
         else
         {
+            Debug.LogError($"[통신 에러] 서버 연결 실패: {www.error}");
             SetUI("서버 연결 실패\n" + www.error, Color.red, false);
         }
+    }
+
+    private bool TryApplyCodeToMachine(string code)
+    {
+        var buildMgr = Ingame_Manager_Build.Instance;
+        if (buildMgr != null && buildMgr.codingManager != null)
+        {
+            // 🔥 [수정] targetLogic을 currentLogic으로 변경
+            logic_CodingBase targetMachine = buildMgr.codingManager.currentLogic; 
+
+            if (targetMachine != null)
+            {
+                // 🔥 [수정] CodeState의 풀네임(logic_CodingBase.CodeState)으로 변경
+                logic_CodingBase.CodeState state = targetMachine.ValidateCode(code);
+                
+                if (state == logic_CodingBase.CodeState.Valid)
+                {
+                    // 🔥 [추가] 유니티 기계 검사도 통과했다면, 
+                    // 코딩창의 초록불을 켜고 설치를 허용하도록 매니저에게 명령!
+                    buildMgr.codingManager.CheckCodeAndApply(code);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void SetUI(string message, Color baseColor, bool isError)
@@ -98,7 +153,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
         if (resultBackground != null)
         {
             resultBackground.gameObject.SetActive(true);
-            // 배경색만 지정한 투명도(bgAlpha)로 연하게 적용
             resultBackground.color = new Color(baseColor.r, baseColor.g, baseColor.b, bgAlpha);
         }
 
@@ -108,7 +162,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
         if (ResultCircle != null) ResultCircle.color = baseColor;
     }
 
-    void HideResult()
+    public void HideResult()
     {
         if (resultBackground != null) resultBackground.gameObject.SetActive(false);
         if (resultText != null) resultText.text = "";
