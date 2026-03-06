@@ -669,44 +669,21 @@ private void AutoIndentCaret(bool isClosingToken = false)
         // 1. 엔터 키(Return) 입력 감지
         if (Input.GetKeyDown(KeyCode.Return) == true)
         {
+            // 🔥 테마 파일(Python Syntax)이 여기서 이미 콜론(:)을 계산해서 currentIndent를 올려줍니다!
             UpdateCurrentLineColumnIndent();
 
-            string currentText = inputField.text;
-            int caretPos = inputField.stringPosition;
-
-            // 3. 파이썬 콜론(:) 체크 로직
-            if (caretPos >= 2)
-            {
-                int lastNewLine = currentText.LastIndexOf('\n', caretPos - 2);
-                int start = lastNewLine + 1;
-                int length = (caretPos - 1) - start;
-
-                if (length > 0)
-                {
-                    string lastLine = currentText.Substring(start, length).TrimEnd();
-                    if (lastLine.EndsWith(":"))
-                    {
-                        currentIndent++;
-                    }
-                }
-            }
+            // (우리가 억지로 콜론을 세서 +1 하던 중복 로직은 삭제 완료!)
 
             string indent = GetAutoIndentTab(currentIndent);
 
-            // =====================================================================
-            // 🔥 [핵심 해결] +1 하던 시한폭탄 제거! 
-            // 커서의 '현재' 위치(이미 엔터를 쳐서 다음 줄로 내려온 첫 칸)에 안전하게 넣습니다.
-            // =====================================================================
             if (indent.Length > 0)
             {
-                // 글자 수 범위를 절대 벗어나지 않도록 강제 고정(Clamp)하는 안전장치
                 int insertPos = Mathf.Clamp(inputField.stringPosition, 0, inputField.text.Length);
-
                 inputField.text = inputField.text.Insert(insertPos, indent);
                 inputField.stringPosition = insertPos + indent.Length;
             }
 
-            // 6. 닫는 문자 처리 (여기 숨어있던 +1 에러도 같이 수정함)
+            // 닫는 문자 처리
             bool immediateClosing = false;
             int closingOffset = -1;
             int checkPos = Mathf.Clamp(inputField.stringPosition, 0, inputField.text.Length);
@@ -732,7 +709,6 @@ private void AutoIndentCaret(bool isClosingToken = false)
                 UpdateCurrentLineColumnIndent();
             }
 
-            // 7. UI 강제 갱신
             inputText.text = inputField.text;
             inputText.SetText(inputField.text, true);
             inputText.Rebuild(CanvasUpdate.Prelayout);
@@ -742,7 +718,7 @@ private void AutoIndentCaret(bool isClosingToken = false)
             delayedRefresh = true;
         }
 
-        // 8. 닫는 토큰 입력 시 들여쓰기 삭제 로직
+        // 닫는 토큰 입력 시 들여쓰기 삭제 로직
         if (isClosingToken == true)
         {
             if (inputField.stringPosition >= 4) 
@@ -756,7 +732,6 @@ private void AutoIndentCaret(bool isClosingToken = false)
             }
         }
     }
-
         private string GetAutoIndentTab(int amount)
         {
             string indentUnit = "    "; // 4칸 공백 (탭 대신 사용)

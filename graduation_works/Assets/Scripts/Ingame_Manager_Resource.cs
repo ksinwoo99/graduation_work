@@ -14,7 +14,6 @@ public class Ingame_Manager_Resource : MonoBehaviour {
 
     [Header("골드 설정")]
     public int currentGold = 300;
-    public int maxGold = 1000;
     public int totalEarnedGold = 0;
 
     [Header("자원 설정")]
@@ -22,6 +21,16 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     public int resUncommon = 0;
     public int resRare = 0;
 
+    // 🔥 [새로 추가] 아무것도 안 지었을 때의 '기본' 최대치
+    [Header("기본 최대 보유량")]
+    public int baseMaxGold = 1000;
+    public int baseMaxResCommon = 500;
+    public int baseMaxResUncommon = 500;
+    public int baseMaxResRare = 500;
+
+    // 🔥 기존 변수 유지 (UI나 타 스크립트 오류 방지용)
+    [Header("현재 최대 보유량 (건물 비례)")]
+    public int maxGold = 1000;
     public int maxResCommon = 500;
     public int maxResUncommon = 500;
     public int maxResRare = 500;
@@ -31,6 +40,21 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     }
 
     void Start() {
+        // 시작할 때 기본 최대치로 한 번 세팅해 줍니다.
+        UpdateCapacities(0, 0); 
+    }
+
+    public void UpdateCapacities(int storageCount, int marketCount) {
+        maxGold = baseMaxGold + (marketCount * 500);
+        maxResCommon = baseMaxResCommon + (storageCount * 100);
+        maxResUncommon = baseMaxResUncommon + ((storageCount / 2) * 100); 
+        maxResRare = baseMaxResRare + ((storageCount / 5) * 100);         
+
+        if (currentGold > maxGold) currentGold = maxGold;
+        if (resCommon > maxResCommon) resCommon = maxResCommon;
+        if (resUncommon > maxResUncommon) resUncommon = maxResUncommon;
+        if (resRare > maxResRare) resRare = maxResRare;
+
         UpdateUI();
     }
 
@@ -73,33 +97,25 @@ public class Ingame_Manager_Resource : MonoBehaviour {
         }
         UpdateUI();
     }
-
-    // =====================================
-    // 🔥 [새로 추가] 복합 자원 결제를 위한 검사/차감 함수들
-    // =====================================
     
-    // 1. 골드가 충분히 있는지 '검사만' 하는 함수
     public bool HasEnoughGold(int amount) {
         return currentGold >= amount; 
     }
 
-    // 2. 특정 자원이 충분히 있는지 '검사만' 하는 함수
     public bool HasEnoughResource(ResourceType type, int amount) {
         switch(type) {
             case ResourceType.Common: return resCommon >= amount;
             case ResourceType.Uncommon: return resUncommon >= amount;
             case ResourceType.Rare: return resRare >= amount;
-            // (Legendary는 아직 보관 변수가 없으므로 무조건 false 처리)
             default: return false;
         }
     }
 
-    // 3. 특정 자원을 '차감'하는 함수 (AddResource의 반대 역할)
     public void ConsumeResource(ResourceType type, int amount) {
         switch(type) {
             case ResourceType.Common: 
                 resCommon -= amount; 
-                if (resCommon < 0) resCommon = 0; // 혹시 모를 마이너스 방지
+                if (resCommon < 0) resCommon = 0; 
                 break;
             case ResourceType.Uncommon: 
                 resUncommon -= amount; 
@@ -110,17 +126,13 @@ public class Ingame_Manager_Resource : MonoBehaviour {
                 if (resRare < 0) resRare = 0;
                 break;
         }
-        UpdateUI(); // 자원이 깎였으니 UI 텍스트 즉시 갱신
+        UpdateUI(); 
     }
 
     void UpdateUI() {
-        if (txtGold != null) 
-            txtGold.text = $"{currentGold} / {maxGold}";
-        if (txtResourceCommon != null) 
-            txtResourceCommon.text = $"{resCommon} / {maxResCommon}";
-        if (txtResourceUncommon != null) 
-            txtResourceUncommon.text = $"{resUncommon} / {maxResUncommon}";
-        if (txtResourceRare != null) 
-            txtResourceRare.text = $"{resRare} / {maxResRare}";
+        if (txtGold != null) txtGold.text = $"{currentGold} / {maxGold}";
+        if (txtResourceCommon != null) txtResourceCommon.text = $"{resCommon} / {maxResCommon}";
+        if (txtResourceUncommon != null) txtResourceUncommon.text = $"{resUncommon} / {maxResUncommon}";
+        if (txtResourceRare != null) txtResourceRare.text = $"{resRare} / {maxResRare}";
     }
 }
