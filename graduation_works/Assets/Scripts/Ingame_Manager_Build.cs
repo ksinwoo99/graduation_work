@@ -158,6 +158,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (confirmPanel != null) confirmPanel.SetActive(false);
         isConfirming = false;
         CancelBuildMode(); 
+
+        UpdateQuestMachineCounts();
     }
 
     public void OnClick_RollbackSave() {
@@ -594,6 +596,38 @@ public class Ingame_Manager_Build : MonoBehaviour {
         resMgr.RefundGold(gold);
         foreach (var res in resources) {
             resMgr.AddResource(res.resourceType, res.amount); 
+        }
+    }
+
+    // ==========================================
+    // 🔥 [수정] 확정된 기계 개수 세기 (storage, market 이름으로 검색)
+    // ==========================================
+    public void UpdateQuestMachineCounts() {
+        if (Ingame_Manager_Quest.Instance == null) return;
+
+        int minerCount = 0;
+        int productorCount = 0;
+        int storageCount = 0; // 🔥 이름 변경 완료
+        int marketCount = 0;  // 🔥 이름 변경 완료
+
+        foreach (GameObject obj in installedObjects.Values) {
+            if (obj == null) continue;
+            
+            if (obj.GetComponent<logic_Miner_Common>() != null) minerCount++;
+            else if (obj.GetComponent<logic_Productor_Common>() != null) productorCount++;
+            
+            // 🔥 프리팹 이름을 모두 소문자로 바꿔서 안전하게 영어 단어 검사!
+            string objName = obj.name.ToLower();
+            if (objName.Contains("storage")) storageCount++;
+            if (objName.Contains("market")) marketCount++;
+        }
+
+        Ingame_Manager_Quest.Instance.builtMinerCount = minerCount;
+        Ingame_Manager_Quest.Instance.builtProductorCount = productorCount;
+
+        // 🔥 2. 자원 매니저에 변경된 변수명으로 통보
+        if (Ingame_Manager_Resource.Instance != null) {
+            Ingame_Manager_Resource.Instance.UpdateCapacities(storageCount, marketCount);
         }
     }
 }
