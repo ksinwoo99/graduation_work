@@ -15,9 +15,9 @@ public class SpentCost {
 public class DemolishedInfo {
     public GameObject machineInstance;
     public BuildDirection dir;
-    public SpentCost originalCost; // 🔥 int에서 SpentCost로 변경
+    public SpentCost originalCost; 
     public TileBase originalTile;
-    public SpentCost refundedCost; // 🔥 철거 시 환불받은 복합 자원 기록
+    public SpentCost refundedCost; 
 }
 
 public class Ingame_Manager_Build : MonoBehaviour {
@@ -65,7 +65,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
     [Header("데이터 로드 시 프리팹")]
     public GameObject[] loadablePrefabs;
 
-    // 🔥 [수정] 설치된 비용을 int 대신 SpentCost 객체로 통째로 저장
     private Dictionary<Vector3Int, SpentCost> installedCosts = new Dictionary<Vector3Int, SpentCost>();
     private Dictionary<Vector3Int, GameObject> installedObjects = new Dictionary<Vector3Int, GameObject>();
     public Dictionary<Vector3Int, BuildDirection> installedDirections = new Dictionary<Vector3Int, BuildDirection>();
@@ -88,25 +87,19 @@ public class Ingame_Manager_Build : MonoBehaviour {
             return;
         }
 
-        // ========================================================
-        // 🔥 [핵심 수정] R키 방향 회전 + UI 입력창 포커스 방어막 추가
-        // ========================================================
         if (Input.GetKeyDown(KeyCode.R) && !isDemolishMode) {
             bool isTyping = false;
             
-            // 현재 선택된 UI가 있고, 그게 텍스트 입력창(TMP_InputField)인지 확인
             if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null) {
                 if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) {
-                    isTyping = true; // 코딩창에서 타자를 치는 중임!
+                    isTyping = true; 
                 }
             }
 
-            // 타자를 치고 있지 않을 때만 기계를 회전시킴
             if (!isTyping) {
                 currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
             }
         }
-        // ========================================================
 
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         worldPos.z = 0;
@@ -187,10 +180,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
             if (info.machineInstance != null) info.machineInstance.SetActive(true);
             installedObjects[pos] = info.machineInstance;
             installedDirections[pos] = info.dir;
-            installedCosts[pos] = info.originalCost; // 데이터 원상복구
+            installedCosts[pos] = info.originalCost; 
             tilemapInstallations.SetTile(pos, info.originalTile);
             
-            // 🔥 철거하면서 돌려받았던 골드와 자원 다시 뺏기
             PayCost(info.refundedCost.gold, info.refundedCost.resources);
         }
 
@@ -361,24 +353,20 @@ public class Ingame_Manager_Build : MonoBehaviour {
             sessionDemolished.Remove(pos);
         }
 
-        // 🔥 요구 자원 목록 가져오기
         int goldCost = (selectedInfo != null) ? selectedInfo.buildCost : 0;
         List<ResourceCost> resCosts = (selectedInfo != null) ? selectedInfo.requiredResources : new List<ResourceCost>();
         
         if (Ingame_Manager_Resource.Instance != null) {
             
-            // 🔥 1. 결제 능력이 되는지 미리 싹 다 검사!
             if (!CanAfford(goldCost, resCosts)) {
                 ShowFloatingText("자원이 부족합니다!", tileWorldPos);
                 return;
             }
 
-            // 🔥 2. 검사 통과했으니 실제 차감
             PayCost(goldCost, resCosts);
             
             tilemapInstallations.SetTile(pos, null); 
             
-            // 🔥 3. 나중에 환불해주기 위해 영수증(SpentCost) 발급 및 저장
             SpentCost newCost = new SpentCost { gold = goldCost };
             foreach(var r in resCosts) {
                 newCost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
@@ -395,8 +383,11 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 GameObject machine = Instantiate(selectedInfo.machinePrefab, tileWorldPos, Quaternion.identity);
                 machine.SendMessage("SetDirection", (int)currentDirection, SendMessageOptions.DontRequireReceiver);
 
-                logic_Miner_Common createdMiner = machine.GetComponent<logic_Miner_Common>();
-                if (createdMiner != null) createdMiner.InitializeMiner(1); 
+                logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
+                if (createdMiner != null) createdMiner.InitializeMiner(-1); 
+
+                logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
+                if (createdProductor != null) createdProductor.InitializeProductor(-1); 
 
                 if (installedObjects.ContainsKey(pos)) installedObjects[pos] = machine;
                 else installedObjects.Add(pos, machine);
@@ -416,7 +407,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         SpentCost refund = new SpentCost();
         SpentCost original = new SpentCost();
 
-        // 🔥 철거 시 원본 비용의 80%를 계산해서 환불 바구니(refund)에 담기
         if (installedCosts.ContainsKey(pos)) {
             original = installedCosts[pos];
             refund.gold = (int)(original.gold * 0.8f); 
@@ -457,7 +447,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
 
         if (Ingame_Manager_Resource.Instance != null) {
-            RefundCost(refund.gold, refund.resources); // 실제 환불 처리
+            RefundCost(refund.gold, refund.resources); 
             ShowFloatingText("철거 완료", tileWorldPos); 
         }
     }
@@ -562,17 +552,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
         return center; 
     }
 
-    // ==========================================
-    // 🔥 [자원 결제 및 환불 전용 헬퍼 함수]
-    // ==========================================
     private bool CanAfford(int gold, List<ResourceCost> resources) {
         var resMgr = Ingame_Manager_Resource.Instance;
         if (resMgr == null) return false;
 
-        // 1. 골드 검사
         if (!resMgr.HasEnoughGold(gold)) return false; 
 
-        // 2. 리스트에 있는 모든 자원이 충분한지 검사
         foreach (var res in resources) {
             if (!resMgr.HasEnoughResource(res.resourceType, res.amount)) return false;
         }
@@ -599,24 +584,21 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    // ==========================================
-    // 🔥 [수정] 확정된 기계 개수 세기 (storage, market 이름으로 검색)
-    // ==========================================
     public void UpdateQuestMachineCounts() {
         if (Ingame_Manager_Quest.Instance == null) return;
 
         int minerCount = 0;
         int productorCount = 0;
-        int storageCount = 0; // 🔥 이름 변경 완료
-        int marketCount = 0;  // 🔥 이름 변경 완료
+        int storageCount = 0;
+        int marketCount = 0;
 
         foreach (GameObject obj in installedObjects.Values) {
             if (obj == null) continue;
             
-            if (obj.GetComponent<logic_Miner_Common>() != null) minerCount++;
-            else if (obj.GetComponent<logic_Productor_Common>() != null) productorCount++;
+            // 🔥 [수정] Common을 Master로 변경!
+            if (obj.GetComponent<logic_Miner_Master>() != null) minerCount++;
+            else if (obj.GetComponent<logic_Productor_Master>() != null) productorCount++;
             
-            // 🔥 프리팹 이름을 모두 소문자로 바꿔서 안전하게 영어 단어 검사!
             string objName = obj.name.ToLower();
             if (objName.Contains("storage")) storageCount++;
             if (objName.Contains("market")) marketCount++;
@@ -625,7 +607,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         Ingame_Manager_Quest.Instance.builtMinerCount = minerCount;
         Ingame_Manager_Quest.Instance.builtProductorCount = productorCount;
 
-        // 🔥 2. 자원 매니저에 변경된 변수명으로 통보
         if (Ingame_Manager_Resource.Instance != null) {
             Ingame_Manager_Resource.Instance.UpdateCapacities(storageCount, marketCount);
         }

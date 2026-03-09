@@ -9,13 +9,11 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public static Ingame_Manager_Quest Instance;
 
     [Header("UI 연결")]
-    public TextMeshProUGUI questTitleText; // 네가 만든 제목 UI
-    public TextMeshProUGUI questGoalText;  // 🔥 네가 만든 목표 UI (여기에 자동 텍스트가 꽂힘!)
-    public TextMeshProUGUI rewardText;     // 네가 만든 보상 UI
+    public TextMeshProUGUI questTitleText; 
+    public TextMeshProUGUI questGoalText;  
+    public TextMeshProUGUI rewardText;     
     
-    [Header("해금 제어할 버튼들")]
-    public Button productorButton;
-    public Button demolishButton;
+    // 🔥 필요 없어진 개별 버튼 변수들 삭제 완료!
 
     [Header("퀘스트 목록")]
     public List<QuestData> questList = new List<QuestData>();
@@ -32,8 +30,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
     }
 
     void Start() {
-        if (productorButton != null) productorButton.interactable = false;
-        if (demolishButton != null) demolishButton.interactable = false;
+        // 🔥 시작 시 버튼을 강제로 끄는 하드코딩 삭제 완료! (처음부터 Interactable을 끄고 시작하면 됨)
         
         StartQuest(0); 
         StartCoroutine(QuestCheckRoutine());
@@ -67,13 +64,12 @@ public class Ingame_Manager_Quest : MonoBehaviour
         bool allCleared = true;
         
         string titleString = $"[{currentQuest.title}]";
-        string goalString = ""; // 🔥 부가 설명 없이 깔끔하게 바로 목록 시작!
+        string goalString = ""; 
 
         foreach (var goal in currentQuest.goals) {
             int currentValue = 0;
             string goalName = "";
 
-            // 🔥 타입에 맞춰서 숫자와 '자동 완성 이름(goalName)'을 세팅
             if (goal.type == QuestGoalType.BuildMiner) {
                 currentValue = builtMinerCount;
                 goalName = "채굴기 설치";
@@ -86,20 +82,19 @@ public class Ingame_Manager_Quest : MonoBehaviour
                 currentValue = Ingame_Manager_Resource.Instance.resCommon;
                 goalName = "기본 자원 수집";
             }
-            else if (goal.type == QuestGoalType.CollectUncommonResource) {
-                currentValue = Ingame_Manager_Resource.Instance.resUncommon;
-                goalName = "특수 자원 수집";
-            }
-            else if (goal.type == QuestGoalType.CollectRareResource) {
+            else if (goal.type == QuestGoalType.CollectRareResource) { 
                 currentValue = Ingame_Manager_Resource.Instance.resRare;
                 goalName = "희귀 자원 수집";
+            }
+            else if (goal.type == QuestGoalType.CollectSpecialResource) { 
+                currentValue = Ingame_Manager_Resource.Instance.resSpecial;
+                goalName = "특수 자원 수집";
             }
             else if (goal.type == QuestGoalType.EarnGold) {
                 currentValue = Mathf.Clamp(Ingame_Manager_Resource.Instance.totalEarnedGold - questStartTotalGold, 0, goal.targetAmount);
                 goalName = "상품 판매로 골드 획득";
             }
 
-            // 세팅된 이름을 goalString에 차곡차곡 쌓음
             goalString += $"- {goalName}: {currentValue} / {goal.targetAmount}\n";
 
             if (currentValue < goal.targetAmount) {
@@ -107,7 +102,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
             }
         }
 
-        // 🔥 완성된 텍스트들을 네가 연결해 둔 3개의 TMP UI에 각각 딱! 꽂아줌
         if (questTitleText != null) questTitleText.text = titleString;
         if (questGoalText != null) questGoalText.text = goalString;
         if (rewardText != null) rewardText.text = currentQuest.rewardText;
@@ -122,11 +116,15 @@ public class Ingame_Manager_Quest : MonoBehaviour
         
         if (quest.rewardGold > 0) resMgr.EarnGold(quest.rewardGold);
         if (quest.rewardCommonResource > 0) resMgr.resCommon += quest.rewardCommonResource;
-        if (quest.rewardUncommonResource > 0) resMgr.resUncommon += quest.rewardUncommonResource;
         if (quest.rewardRareResource > 0) resMgr.resRare += quest.rewardRareResource;
+        if (quest.rewardSpecialResource > 0) resMgr.resSpecial += quest.rewardSpecialResource;
         
-        if (quest.unlockProductor && productorButton != null) productorButton.interactable = true;
-        if (quest.unlockDemolish && demolishButton != null) demolishButton.interactable = true;
+        // 🔥 새롭게 적용된 '버튼 리스트 해금' 방식만 남김
+        foreach (Button btn in quest.unlockButtons) {
+            if (btn != null) {
+                btn.interactable = true;
+            }
+        }
 
         resMgr.EarnGold(0); 
 
