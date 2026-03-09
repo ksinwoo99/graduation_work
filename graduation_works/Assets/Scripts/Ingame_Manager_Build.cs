@@ -471,7 +471,53 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    public void LoadBuilding(string type, Vector3Int pos, int remainingCount) { }
+    public void LoadBuildingFromServer(MachineData data, GameObject prefab) {
+        Vector3Int pos = new Vector3Int((int)data.pos_x, (int)data.pos_y, (int)data.pos_z);
+        Vector3 worldPos = tilemapInstallations.GetCellCenterWorld(pos);
+        worldPos.z = -1f;
+
+        // 1. 프리팹 설치
+        GameObject machine = Instantiate(prefab, worldPos, Quaternion.identity);
+        
+        // 2. 방향(회전) 설정
+        BuildDirection dir = (BuildDirection)(-(int)(data.rotation_y / 90f));
+        machine.SendMessage("SetDirection", (int)dir, SendMessageOptions.DontRequireReceiver);
+
+        // 3. 마이너 횟수 초기화
+        logic_Miner_Common createdMiner = machine.GetComponent<logic_Miner_Common>();
+        if (createdMiner != null) createdMiner.InitializeMiner(1);
+
+        // 4. 작성했던 파이썬 코드 복구
+        string rawName = machine.name.Replace("(Clone)", "").Trim();
+        if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
+            codingManager.SetSavedCode(rawName, data.source_code);
+        }
+
+        // 5. 철거 시 환불을 위한 비용 정보 복구
+        Iteminfo_Base info = prefab.GetComponent<Iteminfo_Base>();
+        if (info != null) {
+            SpentCost cost = new SpentCost { gold = info.buildCost };
+            foreach(var r in info.requiredResources) {
+                cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
+            }
+            if (!installedCosts.ContainsKey(pos)) installedCosts.Add(pos, cost);
+        }
+
+        // 6. 딕셔너리에 등록
+        if (!installedObjects.ContainsKey(pos)) installedObjects.Add(pos, machine);
+        if (!installedDirections.ContainsKey(pos)) installedDirections.Add(pos, dir);
+        CreateInstalledArrow(pos, dir);
+    }
+
+    public void ClearAllBuildingsForLoad() {
+        foreach (var obj in installedObjects.Values) if (obj != null) Destroy(obj);
+        installedObjects.Clear();
+        installedCosts.Clear();
+        installedDirections.Clear();
+        tilemapInstallations.ClearAllTiles();
+        HideAllInstalledArrows();
+    }
+    
     public Dictionary<Vector3Int, GameObject> GetInstalledObjects() { return installedObjects; }
     
     void UpdateCursor(Vector3Int cellPos) {
