@@ -44,13 +44,19 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     }
 
     public void OnClick_Save() { 
-        // 실제 저장은 Ingame_System_Save에서 처리하므로 여기선 UI 처리만
-        if(Ingame_System_Save.Instance != null) Ingame_System_Save.Instance.OnClick_Save();
+        if(Ingame_System_Save.Instance != null) {
+            Ingame_System_Save.Instance.OnClick_Save();
+        }
         isSaved = true; 
         Debug.Log("저장 요청됨"); 
     }
     
-    public void OnClick_Load() { Debug.Log("불러오기"); }
+    public void OnClick_Load() { 
+        if(Ingame_System_Save.Instance != null) {
+            Ingame_System_Save.Instance.OnClick_Load();
+        }
+        OnClick_ToggleMenu(); // 불러오기 후 일시정지 메뉴 닫기
+    }
 
     public void OnClick_Exit() {
         if (isSaved) {
