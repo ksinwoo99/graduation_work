@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Ingame_System_Save : MonoBehaviour { // 🔥 이름 변경 완료
+public class Ingame_System_Save : MonoBehaviour { 
     public static Ingame_System_Save Instance;
     public static Shared_Data_Save TempLoadData = null; 
 
@@ -16,7 +16,6 @@ public class Ingame_System_Save : MonoBehaviour { // 🔥 이름 변경 완료
             TempLoadData = null;
         } else {
             Debug.Log("New Game Started.");
-            // 이름 변경 규칙 적용: Ingame_Manager_Time
             if (Ingame_Manager_Time.Instance != null) 
                 Ingame_Manager_Time.Instance.gameTime = 0f;
         }
@@ -40,18 +39,18 @@ public class Ingame_System_Save : MonoBehaviour { // 🔥 이름 변경 완료
             var mgr = Ingame_Manager_Resource.Instance;
             data.gold = mgr.currentGold;
             data.resCommon = mgr.resCommon;
-            data.resUncommon = mgr.resUncommon;
-            data.resRare = mgr.resRare;
+            
+            data.resUncommon = mgr.resRare;    
+            data.resRare = mgr.resSpecial;     
         }
 
-        // 이름 변경 규칙 적용: Ingame_Manager_Build
         if (Ingame_Manager_Build.Instance != null) {
             foreach (var kvp in Ingame_Manager_Build.Instance.GetInstalledObjects()) {
                 GameObject obj = kvp.Value;
                 if (obj == null) continue;
 
-                // 🔥 [수정] logic_Miner -> logic_Miner_Common
-                logic_Miner_Common miner = obj.GetComponent<logic_Miner_Common>();
+                // 🔥 [수정] Common을 Master로 변경!
+                logic_Miner_Master miner = obj.GetComponent<logic_Miner_Master>();
                 if (miner != null) {
                     BuildingSaveData b = new BuildingSaveData();
                     b.prefabName = obj.name.Replace("(Clone)", "").Trim();
@@ -72,9 +71,11 @@ public class Ingame_System_Save : MonoBehaviour { // 🔥 이름 변경 완료
             var mgr = Ingame_Manager_Resource.Instance;
             mgr.currentGold = data.gold;
             mgr.resCommon = data.resCommon;
-            mgr.resUncommon = data.resUncommon;
-            mgr.resRare = data.resRare;
-            mgr.EarnGold(0); // UI Refresh
+            
+            mgr.resRare = data.resUncommon;    
+            mgr.resSpecial = data.resRare;     
+            
+            mgr.EarnGold(0); 
         }
 
         if (Ingame_Manager_Build.Instance != null) {
