@@ -62,7 +62,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
         }
 
         string code = inputField.text;
-        string currentId = string.IsNullOrEmpty(UserSession.UserId) ? "guest" : UserSession.UserId;
+        string currentId = string.IsNullOrEmpty(Shared_Manager_Session.CurrentUserId) ? "guest" : Shared_Manager_Session.CurrentUserId;
         StartCoroutine(SendToServer(currentId, code));
     }
 
