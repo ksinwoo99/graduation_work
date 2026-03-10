@@ -74,8 +74,8 @@ public class Ingame_System_Save : MonoBehaviour {
         if (Ingame_Manager_Resource.Instance != null) {
             var mgr = Ingame_Manager_Resource.Instance;
             data.res1 = mgr.resCommon; 
-            data.res2 = mgr.resUncommon; 
-            data.res3 = mgr.resRare; 
+            data.res2 = mgr.resRare;      // 수정 완료
+            data.res3 = mgr.resSpecial;   // 수정 완료
             data.res4 = mgr.currentGold; 
         }
 
@@ -140,8 +140,8 @@ public class Ingame_System_Save : MonoBehaviour {
         if (Ingame_Manager_Resource.Instance != null && data.resources != null) {
             var mgr = Ingame_Manager_Resource.Instance;
             mgr.resCommon = data.resources.resource_1;
-            mgr.resUncommon = data.resources.resource_2;
-            mgr.resRare = data.resources.resource_3;
+            mgr.resRare = data.resources.resource_2;       // 수정 완료
+            mgr.resSpecial = data.resources.resource_3;    // 수정 완료
             mgr.currentGold = data.resources.resource_4;
             mgr.EarnGold(0); // UI 갱신
         }
