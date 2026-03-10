@@ -2972,7 +2972,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uAE30\uCD08 \uAC00\uACF5\uAE30"
-  codeSyntax: Production()
+  codeSyntax: Producting()
   buildCost: 200
   requiredResources:
   - resourceType: 0
