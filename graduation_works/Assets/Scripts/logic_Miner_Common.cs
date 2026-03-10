@@ -12,20 +12,20 @@ public class logic_Miner_Common : logic_CodingBase {
     public ResourceType myResourceType = ResourceType.Common; 
     
     [Header("애니메이션 설정")]
-    public Sprite spriteIdle;   // A 이미지
-    public Sprite spriteActive; // B 이미지
+    public Sprite spriteIdle;   
+    public Sprite spriteActive; 
     
-    private SpriteRenderer spriteRenderer;
-    
+    // 🔥 자식(고급 채굴기)도 쓸 수 있게 protected로 변경
+    protected SpriteRenderer spriteRenderer; 
     public int miningCount = 0; 
-    
-    private Coroutine miningCoroutine;
+    protected Coroutine miningCoroutine;
 
-    void Awake() {
+    // 🔥 자식이 덮어쓸 수 있게 virtual 추가
+    protected virtual void Awake() { 
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    void Start() {
+    protected virtual void Start() {
         if (spriteRenderer != null && spriteIdle != null)
             spriteRenderer.sprite = spriteIdle;
     }
@@ -40,48 +40,33 @@ public class logic_Miner_Common : logic_CodingBase {
     }
 
     public override CodeState ValidateCode(string code) {
-        string cleanCode = code.Replace(" ", "").ToLower();
+        string noTags = System.Text.RegularExpressions.Regex.Replace(code, "<.*?>", string.Empty);
+        string cleanCode = System.Text.RegularExpressions.Regex.Replace(noTags, @"\s+", "").ToLower();
 
-        // 🚨 mining() 안에 숫자 넣기 금지
-        if (cleanCode.Contains("mining(") && !cleanCode.Contains("mining()")) {
-            return CodeState.Error; 
-        }
+        if (cleanCode.Contains("mining(") && !cleanCode.Contains("mining()")) return CodeState.Error; 
+        if (!cleanCode.Contains("mining()")) return CodeState.Empty;
 
-        if (!cleanCode.Contains("mining()")) {
-            return CodeState.Empty;
-        }
-
-        // 🔄 1) 무한 반복
-        if (cleanCode.Contains("while(true)") || cleanCode.Contains("loop:")) {
-            miningCount = -1;
-            return CodeState.Valid;
-        }
-
-        // 🔄 2) for 반복문
+        // 1. 횟수가 정해진 for 반복문 처리
         if (cleanCode.Contains("for") && cleanCode.Contains("range(")) {
             try {
                 int start = cleanCode.IndexOf("range(") + 6;
                 int end = cleanCode.IndexOf(")", start);
-                string numStr = cleanCode.Substring(start, end - start);
-                
-                int count = int.Parse(numStr);
+                int count = int.Parse(cleanCode.Substring(start, end - start));
                 if (count <= 0) return CodeState.Error;
-
                 miningCount = count;
                 return CodeState.Valid;
             } catch { return CodeState.Error; }
         }
 
-        // ⛏️ 3) 기본 1회
         if (cleanCode.Contains("mining()")) {
-            miningCount = 1;
+            miningCount = -1;
             return CodeState.Valid;
         }
 
         return CodeState.Error;
     }
 
-    IEnumerator MiningRoutine() {
+    protected virtual IEnumerator MiningRoutine() {
         int currentCount = 0;
         float animTimer = 0f;
         bool isSpriteA = true; 
@@ -96,7 +81,6 @@ public class logic_Miner_Common : logic_CodingBase {
                     timer += Time.deltaTime;
                     animTimer += Time.deltaTime;
 
-                    // 📺 0.5초마다 깜빡깜빡
                     if (animTimer >= 0.5f) {
                         animTimer = 0f;
                         isSpriteA = !isSpriteA;
@@ -109,29 +93,26 @@ public class logic_Miner_Common : logic_CodingBase {
                 yield return null;
             }
 
-            SpawnResource();
+            SpawnResource(); // 자식이 덮어쓴 함수가 실행됨
             
             if (miningCount != -1) currentCount++;
         }
         
-        // 🛑 종료 시 A 이미지 복귀
         if (spriteRenderer != null && spriteIdle != null)
             spriteRenderer.sprite = spriteIdle;
             
         miningCoroutine = null; 
     }
 
-    void SpawnResource() {
+    protected virtual void SpawnResource() {
         if (droppedItemPrefab == null || Ingame_Manager_Build.Instance == null) return;
 
         var buildMgr = Ingame_Manager_Build.Instance;
         Vector3Int myCell = buildMgr.tilemapInstallations.WorldToCell(transform.position);
-
-        // 🔥 [수정] 매니저에게 '최종적으로 떨어질 목적지 월드 좌표'를 계산해달라고 요청
         Vector3 targetDropPos = buildMgr.GetDropPosition(myCell);
 
         Vector3 spawnPos = transform.position;
-        spawnPos.y -= 0.5f; // 약간 아래쪽에서 튀어나오게 연출
+        spawnPos.y -= 0.5f; 
         spawnPos.z = -1f;
 
         GameObject itemObj = Instantiate(droppedItemPrefab, spawnPos, Quaternion.identity);
