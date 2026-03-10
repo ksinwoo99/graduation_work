@@ -53,7 +53,7 @@ public class Menu_Manager_UI : MonoBehaviour {
         loginSuccessPanelRect.DOKill();
         titleLogo.DOKill();
 
-        titleLogo.DOAnchorPosY(800, 0.2f).SetEase(Ease.InOutSine);
+        titleLogo.DOAnchorPosY(1000, 0.2f).SetEase(Ease.InOutSine);
 
         loginSuccessPanelRect
             .DOSizeDelta(expandedSize, 0.5f)

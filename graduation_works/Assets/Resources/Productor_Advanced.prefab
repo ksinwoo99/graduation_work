@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildManager: {fileID: 0}
   myTile: {fileID: 0}
-  requiredSyntax: 
+  requiredSyntax: producting()
   consumeList:
   - resourceType: 0
     amount: 50
