@@ -7900,7 +7900,13 @@ MonoBehaviour:
   currentDirection: 0
   confirmPanel: {fileID: 1459748011}
   isPlacementAllowed: 0
-  loadablePrefabs: []
+  loadablePrefabs:
+  - {fileID: 0}
+  - {fileID: 8957332384124021081, guid: b5e205441974ccc45b5cba197fdaee65, type: 3}
+  - {fileID: 878828813164152959, guid: 0cbbeea4817f5c049a61a65820d67bf3, type: 3}
+  - {fileID: 7186729108183596781, guid: 8e06106bf0f73ee4aab6775b31bc4fc0, type: 3}
+  - {fileID: 128899883274789717, guid: c8bb6390dd05a584ea605ad89d968de9, type: 3}
+  - {fileID: 5656567132823910865, guid: 7590443aaf22f8e4fa697bcecb1d8f1a, type: 3}
 --- !u!4 &1186738513
 Transform:
   m_ObjectHideFlags: 0
@@ -8000,8 +8006,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2090657343}
-        m_TargetAssemblyTypeName: ingame_SaveSystem, Assembly-CSharp
-        m_MethodName: SaveGame
+        m_TargetAssemblyTypeName: Ingame_System_Save, Assembly-CSharp
+        m_MethodName: OnClick_Save
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10545,7 +10551,7 @@ MonoBehaviour:
   btnVerify: {fileID: 1724868767}
   statusLight: {fileID: 3758114311738337546}
   buildManager: {fileID: 1186738512}
-  currentLogic: {fileID: 0}
+  currentLogic: {fileID: 46644562}
 --- !u!4 &1617483140
 Transform:
   m_ObjectHideFlags: 0
