@@ -60,7 +60,7 @@ public class Ingame_System_Save : MonoBehaviour {
     // 💾 1. 저장 로직
     // ==========================================
     public void OnClick_Save() {
-        string currentId = string.IsNullOrEmpty(UserSession.UserId) ? "guest" : UserSession.UserId;
+        string currentId = string.IsNullOrEmpty(Shared_Manager_Session.CurrentUserId) ? "guest" : Shared_Manager_Session.CurrentUserId;
         GameSaveRequest requestData = GatherAllData(currentId);
         StartCoroutine(SaveToServerCoroutine(requestData));
     }
@@ -118,7 +118,7 @@ public class Ingame_System_Save : MonoBehaviour {
     // 📥 2. 불러오기 로직
     // ==========================================
     public void OnClick_Load() {
-        string currentId = string.IsNullOrEmpty(UserSession.UserId) ? "guest" : UserSession.UserId;
+        string currentId = string.IsNullOrEmpty(Shared_Manager_Session.CurrentUserId) ? "guest" : Shared_Manager_Session.CurrentUserId;
         StartCoroutine(LoadFromServerCoroutine(currentId));
     }
 
