@@ -73,7 +73,10 @@ public class Ingame_System_Save : MonoBehaviour {
 
         if (Ingame_Manager_Resource.Instance != null) {
             var mgr = Ingame_Manager_Resource.Instance;
-            data.res1 = mgr.resCommon; data.res2 = mgr.resUncommon; data.res3 = mgr.resRare; data.res4 = mgr.currentGold; 
+            data.res1 = mgr.resCommon; 
+            data.res2 = mgr.resUncommon; 
+            data.res3 = mgr.resRare; 
+            data.res4 = mgr.currentGold; 
         }
 
         if (Ingame_Manager_Build.Instance != null) {

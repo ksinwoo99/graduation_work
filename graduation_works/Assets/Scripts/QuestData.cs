@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public enum QuestGoalType { 
@@ -6,15 +7,15 @@ public enum QuestGoalType {
     BuildMiner,        
     BuildProductor,    
     CollectCommonResource,   
-    CollectUncommonResource, 
-    CollectRareResource,     
+    CollectRareResource,      
+    CollectSpecialResource,   
     EarnGold           
 }
 
 [System.Serializable]
 public class QuestGoal {
     public QuestGoalType type; 
-    public int targetAmount;   // 🔥 텍스트 적는 칸 없이 깔끔하게 목표치만!
+    public int targetAmount;   
 }
 
 [System.Serializable]
@@ -23,14 +24,15 @@ public class QuestData {
     public string title;
     [TextArea] public string rewardText; 
 
-    [Header("목표 설정 (진행도는 자동 표시됨)")]
+    [Header("목표 설정")]
     public List<QuestGoal> goals = new List<QuestGoal>();
 
     [Header("실제 보상 지급 설정")]
     public int rewardGold;
     public int rewardCommonResource;    
-    public int rewardUncommonResource;  
-    public int rewardRareResource;      
-    public bool unlockProductor; 
-    public bool unlockDemolish;  
+    public int rewardRareResource;     
+    public int rewardSpecialResource;  
+
+    [Header("해금될 하단 메뉴 버튼들")]
+    public List<Button> unlockButtons = new List<Button>(); 
 }
