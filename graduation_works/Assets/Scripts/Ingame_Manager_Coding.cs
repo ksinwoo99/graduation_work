@@ -102,4 +102,14 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public void CloseWindowOnly() {
         codingPanel.SetActive(false);
     }
+
+    public void SetSavedCode(string machineName, string code) {
+        if (globalCodes.ContainsKey(machineName)) globalCodes[machineName] = code;
+        else globalCodes.Add(machineName, code);
+    }
+
+    public string GetSavedCode(string machineName) {
+        if (globalCodes.ContainsKey(machineName)) return globalCodes[machineName];
+        return "";
+    }
 }
