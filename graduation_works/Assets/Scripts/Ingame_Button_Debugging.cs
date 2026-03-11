@@ -13,6 +13,11 @@ public class CodeRequest
     public string user_id;
     public string source_code;
     public string machine_type;
+    
+    // 파이썬 서버로 보낼 현재 자원 보유량 변수
+    public int resCommon;
+    public int resRare;
+    public int resSpecial;
 }
 
 [System.Serializable]
@@ -69,11 +74,19 @@ public class Ingame_Button_Debugging : MonoBehaviour
     IEnumerator SendToServer(string userId, string code)
     {
         string url = "http://13.237.51.219:8000/execute";
+        
         CodeRequest requestData = new CodeRequest { 
             user_id = userId, 
             source_code = code, 
             machine_type = "GENERAL" 
         };
+
+        if (Ingame_Manager_Resource.Instance != null) 
+        {
+            requestData.resCommon = Ingame_Manager_Resource.Instance.resCommon;
+            requestData.resRare = Ingame_Manager_Resource.Instance.resRare;
+            requestData.resSpecial = Ingame_Manager_Resource.Instance.resSpecial; 
+        }
 
         string json = JsonUtility.ToJson(requestData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(json);
@@ -120,18 +133,14 @@ public class Ingame_Button_Debugging : MonoBehaviour
         var buildMgr = Ingame_Manager_Build.Instance;
         if (buildMgr != null && buildMgr.codingManager != null)
         {
-            // 🔥 [수정] targetLogic을 currentLogic으로 변경
             logic_CodingBase targetMachine = buildMgr.codingManager.currentLogic; 
 
             if (targetMachine != null)
             {
-                // 🔥 [수정] CodeState의 풀네임(logic_CodingBase.CodeState)으로 변경
                 logic_CodingBase.CodeState state = targetMachine.ValidateCode(code);
                 
                 if (state == logic_CodingBase.CodeState.Valid)
                 {
-                    // 🔥 [추가] 유니티 기계 검사도 통과했다면, 
-                    // 코딩창의 초록불을 켜고 설치를 허용하도록 매니저에게 명령!
                     buildMgr.codingManager.CheckCodeAndApply(code);
                     return true;
                 }
