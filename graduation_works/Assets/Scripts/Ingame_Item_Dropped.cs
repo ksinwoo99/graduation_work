@@ -61,6 +61,7 @@ public class Ingame_Item_Dropped : MonoBehaviour
             string colorCode = (resourceType == ResourceType.Common) ? "#00FF00" : "#FFFFFF";
             if (resourceType == ResourceType.Rare) colorCode = "#00FFFF";
             if (resourceType == ResourceType.Special) colorCode = "#FF00FF"; 
+            if (resourceType == ResourceType.Exotic) colorCode = "#FF4500"; 
             
             string msg = $"<color={colorCode}>{krName} +{amount}</color>";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
@@ -73,7 +74,7 @@ public class Ingame_Item_Dropped : MonoBehaviour
             case ResourceType.Common: return "기본 자원";
             case ResourceType.Rare: return "희귀 자원";    
             case ResourceType.Special: return "특수 자원"; 
-            case ResourceType.Legendary: return "전설 자원";
+            case ResourceType.Exotic: return "경이 자원";
             default: return "알 수 없음";
         }
     }
