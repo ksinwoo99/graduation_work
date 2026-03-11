@@ -16,14 +16,14 @@ public class MachineData {
 [System.Serializable]
 public class GameSaveRequest {
     public string user_id;
-    public int res1, res2, res3, res4, play_time;
+    public int res1, res2, res3, res4, res5, play_time;
     public List<MachineData> machines = new List<MachineData>();
 }
 
 // ⬇️ 서버에서 주는 JSON 규격에 맞춘 응답 클래스
 [System.Serializable]
 public class LoadResources {
-    public int resource_1, resource_2, resource_3, resource_4, total_play_time;
+    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time;
 }
 [System.Serializable]
 public class GameLoadResponse {
@@ -36,19 +36,17 @@ public class GameLoadResponse {
 public class Ingame_System_Save : MonoBehaviour { 
     public static Ingame_System_Save Instance;
 
-    // 🔥 [추가] 타이틀 메뉴에서 넘어온 '불러오기' 요청 신호
     public static bool isLoadRequested = false; 
 
     private string serverUrl = "http://13.237.51.219:8000";
 
     void Awake() { if (Instance == null) Instance = this; }
 
-    // 🔥 [수정] 씬이 시작될 때 신호를 확인하고 서버 로드 실행
     void Start() {
         if (isLoadRequested) {
             Debug.Log("타이틀 화면에서 불러오기 요청됨! 서버에서 데이터를 가져옵니다...");
-            isLoadRequested = false; // 신호 초기화
-            OnClick_Load();          // 서버 로드 함수 호출
+            isLoadRequested = false; 
+            OnClick_Load();          
         } else {
             Debug.Log("새 게임 시작. (서버 로드 안 함)");
             if (Ingame_Manager_Time.Instance != null) 
@@ -74,9 +72,10 @@ public class Ingame_System_Save : MonoBehaviour {
         if (Ingame_Manager_Resource.Instance != null) {
             var mgr = Ingame_Manager_Resource.Instance;
             data.res1 = mgr.resCommon; 
-            data.res2 = mgr.resRare;      // 수정 완료
-            data.res3 = mgr.resSpecial;   // 수정 완료
+            data.res2 = mgr.resRare;      
+            data.res3 = mgr.resSpecial;   
             data.res4 = mgr.currentGold; 
+            data.res5 = mgr.resLegendary; 
         }
 
         if (Ingame_Manager_Build.Instance != null) {
@@ -88,7 +87,7 @@ public class Ingame_System_Save : MonoBehaviour {
                 string rawName = obj.name.Replace("(Clone)", "").Trim();
                 MachineData mData = new MachineData {
                     machine_type = GetMachineTypeInt(rawName),
-                    tile_index = 0, // 타일 인덱스가 당장 필요 없다면 0으로 넘겨도 무방합니다.
+                    tile_index = 0, 
                     pos_x = kvp.Key.x, pos_y = kvp.Key.y, pos_z = kvp.Key.z
                 };
                 
@@ -140,9 +139,11 @@ public class Ingame_System_Save : MonoBehaviour {
         if (Ingame_Manager_Resource.Instance != null && data.resources != null) {
             var mgr = Ingame_Manager_Resource.Instance;
             mgr.resCommon = data.resources.resource_1;
-            mgr.resRare = data.resources.resource_2;       // 수정 완료
-            mgr.resSpecial = data.resources.resource_3;    // 수정 완료
+            mgr.resRare = data.resources.resource_2;       
+            mgr.resSpecial = data.resources.resource_3;    
             mgr.currentGold = data.resources.resource_4;
+            mgr.resLegendary = data.resources.resource_5;  
+            
             mgr.EarnGold(0); // UI 갱신
         }
         // 시간 적용
