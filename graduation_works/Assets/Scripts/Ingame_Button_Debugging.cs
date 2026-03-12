@@ -18,6 +18,7 @@ public class CodeRequest
     public int resCommon;
     public int resRare;
     public int resSpecial;
+    public int resExotic;
 }
 
 [System.Serializable]
@@ -86,6 +87,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
             requestData.resCommon = Ingame_Manager_Resource.Instance.resCommon;
             requestData.resRare = Ingame_Manager_Resource.Instance.resRare;
             requestData.resSpecial = Ingame_Manager_Resource.Instance.resSpecial; 
+            requestData.resExotic = Ingame_Manager_Resource.Instance.resExotic;
         }
 
         string json = JsonUtility.ToJson(requestData);
