@@ -44,9 +44,9 @@ public class Ingame_UI_MachineInfo : MonoBehaviour
     private string GetKoreanName(ResourceType type) {
         switch (type) {
             case ResourceType.Common: return "기본 자원";
-            case ResourceType.Rare: return "희귀 자원";       
-            case ResourceType.Special: return "특수 자원";  
-            case ResourceType.Legendary: return "전설 자원";
+            case ResourceType.Rare: return "희귀 자원";
+            case ResourceType.Special: return "특수 자원";
+            case ResourceType.Exotic: return "경이 자원";
             default: return "알 수 없음";
         }
     }

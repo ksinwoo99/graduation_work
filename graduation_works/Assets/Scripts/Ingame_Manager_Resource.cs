@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public enum ResourceType { Common, Rare, Special, Legendary }
+public enum ResourceType { Common, Rare, Special, Exotic }
 
 public class Ingame_Manager_Resource : MonoBehaviour {
     public static Ingame_Manager_Resource Instance;
@@ -9,9 +9,9 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     [Header("UI 연결")]
     public TextMeshProUGUI txtGold;
     public TextMeshProUGUI txtResourceCommon;
-    public TextMeshProUGUI txtResourceRare;     
-    public TextMeshProUGUI txtResourceSpecial;  
-    public TextMeshProUGUI txtResourceLegendary;
+    public TextMeshProUGUI txtResourceRare;
+    public TextMeshProUGUI txtResourceSpecial;
+    public TextMeshProUGUI txtResourceExotic; // 🔥 인스펙터에 꼭 연결해주세요!
 
     [Header("골드 설정")]
     public int currentGold = 300;
@@ -19,23 +19,23 @@ public class Ingame_Manager_Resource : MonoBehaviour {
 
     [Header("자원 설정")]
     public int resCommon = 0;
-    public int resRare = 0;      
-    public int resSpecial = 0;   
-    public int resLegendary = 0;
+    public int resRare = 0;
+    public int resSpecial = 0;
+    public int resExotic = 0;
 
     [Header("기본 최대 보유량")]
     public int baseMaxGold = 1000;
     public int baseMaxResCommon = 500;
-    public int baseMaxResRare = 500;     
-    public int baseMaxResSpecial = 500;  
-    public int baseMaxResLegendary = 500;
+    public int baseMaxResRare = 300;
+    public int baseMaxResSpecial = 150;
+    public int baseMaxResExotic = 100;
 
     [Header("현재 최대 보유량 (건물 비례)")]
     public int maxGold = 1000;
     public int maxResCommon = 500;
-    public int maxResRare = 500;     
-    public int maxResSpecial = 500;  
-    public int maxResLegendary = 500;
+    public int maxResRare = 300;
+    public int maxResSpecial = 150;
+    public int maxResExotic = 100;
 
     void Awake() {
         if (Instance == null) Instance = this;
@@ -48,15 +48,15 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     public void UpdateCapacities(int storageCount, int marketCount) {
         maxGold = baseMaxGold + (marketCount * 500);
         maxResCommon = baseMaxResCommon + (storageCount * 100);
-        maxResRare = baseMaxResRare + ((storageCount / 2) * 100);    
-        maxResSpecial = baseMaxResSpecial + ((storageCount / 5) * 100); 
-        maxResLegendary = baseMaxResLegendary + ((storageCount / 10) * 100); 
+        maxResRare = baseMaxResRare + ((storageCount / 2) * 100);
+        maxResSpecial = baseMaxResSpecial + ((storageCount / 5) * 100);
+        maxResExotic = baseMaxResExotic + ((storageCount / 10) * 100);
 
         if (currentGold > maxGold) currentGold = maxGold;
         if (resCommon > maxResCommon) resCommon = maxResCommon;
-        if (resRare > maxResRare) resRare = maxResRare;             
-        if (resSpecial > maxResSpecial) resSpecial = maxResSpecial; 
-        if (resLegendary > maxResLegendary) resLegendary = maxResLegendary;
+        if (resRare > maxResRare) resRare = maxResRare;
+        if (resSpecial > maxResSpecial) resSpecial = maxResSpecial;
+        if (resExotic > maxResExotic) resExotic = maxResExotic;
 
         UpdateUI();
     }
@@ -89,17 +89,17 @@ public class Ingame_Manager_Resource : MonoBehaviour {
                 resCommon += amount;
                 if (resCommon > maxResCommon) resCommon = maxResCommon;
                 break;
-            case ResourceType.Rare:     
+            case ResourceType.Rare:
                 resRare += amount;
                 if (resRare > maxResRare) resRare = maxResRare;
                 break;
-            case ResourceType.Special:  
+            case ResourceType.Special:
                 resSpecial += amount;
                 if (resSpecial > maxResSpecial) resSpecial = maxResSpecial;
                 break;
-            case ResourceType.Legendary:  
-                resLegendary += amount;
-                if (resLegendary > maxResLegendary) resLegendary = maxResLegendary;
+            case ResourceType.Exotic:
+                resExotic += amount;
+                if (resExotic > maxResExotic) resExotic = maxResExotic;
                 break;
         }
         UpdateUI();
@@ -112,9 +112,9 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     public bool HasEnoughResource(ResourceType type, int amount) {
         switch(type) {
             case ResourceType.Common: return resCommon >= amount;
-            case ResourceType.Rare: return resRare >= amount;       
-            case ResourceType.Special: return resSpecial >= amount; 
-            case ResourceType.Legendary: return resLegendary >= amount;
+            case ResourceType.Rare: return resRare >= amount;
+            case ResourceType.Special: return resSpecial >= amount;
+            case ResourceType.Exotic: return resExotic >= amount;
             default: return false;
         }
     }
@@ -125,17 +125,17 @@ public class Ingame_Manager_Resource : MonoBehaviour {
                 resCommon -= amount; 
                 if (resCommon < 0) resCommon = 0; 
                 break;
-            case ResourceType.Rare:     
+            case ResourceType.Rare:
                 resRare -= amount; 
                 if (resRare < 0) resRare = 0;
                 break;
-            case ResourceType.Special:  
+            case ResourceType.Special:
                 resSpecial -= amount; 
                 if (resSpecial < 0) resSpecial = 0;
                 break;
-            case ResourceType.Legendary:  
-                resLegendary -= amount; 
-                if (resLegendary < 0) resLegendary = 0;
+            case ResourceType.Exotic:
+                resExotic -= amount; 
+                if (resExotic < 0) resExotic = 0;
                 break;
         }
         UpdateUI(); 
@@ -144,8 +144,8 @@ public class Ingame_Manager_Resource : MonoBehaviour {
     void UpdateUI() {
         if (txtGold != null) txtGold.text = $"{currentGold} / {maxGold}";
         if (txtResourceCommon != null) txtResourceCommon.text = $"{resCommon} / {maxResCommon}";
-        if (txtResourceRare != null) txtResourceRare.text = $"{resRare} / {maxResRare}";       
-        if (txtResourceSpecial != null) txtResourceSpecial.text = $"{resSpecial} / {maxResSpecial}"; 
-        if (txtResourceLegendary != null) txtResourceLegendary.text = $"{resLegendary} / {maxResLegendary}"; 
+        if (txtResourceRare != null) txtResourceRare.text = $"{resRare} / {maxResRare}";
+        if (txtResourceSpecial != null) txtResourceSpecial.text = $"{resSpecial} / {maxResSpecial}";
+        if (txtResourceExotic != null) txtResourceExotic.text = $"{resExotic} / {maxResExotic}";
     }
 }

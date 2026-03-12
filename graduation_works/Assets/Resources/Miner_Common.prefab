@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6803157500931026614}
-  - component: {fileID: 6409148627511688862}
   - component: {fileID: 8872084085249466616}
-  - component: {fileID: -4556742679898032652}
+  - component: {fileID: 5764121903337690278}
   m_Layer: 0
   m_Name: Miner_Common
   m_TagString: Untagged
@@ -34,27 +33,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6409148627511688862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8957332384124021081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71b1aa13722872044a9da80c94042107, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buildManager: {fileID: 0}
-  myTile: {fileID: 0}
-  droppedItemPrefab: {fileID: 1521137862196071764, guid: 83d4b9fd6f14ee045a65e22b7f3c6aa7, type: 3}
-  machinePrefab: {fileID: 0}
-  miningInterval: 5
-  myResourceType: 0
-  spriteIdle: {fileID: 21300000, guid: 713e2eeecc83cd44f8e63ea8f7ec57a1, type: 3}
-  spriteActive: {fileID: 21300000, guid: 3e8dd8205d7d09744a5876a1917d5ef1, type: 3}
-  miningCount: -1
 --- !u!212 &8872084085249466616
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -107,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-4556742679898032652
+--- !u!114 &5764121903337690278
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,7 +103,7 @@ MonoBehaviour:
   dropList:
   - itemPrefab: {fileID: 1521137862196071764, guid: 83d4b9fd6f14ee045a65e22b7f3c6aa7, type: 3}
     probability: 100
-  miningInterval: 3
+  miningInterval: 5
   spriteIdle: {fileID: 21300000, guid: 713e2eeecc83cd44f8e63ea8f7ec57a1, type: 3}
   spriteActive: {fileID: 21300000, guid: 3e8dd8205d7d09744a5876a1917d5ef1, type: 3}
   miningCount: 0
