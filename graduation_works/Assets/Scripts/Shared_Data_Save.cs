@@ -6,8 +6,9 @@ public class Shared_Data_Save {
     public float totalPlayTime;
     public int gold;
     public int resCommon;
-    public int resUncommon;
     public int resRare;
+    public int resSpecial;
+    public int resExotic;
     public List<BuildingSaveData> buildings = new List<BuildingSaveData>();
 }
 
