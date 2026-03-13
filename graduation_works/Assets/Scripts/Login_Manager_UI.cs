@@ -28,7 +28,7 @@ public class Login_Manager_UI : MonoBehaviour {
     public RectTransform registerSuccessPanelRect;
 
     private Vector2 originalRegisterSize = new Vector2(500, 380);
-    private Vector2 expandedRegisterSize = new Vector2(500, 600);
+    private Vector2 expandedRegisterSize = new Vector2(500, 820);
     private Dictionary<GameObject, Coroutine> hideRoutines = new();
 
     void Start() {
@@ -99,7 +99,7 @@ public class Login_Manager_UI : MonoBehaviour {
 
     public void ShowRegisterPanel() {
         loginTitle.DOKill();
-        loginTitle.DOAnchorPosY(320, 0.2f).SetEase(Ease.InOutSine);
+        loginTitle.DOAnchorPosY(540, 0.2f).SetEase(Ease.InOutSine);
 
         loginPanel.SetActive(false);
         pwFindPanel.SetActive(false);
