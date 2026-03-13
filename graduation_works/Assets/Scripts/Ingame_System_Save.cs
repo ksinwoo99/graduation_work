@@ -16,15 +16,15 @@ public class MachineData {
 [System.Serializable]
 public class GameSaveRequest {
     public string user_id;
-    // 🔥 [수정] res5 (경이 자원) 추가!
-    public int res1, res2, res3, res4, res5, play_time; 
+    // ✨ [수정] res5(경이 자원)와 expand_count(맵 확장 횟수) 추가!
+    public int res1, res2, res3, res4, res5, play_time, expand_count; 
     public List<MachineData> machines = new List<MachineData>();
 }
 
 [System.Serializable]
 public class LoadResources {
-    // 🔥 [수정] resource_5 (경이 자원) 추가!
-    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time;
+    // ✨ [수정] resource_5 와 expand_count 추가!
+    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count;
 }
 
 [System.Serializable]
@@ -73,11 +73,14 @@ public class Ingame_System_Save : MonoBehaviour {
             data.res1 = mgr.resCommon; 
             data.res2 = mgr.resRare;      
             data.res3 = mgr.resSpecial;   
-            data.res5 = mgr.resExotic;    // 🔥 [추가] 경이 자원을 res5에 담습니다.
-            data.res4 = mgr.currentGold;  // 골드는 res4
+            data.res5 = mgr.resExotic;    
+            data.res4 = mgr.currentGold;  
         }
 
         if (Ingame_Manager_Build.Instance != null) {
+            // ✨ [추가] 맵 매니저에 있는 현재 '확장 횟수'를 택배에 포장합니다.
+            data.expand_count = Ingame_Manager_Build.Instance.expandCount;
+            
             var codingMgr = FindObjectOfType<Ingame_Manager_Coding>();
             foreach (var kvp in Ingame_Manager_Build.Instance.GetInstalledObjects()) {
                 GameObject obj = kvp.Value;
@@ -136,13 +139,27 @@ public class Ingame_System_Save : MonoBehaviour {
             mgr.resCommon = data.resources.resource_1;
             mgr.resRare = data.resources.resource_2;       
             mgr.resSpecial = data.resources.resource_3;    
-            mgr.resExotic = data.resources.resource_5;     // 🔥 [추가] 서버의 resource_5를 경이 자원에 적용
+            mgr.resExotic = data.resources.resource_5;     
             mgr.currentGold = data.resources.resource_4;
             mgr.EarnGold(0); 
         }
 
         if (Ingame_Manager_Time.Instance != null && data.resources != null)
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
+
+        // ✨ [추가] 맵 크기 복구 및 바닥 다시 깔기 (기계 설치 전에 무조건 실행되어야 함!)
+        if (Ingame_Manager_Build.Instance != null && data.resources != null) {
+            var buildMgr = Ingame_Manager_Build.Instance;
+            
+            // 1. 서버에서 받은 확장 횟수 적용
+            buildMgr.expandCount = data.resources.expand_count;
+            
+            // 2. 확장 횟수를 바탕으로 현재 맵 크기 다시 계산 (시작 크기 4 + (확장횟수 * 스텝크기))
+            buildMgr.currentMapSize = 4 + (buildMgr.expandCount * buildMgr.expandSizeStep); 
+            
+            // 3. 넓어진 크기로 바닥 타일 촥 깔아주기
+            buildMgr.GenerateFloor(); 
+        }
 
         if (Ingame_Manager_Build.Instance != null && data.machines != null) {
             Ingame_Manager_Build.Instance.ClearAllBuildingsForLoad();
