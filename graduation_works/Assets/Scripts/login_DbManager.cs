@@ -22,6 +22,7 @@ public class login_DbManager : MonoBehaviour
         public string status;
         public string msg;
         public int user_pk;
+        public string user_id;
         public string password;
     }
 

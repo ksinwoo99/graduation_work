@@ -7,20 +7,17 @@ using System.Collections.Generic;
 public class Login_Manager_UI : MonoBehaviour {
     [Header("로그인")]
     public GameObject loginPanel;
-    public GameObject loginErrorPanel;
 
     [Header("비밀번호 찾기")]
     public GameObject pwFindPanel;
 
-    [Header("ID 중복확인")]
-    public GameObject registerIDCheckPanel;
-    public TMP_Text registerIDCheckText;
-
     [Header("회원 가입")]
     public GameObject registerPanel;
     public GameObject registerSuccessPanel;
-    public GameObject registerErrorPanel;
-    public TMP_Text registerErrorText;
+
+    [Header("통합 알림창 (에러 및 안내)")]
+    public GameObject errorPanel;
+    public TMP_Text errorText;
 
     [Header("DOTween용 RectTransform")]
     public RectTransform loginTitle;
@@ -33,12 +30,11 @@ public class Login_Manager_UI : MonoBehaviour {
 
     void Start() {
         loginPanel.SetActive(true);
-        loginErrorPanel.SetActive(false);
         pwFindPanel.SetActive(false);
         registerPanel.SetActive(false);
         registerSuccessPanel.SetActive(false);
-        registerIDCheckPanel.SetActive(false);
-        registerErrorPanel.SetActive(false);
+        
+        if (errorPanel != null) errorPanel.SetActive(false);
 
         registerPanelRect.sizeDelta = originalRegisterSize;
         registerPanelRect.pivot = new Vector2(0.5f, 0f);
@@ -49,11 +45,32 @@ public class Login_Manager_UI : MonoBehaviour {
         panel.SetActive(true);
         if (hideRoutines.TryGetValue(panel, out var running) && running != null)
             StopCoroutine(running);
-        hideRoutines[panel] = StartCoroutine(AutoHide(panel, 1f));
+            
+        // 🔥 [수정 1] 팝업 유지 시간을 1초에서 5초로 변경!
+        hideRoutines[panel] = StartCoroutine(AutoHide(panel, 5f));
     }
 
+    // 🔥 [수정 2] 5초를 대기하되, 도중에 입력이 들어오면 바로 꺼지는 로직으로 변경
     IEnumerator AutoHide(GameObject panel, float seconds) {
-        yield return new WaitForSeconds(seconds);
+        float timer = 0f;
+        
+        // 버튼을 클릭해서 창을 띄운 그 찰나의 순간(같은 프레임)에 바로 꺼지는 것을 방지하기 위해 아주 잠깐 대기합니다.
+        yield return null; 
+
+        while (timer < seconds) {
+            timer += Time.deltaTime;
+
+            // 마우스 좌클릭(0), 엔터 키, 넘패드 엔터 키, ESC 키 중 하나라도 누르면 즉시 종료
+            if (Input.GetMouseButtonDown(0) || 
+                Input.GetKeyDown(KeyCode.Return) || 
+                Input.GetKeyDown(KeyCode.KeypadEnter) || 
+                Input.GetKeyDown(KeyCode.Escape)) {
+                break; // 5초가 다 안 지났어도 루프를 탈출하여 바로 아래의 SetActive(false)로 넘어감
+            }
+
+            yield return null;
+        }
+
         if (panel != null) panel.SetActive(false);
         hideRoutines[panel] = null;
     }
@@ -76,19 +93,14 @@ public class Login_Manager_UI : MonoBehaviour {
 
     private void ActivateLoginPanel() {
         loginPanel.SetActive(true);
-        loginErrorPanel.SetActive(false);
         pwFindPanel.SetActive(false);
         registerPanel.SetActive(false);
-        registerIDCheckPanel.SetActive(false);
         registerSuccessPanel.SetActive(false);
-        registerErrorPanel.SetActive(false);
+        
+        if (errorPanel != null) errorPanel.SetActive(false);
 
         loginTitle.DOKill();
         loginTitle.DOAnchorPosY(90f, 1.2f).SetEase(Ease.OutBounce);
-    }
-
-    public void ShowLoginError() {
-        ShowTempPanel(loginErrorPanel);
     }
 
     public void ShowPwFindPanel() {
@@ -113,24 +125,32 @@ public class Login_Manager_UI : MonoBehaviour {
         });
     }
 
+    public void ShowLoginError() {
+        if (errorText != null) errorText.text = "<color=#FF5A5A>아이디 또는 비밀번호를 확인해주세요.</color>";
+        ShowTempPanel(errorPanel);
+    }
+
     public void ShowRegisterIdCheckResult(bool available) {
-        registerIDCheckText.text = available
-            ? "<color=#4CAF50>사용 가능한 ID입니다.</color>"
-            : "<color=#FF5A5A>사용 불가능한 ID입니다.</color>";
-        ShowTempPanel(registerIDCheckPanel);
+        if (errorText != null) {
+            errorText.text = available
+                ? "<color=#4CAF50>사용 가능한 ID입니다.</color>"
+                : "<color=#FF5A5A>사용 불가능한 ID입니다.</color>";
+        }
+        ShowTempPanel(errorPanel);
     }
 
     public void HideRegisterIdCheckPanel() {
-        registerIDCheckPanel.SetActive(false);
+        if (errorPanel != null) errorPanel.SetActive(false);
     }
 
-    public void ShowRegisterError(string message) {
-        registerErrorText.text = message;
-        ShowTempPanel(registerErrorPanel);
+    public void ShowAlertMessage(string message) {
+        if (errorText != null) errorText.text = message; 
+        ShowTempPanel(errorPanel);
     }
+
     public void ShowRegisterSuccess() {
         registerPanel.SetActive(false);
-        registerSuccessPanelRect.sizeDelta = expandedRegisterSize; // 두번째 가입시 글자 안뜬거 수정 반영
+        registerSuccessPanelRect.sizeDelta = expandedRegisterSize; 
         registerSuccessPanel.SetActive(true);
     }
 }
