@@ -1,53 +1,113 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class Ingame_UI_ExpandMap : MonoBehaviour
 {
-    [Header("UI 연결")]
-    public GameObject expandPopupPanel;    // 확장 확인 팝업창 (배경 패널)
-    public TextMeshProUGUI txtCostMessage; // 확장 안내 및 비용 텍스트
+    [Header("메인 UI")]
+    public Button btnExpandMain; 
 
-    // 하단 메뉴의 [부지 확장] 버튼을 눌렀을 때 팝업 열기
-    public void OnClick_OpenExpandPopup()
+    [Header("팝업창 UI")]
+    public GameObject popupPanel;           
+    
+    // ✨ [수정 1] 텍스트를 크기용과 비용용으로 분리했습니다.
+    public TextMeshProUGUI txtSizeMessage; 
+    public TextMeshProUGUI txtCostMessage; 
+    
+    // ✨ [추가] 골드 부족 시 '예/아니오' 버튼을 한 번에 숨기기 위한 그룹 객체
+    public GameObject buttonGroup;         
+
+    private Coroutine hideRoutine; // 자동 닫기 코루틴
+
+    public void OnClick_OpenPopup()
     {
         if (Ingame_Manager_Build.Instance == null) return;
 
-        // 현재 얼마가 필요한지, 크기는 어떻게 변하는지 가져옵니다.
+        // 팝업 열 때 예/아니오 버튼 그룹 다시 활성화
+        if (buttonGroup != null) buttonGroup.SetActive(true);
+
         int cost = Ingame_Manager_Build.Instance.GetCurrentExpandCost();
         int currentSize = Ingame_Manager_Build.Instance.currentMapSize;
         int nextSize = currentSize + Ingame_Manager_Build.Instance.expandSizeStep;
 
-        // 팝업창 텍스트 업데이트
+        // 텍스트 분리해서 출력
+        if (txtSizeMessage != null)
+            txtSizeMessage.text = $"현재 크기: {currentSize}x{currentSize}\n다음 크기: <color=#00FF00>{nextSize}x{nextSize}</color>";
+        
         if (txtCostMessage != null)
-        {
-            txtCostMessage.text = $"현재 크기: {currentSize}x{currentSize}\n다음 크기: <color=#00FF00>{nextSize}x{nextSize}</color>\n\n<color=#FFD700>{cost} G</color>를 지불하고\n부지를 확장하시겠습니까?";
-        }
+            txtCostMessage.text = $"<color=#FFD700>{cost} G</color>를 지불하고\n부지를 확장하시겠습니까?";
 
-        if (expandPopupPanel != null) expandPopupPanel.SetActive(true);
+        if (popupPanel != null) popupPanel.SetActive(true);
+
+        // ✨ [수정 2] 게임 일시정지 (시간 및 모든 기계 동작 멈춤)
+        Time.timeScale = 0f;
     }
 
-    // 팝업창에서 [예(확장)] 버튼을 눌렀을 때
     public void OnClick_ConfirmExpand()
     {
         if (Ingame_Manager_Build.Instance == null) return;
 
-        // 골드가 충분해서 확장에 성공했다면 팝업 닫기
         if (Ingame_Manager_Build.Instance.TryExpandMap())
         {
-            ClosePopup();
-            // 맵 중앙에 성공 메시지 띄우기
+            // 성공 시
             Ingame_Manager_Build.Instance.ShowFloatingText("부지 확장 완료!", Vector3.zero);
+            ClosePopup();
+            
+            if (btnExpandMain != null) btnExpandMain.interactable = false;
         }
         else
         {
-            // 골드 부족 텍스트 띄우기
-            Ingame_Manager_Build.Instance.ShowFloatingText("골드가 부족합니다!", Vector3.zero);
+            // ✨ [수정 3] 실패 (골드 부족) 시 로직
+            if (buttonGroup != null) buttonGroup.SetActive(false); // 예/아니오 버튼 숨기기
+            
+            // 텍스트 변경
+            if (txtSizeMessage != null) txtSizeMessage.text = "<color=#FF5A5A>골드가 부족합니다!</color>";
+            if (txtCostMessage != null) txtCostMessage.text = "더 많은 골드를 모아오세요.";
+
+            // 5초 대기 후 자동 닫기 코루틴 시작
+            if (hideRoutine != null) StopCoroutine(hideRoutine);
+            hideRoutine = StartCoroutine(AutoHide(5f));
         }
     }
 
-    // 팝업창에서 [아니오(취소)] 버튼을 눌렀을 때
     public void ClosePopup()
     {
-        if (expandPopupPanel != null) expandPopupPanel.SetActive(false);
+        // 코루틴이 돌고 있다면 정지
+        if (hideRoutine != null) 
+        {
+            StopCoroutine(hideRoutine);
+            hideRoutine = null;
+        }
+        
+        if (popupPanel != null) popupPanel.SetActive(false);
+
+        // ✨ [수정 2] 팝업이 닫히면 게임 시간(동작) 다시 정상화
+        Time.timeScale = 1f;
+    }
+
+    // ✨ [수정 3] 5초 대기 또는 아무 입력 감지 시 창 닫기
+    IEnumerator AutoHide(float seconds) 
+    {
+        float timer = 0f;
+        yield return null; // 클릭하는 순간 바로 꺼지는 것을 방지하기 위해 한 프레임 대기
+
+        while (timer < seconds) 
+        {
+            // Time.timeScale이 0일 때 일반 Time.deltaTime은 작동하지 않으므로, unscaledDeltaTime을 사용해야 현실 시간으로 5초를 잴 수 있습니다!
+            timer += Time.unscaledDeltaTime; 
+
+            // 클릭, 엔터, ESC 누르면 루프 탈출
+            if (Input.GetMouseButtonDown(0) || 
+                Input.GetKeyDown(KeyCode.Return) || 
+                Input.GetKeyDown(KeyCode.KeypadEnter) || 
+                Input.GetKeyDown(KeyCode.Escape)) 
+            {
+                break;
+            }
+            yield return null;
+        }
+
+        ClosePopup();
     }
 }
