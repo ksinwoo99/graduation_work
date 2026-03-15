@@ -29,14 +29,14 @@ public class Ingame_Manager_Build : MonoBehaviour {
     public Tilemap tilemapPreview;
 
     // ==========================================
-    // 🔥 [추가] 타일맵 확장 (부동산) 설정
+    // 🔥 타일맵 확장 (부동산) 설정
     // ==========================================
     [Header("타일맵 확장 (부동산) 설정")]
-    public TileBase floorTileBase; // 바닥에 깔아줄 타일
-    public int currentMapSize = 4; // 시작 크기 (4x4)
-    public int expandCount = 0;    // 확장 횟수
-    public int baseExpandCost = 1000; // 기본 확장 비용
-    public int expandSizeStep = 2; // 한 번 확장할 때 늘어날 칸 수 (예: 2칸이면 4x4 -> 6x6)
+    public TileBase floorTileBase; 
+    public int currentMapSize = 4; 
+    public int expandCount = 0;    
+    public int baseExpandCost = 1000; 
+    public int expandSizeStep = 2; 
 
     [Header("매니저 연결")]
     public Ingame_Manager_Coding codingManager;
@@ -85,7 +85,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
     
     void Awake() { if (Instance == null) Instance = this; }
 
-    // 🔥 [추가] 게임이 켜지면 코드로 바닥을 생성합니다!
     void Start() {
         GenerateFloor();
     }
@@ -476,6 +475,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
+    // ==========================================
+    // 🔥 서버에서 맵 불러오기 (비어있던 로직 완벽 복구!)
+    // ==========================================
     public void LoadBuildingFromServer(MachineData data, GameObject prefab) {
         Vector3Int pos = new Vector3Int((int)data.pos_x, (int)data.pos_y, (int)data.pos_z);
         Vector3 worldPos = tilemapInstallations.GetCellCenterWorld(pos);
@@ -488,9 +490,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
         BuildDirection dir = (BuildDirection)(-(int)(data.rotation_y / 90f));
         machine.SendMessage("SetDirection", (int)dir, SendMessageOptions.DontRequireReceiver);
 
-        // 🔥 [수정] 옛날 Common 스크립트 참조를 Master로 변경!
+        // 3. 기계 초기화
         logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
         if (createdMiner != null) createdMiner.InitializeMiner(-1);
+        
+        logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
+        if (createdProductor != null) createdProductor.InitializeProductor(-1);
 
         // 4. 작성했던 파이썬 코드 복구
         string rawName = machine.name.Replace("(Clone)", "").Trim();
@@ -656,7 +661,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         foreach (GameObject obj in installedObjects.Values) {
             if (obj == null) continue;
             
-            // 🔥 [수정] Common을 Master로 변경!
             if (obj.GetComponent<logic_Miner_Master>() != null) minerCount++;
             else if (obj.GetComponent<logic_Productor_Master>() != null) productorCount++;
             
@@ -674,7 +678,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     // ==========================================
-    // 🔥 [추가] 타일맵 확장 로직
+    // 🔥 타일맵 확장 로직
     // ==========================================
     public void GenerateFloor() {
         if (floorTileBase == null) {
@@ -687,7 +691,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         int halfSize = currentMapSize / 2;
         int oddOffset = currentMapSize % 2; 
 
-        // 현재 맵 사이즈에 맞춰 중앙을 기준으로 정사각형 바닥을 그립니다.
         for (int x = -halfSize; x < halfSize + oddOffset; x++) {
             for (int y = -halfSize; y < halfSize + oddOffset; y++) {
                 tilemapFloor.SetTile(new Vector3Int(x, y, 0), floorTileBase);
@@ -695,12 +698,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    // 현재 맵을 1회 확장하기 위해 필요한 골드량 반환
     public int GetCurrentExpandCost() {
         return baseExpandCost * (expandCount + 1);
     }
 
-    // 골드를 지불하고 맵을 넓히는 핵심 로직
     public bool TryExpandMap() {
         var resMgr = Ingame_Manager_Resource.Instance;
         int cost = GetCurrentExpandCost();
@@ -708,11 +709,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (resMgr != null && resMgr.HasEnoughGold(cost)) {
             resMgr.SpendGold(cost);
             expandCount++;
-            currentMapSize += expandSizeStep; // 설정한 스텝(예: 2)만큼 맵이 커집니다!
+            currentMapSize += expandSizeStep; 
             
-            GenerateFloor(); // 넓어진 크기로 바닥 다시 그리기
-            
-            Debug.Log($"부지 확장 성공! 현재 맵 크기: {currentMapSize}x{currentMapSize}");
+            GenerateFloor(); 
             return true;
         }
         return false;
