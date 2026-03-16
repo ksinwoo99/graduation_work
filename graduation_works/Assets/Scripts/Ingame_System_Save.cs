@@ -115,8 +115,12 @@ public class Ingame_System_Save : MonoBehaviour {
         else Debug.LogError($"저장 실패: {www.error}");
     }
 
-    public void OnClick_Load() {
-        string currentId = string.IsNullOrEmpty(Shared_Manager_Session.CurrentUserId) ? "guest" : Shared_Manager_Session.CurrentUserId;
+public void OnClick_Load() {
+        // 놀러가기는 친구 아이디(VisitTargetId)를 꺼내고, 아니면 내 아이디를 꺼냅니다!
+        string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
+        
+        if (string.IsNullOrEmpty(currentId)) currentId = "guest";
+        
         StartCoroutine(LoadFromServerCoroutine(currentId));
     }
 

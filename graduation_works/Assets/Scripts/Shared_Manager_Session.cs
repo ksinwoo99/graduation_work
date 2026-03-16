@@ -8,6 +8,8 @@ public static class Shared_Manager_Session {
     }
 
     public static bool IsReadOnlyMode = false;
+    public static bool IsVisiting = false; 
+    public static string VisitTargetId = "";
 
     private static string GetSaveKey(string userId) => $"User_{userId}_SaveData";
 
