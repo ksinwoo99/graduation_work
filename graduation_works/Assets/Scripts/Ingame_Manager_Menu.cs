@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 
+// ✨ [핵심 추가] 빌드 로직보다 무조건 먼저 ESC 키를 판별하도록 순서를 강제 고정!
+[DefaultExecutionOrder(-100)] 
 public class Ingame_Manager_Menu : MonoBehaviour {
     [Header("UI 연결")]
     public GameObject PausePanel;       
@@ -23,6 +25,16 @@ public class Ingame_Manager_Menu : MonoBehaviour {
                 OnClick_ConfirmNo(); 
                 return; 
             }
+
+            if (Ingame_Manager_Build.Instance != null) {
+                bool isConfirming = Ingame_Manager_Build.Instance.confirmPanel != null && Ingame_Manager_Build.Instance.confirmPanel.activeSelf;
+                
+                // 설치 모드이거나 저장 확인창이 떠있으면 메뉴창 안 띄우고 무시!
+                if (Ingame_Manager_Build.Instance.isBuildMode || isConfirming) {
+                    return; 
+                }
+            }
+
             OnClick_ToggleMenu();
         }
     }
@@ -55,7 +67,7 @@ public class Ingame_Manager_Menu : MonoBehaviour {
         if(Ingame_System_Save.Instance != null) {
             Ingame_System_Save.Instance.OnClick_Load();
         }
-        OnClick_ToggleMenu(); // 불러오기 후 일시정지 메뉴 닫기
+        OnClick_ToggleMenu(); 
     }
 
     public void OnClick_Exit() {
