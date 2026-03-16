@@ -354,6 +354,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     void TryBuildMachine(Vector3Int pos) {
+        if (Shared_Manager_Session.IsVisiting) return;
+        
         Vector3 tileWorldPos = tilemapInstallations.GetCellCenterWorld(pos);
         tileWorldPos.z = -1f;
 
