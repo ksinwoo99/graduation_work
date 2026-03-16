@@ -716,4 +716,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
         return false;
     }
+    public void CenterCamera() {
+        if (Camera.main != null) {
+            Camera.main.transform.position = new Vector3(0, 0, -10);
+        }
+    }
 }

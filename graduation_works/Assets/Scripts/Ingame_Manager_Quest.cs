@@ -130,4 +130,8 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
         StartQuest(currentQuestId + 1);
     }
+    
+    public bool IsAllQuestsCleared() {
+        return currentQuestId >= questList.Count;
+    }
 }
