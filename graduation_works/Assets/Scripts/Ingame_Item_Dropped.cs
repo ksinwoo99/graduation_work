@@ -37,6 +37,7 @@ public class Ingame_Item_Dropped : MonoBehaviour
     }
 
     private void OnMouseDown() {
+        if (Shared_Manager_Session.IsVisiting) return;
         CollectItem();
     }
 
