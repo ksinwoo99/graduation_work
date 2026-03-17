@@ -1,16 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 
-// ✨ [핵심 추가] 빌드 로직보다 무조건 먼저 ESC 키를 판별하도록 순서를 강제 고정!
+// 원래대로 든든하게 유지!
 [DefaultExecutionOrder(-100)] 
 public class Ingame_Manager_Menu : MonoBehaviour {
     [Header("UI 연결")]
-    public GameObject PausePanel;       
+    public GameObject PausePanel;
     public GameObject menu_SelectPanel; 
     public GameObject menu_ErrorPanel;  
 
+    // ✨ [추가된 부분] 관전 모드일 때만 띄울 텍스트!
+    [Header("관전 모드 전용 UI")]
+    public GameObject visitNoticeText; 
+
     private bool isPaused = false;
-    private bool isSaved = false;       
+    public bool isSaved = false; 
 
     void Start() {
         Time.timeScale = 1f; 
@@ -22,16 +26,14 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
             if (menu_ErrorPanel != null && menu_ErrorPanel.activeSelf) {
-                OnClick_ConfirmNo(); 
+                OnClick_ConfirmNo();
                 return; 
             }
 
             if (Ingame_Manager_Build.Instance != null) {
                 bool isConfirming = Ingame_Manager_Build.Instance.confirmPanel != null && Ingame_Manager_Build.Instance.confirmPanel.activeSelf;
-                
-                // 설치 모드이거나 저장 확인창이 떠있으면 메뉴창 안 띄우고 무시!
                 if (Ingame_Manager_Build.Instance.isBuildMode || isConfirming) {
-                    return; 
+                    return;
                 }
             }
 
@@ -40,14 +42,19 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     }
 
     public void OnClick_ToggleMenu() {
-        if (menu_ErrorPanel != null && menu_ErrorPanel.activeSelf) return; 
-
+        if (menu_ErrorPanel != null && menu_ErrorPanel.activeSelf) return;
         isPaused = !isPaused;
 
         if (isPaused) {
-            Time.timeScale = 0f; 
+            Time.timeScale = 0f;
             PausePanel.SetActive(true);
             menu_SelectPanel.SetActive(true);
+
+            // ✨ [추가된 부분] ESC 메뉴가 열릴 때, 관전 모드면 글자를 켜고, 내 공장이면 끕니다!
+            if (visitNoticeText != null) {
+                visitNoticeText.SetActive(Shared_Manager_Session.IsVisiting);
+            }
+
         } else {
             Time.timeScale = 1f; 
             PausePanel.SetActive(false);
@@ -60,7 +67,7 @@ public class Ingame_Manager_Menu : MonoBehaviour {
             Ingame_System_Save.Instance.OnClick_Save();
         }
         isSaved = true; 
-        Debug.Log("저장 요청됨"); 
+        Debug.Log("저장 요청됨");
     }
     
     public void OnClick_Load() { 
@@ -71,10 +78,20 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     }
 
     public void OnClick_Exit() {
+        if (Shared_Manager_Session.IsVisiting) {
+            Shared_Manager_Session.IsVisiting = false;
+            Shared_Manager_Session.VisitTargetId = "";
+            Shared_Manager_Session.IsReadOnlyMode = false;
+
+            Time.timeScale = 1f; 
+            SceneManager.LoadScene("Menu_Scene"); 
+            return;
+        }
+
         if (isSaved) {
-            RealExit();
+            RealExit(); 
         } else {
-            if(menu_ErrorPanel != null) menu_ErrorPanel.SetActive(true);
+            if(menu_ErrorPanel != null) menu_ErrorPanel.SetActive(true); 
         }
     }
 
