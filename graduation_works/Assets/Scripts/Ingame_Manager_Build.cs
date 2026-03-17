@@ -123,6 +123,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
         UpdateCursor(cellPos);
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+            
+            // ✨ [핵심 방패] 관전 모드에서는 맵 클릭 자체를 완벽하게 무시합니다! ("코드 오류!" 경고창 차단)
+            if (Shared_Manager_Session.IsVisiting) return; 
+
             if (isDemolishMode) TryDemolishMachine(cellPos);
             else {
                 if (!isPlacementAllowed) {
@@ -300,7 +304,14 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     void ShowPreview(Vector3Int pos) {
+        // 일단 그려져 있던 미리보기를 지웁니다.
         tilemapPreview.ClearAllTiles();
+
+        // ✨ [추가된 방패] 관전 모드일 때는 홀로그램과 방향 화살표를 모두 숨기고 바로 종료!
+        if (Shared_Manager_Session.IsVisiting) {
+            if (previewArrowInstance != null) previewArrowInstance.SetActive(false);
+            return;
+        }
         
         if (isDemolishMode) {
             if (previewArrowInstance != null) previewArrowInstance.SetActive(false); 
@@ -416,6 +427,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     void TryDemolishMachine(Vector3Int pos) {
+        // ✨ [핵심 방패] 혹시 모를 철거 우회 방지
+        if (Shared_Manager_Session.IsVisiting) return;
+
         if (!IsOccupied(pos)) return;
         Vector3 tileWorldPos = tilemapInstallations.GetCellCenterWorld(pos);
         tileWorldPos.z = -5f;
