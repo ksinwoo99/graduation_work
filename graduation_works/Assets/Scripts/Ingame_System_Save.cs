@@ -16,14 +16,12 @@ public class MachineData {
 [System.Serializable]
 public class GameSaveRequest {
     public string user_id;
-    // ✨ [수정] res5(경이 자원)와 expand_count(맵 확장 횟수) 추가!
     public int res1, res2, res3, res4, res5, play_time, expand_count; 
     public List<MachineData> machines = new List<MachineData>();
 }
 
 [System.Serializable]
 public class LoadResources {
-    // ✨ [수정] resource_5 와 expand_count 추가!
     public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count;
 }
 
@@ -78,15 +76,17 @@ public class Ingame_System_Save : MonoBehaviour {
         }
 
         if (Ingame_Manager_Build.Instance != null) {
-            // ✨ [추가] 맵 매니저에 있는 현재 '확장 횟수'를 택배에 포장합니다.
             data.expand_count = Ingame_Manager_Build.Instance.expandCount;
             
-            var codingMgr = FindObjectOfType<Ingame_Manager_Coding>();
+            // ✨ [핵심 수정 1] 비활성화 상태일 수도 있는 FindObjectOfType 대신, 확실하게 연결된 매니저를 바로 사용합니다!
+            var codingMgr = Ingame_Manager_Build.Instance.codingManager;
+            
             foreach (var kvp in Ingame_Manager_Build.Instance.GetInstalledObjects()) {
                 GameObject obj = kvp.Value;
                 if (obj == null) continue;
 
                 string rawName = obj.name.Replace("(Clone)", "").Trim();
+                
                 MachineData mData = new MachineData {
                     machine_type = GetMachineTypeInt(rawName),
                     tile_index = 0, 
@@ -96,7 +96,25 @@ public class Ingame_System_Save : MonoBehaviour {
                 if (Ingame_Manager_Build.Instance.installedDirections.ContainsKey(kvp.Key)) 
                     mData.rotation_y = -(int)Ingame_Manager_Build.Instance.installedDirections[kvp.Key] * 90f; 
 
-                if (codingMgr != null) mData.source_code = codingMgr.GetSavedCode(rawName);
+                // ✨ [핵심 수정 2] 코딩 창은 "간이 채굴기"(한글), 로드는 "Miner_Basic"(영어)을 키로 쓸 수 있습니다.
+                // 따라서 기계의 한글 이름과 영어 이름을 모두 사용해 코드를 안전하게 찾아옵니다!
+                if (codingMgr != null) {
+                    string codeToSave = "";
+                    Iteminfo_Base info = obj.GetComponent<Iteminfo_Base>();
+
+                    // 1순위: UI에서 썼던 한글 이름 (예: "간이 채굴기")으로 먼저 검색
+                    if (info != null && !string.IsNullOrEmpty(info.machineName)) {
+                        codeToSave = codingMgr.GetSavedCode(info.machineName);
+                    }
+
+                    // 2순위: 혹시 한글 이름으로 못 찾았다면, 영어 이름(예: "Miner_Advanced")으로 다시 검색
+                    if (string.IsNullOrEmpty(codeToSave)) {
+                        codeToSave = codingMgr.GetSavedCode(rawName);
+                    }
+
+                    mData.source_code = codeToSave; // 찾은 코드를 택배에 포장!
+                }
+
                 data.machines.Add(mData);
             }
         }
@@ -115,8 +133,7 @@ public class Ingame_System_Save : MonoBehaviour {
         else Debug.LogError($"저장 실패: {www.error}");
     }
 
-public void OnClick_Load() {
-        // 놀러가기는 친구 아이디(VisitTargetId)를 꺼내고, 아니면 내 아이디를 꺼냅니다!
+    public void OnClick_Load() {
         string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
         
         if (string.IsNullOrEmpty(currentId)) currentId = "guest";
@@ -151,17 +168,11 @@ public void OnClick_Load() {
         if (Ingame_Manager_Time.Instance != null && data.resources != null)
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
 
-        // ✨ [추가] 맵 크기 복구 및 바닥 다시 깔기 (기계 설치 전에 무조건 실행되어야 함!)
         if (Ingame_Manager_Build.Instance != null && data.resources != null) {
             var buildMgr = Ingame_Manager_Build.Instance;
             
-            // 1. 서버에서 받은 확장 횟수 적용
             buildMgr.expandCount = data.resources.expand_count;
-            
-            // 2. 확장 횟수를 바탕으로 현재 맵 크기 다시 계산 (시작 크기 4 + (확장횟수 * 스텝크기))
             buildMgr.currentMapSize = 4 + (buildMgr.expandCount * buildMgr.expandSizeStep); 
-            
-            // 3. 넓어진 크기로 바닥 타일 촥 깔아주기
             buildMgr.GenerateFloor(); 
         }
 
