@@ -26,6 +26,7 @@ public class DebuggingResponse
 {
     public string output;
     public string status;
+    public float execution_time;
 }
 
 public class Ingame_Button_Debugging : MonoBehaviour
