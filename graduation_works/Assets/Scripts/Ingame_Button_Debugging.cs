@@ -29,7 +29,7 @@ public class DebuggingResponse
 [System.Serializable]
 public class MLSubmitRequest
 {
-    public string user_id;
+    public string user_pk;
     public string machine_type;
     public string source_code;
     public bool is_python_valid;
@@ -86,7 +86,22 @@ public class Ingame_Button_Debugging : MonoBehaviour
     IEnumerator SendToServer(string userId, string code)
     {
         string url = "http://13.237.51.219:8000/execute";
+<<<<<<< Updated upstream
         
+=======
+
+        // ✨ [핵심 추가] 현재 코딩 창이 열려있는 기계의 이름을 실시간으로 가져옵니다!
+        string actualMachineType = "GENERAL"; 
+        if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null)
+        {
+            logic_CodingBase targetMachine = Ingame_Manager_Build.Instance.codingManager.currentLogic;
+            if (targetMachine != null)
+            {
+                actualMachineType = targetMachine.GetMachineName(); 
+            }
+        }
+
+>>>>>>> Stashed changes
         CodeRequest requestData = new CodeRequest { 
             user_id = userId, 
             source_code = code, 
@@ -147,7 +162,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
         string logUrl = "http://127.0.0.1:8000/api/submit_code";
 
         MLSubmitRequest mlData = new MLSubmitRequest {
-            user_id = userId,
+            user_pk = userId,
             machine_type = machineType,
             source_code = code,
             is_python_valid = isPyValid,
@@ -169,11 +184,11 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log($"[데이터 수집 완료] AI 피드백: {www.downloadHandler.text}");
+            Debug.Log($"[데이터 수집 완료] AI 피드백 : {www.downloadHandler.text}");
         }
         else
         {
-            Debug.LogError($"[데이터 수집 실패] ML 서버 로그 전송 에러: {www.error}");
+            Debug.LogError($"[데이터 수집 실패] ML 서버 에러 : {www.error}\n 원인 : {www.downloadHandler.text}");
         }
     }
 
