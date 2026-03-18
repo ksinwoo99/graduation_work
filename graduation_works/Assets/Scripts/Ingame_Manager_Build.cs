@@ -159,6 +159,15 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
+    public void ClearSessionLists() {
+        sessionBuilt.Clear();       // 설치 기록 삭제 
+        sessionDemolished.Clear();  // 철거 기록 삭제 
+        isConfirming = false;       // 혹시 켜져 있을지 모를 확인 플래그 리셋 
+    
+        if (confirmPanel != null) confirmPanel.SetActive(false); 
+        Debug.Log("<color=green>저장이 완료되어 빌드 세션 리스트를 초기화했습니다.</color>");
+    }
+
     public void OnClick_ConfirmSave() {
         foreach (var kvp in sessionDemolished) {
             if (kvp.Value.machineInstance != null) Destroy(kvp.Value.machineInstance);

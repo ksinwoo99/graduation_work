@@ -138,9 +138,16 @@ public class Ingame_System_Save : MonoBehaviour {
         
         if (www.result == UnityWebRequest.Result.Success) {
             Debug.Log("저장 성공!");
-        } else {
-            Debug.LogError("저장 실패: " + www.error);
-        }
+
+            if (Ingame_Manager_Build.Instance != null) {
+                Ingame_Manager_Build.Instance.ClearSessionLists();
+                }
+            if (Ingame_Manager_Menu.Instance != null) {
+                Ingame_Manager_Menu.Instance.isSaved = true;
+                }
+            } else {
+                Debug.LogError("저장 실패: " + www.error);
+            }
     }
 
     public void OnClick_Load() {
