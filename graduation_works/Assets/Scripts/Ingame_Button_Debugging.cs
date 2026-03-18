@@ -35,7 +35,7 @@ public class DebuggingResponse
 [System.Serializable]
 public class MLSubmitRequest
 {
-    public string user_id;
+    public string user_pk;
     public string machine_type;
     public string source_code;
     public bool is_python_valid;
@@ -138,7 +138,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
             DebuggingResponse response = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
             
-            // ✨ [충돌 해결 및 병합] ML 로직용 변수와 실행 시간 UI 표시를 하나로 합침!
+            // ✨ ML 로직용 변수와 실행 시간 UI 표시
             bool isPythonValid = (response.status == "success");
             bool isMachineValid = false;
             bool isSuccess = false;
@@ -161,8 +161,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
                 SetUI(response.output, Color.red, true);
             }
 
-            // ★ 파이썬이 응답으로 준 실행 시간(response.execution_time)을 그대로 ML 릴레이!
-            // ("GENERAL"로 고정되어 있던 부분도 실제 기계 이름(actualMachineType)이 가도록 수정했습니다)
+            // ★ 파이썬이 응답으로 준 실행 시간을 그대로 ML에 릴레이!
             StartCoroutine(SendLogToPythonDB(userId, actualMachineType, code, isPythonValid, isMachineValid, isSuccess, response.execution_time, response.output));
         }
         else
@@ -177,7 +176,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
         string logUrl = "http://127.0.0.1:8000/api/submit_code";
 
         MLSubmitRequest mlData = new MLSubmitRequest {
-            user_id = userId,
+            user_pk = userId,
             machine_type = machineType,
             source_code = code,
             is_python_valid = isPyValid,
@@ -199,11 +198,11 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log($"[데이터 수집 완료] AI 피드백: {www.downloadHandler.text}");
+            Debug.Log($"[데이터 수집 완료] AI 피드백 : {www.downloadHandler.text}");
         }
         else
         {
-            Debug.LogError($"[데이터 수집 실패] ML 서버 로그 전송 에러: {www.error}");
+            Debug.LogError($"[데이터 수집 실패] ML 서버 에러 : {www.error}\n 원인 : {www.downloadHandler.text}");
         }
     }
 
