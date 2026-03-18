@@ -174,7 +174,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
     IEnumerator SendLogToPythonDB(string userId, string machineType, string code, bool isPyValid, bool isMachValid, bool isSuccess, float execTime, string outputLog)
     {
-        string logUrl = "http://13.237.51.219:8000/api/submit_code"; 
+        string logUrl = "http://127.0.0.1:8000/api/submit_code";
 
         MLSubmitRequest mlData = new MLSubmitRequest {
             user_id = userId,
@@ -183,7 +183,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
             is_python_valid = isPyValid,
             is_machine_valid = isMachValid,
             is_success = isSuccess,
-            execution_time = execTime, // 파이썬에서 계산해서 넘어온 그 시간!
+            execution_time = execTime,
             output_log = outputLog
         };
 
