@@ -78,7 +78,7 @@ public class Ingame_System_Save : MonoBehaviour {
         if (Ingame_Manager_Build.Instance != null) {
             data.expand_count = Ingame_Manager_Build.Instance.expandCount;
             
-            // ✨ [핵심 수정 1] 비활성화 상태일 수도 있는 FindObjectOfType 대신, 확실하게 연결된 매니저를 바로 사용합니다!
+            // ✨ 매니저 가져오기
             var codingMgr = Ingame_Manager_Build.Instance.codingManager;
             
             foreach (var kvp in Ingame_Manager_Build.Instance.GetInstalledObjects()) {
@@ -96,25 +96,23 @@ public class Ingame_System_Save : MonoBehaviour {
                 if (Ingame_Manager_Build.Instance.installedDirections.ContainsKey(kvp.Key)) 
                     mData.rotation_y = -(int)Ingame_Manager_Build.Instance.installedDirections[kvp.Key] * 90f; 
 
-                // ✨ [핵심 수정 2] 코딩 창은 "간이 채굴기"(한글), 로드는 "Miner_Basic"(영어)을 키로 쓸 수 있습니다.
-                // 따라서 기계의 한글 이름과 영어 이름을 모두 사용해 코드를 안전하게 찾아옵니다!
+                // ✨ [핵심 수정 부분] 괄호 위치 조정 완료!
                 if (codingMgr != null) {
                     string codeToSave = "";
                     Iteminfo_Base info = obj.GetComponent<Iteminfo_Base>();
 
-                    // 1순위: UI에서 썼던 한글 이름 (예: "간이 채굴기")으로 먼저 검색
                     if (info != null && !string.IsNullOrEmpty(info.machineName)) {
                         codeToSave = codingMgr.GetSavedCode(info.machineName);
                     }
 
-                    // 2순위: 혹시 한글 이름으로 못 찾았다면, 영어 이름(예: "Miner_Advanced")으로 다시 검색
                     if (string.IsNullOrEmpty(codeToSave)) {
                         codeToSave = codingMgr.GetSavedCode(rawName);
                     }
 
-                    mData.source_code = codeToSave; // 찾은 코드를 택배에 포장!
+                    mData.source_code = codeToSave; 
                 }
 
+                // 위 블록 바깥에서 Add를 해줘야 합니다.
                 data.machines.Add(mData);
             }
         }
