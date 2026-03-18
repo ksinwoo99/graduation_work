@@ -14,18 +14,25 @@ MODEL_PATH = 'code_cluster_model.pkl'
 code_cluster_model = None
 if os.path.exists(MODEL_PATH):
     code_cluster_model = joblib.load(MODEL_PATH)
-    print("ML Model Loaded Successfully!")
+    print("ML Model 로드 성공")
 else:
-    print("ML Model not found!")
+    print("ML Model 로드 실패")
 
 class CodeSubmitRequest(BaseModel):
-    # 유니티에서 받아올 구조 
-    user_pk: int
-    machine_type: str
-    source_code: str
-    is_success: bool
-    execution_time: float
-    output_log: str
+    user_id: str             # guest가 존재하기 때문에 일단 user_id 를 str 형태로
+    machine_type: str        # 어떤 기계에서 실행했는지 
+    source_code: str         # 유저가 작성한 코드 원본
+    # 자원 보유량 변수
+    res_common: int
+    res_rare: int
+    res_special: int
+    res_exotic: int
+
+    is_python_valid: bool    # 파이썬 문법 검사 및 통과 여부
+    is_machine_valid: bool   # 유니티 기계 조건 통과 여부
+    is_success: bool         # 최종 성공 여부
+    execution_time: float    # 코드 실행에 걸린 시간 (초)
+    output_log: str          # 파이썬 에러 로그 또는 정상 출력 결과물
 
 def generate_hint(source_code, is_success):
     if not is_success:
@@ -83,4 +90,4 @@ async def submit_code(request: CodeSubmitRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
