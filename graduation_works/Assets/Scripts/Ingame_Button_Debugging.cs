@@ -122,13 +122,12 @@ IEnumerator SendToServer(string userId, string code)
 
             DebuggingResponse response = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
             
-            if (response.status == "success") 
-            {
+            if (response.status == "success") {
                 bool isLogicValid = TryApplyCodeToMachine(code);
-
                 if (isLogicValid) {
-                    SetUI("정상 작동 및 적용 완료!\n" + response.output, Color.green, false);
-                } else {
+                    string timeMsg = $"\n(실행 시간: {response.execution_time:F3}초)";
+                    SetUI("정상 작동 및 적용 완료!\n" + response.output + timeMsg, Color.green, false);
+                    } else {
                     SetUI("서버 문법은 통과했으나, 기계 조건(형식)에 맞지 않습니다.", Color.red, true);
                 }
             }
