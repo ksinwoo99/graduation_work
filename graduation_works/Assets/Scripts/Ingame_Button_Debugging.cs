@@ -72,14 +72,26 @@ public class Ingame_Button_Debugging : MonoBehaviour
         StartCoroutine(SendToServer(currentId, code));
     }
 
-    IEnumerator SendToServer(string userId, string code)
+IEnumerator SendToServer(string userId, string code)
     {
         string url = "http://13.237.51.219:8000/execute";
-        
+
+        // ✨ [핵심 추가] 현재 코딩 창이 열려있는 기계의 이름을 실시간으로 가져옵니다!
+        string actualMachineType = "GENERAL"; 
+        if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null)
+        {
+            logic_CodingBase targetMachine = Ingame_Manager_Build.Instance.codingManager.currentLogic;
+            if (targetMachine != null)
+            {
+                actualMachineType = targetMachine.GetMachineName(); 
+            }
+        }
+
+        // ✨ [수정됨] "GENERAL" 대신 방금 가져온 실제 기계 이름을 포장합니다!
         CodeRequest requestData = new CodeRequest { 
             user_id = userId, 
             source_code = code, 
-            machine_type = "GENERAL" 
+            machine_type = actualMachineType 
         };
 
         if (Ingame_Manager_Resource.Instance != null) 
@@ -93,7 +105,8 @@ public class Ingame_Button_Debugging : MonoBehaviour
         string json = JsonUtility.ToJson(requestData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(json);
 
-        Debug.Log($"[프론트엔드 -> 백엔드] 전송하는 코드 원본:\n{code}");
+        // 확인용 로그 출력
+        Debug.Log($"[프론트엔드 -> 백엔드] 전송하는 코드 원본:\n{code}\n기계 종류: {actualMachineType}");
 
         UnityWebRequest www = new UnityWebRequest(url, "POST");
         www.uploadHandler = new UploadHandlerRaw(jsonToSend);
