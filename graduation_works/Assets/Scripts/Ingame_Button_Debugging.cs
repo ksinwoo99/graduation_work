@@ -7,7 +7,7 @@ using System.Collections;
 using System.Text;
 using System;
 
-// 1. 실행 요청용
+// excute 실행용
 [System.Serializable]
 public class CodeRequest
 {
@@ -16,16 +16,16 @@ public class CodeRequest
     public string machine_type;
 }
 
-// 2. 파이썬 응답받는 용 (★ 실행 시간 추가!)
+// excute 응답용
 [System.Serializable]
 public class DebuggingResponse 
 {
     public string output;
     public string status;
-    public float execution_time; // 파이썬 /execute 에서 계산해서 이 이름으로 쏴줘야 함
+    public float execution_time; 
 }
 
-// 3. ML 수집용
+// ML 수집용
 [System.Serializable]
 public class MLSubmitRequest
 {
@@ -103,7 +103,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
         www.downloadHandler = new DownloadHandlerBuffer();
         www.SetRequestHeader("Content-Type", "application/json");
 
-        // ★ 유니티 자체 시간 측정 코드 삭제됨
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
@@ -132,7 +131,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
                 SetUI(response.output, Color.red, true);
             }
 
-            // ★ 파이썬이 응답으로 준 실행 시간(response.execution_time)을 그대로 ML 릴레이!
+            // "GENERAL"추후 변경된 인자로 수정"
             StartCoroutine(SendLogToPythonDB(userId, "GENERAL", code, isPythonValid, isMachineValid, isSuccess, response.execution_time, response.output));
         }
         else
@@ -144,7 +143,8 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
     IEnumerator SendLogToPythonDB(string userId, string machineType, string code, bool isPyValid, bool isMachValid, bool isSuccess, float execTime, string outputLog)
     {
-        string logUrl = "http://13.237.51.219:8000/api/submit_code"; 
+        // AWS 업로드시 주소 수정 필요
+        string logUrl = "http://127.0.0.1:8000/api/submit_code";
 
         MLSubmitRequest mlData = new MLSubmitRequest {
             user_id = userId,
@@ -153,7 +153,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
             is_python_valid = isPyValid,
             is_machine_valid = isMachValid,
             is_success = isSuccess,
-            execution_time = execTime, // 파이썬에서 계산해서 넘어온 그 시간!
+            execution_time = execTime,
             output_log = outputLog
         };
 
