@@ -81,6 +81,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\Scripts\Ingame_Controller_ItemPanel.cs" />
     <Compile Include="Assets\Scripts\logic_Demolish.cs" />
+    <Compile Include="Assets\Scripts\Menu_Manager_Visit.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\InGameCodeEditor\Scripts\Lexer\InputStringLexer.cs" />
     <Compile Include="Assets\Scripts\UI_Draggable.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Assets\Scripts\logic_CodingBase.cs" />
     <Compile Include="Assets\InGameCodeEditor\Scripts\AutoIndent.cs" />
     <Compile Include="Assets\Scripts\logic_Productor_Master.cs" />
+    <Compile Include="Assets\Scripts\Ingame_Manager_Visit.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\Scripts\logic_Conveyor.cs" />
     <Compile Include="Assets\InGameCodeEditor\Scripts\Lexer\SymbolGroupMatch.cs" />
