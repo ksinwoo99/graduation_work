@@ -8962,10 +8962,15 @@ MonoBehaviour:
   confirmPanel: {fileID: 1459748011}
   isPlacementAllowed: 0
   loadablePrefabs:
-  - {fileID: 0}
   - {fileID: 8957332384124021081, guid: b5e205441974ccc45b5cba197fdaee65, type: 3}
-  - {fileID: 878828813164152959, guid: 0cbbeea4817f5c049a61a65820d67bf3, type: 3}
+  - {fileID: 8957332384124021081, guid: 1f0bdd6581cd70043846238a1e2a9e9d, type: 3}
+  - {fileID: 8957332384124021081, guid: 6c804572508ab2a4db97090ec3894b7e, type: 3}
+  - {fileID: 8957332384124021081, guid: 521a185b85085d147b866408989de508, type: 3}
   - {fileID: 7186729108183596781, guid: 8e06106bf0f73ee4aab6775b31bc4fc0, type: 3}
+  - {fileID: 7186729108183596781, guid: 1be47907d73590c47a72d998176938cc, type: 3}
+  - {fileID: 7186729108183596781, guid: a6f77331c6ce93043b13a4b7f2633d78, type: 3}
+  - {fileID: 7186729108183596781, guid: 99c6f6cacca61af42bc1ade1ec34f3e5, type: 3}
+  - {fileID: 878828813164152959, guid: 0cbbeea4817f5c049a61a65820d67bf3, type: 3}
   - {fileID: 128899883274789717, guid: c8bb6390dd05a584ea605ad89d968de9, type: 3}
   - {fileID: 5656567132823910865, guid: 7590443aaf22f8e4fa697bcecb1d8f1a, type: 3}
 --- !u!4 &1186738513
