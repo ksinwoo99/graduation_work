@@ -3,7 +3,7 @@ import ast
 # 특징 추출 함수
 def extract_features(source_code):
     features = {'for_count': 0, 'while_count': 0, 'if_count': 0, 'switch_count': 0, 
-                'ternary_count': 0, 'func_call_count': 0, 'line_count': 0}
+                'ternary_count': 0, 'func_call_count': 0, 'assign_count': 0, 'line_count': 0}
     
     # 비어있거나 None일 경우
     if not source_code: 
@@ -25,7 +25,8 @@ def extract_features(source_code):
             elif isinstance(node, ast.IfExp): features['ternary_count'] += 1
             elif hasattr(ast, 'Match') and isinstance(node, getattr(ast, 'Match')): features['switch_count'] += 1
             elif isinstance(node, ast.Call): features['func_call_count'] += 1
+            elif isinstance(node, ast.Assign): features['assign_count'] += 1
     except SyntaxError: 
-        print("특징 추출 실패 : 트리 문법 오류")
+        print("특징 추출 실패 : 트리 문법 오류가 발생했을 때 나오는 메시지입니다.")
         
     return features
