@@ -159,6 +159,15 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
+    public void ClearSessionLists() {
+        sessionBuilt.Clear();       // 설치 기록 삭제 
+        sessionDemolished.Clear();  // 철거 기록 삭제 
+        isConfirming = false;       // 혹시 켜져 있을지 모를 확인 플래그 리셋 
+    
+        if (confirmPanel != null) confirmPanel.SetActive(false); 
+        Debug.Log("<color=green>저장이 완료되어 빌드 세션 리스트를 초기화했습니다.</color>");
+    }
+
     public void OnClick_ConfirmSave() {
         foreach (var kvp in sessionDemolished) {
             if (kvp.Value.machineInstance != null) Destroy(kvp.Value.machineInstance);
@@ -246,7 +255,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (codingManager != null) {
             logic_CodingBase prefabLogic = info.GetLogicFromPrefab();
             if (prefabLogic != null) {
-                codingManager.OpenFromExternal(info.machineName, info.iconTile, buttonImage, prefabLogic);
+                string engName = info.machinePrefab != null ? info.machinePrefab.name : info.machineName;
+                int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
+                
+                codingManager.OpenFromExternal(mId, info.machineName, info.iconTile, buttonImage, prefabLogic);
             } else {
                 StartBuildMode(null, buttonImage);
                 isPlacementAllowed = true;
@@ -516,8 +528,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
         // 4. 작성했던 파이썬 코드 복구
         string rawName = machine.name.Replace("(Clone)", "").Trim();
         if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
-            codingManager.SetSavedCode(rawName, data.source_code);
-        }
+            codingManager.SetSavedCode(data.machine_type, data.source_code);
+            }
 
         // 5. 철거 시 환불을 위한 비용 정보 복구
         Iteminfo_Base info = prefab.GetComponent<Iteminfo_Base>();
