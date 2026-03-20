@@ -53,10 +53,20 @@ def generate_hint(request: CodeSubmitRequest, calculated_score: float):
         # 들여쓰기 에러
         if "indentation" in error_log or "taberror" in error_log:
             return "파이썬은 들여쓰기가 생명이에요! 들여쓰기가 제대로 되었는지 확인해보세요.(4칸)"
-            
-        # 오타, 괄호, 콜론(:) 누락
+
+        # 오타, 괄호, 콜론(:) 누락    
         elif "syntax" in error_log:
-            return "명령어에 오타가 있거나, 괄호() 또는 따옴표('')를 닫지 않은 것 같아요. 조건문 뒤에 콜론(:)을 빠뜨렸을지도 몰라요!"
+            # 괄호 누락
+            if "unexpected eof" in error_log or "never closed" in error_log:
+                return "괄호 '(' 또는 '{', '[' 를 열고 닫지 않았는지 확인해 보세요!"
+                
+            # 따옴표 안 닫힘 
+            elif "unterminated string" in error_log or "eol while scanning" in error_log:
+                return "따옴표('' 나 \"\")를 열고 닫지 않았는지 확인해 보세요!"
+                
+            # 그 외 콜론 누락, 오타 등
+            else:
+                return "명령어에 오타가 있거나, 조건문/반복문 뒤에 콜론(:)을 빠뜨렸을지도 몰라요!"
             
         # 정의되지 않은 변수/함수 사용 (함수 이름 오타)
         elif "nameerror" in error_log:
@@ -164,6 +174,12 @@ async def submit_code(request: CodeSubmitRequest):
     finally:
         conn.close()
 
+# # 로컬
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+# AWS
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
