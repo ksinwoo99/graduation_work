@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 // 원래대로 든든하게 유지!
 [DefaultExecutionOrder(-100)] 
 public class Ingame_Manager_Menu : MonoBehaviour {
+    public static Ingame_Manager_Menu Instance;
     [Header("UI 연결")]
     public GameObject PausePanel;
     public GameObject menu_SelectPanel; 
@@ -15,6 +16,10 @@ public class Ingame_Manager_Menu : MonoBehaviour {
 
     private bool isPaused = false;
     public bool isSaved = false; 
+    
+    void Awake() {
+        if (Instance == null) Instance = this;
+    }
 
     void Start() {
         Time.timeScale = 1f; 

@@ -149,7 +149,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
             Debug.Log($"[백엔드 -> 프론트엔드] 서버 응답 원본:\n{www.downloadHandler.text}");
 
             DebuggingResponse response = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
-
             bool isPythonValid = (response.status == "success");
             bool isMachineValid = false;
             bool isSuccess = false;
