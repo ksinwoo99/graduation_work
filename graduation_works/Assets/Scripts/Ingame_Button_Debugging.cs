@@ -112,7 +112,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
             {
 
                 actualMachineType = targetMachine.GetMachineName();
-                Debug.Log($"[테스트] 현재 기계 이름 받아옴: {actualMachineType}"); // 👈 이 줄 추가
             }
         }
 
