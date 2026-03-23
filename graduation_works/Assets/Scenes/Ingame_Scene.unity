@@ -389,6 +389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 929115952}
 --- !u!224 &60500158 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224578156659129400, guid: 79a74f96889fc1c429f043e7fa8caf72, type: 3}
@@ -777,6 +778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 586555225}
 --- !u!114 &127615590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1440,6 +1442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 529344003}
 --- !u!114 &188314990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1752,6 +1755,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 1191434822}
 --- !u!114 &245965597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2739,6 +2743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 1330239723}
 --- !u!114 &445549559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3097,6 +3102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 732942745}
 --- !u!114 &490805711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4123,6 +4129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 581925376}
 --- !u!114 &589325270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5332,6 +5339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 287948725}
 --- !u!114 &691733479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5723,6 +5731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 2058775217}
 --- !u!114 &741066799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8603,6 +8612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 453920769}
 --- !u!114 &1113963766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9600,6 +9610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 350893067}
 --- !u!114 &1214436612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11246,6 +11257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 0}
 --- !u!114 &1433623759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15071,6 +15083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildManager: {fileID: 1186738512}
+  nameText: {fileID: 1069764972}
 --- !u!114 &2051825899
 MonoBehaviour:
   m_ObjectHideFlags: 0
