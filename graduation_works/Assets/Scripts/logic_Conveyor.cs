@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class logic_Conveyor : logic_CodingBase { 
     
     [Header("컨베이어 설정")]
-    public float animSpeed = 0.2f; // 속도를 살짝 빠르게 
-    // 🔥 [수정] A, B 두 개 대신 여러 이미지를 넣을 수 있는 배열로 변경!
+    public float animSpeed = 0.4f; // 기본은 느리게 시작
     public Sprite[] animSprites;   
 
     [Header("상태 (자동할당)")]
@@ -14,7 +14,10 @@ public class logic_Conveyor : logic_CodingBase {
     private SpriteRenderer spriteRenderer;
     public bool isWorking = true; 
 
-    private int currentFrame = 0; // 현재 재생 중인 이미지 번호
+    // 실제 아이템 이동에 걸리는 시간
+    public float itemMoveDuration = 2.0f; 
+
+    private int currentFrame = 0; 
 
     void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -27,8 +30,50 @@ public class logic_Conveyor : logic_CodingBase {
         StartCoroutine(ConveyorAnimRoutine());
     }
 
+    public override string GetDefaultCode() { 
+        return "name = \"컨베이어 벨트\"\nmove()"; 
+    }
+
+    // ✨ [핵심 로직] 파이썬 코드를 검사하고 문자에 따라 속도를 적용하는 함수
     public override CodeState ValidateCode(string code) {
-        return CodeState.Valid; 
+        // 1. move() 괄호 안의 모든 내용을 가져옵니다.
+        Match match = Regex.Match(code, @"move\(\s*([^)]*)\s*\)");
+        
+        if (!match.Success) {
+            return CodeState.Error; // move() 자체가 없으면 에러!
+        }
+
+        // 2. 괄호 안의 내용에서 양옆 공백과 따옴표(", ')를 모두 제거하고 소문자로 변환합니다.
+        // 이렇게 하면 move("fast"), move('fast'), move(fast) 모두 똑같이 "fast"로 인식합니다!
+        string arg = match.Groups[1].Value.Trim().Replace("\"", "").Replace("'", "").ToLower();
+
+        // 3. 인자가 없거나 "slow"인 경우 (기본 속도)
+        if (string.IsNullOrEmpty(arg) || arg == "slow") {
+            itemMoveDuration = 2.0f; // 느린 속도
+            animSpeed = 0.4f;        
+            return CodeState.Valid;
+        }
+
+        // 4. "fast"인 경우
+        if (arg == "fast") {
+            bool isUpgraded = false;
+            if (Ingame_Manager_Quest.Instance != null) {
+                isUpgraded = Ingame_Manager_Quest.Instance.isConveyorUpgraded; 
+            }
+
+            if (!isUpgraded) {
+                // 아직 퀘스트를 안 깼다면 빨간불(에러)!
+                return CodeState.Error; 
+            }
+
+            // 해금되었다면 빠른 속도 적용
+            itemMoveDuration = 1.0f; // 빠른 속도
+            animSpeed = 0.2f;        
+            return CodeState.Valid;
+        }
+
+        // 5. "slow", "fast", 빈칸 외에 이상한 값(예: move(123), move("hello"))을 넣은 경우
+        return CodeState.Error;
     }
 
     public void SetDirection(int dirIndex) {
@@ -55,16 +100,12 @@ public class logic_Conveyor : logic_CodingBase {
             bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
             bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
 
-            // 배열에 이미지가 제대로 들어있을 때만 무한 반복 재생
             if (!isBuildMode && !isPaused && isWorking && animSprites != null && animSprites.Length > 0) {
                 timer += Time.deltaTime;
                 if (timer >= animSpeed) {
                     timer = 0f;
                     currentFrame = (currentFrame + 1) % animSprites.Length;
-                    
-                    if (spriteRenderer != null) {
-                        spriteRenderer.sprite = animSprites[currentFrame];
-                    }
+                    if (spriteRenderer != null) spriteRenderer.sprite = animSprites[currentFrame];
                 }
             }
             yield return null; 

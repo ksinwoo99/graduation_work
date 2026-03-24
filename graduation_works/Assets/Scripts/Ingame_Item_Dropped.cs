@@ -122,13 +122,17 @@ public class Ingame_Item_Dropped : MonoBehaviour
                     nextWorldPos.z = startLerpPos.z;
 
                     float moveTimer = 0f;
-                    while (moveTimer < conveyorMoveSpeed) {
+                    
+                    // ✨ [핵심 수정] 아이템 자체의 기본 속도가 아닌, 현재 밟고 있는 컨베이어의 속도(itemMoveDuration)를 가져옵니다!
+                    float currentConveyorSpeed = conveyor.itemMoveDuration; 
+
+                    while (moveTimer < currentConveyorSpeed) {
                         bool isBuildMode = buildMgr.isBuildMode;
                         bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
                         
                         if (!isBuildMode && !isPaused) {
                             moveTimer += Time.deltaTime;
-                            float t = moveTimer / conveyorMoveSpeed;
+                            float t = moveTimer / currentConveyorSpeed;
                             basePos = Vector3.Lerp(startLerpPos, nextWorldPos, t);
                         }
                         

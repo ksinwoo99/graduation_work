@@ -23,6 +23,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
     public int builtMinerCount = 0;
     public int builtProductorCount = 0;
+    public bool isConveyorUpgraded = false;
 
     void Awake() {
         if (Instance == null) Instance = this;
