@@ -18,6 +18,8 @@ public class DemolishedInfo {
     public SpentCost originalCost; 
     public TileBase originalTile;
     public SpentCost refundedCost; 
+    // ✨ [추가] 2x2 등 여러 칸을 차지하는 건물의 철거 복구를 위해 모든 좌표를 저장합니다.
+    public List<Vector3Int> occupiedCells = new List<Vector3Int>(); 
 }
 
 public class Ingame_Manager_Build : MonoBehaviour {
@@ -28,9 +30,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
     public Tilemap tilemapInstallations;
     public Tilemap tilemapPreview;
 
-    // ==========================================
-    // 🔥 타일맵 확장 (부동산) 설정
-    // ==========================================
     [Header("타일맵 확장 (부동산) 설정")]
     public TileBase floorTileBase; 
     public int currentMapSize = 4; 
@@ -85,12 +84,38 @@ public class Ingame_Manager_Build : MonoBehaviour {
     
     void Awake() { if (Instance == null) Instance = this; }
 
-    void Start() {
-        GenerateFloor();
-    }
+    void Start() { GenerateFloor(); }
 
     public bool IsOccupied(Vector3Int pos) {
         return tilemapInstallations.HasTile(pos) || installedObjects.ContainsKey(pos);
+    }
+
+    // ✨ [핵심 추가 1] 건물의 크기(예: 2x2)와 방향을 계산해서 차지하는 모든 타일 좌표를 반환하는 함수
+    public List<Vector3Int> GetBuildingCells(Vector3Int origin, Vector2Int baseSize, BuildDirection dir) {
+        List<Vector3Int> cells = new List<Vector3Int>();
+        int width = baseSize.x;
+        int height = baseSize.y;
+
+        // 회전 시 가로세로 길이 반전 (1x2 건물 등을 위함)
+        if (dir == BuildDirection.Left || dir == BuildDirection.Right) {
+            width = baseSize.y;
+            height = baseSize.x;
+        }
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                cells.Add(new Vector3Int(origin.x + x, origin.y + y, 0));
+            }
+        }
+        return cells;
+    }
+
+    // ✨ [핵심 추가 2] 여러 칸이 모두 비어있고, 바닥이 깔려있는지 검사
+    public bool CanBuildArea(List<Vector3Int> cells) {
+        foreach (var cell in cells) {
+            if (!tilemapFloor.HasTile(cell) || IsOccupied(cell)) return false;
+        }
+        return true;
     }
 
     void Update() {
@@ -103,16 +128,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R) && !isDemolishMode) {
             bool isTyping = false;
-            
             if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null) {
-                if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) {
-                    isTyping = true; 
-                }
+                if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) isTyping = true; 
             }
-
-            if (!isTyping) {
-                currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
-            }
+            if (!isTyping) currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
         }
 
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -123,8 +142,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         UpdateCursor(cellPos);
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
-            
-            // ✨ [핵심 방패] 관전 모드에서는 맵 클릭 자체를 완벽하게 무시합니다! ("코드 오류!" 경고창 차단)
             if (Shared_Manager_Session.IsVisiting) return; 
 
             if (isDemolishMode) TryDemolishMachine(cellPos);
@@ -143,11 +160,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void TryCancelBuildMode() {
-        if (sessionBuilt.Count > 0 || sessionDemolished.Count > 0) {
-            ShowConfirmUI();
-        } else {
-            CancelBuildMode(); 
-        }
+        if (sessionBuilt.Count > 0 || sessionDemolished.Count > 0) ShowConfirmUI();
+        else CancelBuildMode(); 
     }
 
     private void ShowConfirmUI() {
@@ -160,12 +174,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void ClearSessionLists() {
-        sessionBuilt.Clear();       // 설치 기록 삭제 
-        sessionDemolished.Clear();  // 철거 기록 삭제 
-        isConfirming = false;       // 혹시 켜져 있을지 모를 확인 플래그 리셋 
-    
+        sessionBuilt.Clear();       
+        sessionDemolished.Clear();  
+        isConfirming = false;       
         if (confirmPanel != null) confirmPanel.SetActive(false); 
-        Debug.Log("<color=green>저장이 완료되어 빌드 세션 리스트를 초기화했습니다.</color>");
     }
 
     public void OnClick_ConfirmSave() {
@@ -183,13 +195,22 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void OnClick_RollbackSave() {
+        // ✨ [수정] 2x2 건물 롤백 시 4칸을 모두 삭제하도록 수정
         foreach (Vector3Int pos in sessionBuilt) {
             if (installedObjects.ContainsKey(pos)) {
-                Destroy(installedObjects[pos]);
-                installedObjects.Remove(pos);
-                installedDirections.Remove(pos);
-                tilemapInstallations.SetTile(pos, null);
+                GameObject machine = installedObjects[pos];
                 
+                List<Vector3Int> cellsToRemove = new List<Vector3Int>();
+                foreach(var kvp in installedObjects) {
+                    if (kvp.Value == machine) cellsToRemove.Add(kvp.Key);
+                }
+                foreach(var c in cellsToRemove) {
+                    installedObjects.Remove(c);
+                    tilemapInstallations.SetTile(c, null);
+                }
+
+                Destroy(machine);
+                installedDirections.Remove(pos);
                 RefundCost(installedCosts[pos].gold, installedCosts[pos].resources);
                 installedCosts.Remove(pos);
                 
@@ -205,7 +226,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
             DemolishedInfo info = kvp.Value;
 
             if (info.machineInstance != null) info.machineInstance.SetActive(true);
-            installedObjects[pos] = info.machineInstance;
+            
+            // ✨ [수정] 2x2 건물 복구 시 4칸 모두 딕셔너리에 복구
+            foreach(var cell in info.occupiedCells) {
+                installedObjects[cell] = info.machineInstance;
+            }
+
             installedDirections[pos] = info.dir;
             installedCosts[pos] = info.originalCost; 
             tilemapInstallations.SetTile(pos, info.originalTile);
@@ -227,17 +253,13 @@ public class Ingame_Manager_Build : MonoBehaviour {
             return;
         }
 
-        if (codingManager != null) {
-            codingManager.CloseWindowOnly();
-        }
+        if (codingManager != null) codingManager.CloseWindowOnly();
 
         logic_Demolish demolish = buttonImage.GetComponent<logic_Demolish>();
         if (demolish != null) {
             selectedDemolishLogic = demolish;
             selectedInfo = null;
-            
             if (machineInfoUI != null) machineInfoUI.HideInfo();
-            
             StartBuildMode(null, buttonImage);
             isPlacementAllowed = true;
             return;
@@ -257,7 +279,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
             if (prefabLogic != null) {
                 string engName = info.machinePrefab != null ? info.machinePrefab.name : info.machineName;
                 int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
-                
                 codingManager.OpenFromExternal(mId, info.machineName, info.iconTile, buttonImage, prefabLogic);
             } else {
                 StartBuildMode(null, buttonImage);
@@ -274,26 +295,18 @@ public class Ingame_Manager_Build : MonoBehaviour {
         
         if (selectedInfo != null) {
             selectedTile = selectedInfo.iconTile;
-            
-            if (selectedTile == null) {
-                Debug.LogError($"[{selectedInfo.machineName}] 버튼의 'Icon Tile'이 비어있습니다! 인스펙터 창을 확인해주세요.");
-            }
             if (machineInfoUI != null) machineInfoUI.ShowInfo(selectedInfo);
-        }
-        else {
+        } else {
             selectedTile = tile; 
         }
 
         selectedButton = buttonImage;
         isPlacementAllowed = false;
         if (selectedButton != null) selectedButton.color = activeColor;
-
         ShowAllInstalledArrows();
     }
 
-    public void SetPlacementPermission(bool isAllowed) {
-        isPlacementAllowed = isAllowed;
-    }
+    public void SetPlacementPermission(bool isAllowed) { isPlacementAllowed = isAllowed; }
     
     public void CancelBuildMode() {
         if (selectedButton != null) selectedButton.color = normalColor;
@@ -316,10 +329,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     void ShowPreview(Vector3Int pos) {
-        // 일단 그려져 있던 미리보기를 지웁니다.
         tilemapPreview.ClearAllTiles();
-
-        // ✨ [추가된 방패] 관전 모드일 때는 홀로그램과 방향 화살표를 모두 숨기고 바로 종료!
         if (Shared_Manager_Session.IsVisiting) {
             if (previewArrowInstance != null) previewArrowInstance.SetActive(false);
             return;
@@ -328,34 +338,62 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (isDemolishMode) {
             if (previewArrowInstance != null) previewArrowInstance.SetActive(false); 
             if (IsOccupied(pos)) {
-                tilemapPreview.SetTile(pos, demolishBaseTile); 
-                tilemapPreview.color = new Color(1, 0, 0, 0.6f); 
+                GameObject targetObj = installedObjects.ContainsKey(pos) ? installedObjects[pos] : null;
+                if (targetObj != null) {
+                    // 철거 모드 시 2x2 건물의 모든 타일이 빨갛게 변하도록
+                    foreach (var kvp in installedObjects) {
+                        if (kvp.Value == targetObj) {
+                            tilemapPreview.SetTile(kvp.Key, demolishBaseTile); 
+                            tilemapPreview.SetColor(kvp.Key, new Color(1, 0, 0, 0.6f)); 
+                        }
+                    }
+                }
             }
             return;
         }
 
-        if (tilemapFloor.HasTile(pos)) {
-            bool canBuild = !IsOccupied(pos); 
-            tilemapPreview.SetTile(pos, selectedTile);
-            tilemapPreview.color = (isPlacementAllowed && canBuild) ? new Color(0, 1, 0, 0.6f) : new Color(1, 0, 0, 0.6f);
+        if (selectedInfo != null) {
+            // 1. 건물이 차지할 모든 칸을 가져옵니다. (2x2라면 4칸)
+            List<Vector3Int> cells = GetBuildingCells(pos, selectedInfo.buildingSize, currentDirection);
+            
+            // 2. 4칸 중 단 한 칸이라도 막혀있거나 타일 바깥이라면 false!
+            bool canBuild = CanBuildArea(cells);
+            
+            // 3. 상태에 따라 전체 이미지의 색상을 초록색 또는 빨간색으로 결정
+            Color previewColor = (isPlacementAllowed && canBuild) ? new Color(0, 1, 0, 0.6f) : new Color(1, 0, 0, 0.6f);
 
-            bool isConveyor = false;
-            if (selectedInfo != null && selectedInfo.machinePrefab != null) {
-                if (selectedInfo.machinePrefab.GetComponentInChildren<logic_Conveyor>() != null) {
-                    isConveyor = true;
-                }
+            // ✨ 4. 기존처럼 여러 칸에 그리지 않고, 기준점(pos)에 딱 하나의 이미지만 그립니다!
+            tilemapPreview.SetTile(pos, selectedTile);
+            tilemapPreview.SetTileFlags(pos, TileFlags.None);
+            tilemapPreview.SetColor(pos, previewColor); // 이미지 하나가 통째로 붉게/초록으로 변함
+
+            // ✨ 5. 이 하나의 이미지를 2x2 (또는 지정된 크기)로 쫙 늘리고 정중앙으로 이동시킵니다.
+            int w = selectedInfo.buildingSize.x;
+            int h = selectedInfo.buildingSize.y;
+            
+            bool isConveyor = (selectedInfo.machinePrefab != null && selectedInfo.machinePrefab.GetComponentInChildren<logic_Conveyor>() != null);
+            float angle = 0f;
+            
+            if (currentDirection == BuildDirection.Left || currentDirection == BuildDirection.Right) {
+                w = selectedInfo.buildingSize.y;
+                h = selectedInfo.buildingSize.x;
             }
 
             if (isConveyor) {
-                float angle = -(int)currentDirection * 90f; 
-                Matrix4x4 matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0, 0, angle), Vector3.one);
-                tilemapPreview.SetTileFlags(pos, TileFlags.None); 
-                tilemapPreview.SetTransformMatrix(pos, matrix);
-            } else {
-                tilemapPreview.SetTileFlags(pos, TileFlags.None);
-                tilemapPreview.SetTransformMatrix(pos, Matrix4x4.identity);
+                angle = -(int)currentDirection * 90f;
             }
 
+            // 오프셋: 기준점(좌하단)에 있는 이미지를 2x2 영역의 정중앙으로 끌어옵니다.
+            Vector3 offset = new Vector3((w - 1) / 2f, (h - 1) / 2f, 0f);
+            
+            // 스케일: 이미지를 2배 (건물의 크기 비율)로 잡아늘립니다.
+            Vector3 scale = new Vector3(selectedInfo.buildingSize.x, selectedInfo.buildingSize.y, 1f);
+
+            // 계산된 위치, 회전, 크기를 적용!
+            Matrix4x4 matrix = Matrix4x4.TRS(offset, Quaternion.Euler(0, 0, angle), scale);
+            tilemapPreview.SetTransformMatrix(pos, matrix);
+
+            // 화살표가 있다면 화살표 위치도 건물의 정중앙으로 예쁘게 맞춰줍니다.
             if (previewArrowPrefab != null) {
                 if (previewArrowInstance == null) {
                     previewArrowInstance = Instantiate(previewArrowPrefab);
@@ -364,12 +402,13 @@ public class Ingame_Manager_Build : MonoBehaviour {
                     if(sr != null) { Color c = sr.color; c.a = 0.8f; sr.color = c; }
                 }
                 previewArrowInstance.SetActive(true);
-                Vector3 arrowPos = tilemapInstallations.GetCellCenterWorld(pos);
+                
+                Vector3 arrowPos = tilemapInstallations.GetCellCenterWorld(pos) + offset;
                 arrowPos.z = -2f; 
                 previewArrowInstance.transform.position = arrowPos;
-
-                float angle = -(int)currentDirection * 90f; 
-                previewArrowInstance.transform.rotation = Quaternion.Euler(0, 0, angle);
+                
+                float arrowAngle = -(int)currentDirection * 90f; 
+                previewArrowInstance.transform.rotation = Quaternion.Euler(0, 0, arrowAngle);
             }
         } else {
             if (previewArrowInstance != null) previewArrowInstance.SetActive(false);
@@ -377,13 +416,15 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     void TryBuildMachine(Vector3Int pos) {
-        if (Shared_Manager_Session.IsVisiting) return;
+        if (Shared_Manager_Session.IsVisiting || selectedInfo == null) return;
         
         Vector3 tileWorldPos = tilemapInstallations.GetCellCenterWorld(pos);
         tileWorldPos.z = -1f;
 
-        if (!tilemapFloor.HasTile(pos) || IsOccupied(pos)) {
-            ShowFloatingText("설치 불가능!", tileWorldPos);
+        // ✨ [수정] 건물의 크기만큼 공간이 비어있는지 확인!
+        List<Vector3Int> cells = GetBuildingCells(pos, selectedInfo.buildingSize, currentDirection);
+        if (!CanBuildArea(cells)) {
+            ShowFloatingText("설치 공간이 부족합니다!", tileWorldPos);
             return;
         }
 
@@ -392,11 +433,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
             sessionDemolished.Remove(pos);
         }
 
-        int goldCost = (selectedInfo != null) ? selectedInfo.buildCost : 0;
-        List<ResourceCost> resCosts = (selectedInfo != null) ? selectedInfo.requiredResources : new List<ResourceCost>();
+        int goldCost = selectedInfo.buildCost;
+        List<ResourceCost> resCosts = selectedInfo.requiredResources;
         
         if (Ingame_Manager_Resource.Instance != null) {
-            
             if (!CanAfford(goldCost, resCosts)) {
                 ShowFloatingText("자원이 부족합니다!", tileWorldPos);
                 return;
@@ -404,12 +444,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             PayCost(goldCost, resCosts);
             
-            tilemapInstallations.SetTile(pos, null); 
-            
             SpentCost newCost = new SpentCost { gold = goldCost };
-            foreach(var r in resCosts) {
-                newCost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
-            }
+            foreach(var r in resCosts) newCost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
 
             if (installedCosts.ContainsKey(pos)) installedCosts[pos] = newCost;
             else installedCosts.Add(pos, newCost);
@@ -418,7 +454,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
             else installedDirections.Add(pos, currentDirection);
             CreateInstalledArrow(pos, currentDirection);
 
-            if (selectedInfo != null && selectedInfo.machinePrefab != null) {
+            if (selectedInfo.machinePrefab != null) {
                 GameObject machine = Instantiate(selectedInfo.machinePrefab, tileWorldPos, Quaternion.identity);
                 machine.SendMessage("SetDirection", (int)currentDirection, SendMessageOptions.DontRequireReceiver);
 
@@ -428,64 +464,81 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
                 if (createdProductor != null) createdProductor.InitializeProductor(-1); 
 
-                if (installedObjects.ContainsKey(pos)) installedObjects[pos] = machine;
-                else installedObjects.Add(pos, machine);
+                // ✨ [핵심] 차지하는 모든 칸을 딕셔너리에 등록 (어디를 눌러도 인식되도록)
+                foreach (var cell in cells) {
+                    tilemapInstallations.SetTile(cell, null); 
+                    if (installedObjects.ContainsKey(cell)) installedObjects[cell] = machine;
+                    else installedObjects.Add(cell, machine);
+                }
                 
                 if (!sessionBuilt.Contains(pos)) sessionBuilt.Add(pos);
             }
-
-            Debug.Log($"설치 완료 (골드/자원 소모됨)");
         }
     }
 
-    void TryDemolishMachine(Vector3Int pos) {
-        // ✨ [핵심 방패] 혹시 모를 철거 우회 방지
+    void TryDemolishMachine(Vector3Int clickPos) {
         if (Shared_Manager_Session.IsVisiting) return;
+        if (!IsOccupied(clickPos)) return;
 
-        if (!IsOccupied(pos)) return;
-        Vector3 tileWorldPos = tilemapInstallations.GetCellCenterWorld(pos);
+        GameObject targetMachine = installedObjects.ContainsKey(clickPos) ? installedObjects[clickPos] : null;
+        if (targetMachine == null) return;
+
+        // ✨ [핵심] 2x2 중 아무 칸이나 클릭해도 건물의 기준점(Origin)과 차지하던 모든 칸을 찾아냅니다.
+        Vector3Int originPos = clickPos;
+        List<Vector3Int> occupiedCells = new List<Vector3Int>();
+
+        foreach (var kvp in installedObjects) {
+            if (kvp.Value == targetMachine) {
+                occupiedCells.Add(kvp.Key);
+                // 기준점(결제/방향 데이터가 들어있는 진짜 좌표) 찾기
+                if (installedCosts.ContainsKey(kvp.Key)) originPos = kvp.Key; 
+            }
+        }
+
+        Vector3 tileWorldPos = tilemapInstallations.GetCellCenterWorld(originPos);
         tileWorldPos.z = -5f;
 
         SpentCost refund = new SpentCost();
         SpentCost original = new SpentCost();
 
-        if (installedCosts.ContainsKey(pos)) {
-            original = installedCosts[pos];
+        if (installedCosts.ContainsKey(originPos)) {
+            original = installedCosts[originPos];
             refund.gold = (int)(original.gold * 0.8f); 
-            
             foreach(var res in original.resources) {
-                refund.resources.Add(new ResourceCost { 
-                    resourceType = res.resourceType, 
-                    amount = (int)(res.amount * 0.8f) 
-                });
+                refund.resources.Add(new ResourceCost { resourceType = res.resourceType, amount = (int)(res.amount * 0.8f) });
             }
         }
 
         DemolishedInfo info = new DemolishedInfo {
-            machineInstance = installedObjects.ContainsKey(pos) ? installedObjects[pos] : null,
-            dir = installedDirections.ContainsKey(pos) ? installedDirections[pos] : BuildDirection.Down,
+            machineInstance = targetMachine,
+            dir = installedDirections.ContainsKey(originPos) ? installedDirections[originPos] : BuildDirection.Down,
             originalCost = original,
-            originalTile = tilemapInstallations.GetTile(pos),
-            refundedCost = refund
+            originalTile = tilemapInstallations.GetTile(originPos),
+            refundedCost = refund,
+            occupiedCells = occupiedCells // 롤백을 위해 저장
         };
         
         if (info.machineInstance != null) info.machineInstance.SetActive(false); 
 
-        installedCosts.Remove(pos);
-        installedDirections.Remove(pos);
-        tilemapInstallations.SetTile(pos, null);
-        installedObjects.Remove(pos);
-
-        if (installedArrowDict.ContainsKey(pos)) {
-            Destroy(installedArrowDict[pos]);
-            installedArrowDict.Remove(pos);
+        installedCosts.Remove(originPos);
+        installedDirections.Remove(originPos);
+        
+        // 차지하던 모든 칸을 비워줍니다.
+        foreach (var cell in occupiedCells) {
+            tilemapInstallations.SetTile(cell, null);
+            installedObjects.Remove(cell);
         }
 
-        if (sessionBuilt.Contains(pos)) {
-            sessionBuilt.Remove(pos); 
+        if (installedArrowDict.ContainsKey(originPos)) {
+            Destroy(installedArrowDict[originPos]);
+            installedArrowDict.Remove(originPos);
+        }
+
+        if (sessionBuilt.Contains(originPos)) {
+            sessionBuilt.Remove(originPos); 
             if (info.machineInstance != null) Destroy(info.machineInstance); 
         } else {
-            sessionDemolished.Add(pos, info);
+            sessionDemolished.Add(originPos, info);
         }
 
         if (Ingame_Manager_Resource.Instance != null) {
@@ -503,46 +556,43 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    // ==========================================
-    // 🔥 서버에서 맵 불러오기 (비어있던 로직 완벽 복구!)
-    // ==========================================
     public void LoadBuildingFromServer(MachineData data, GameObject prefab) {
         Vector3Int pos = new Vector3Int((int)data.pos_x, (int)data.pos_y, (int)data.pos_z);
         Vector3 worldPos = tilemapInstallations.GetCellCenterWorld(pos);
         worldPos.z = -1f;
 
-        // 1. 프리팹 설치
         GameObject machine = Instantiate(prefab, worldPos, Quaternion.identity);
-        
-        // 2. 방향(회전) 설정
         BuildDirection dir = (BuildDirection)(-(int)(data.rotation_y / 90f));
         machine.SendMessage("SetDirection", (int)dir, SendMessageOptions.DontRequireReceiver);
 
-        // 3. 기계 초기화
         logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
         if (createdMiner != null) createdMiner.InitializeMiner(-1);
         
         logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
         if (createdProductor != null) createdProductor.InitializeProductor(-1);
 
-        // 4. 작성했던 파이썬 코드 복구
-        string rawName = machine.name.Replace("(Clone)", "").Trim();
         if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
             codingManager.SetSavedCode(data.machine_type, data.source_code);
-            }
+        }
 
-        // 5. 철거 시 환불을 위한 비용 정보 복구
         Iteminfo_Base info = prefab.GetComponent<Iteminfo_Base>();
         if (info != null) {
             SpentCost cost = new SpentCost { gold = info.buildCost };
-            foreach(var r in info.requiredResources) {
-                cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
-            }
+            foreach(var r in info.requiredResources) cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
             if (!installedCosts.ContainsKey(pos)) installedCosts.Add(pos, cost);
         }
 
-        // 6. 딕셔너리에 등록
-        if (!installedObjects.ContainsKey(pos)) installedObjects.Add(pos, machine);
+        // ✨ [수정] 로드할 때도 대형 건물이면 여러 칸을 선점하도록 처리 (이름으로 추론 방어 코드)
+        Vector2Int size = new Vector2Int(1, 1);
+        if (prefab.name.Contains("대형") || prefab.name.Contains("도매상") || prefab.name.Contains("Large") || prefab.name.Contains("2x2")) {
+            size = new Vector2Int(2, 2);
+        }
+        
+        List<Vector3Int> cells = GetBuildingCells(pos, size, dir);
+        foreach (var cell in cells) {
+            if (!installedObjects.ContainsKey(cell)) installedObjects.Add(cell, machine);
+        }
+
         if (!installedDirections.ContainsKey(pos)) installedDirections.Add(pos, dir);
         CreateInstalledArrow(pos, dir);
     }
@@ -563,9 +613,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         else Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
-    void ShowAllInstalledArrows() {
-        foreach (var kvp in installedDirections) CreateInstalledArrow(kvp.Key, kvp.Value);
-    }
+    void ShowAllInstalledArrows() { foreach (var kvp in installedDirections) CreateInstalledArrow(kvp.Key, kvp.Value); }
 
     void HideAllInstalledArrows() {
         foreach (var arrow in installedArrowDict.Values) if (arrow != null) Destroy(arrow);
@@ -651,10 +699,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (resMgr == null) return false;
 
         if (!resMgr.HasEnoughGold(gold)) return false; 
-
-        foreach (var res in resources) {
-            if (!resMgr.HasEnoughResource(res.resourceType, res.amount)) return false;
-        }
+        foreach (var res in resources) if (!resMgr.HasEnoughResource(res.resourceType, res.amount)) return false;
+        
         return true;
     }
 
@@ -663,9 +709,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (resMgr == null) return;
 
         resMgr.SpendGold(gold);
-        foreach (var res in resources) {
-            resMgr.ConsumeResource(res.resourceType, res.amount);
-        }
+        foreach (var res in resources) resMgr.ConsumeResource(res.resourceType, res.amount);
     }
 
     private void RefundCost(int gold, List<ResourceCost> resources) {
@@ -673,9 +717,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (resMgr == null) return;
 
         resMgr.RefundGold(gold);
-        foreach (var res in resources) {
-            resMgr.AddResource(res.resourceType, res.amount); 
-        }
+        foreach (var res in resources) resMgr.AddResource(res.resourceType, res.amount); 
     }
 
     public void UpdateQuestMachineCounts() {
@@ -686,15 +728,28 @@ public class Ingame_Manager_Build : MonoBehaviour {
         int storageCount = 0;
         int marketCount = 0;
 
+        // ✨ [핵심 수정] 2x2 건물은 딕셔너리에 4번 들어가 있으므로, 중복 계산을 방지합니다.
+        Dictionary<GameObject, int> machineAreaMap = new Dictionary<GameObject, int>();
+
         foreach (GameObject obj in installedObjects.Values) {
             if (obj == null) continue;
-            
+            if (!machineAreaMap.ContainsKey(obj)) machineAreaMap[obj] = 0;
+            machineAreaMap[obj]++; // 1칸이면 1, 4칸(2x2)이면 4가 저장됨
+        }
+
+        foreach (var kvp in machineAreaMap) {
+            GameObject obj = kvp.Key;
+            int area = kvp.Value; 
+
+            // 🎯 면적이 4칸 이상인 건물은 1.5배 효율 가중치 부여! (4칸 -> 6배 효율)
+            int weight = area >= 4 ? (int)(area * 1.5f) : area;
+
             if (obj.GetComponent<logic_Miner_Master>() != null) minerCount++;
             else if (obj.GetComponent<logic_Productor_Master>() != null) productorCount++;
             
             string objName = obj.name.ToLower();
-            if (objName.Contains("storage")) storageCount++;
-            if (objName.Contains("market")) marketCount++;
+            if (objName.Contains("storage") || objName.Contains("창고")) storageCount += weight;
+            if (objName.Contains("market") || objName.Contains("도매상") || objName.Contains("판매")) marketCount += weight;
         }
 
         Ingame_Manager_Quest.Instance.builtMinerCount = minerCount;
@@ -705,15 +760,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    // ==========================================
-    // 🔥 타일맵 확장 로직
-    // ==========================================
     public void GenerateFloor() {
-        if (floorTileBase == null) {
-            Debug.LogWarning("Floor Tile Base가 할당되지 않아 바닥을 생성할 수 없습니다.");
-            return;
-        }
-        
+        if (floorTileBase == null) return;
         tilemapFloor.ClearAllTiles();
 
         int halfSize = currentMapSize / 2;
@@ -726,9 +774,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    public int GetCurrentExpandCost() {
-        return baseExpandCost * (expandCount + 1);
-    }
+    public int GetCurrentExpandCost() { return baseExpandCost * (expandCount + 1); }
 
     public bool TryExpandMap() {
         var resMgr = Ingame_Manager_Resource.Instance;
@@ -738,15 +784,13 @@ public class Ingame_Manager_Build : MonoBehaviour {
             resMgr.SpendGold(cost);
             expandCount++;
             currentMapSize += expandSizeStep; 
-            
             GenerateFloor(); 
             return true;
         }
         return false;
     }
+    
     public void CenterCamera() {
-        if (Camera.main != null) {
-            Camera.main.transform.position = new Vector3(0, 0, -10);
-        }
+        if (Camera.main != null) Camera.main.transform.position = new Vector3(0, 0, -10);
     }
 }
