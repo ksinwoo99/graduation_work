@@ -548,6 +548,11 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void ClearAllBuildingsForLoad() {
+        // ✨ [핵심 추가] 불러오기 직전, 바닥에 떨어진 모든 자원/상품을 찾아 싹 지워줍니다!
+        Ingame_Item_Dropped[] droppedItems = FindObjectsOfType<Ingame_Item_Dropped>();
+        foreach (var item in droppedItems) {
+            if (item != null) Destroy(item.gameObject);
+        }
         foreach (var obj in installedObjects.Values) if (obj != null) Destroy(obj);
         installedObjects.Clear();
         installedCosts.Clear();
