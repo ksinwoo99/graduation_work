@@ -17,7 +17,6 @@ public class ProductorDropRate {
 [RequireComponent(typeof(SpriteRenderer))]
 public class logic_Productor_Master : logic_CodingBase
 {
-    // 🔥 가공기도 명령어를 직접 세팅합니다!
     [Header("코딩 설정")]
     public string requiredSyntax = "producting()";
 
@@ -38,8 +37,10 @@ public class logic_Productor_Master : logic_CodingBase
     public int processingCount = 0; 
     private Coroutine processingCoroutine;
 
-    void Awake() {
+    protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (GetComponent<BoxCollider2D>() == null) gameObject.AddComponent<BoxCollider2D>();
+        base.Awake(); 
     }
 
     void Start() {
@@ -47,7 +48,19 @@ public class logic_Productor_Master : logic_CodingBase
             spriteRenderer.sprite = spriteIdle;
     }
 
-    // 건설 직후 무한 반복 등을 세팅할 때 쓰임
+    public override void ToggleOperation() {
+        if (isOperating) {
+            isOperating = false;
+            isStopping = true;
+            UpdateStatusUI(); // ⏳ 멈추는 중 아이콘!
+        } else {
+            isOperating = true;
+            isStopping = false;
+            UpdateStatusUI(); // ▶️ 실행 중 아이콘!
+            InitializeProductor(this.processingCount); 
+        }
+    }
+
     public void InitializeProductor(int count) {
         this.processingCount = count;
         if (processingCoroutine != null) StopCoroutine(processingCoroutine);
@@ -61,50 +74,69 @@ public class logic_Productor_Master : logic_CodingBase
 
         if (!cleanCode.Contains(targetSyntax)) return CodeState.Empty;
 
+        // ✨ 퀘스트 매니저에서 현재 해금 레벨을 가져옵니다.
+        int loopLevel = 0;
+        if (Ingame_Manager_Quest.Instance != null) {
+            loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
+        }
+
+        // 🔄 무한 반복 (while) 검사
         if (cleanCode.Contains("whiletrue:") || cleanCode.Contains("while(true)") || cleanCode.Contains("loop:")) {
-            processingCount = -1;
+            if (loopLevel < 2) return CodeState.Error_InfiniteLocked; // 레벨 2 미만이면 컷!
+            
+            processingCount = -1; // ✨ 수정완료!
             return CodeState.Valid;
         }
 
+        // 🔄 횟수 반복 (for) 검사
         if (cleanCode.Contains("for") && cleanCode.Contains("range(")) {
+            if (loopLevel < 1) return CodeState.Error_LoopLocked; // 레벨 1 미만이면 컷!
+            
             try {
                 int start = cleanCode.IndexOf("range(") + 6;
                 int end = cleanCode.IndexOf(")", start);
                 int count = int.Parse(cleanCode.Substring(start, end - start));
+                
                 if (count <= 0) return CodeState.Error;
-                processingCount = count;
+                
+                // 레벨 1인데 10회를 초과해서 적었다면 컷!
+                if (loopLevel == 1 && count > 10) return CodeState.Error_LoopLimit;
+
+                processingCount = count; // ✨ 수정완료!
                 return CodeState.Valid;
             } catch { return CodeState.Error; }
         }
 
+        // ⛏️ 그냥 명령어 1줄만 쳤을 때
         if (cleanCode.Contains(targetSyntax)) {
-            processingCount = -1; 
+            processingCount = 1; // ✨ 수정완료! (기본 1회 실행 후 멈춤)
             return CodeState.Valid;
         }
-
+        
         return CodeState.Error;
     }
 
     IEnumerator MasterRoutine() {
         int currentCount = 0;
+        
+        isOperating = true; 
+        isStopping = false;
+        UpdateStatusUI(); // 시작 확인
 
         while (processingCount == -1 || currentCount < processingCount) {
             bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
             bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
 
             if (!isBuildMode && !isPaused) {
-                // 1. 자원이 충분한지 검사하고 깎음
                 if (CheckAndConsumeResources()) {
-                    // 2. 가공 애니메이션 대기 (processingTime 만큼 시간 소요)
                     yield return StartCoroutine(ProcessingAnimationRoutine());
-                    
-                    // 3. 상품 가챠 생성
                     SpawnProduct();
-                    
                     if (processingCount != -1) currentCount++;
+
+                    if (isStopping) break; 
                 } else {
-                    // 자원이 부족하면 인터벌(1초)만큼 대기했다가 다시 체크
                     yield return new WaitForSeconds(checkInterval);
+                    if (isStopping) break;
                 }
             } else {
                 yield return null;
@@ -112,6 +144,10 @@ public class logic_Productor_Master : logic_CodingBase
         }
         
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
+        
+        isOperating = false; 
+        isStopping = false;
+        UpdateStatusUI(); // ⏹️ 완전히 정지 아이콘으로 변경!
         processingCoroutine = null;
     }
 
@@ -151,6 +187,10 @@ public class logic_Productor_Master : logic_CodingBase
                 }
             }
             yield return null;
+        }
+
+        if (spriteRenderer != null && spriteIdle != null) {
+            spriteRenderer.sprite = spriteIdle;
         }
     }
 

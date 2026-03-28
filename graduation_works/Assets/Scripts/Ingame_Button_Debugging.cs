@@ -142,21 +142,27 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
             if (isPythonValid)
             {
-                // ✨ [핵심 수정] int를 받아와서 상태를 구분합니다!
                 int applyResult = TryApplyCodeToMachine(code);
                 isMachineValid = (applyResult == 2);
                 isSuccess = isPythonValid && isMachineValid;
 
                 string timeMsg = $"\n(실행 시간: {response.execution_time:F3}초)";
 
+                // ✨ [수정] 숫자에 따라 아주 친절한 에러 메시지를 출력합니다!
                 if (applyResult == 2) {
                     SetUI("정상 작동 및 적용 완료!\n" + response.output + timeMsg, Color.green, false);
-                } 
-                else if (applyResult == 1) {
-                    SetUI("이름은 저장되었으나, 기계 작동을 위한 필수 함수(예: mining())가 없습니다!" + timeMsg, Color.yellow, true);
-                } 
-                else {
+                } else if (applyResult == 1) {
+                    SetUI("이름은 저장되었으나, 기계 작동을 위한 필수 함수가 없습니다!" + timeMsg, Color.yellow, true);
+                } else if (applyResult == -1) {
+                    SetUI("아직 반복문(for)을 사용할 수 있는 시스템 권한이 없습니다!" + timeMsg, Color.red, true);
+                } else if (applyResult == -2) {
+                    SetUI("현재 시스템에서는 반복문을 최대 10회까지만 사용할 수 있습니다!" + timeMsg, Color.red, true);
+                } else if (applyResult == -3) {
+                    SetUI("아직 무한 루프(while)를 사용할 수 있는 시스템 권한이 없습니다!" + timeMsg, Color.red, true);
+                } else if (applyResult == -4) {
                     SetUI("기계의 이름(name 변수)을 필수로 지정해야 합니다!" + timeMsg, Color.red, true);
+                } else {
+                    SetUI("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다." + timeMsg, Color.red, true);
                 }
             }
             else

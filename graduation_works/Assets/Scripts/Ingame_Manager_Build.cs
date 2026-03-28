@@ -128,10 +128,16 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R) && !isDemolishMode) {
             bool isTyping = false;
+            
             if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null) {
-                if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) isTyping = true; 
+                if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) {
+                    isTyping = true; 
+                }
             }
-            if (!isTyping) currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
+
+            if (!isTyping) {
+                currentDirection = (BuildDirection)(((int)currentDirection + 1) % 4);
+            }
         }
 
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -142,10 +148,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
         UpdateCursor(cellPos);
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+            
             if (Shared_Manager_Session.IsVisiting) return; 
 
             if (isDemolishMode) TryDemolishMachine(cellPos);
-            else {
+            // ✨ [수정됨] 선택된 타일이 있을 때(건축 모드일 때)만 건축을 시도합니다!
+            else if (selectedTile != null) { 
                 if (!isPlacementAllowed) {
                     Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     clickPos.z = -5f;

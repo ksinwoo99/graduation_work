@@ -11,6 +11,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public TMP_InputField inputField;
     public Button btnVerify;
     public Image statusLight;
+    public TextMeshProUGUI txtLoopLevelInfo; // ✨ 반복문 상태 텍스트
 
     [Header("매니저 연결")]
     public Ingame_Manager_Build buildManager;
@@ -24,6 +25,19 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void Start() {
         if (codingPanel != null) codingPanel.SetActive(false);
         if (btnVerify != null) btnVerify.onClick.AddListener(OnClick_Verify);
+        
+        // ✨ [핵심 해결] 게임이 시작되자마자 즉시 텍스트를 갱신합니다!
+        UpdateLoopLevelText();
+    }
+
+    // ✨ [추가] 텍스트 갱신만 전담하는 깔끔한 함수
+    public void UpdateLoopLevelText() {
+        if (txtLoopLevelInfo != null && Ingame_Manager_Quest.Instance != null) {
+            int lvl = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
+            if (lvl == 0) txtLoopLevelInfo.text = "시스템: [반복문 사용 불가]";
+            else if (lvl == 1) txtLoopLevelInfo.text = "시스템: [for문 최대 10회 가능]";
+            else txtLoopLevelInfo.text = "시스템: [무한 루프 사용 가능]";
+        }
     }
 
     public void OpenFromExternal(int machineId, string displayName, UnityEngine.Tilemaps.TileBase tile, Image btnImage, logic_CodingBase logicScript) {
@@ -54,6 +68,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (buildManager != null) buildManager.StartBuildMode(tile, btnImage);
         
+        // 코딩창을 열 때도 상태가 바뀌었을 수 있으니 한 번 더 갱신!
+        UpdateLoopLevelText();
+
         CheckCodeAndApply(savedCode);
     }
 
@@ -96,16 +113,12 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         CheckCodeAndApply(codeToVerify);
     }
 
-    // ✨ [핵심 변경] void에서 int로 반환형을 변경하여 상세한 상태를 알려줍니다.
     public int CheckCodeAndApply(string code) {
         if (currentLogic == null) return 0;
         
-        // ==============================================================
-        // ✨ [업그레이드된 이름 탐지기] 직접 할당 및 변수 참조 모두 감지!
         string newName = "";
         bool hasName = false;
 
-        // 1단계: name = "이름" (직접 할당) 방식 찾기
         Match directMatch = Regex.Match(code, @"name\s*=\s*[""']([^""']+)[""']");
         
         if (directMatch.Success) {
@@ -113,12 +126,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             hasName = true;
         } 
         else {
-            // 2단계: name = a 처럼 따옴표 없는 변수를 넣었을 경우 찾기
             Match varMatch = Regex.Match(code, @"name\s*=\s*([a-zA-Z_][a-zA-Z0-9_]*)");
             if (varMatch.Success) {
-                string targetVar = varMatch.Groups[1].Value; // 'a' 라는 변수명 획득
-                
-                // 3단계: 위쪽에 a = "이름" 이라고 정의된 부분이 있는지 역추적!
+                string targetVar = varMatch.Groups[1].Value; 
                 Match valueMatch = Regex.Match(code, targetVar + @"\s*=\s*[""']([^""']+)[""']");
                 if (valueMatch.Success) {
                     newName = valueMatch.Groups[1].Value;
@@ -126,23 +136,15 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
             }
         }
-        // ==============================================================
 
-        // 🚨 [새로 추가된 트릭] 기계 부품(logic)은 옛날 방식(name="...")만 고집하므로,
-        // 검사를 통과시키기 위해 코드 맨 밑에 몰래 따옴표 형식을 붙여서 검사받게 속입니다!
         string validationCode = code;
         if (hasName) {
             validationCode += $"\nname=\"{newName}\"";
         }
 
-        // 🔥 code 대신 몰래 조작한 validationCode를 검사기에 넣습니다!
-        bool isLogicValid = (currentLogic.ValidateCode(validationCode) == logic_CodingBase.CodeState.Valid);
-
-        // 🔥 코드를 검사할 때마다 무조건 딕셔너리에 코드를 저장합니다! (원본 그대로 저장)
         if (globalCodes.ContainsKey(currentMachineId)) globalCodes[currentMachineId] = code;
         else globalCodes.Add(currentMachineId, code);
 
-        // 찾은 이름이 있을 경우 UI와 퀘스트를 업데이트합니다.
         if (hasName && !string.IsNullOrEmpty(newName)) {
             if (titleText != null) titleText.text = $"{newName}.py";
             if (currentBuildButton != null && currentBuildButton.nameText != null) {
@@ -155,19 +157,24 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
             }
 
-            if (isLogicValid) {
-                // 1. 이름도 있고 함수도 완벽할 때 (초록불, 설치 허용)
-                SetStatus(Color.green, true);
-                return 2; 
+            logic_CodingBase.CodeState state = currentLogic.ValidateCode(validationCode);
+
+            if (state == logic_CodingBase.CodeState.Valid) {
+                SetStatus(Color.green, true); return 2; 
+            } else if (state == logic_CodingBase.CodeState.Empty) {
+                SetStatus(Color.yellow, false); return 1; 
+            } else if (state == logic_CodingBase.CodeState.Error_LoopLocked) {
+                SetStatus(Color.red, false); return -1; 
+            } else if (state == logic_CodingBase.CodeState.Error_LoopLimit) {
+                SetStatus(Color.red, false); return -2; 
+            } else if (state == logic_CodingBase.CodeState.Error_InfiniteLocked) {
+                SetStatus(Color.red, false); return -3; 
             } else {
-                // 2. 이름은 바꿨지만 함수가 없을 때 (노란불, 설치 불가!)
-                SetStatus(Color.yellow, false); 
-                return 1; 
+                SetStatus(Color.red, false); return 0; 
             }
         } else {
-            // 3. 이름 변수가 아예 없을 때 (빨간불, 설치 불가!)
             SetStatus(Color.red, false); 
-            return 0; 
+            return -4; 
         }
     }
 
