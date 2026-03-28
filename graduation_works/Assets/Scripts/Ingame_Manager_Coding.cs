@@ -100,17 +100,50 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public int CheckCodeAndApply(string code) {
         if (currentLogic == null) return 0;
         
-        Match match = Regex.Match(code, @"name\s*=\s*[""']([^""']+)[""']");
-        bool hasName = match.Success;
-        bool isLogicValid = (currentLogic.ValidateCode(code) == logic_CodingBase.CodeState.Valid);
+        // ==============================================================
+        // ✨ [업그레이드된 이름 탐지기] 직접 할당 및 변수 참조 모두 감지!
+        string newName = "";
+        bool hasName = false;
 
-        // 🔥 코드를 검사할 때마다 무조건 딕셔너리에 코드를 저장합니다!
+        // 1단계: name = "이름" (직접 할당) 방식 찾기
+        Match directMatch = Regex.Match(code, @"name\s*=\s*[""']([^""']+)[""']");
+        
+        if (directMatch.Success) {
+            newName = directMatch.Groups[1].Value;
+            hasName = true;
+        } 
+        else {
+            // 2단계: name = a 처럼 따옴표 없는 변수를 넣었을 경우 찾기
+            Match varMatch = Regex.Match(code, @"name\s*=\s*([a-zA-Z_][a-zA-Z0-9_]*)");
+            if (varMatch.Success) {
+                string targetVar = varMatch.Groups[1].Value; // 'a' 라는 변수명 획득
+                
+                // 3단계: 위쪽에 a = "이름" 이라고 정의된 부분이 있는지 역추적!
+                Match valueMatch = Regex.Match(code, targetVar + @"\s*=\s*[""']([^""']+)[""']");
+                if (valueMatch.Success) {
+                    newName = valueMatch.Groups[1].Value;
+                    hasName = true;
+                }
+            }
+        }
+        // ==============================================================
+
+        // 🚨 [새로 추가된 트릭] 기계 부품(logic)은 옛날 방식(name="...")만 고집하므로,
+        // 검사를 통과시키기 위해 코드 맨 밑에 몰래 따옴표 형식을 붙여서 검사받게 속입니다!
+        string validationCode = code;
+        if (hasName) {
+            validationCode += $"\nname=\"{newName}\"";
+        }
+
+        // 🔥 code 대신 몰래 조작한 validationCode를 검사기에 넣습니다!
+        bool isLogicValid = (currentLogic.ValidateCode(validationCode) == logic_CodingBase.CodeState.Valid);
+
+        // 🔥 코드를 검사할 때마다 무조건 딕셔너리에 코드를 저장합니다! (원본 그대로 저장)
         if (globalCodes.ContainsKey(currentMachineId)) globalCodes[currentMachineId] = code;
         else globalCodes.Add(currentMachineId, code);
 
-        if (hasName) {
-            string newName = match.Groups[1].Value; 
-            
+        // 찾은 이름이 있을 경우 UI와 퀘스트를 업데이트합니다.
+        if (hasName && !string.IsNullOrEmpty(newName)) {
             if (titleText != null) titleText.text = $"{newName}.py";
             if (currentBuildButton != null && currentBuildButton.nameText != null) {
                 currentBuildButton.nameText.text = newName;
