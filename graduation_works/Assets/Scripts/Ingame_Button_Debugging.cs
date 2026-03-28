@@ -7,7 +7,6 @@ using System.Collections;
 using System.Text;
 using System;
 
-// 1. 실행 요청용
 [System.Serializable]
 public class CodeRequest
 {
@@ -15,14 +14,12 @@ public class CodeRequest
     public string source_code;
     public string machine_type;
     
-    // 파이썬 서버로 보낼 현재 자원 보유량 변수
     public int resCommon;
     public int resRare;
     public int resSpecial;
     public int resExotic;
 }
 
-// 2. 파이썬 응답받는 용 (★ 실행 시간 추가!)
 [System.Serializable]
 public class DebuggingResponse
 {
@@ -31,7 +28,6 @@ public class DebuggingResponse
     public float execution_time;
 }
 
-// 3. ML 수집용
 [System.Serializable]
 public class MLSubmitRequest
 {
@@ -44,7 +40,7 @@ public class MLSubmitRequest
     public float execution_time;
     public string output_log;
 }
-// ML 응답용
+
 [System.Serializable]
 public class MLResponse
 {
@@ -52,6 +48,7 @@ public class MLResponse
     public float score;
     public string hint;
 }
+
 public class Ingame_Button_Debugging : MonoBehaviour
 {
     [Header("UI References")]
@@ -92,7 +89,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
         }
 
         string code = inputField.text;
-
         string currentId = string.IsNullOrEmpty(Shared_Manager_Session.CurrentUserId) ? "guest" : Shared_Manager_Session.CurrentUserId;
 
         StartCoroutine(SendToServer(currentId, code));
@@ -101,8 +97,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
     IEnumerator SendToServer(string userId, string code)
     {
         string url = "http://13.237.51.219:8000/execute";
-
-        // 기본값은 GENERAL
         string actualMachineType = "GENERAL";
 
         if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null)
@@ -110,7 +104,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
             logic_CodingBase targetMachine = Ingame_Manager_Build.Instance.codingManager.currentLogic;
             if (targetMachine != null)
             {
-
                 actualMachineType = targetMachine.GetMachineName();
             }
         }
@@ -133,9 +126,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
         string json = JsonUtility.ToJson(requestData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(json);
 
-        // 확인용 로그 출력
-        Debug.Log($"[프론트엔드 -> 백엔드] 전송하는 코드 원본:\n{code}\n기계 종류: {actualMachineType}");
-
         UnityWebRequest www = new UnityWebRequest(url, "POST");
         www.uploadHandler = new UploadHandlerRaw(jsonToSend);
         www.downloadHandler = new DownloadHandlerBuffer();
@@ -145,8 +135,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log($"[백엔드 -> 프론트엔드] 서버 응답 원본:\n{www.downloadHandler.text}");
-
             DebuggingResponse response = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
             bool isPythonValid = (response.status == "success");
             bool isMachineValid = false;
@@ -154,15 +142,21 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
             if (isPythonValid)
             {
-                isMachineValid = TryApplyCodeToMachine(code);
+                // ✨ [핵심 수정] int를 받아와서 상태를 구분합니다!
+                int applyResult = TryApplyCodeToMachine(code);
+                isMachineValid = (applyResult == 2);
                 isSuccess = isPythonValid && isMachineValid;
 
-                if (isMachineValid) {
-                    string timeMsg = $"\n(실행 시간: {response.execution_time:F3}초)";
+                string timeMsg = $"\n(실행 시간: {response.execution_time:F3}초)";
+
+                if (applyResult == 2) {
                     SetUI("정상 작동 및 적용 완료!\n" + response.output + timeMsg, Color.green, false);
-                } else
-                {
-                    SetUI("서버 문법은 통과했으나, 기계 조건(형식)에 맞지 않습니다.", Color.red, true);
+                } 
+                else if (applyResult == 1) {
+                    SetUI("이름은 저장되었으나, 기계 작동을 위한 필수 함수(예: mining())가 없습니다!" + timeMsg, Color.yellow, true);
+                } 
+                else {
+                    SetUI("기계의 이름(name 변수)을 필수로 지정해야 합니다!" + timeMsg, Color.red, true);
                 }
             }
             else
@@ -174,17 +168,12 @@ public class Ingame_Button_Debugging : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"[통신 에러] 서버 연결 실패: {www.error}");
             SetUI("서버 연결 실패\n" + www.error, Color.red, false);
         }
     }
 
     IEnumerator SendLogToPythonDB(string userId, string machineType, string code, bool isPyValid, bool isMachValid, bool isSuccess, float execTime, string outputLog)
     {
-        // 로컬
-        // string logUrl = "http://127.0.0.1:8000/api/submit_code"; 
-
-        // AWS
         string logUrl = "http://13.237.51.219:8001/api/submit_code";
 
         MLSubmitRequest mlData = new MLSubmitRequest
@@ -211,43 +200,27 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log($"[데이터 수집 완료] AI 피드백 : {www.downloadHandler.text}");
-
-            // 💡 파이썬이 준 JSON 데이터(점수, 힌트)
             MLResponse mlRes = JsonUtility.FromJson<MLResponse>(www.downloadHandler.text);
-
-            // 💡 현재 유니티 화면 텍스트 아래에 AI 힌트 추가
             if (resultText != null)
             {
-                // 줄 띄우고 예쁘게 덧붙이기
                 resultText.text += $"\n\n<color=#FFFF00>[AI 분석 결과]</color> (점수: {mlRes.score}점)\n{mlRes.hint}";
             }
         }
-        else
-        {
-            Debug.LogError($"[데이터 수집 실패] ML 서버 에러 : {www.error}\n 원인 : {www.downloadHandler.text}");
-        }
     }
 
-    private bool TryApplyCodeToMachine(string code)
+    // ✨ [핵심 수정] bool 반환에서 int(0, 1, 2) 반환으로 변경
+    private int TryApplyCodeToMachine(string code)
     {
         var buildMgr = Ingame_Manager_Build.Instance;
         if (buildMgr != null && buildMgr.codingManager != null)
         {
             logic_CodingBase targetMachine = buildMgr.codingManager.currentLogic;
-
             if (targetMachine != null)
             {
-                logic_CodingBase.CodeState state = targetMachine.ValidateCode(code);
-
-                if (state == logic_CodingBase.CodeState.Valid)
-                {
-                    buildMgr.codingManager.CheckCodeAndApply(code);
-                    return true;
-                }
+                return buildMgr.codingManager.CheckCodeAndApply(code);
             }
         }
-        return false;
+        return 0;
     }
 
     void SetUI(string message, Color Color, bool isError)

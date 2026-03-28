@@ -11778,7 +11778,7 @@ MonoBehaviour:
   questList:
   - title: "\uCCAB \uC790\uC6D0 \uCC44\uAD74"
     rewardText: "- \uAE30\uCD08 \uAC00\uACF5\uAE30 \uD574\uAE08\n- \uACE8\uB4DC 200
-      / \uAE30\uBCF8 \uC790\uC6D0 70"
+      / \uAE30\uBCF8 \uC790\uC6D0 80"
     goals:
     - type: 1
       targetAmount: 1

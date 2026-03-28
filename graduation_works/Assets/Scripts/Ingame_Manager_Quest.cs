@@ -13,8 +13,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public TextMeshProUGUI questGoalText;  
     public TextMeshProUGUI rewardText;     
     
-    // 🔥 필요 없어진 개별 버튼 변수들 삭제 완료!
-
     [Header("퀘스트 목록")]
     public List<QuestData> questList = new List<QuestData>();
 
@@ -24,6 +22,9 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public int builtMinerCount = 0;
     public int builtProductorCount = 0;
     public bool isConveyorUpgraded = false;
+    
+    // ✨ [추가] 채굴기 이름이 변경되었는지 기억할 변수
+    public bool isMinerNameChanged = false;
 
     void Awake() {
         if (Instance == null) Instance = this;
@@ -31,8 +32,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
     }
 
     void Start() {
-        // 🔥 시작 시 버튼을 강제로 끄는 하드코딩 삭제 완료! (처음부터 Interactable을 끄고 시작하면 됨)
-        
         StartQuest(0); 
         StartCoroutine(QuestCheckRoutine());
     }
@@ -71,7 +70,12 @@ public class Ingame_Manager_Quest : MonoBehaviour
             int currentValue = 0;
             string goalName = "";
 
-            if (goal.type == QuestGoalType.BuildMiner) {
+            // 🔥 [에러 방지 팁] 혹시 아래 에러가 나면 QuestGoalType Enum이 선언된 곳(아마 QuestData 스크립트)에 ChangeMinerName 을 꼭 추가해주세요!
+            if (goal.type.ToString() == "ChangeMinerName") { // 임시로 문자열 비교로 안전하게 해두거나 Enum을 쓰셔도 됩니다.
+                currentValue = isMinerNameChanged ? 1 : 0;
+                goalName = "채굴기 이름 지정하기";
+            }
+            else if (goal.type == QuestGoalType.BuildMiner) {
                 currentValue = builtMinerCount;
                 goalName = "채굴기 설치";
             }
@@ -120,7 +124,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
         if (quest.rewardRareResource > 0) resMgr.resRare += quest.rewardRareResource;
         if (quest.rewardSpecialResource > 0) resMgr.resSpecial += quest.rewardSpecialResource;
         
-        // 🔥 새롭게 적용된 '버튼 리스트 해금' 방식만 남김
         foreach (Button btn in quest.unlockButtons) {
             if (btn != null) {
                 btn.interactable = true;
