@@ -3,13 +3,14 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public enum QuestGoalType { 
-    None, 
-    BuildMiner,        
-    BuildProductor,    
-    CollectCommonResource,   
-    CollectRareResource,      
-    CollectSpecialResource,   
-    EarnGold           
+    None,
+    BuildMiner,
+    BuildProductor,
+    CollectCommonResource,
+    CollectRareResource,
+    CollectSpecialResource,
+    EarnGold,
+    ChangeMinerName
 }
 
 [System.Serializable]
