@@ -19,8 +19,9 @@ public class logic_Conveyor : logic_CodingBase {
 
     private int currentFrame = 0; 
 
-    void Awake() {
+    protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        base.Awake(); // 부모의 Awake(상태 아이콘 찾기) 실행!
     }
 
     void Start() {

@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-// 🔥 확률과 프리팹을 하나로 묶어주는 클래스
 [System.Serializable]
 public class MinerDropRate {
     public GameObject itemPrefab;
@@ -12,9 +11,6 @@ public class MinerDropRate {
 [RequireComponent(typeof(SpriteRenderer))]
 public class logic_Miner_Master : logic_CodingBase {
 
-    // ==========================================
-    // 🔥 [핵심 추가] 인스펙터에서 정답 명령어를 마음대로 바꿀 수 있습니다!
-    // ==========================================
     [Header("코딩 설정")]
     public string requiredSyntax = "mining()"; 
 
@@ -30,13 +26,29 @@ public class logic_Miner_Master : logic_CodingBase {
     public int miningCount = 0; 
     private Coroutine miningCoroutine;
 
-    void Awake() {
+    protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (GetComponent<BoxCollider2D>() == null) gameObject.AddComponent<BoxCollider2D>();
+        base.Awake(); 
     }
 
     void Start() {
         if (spriteRenderer != null && spriteIdle != null)
             spriteRenderer.sprite = spriteIdle;
+    }
+
+    // ✨ [추가] 상태가 변할 때마다 UpdateStatusUI() 호출!
+    public override void ToggleOperation() {
+        if (isOperating) {
+            isOperating = false;
+            isStopping = true;
+            UpdateStatusUI(); // ⏳ 멈추는 중 아이콘으로 변경!
+        } else {
+            isOperating = true;
+            isStopping = false;
+            UpdateStatusUI(); // ▶️ 실행 중 아이콘으로 변경!
+            InitializeMiner(this.miningCount); 
+        }
     }
 
     public void InitializeMiner(int count) {
@@ -48,34 +60,46 @@ public class logic_Miner_Master : logic_CodingBase {
     public override CodeState ValidateCode(string code) {
         string noTags = System.Text.RegularExpressions.Regex.Replace(code, "<.*?>", string.Empty);
         string cleanCode = System.Text.RegularExpressions.Regex.Replace(noTags, @"\s+", "").ToLower();
-        
-        // 인스펙터에 적은 정답에서도 공백을 없애고 소문자로 맞춰서 비교합니다.
         string targetSyntax = requiredSyntax.Replace(" ", "").ToLower();
 
-        // 🚨 유저가 쓴 코드에 정답 명령어가 없으면 반응 안 함!
         if (!cleanCode.Contains(targetSyntax)) return CodeState.Empty;
 
-        // 🔄 무한 반복 처리
+        // ✨ 퀘스트 매니저에서 현재 해금 레벨을 가져옵니다.
+        int loopLevel = 0;
+        if (Ingame_Manager_Quest.Instance != null) {
+            loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
+        }
+
+        // 🔄 무한 반복 (while) 검사
         if (cleanCode.Contains("whiletrue:") || cleanCode.Contains("while(true)") || cleanCode.Contains("loop:")) {
-            miningCount = -1;
+            if (loopLevel < 2) return CodeState.Error_InfiniteLocked; // 레벨 2 미만이면 컷!
+            
+            miningCount = -1; // 가공기 스크립트에서는 processingCount = -1; 로 변경해주세요!
             return CodeState.Valid;
         }
 
-        // 🔄 for 반복문 처리
+        // 🔄 횟수 반복 (for) 검사
         if (cleanCode.Contains("for") && cleanCode.Contains("range(")) {
+            if (loopLevel < 1) return CodeState.Error_LoopLocked; // 레벨 1 미만이면 컷!
+            
             try {
                 int start = cleanCode.IndexOf("range(") + 6;
                 int end = cleanCode.IndexOf(")", start);
                 int count = int.Parse(cleanCode.Substring(start, end - start));
+                
                 if (count <= 0) return CodeState.Error;
-                miningCount = count;
+                
+                // 레벨 1인데 10회를 초과해서 적었다면 컷!
+                if (loopLevel == 1 && count > 10) return CodeState.Error_LoopLimit;
+
+                miningCount = count; // 가공기: processingCount = count;
                 return CodeState.Valid;
             } catch { return CodeState.Error; }
         }
 
-        // ⛏️ 그냥 명령어 1줄만 쳤을 때도 기본적으로 무한 반복 되도록 세팅
+        // ⛏️ 그냥 명령어 1줄만 쳤을 때
         if (cleanCode.Contains(targetSyntax)) {
-            miningCount = -1; 
+            miningCount = 1; // ✨ [핵심 수정] 이제 기본은 1회 실행 후 멈춥니다! (가공기: processingCount = 1;)
             return CodeState.Valid;
         }
         
@@ -86,6 +110,10 @@ public class logic_Miner_Master : logic_CodingBase {
         int currentCount = 0;
         float animTimer = 0f;
         bool isSpriteA = true; 
+        
+        isOperating = true; 
+        isStopping = false;
+        UpdateStatusUI(); // 루프 시작 시 실행 아이콘 확인
 
         while (miningCount == -1 || currentCount < miningCount) {
             float timer = 0;
@@ -108,9 +136,17 @@ public class logic_Miner_Master : logic_CodingBase {
 
             SpawnResource();
             if (miningCount != -1) currentCount++;
+
+            if (isStopping) {
+                break; // 이번 사이클 끝내고 멈춤 예약 확인
+            }
         }
         
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
+        
+        isOperating = false; 
+        isStopping = false;
+        UpdateStatusUI(); // ⏹️ 완전히 정지 아이콘으로 변경!
         miningCoroutine = null; 
     }
 
@@ -125,7 +161,6 @@ public class logic_Miner_Master : logic_CodingBase {
         spawnPos.y -= 0.5f; 
         spawnPos.z = -1f;
 
-        // 🔥 확률별 가챠 로직
         float rand = Random.Range(0f, 100f);
         float cumulative = 0f;
         GameObject prefabToDrop = null;

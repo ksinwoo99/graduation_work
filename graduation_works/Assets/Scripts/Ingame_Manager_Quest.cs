@@ -21,9 +21,9 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
     public int builtMinerCount = 0;
     public int builtProductorCount = 0;
+    public int loopUpgradeLevel = 0;
     public bool isConveyorUpgraded = false;
     
-    // ✨ [추가] 채굴기 이름이 변경되었는지 기억할 변수
     public bool isMinerNameChanged = false;
 
     void Awake() {
