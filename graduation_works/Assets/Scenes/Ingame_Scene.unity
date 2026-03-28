@@ -8833,7 +8833,7 @@ MonoBehaviour:
   txtResourceRare: {fileID: 1227988026}
   txtResourceSpecial: {fileID: 1250875880}
   txtResourceExotic: {fileID: 2032495719}
-  currentGold: 100
+  currentGold: 0
   totalEarnedGold: 0
   resCommon: 0
   resRare: 0
@@ -11776,6 +11776,16 @@ MonoBehaviour:
   questGoalText: {fileID: 1399273639}
   rewardText: {fileID: 1155617578}
   questList:
+  - title: "\uBCC0\uC218\uB85C \uC774\uB984\uC9D3\uAE30"
+    rewardText: "- \uACE8\uB4DC 100"
+    goals:
+    - type: 7
+      targetAmount: 1
+    rewardGold: 100
+    rewardCommonResource: 0
+    rewardRareResource: 0
+    rewardSpecialResource: 0
+    unlockButtons: []
   - title: "\uCCAB \uC790\uC6D0 \uCC44\uAD74"
     rewardText: "- \uAE30\uCD08 \uAC00\uACF5\uAE30 \uD574\uAE08\n- \uACE8\uB4DC 200
       / \uAE30\uBCF8 \uC790\uC6D0 80"
@@ -11836,6 +11846,7 @@ MonoBehaviour:
   builtMinerCount: 0
   builtProductorCount: 0
   isConveyorUpgraded: 0
+  isMinerNameChanged: 0
 --- !u!4 &1446250231
 Transform:
   m_ObjectHideFlags: 0
