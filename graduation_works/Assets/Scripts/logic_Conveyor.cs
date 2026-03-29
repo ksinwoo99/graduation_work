@@ -36,44 +36,42 @@ public class logic_Conveyor : logic_CodingBase {
     }
 
     // ✨ [핵심 로직] 파이썬 코드를 검사하고 문자에 따라 속도를 적용하는 함수
+    // ValidateCode 함수 전체를 덮어씌워 주세요.
     public override CodeState ValidateCode(string code) {
-        // 1. move() 괄호 안의 모든 내용을 가져옵니다.
         Match match = Regex.Match(code, @"move\(\s*([^)]*)\s*\)");
         
-        if (!match.Success) {
-            return CodeState.Error; // move() 자체가 없으면 에러!
-        }
+        if (!match.Success) return CodeState.Error;
 
-        // 2. 괄호 안의 내용에서 양옆 공백과 따옴표(", ')를 모두 제거하고 소문자로 변환합니다.
-        // 이렇게 하면 move("fast"), move('fast'), move(fast) 모두 똑같이 "fast"로 인식합니다!
         string arg = match.Groups[1].Value.Trim().Replace("\"", "").Replace("'", "").ToLower();
 
-        // 3. 인자가 없거나 "slow"인 경우 (기본 속도)
+        // ✨ 퀘스트 매니저에서 현재 컨베이어 해금 레벨(0, 1, 2)을 가져옵니다.
+        int convLevel = 0;
+        if (Ingame_Manager_Quest.Instance != null) {
+            convLevel = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel; 
+        }
+
+        // 🚨 0단계: 아예 사용 불가!
+        if (convLevel == 0) return CodeState.Error_ConveyorLocked;
+
+        // 🟢 1단계: 일반 속도 (slow) 통과
         if (string.IsNullOrEmpty(arg) || arg == "slow") {
-            itemMoveDuration = 2.0f; // 느린 속도
+            itemMoveDuration = 2.0f; 
             animSpeed = 0.4f;        
             return CodeState.Valid;
         }
 
-        // 4. "fast"인 경우
+        // 🟢 2단계: 빠른 속도 (fast) 검사
         if (arg == "fast") {
-            bool isUpgraded = false;
-            if (Ingame_Manager_Quest.Instance != null) {
-                isUpgraded = Ingame_Manager_Quest.Instance.isConveyorUpgraded; 
+            if (convLevel < 2) {
+                // 아직 고속 모드가 해금되지 않았을 때!
+                return CodeState.Error_ConveyorFastLocked; 
             }
 
-            if (!isUpgraded) {
-                // 아직 퀘스트를 안 깼다면 빨간불(에러)!
-                return CodeState.Error; 
-            }
-
-            // 해금되었다면 빠른 속도 적용
-            itemMoveDuration = 1.0f; // 빠른 속도
+            itemMoveDuration = 1.0f; 
             animSpeed = 0.2f;        
             return CodeState.Valid;
         }
 
-        // 5. "slow", "fast", 빈칸 외에 이상한 값(예: move(123), move("hello"))을 넣은 경우
         return CodeState.Error;
     }
 

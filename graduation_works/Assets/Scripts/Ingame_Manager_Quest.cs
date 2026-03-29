@@ -22,9 +22,15 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public int builtMinerCount = 0;
     public int builtProductorCount = 0;
     public int loopUpgradeLevel = 0;
-    public bool isConveyorUpgraded = false;
-    
+    public int conveyorUpgradeLevel = 0;
     public bool isMinerNameChanged = false;
+
+    public int storageCollectionProgress = 0;
+    public int marketSaleProgress = 0;
+    
+    // ✨ [추가] 철거 및 반복문 진행도 변수
+    public int demolishProgress = 0;
+    public int loopUsageProgress = 0;
 
     void Awake() {
         if (Instance == null) Instance = this;
@@ -38,6 +44,13 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
     void StartQuest(int id) {
         currentQuestId = id;
+        
+        storageCollectionProgress = 0;
+        marketSaleProgress = 0;
+        // ✨ 새 퀘스트 시작 시 초기화
+        demolishProgress = 0;
+        loopUsageProgress = 0;
+
         if (Ingame_Manager_Resource.Instance != null) {
             questStartTotalGold = Ingame_Manager_Resource.Instance.totalEarnedGold;
         }
@@ -49,6 +62,13 @@ public class Ingame_Manager_Quest : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
     }
+
+    public void AddStorageProgress(int amount) { storageCollectionProgress += amount; }
+    public void AddMarketProgress(int gold) { marketSaleProgress += gold; }
+    
+    // ✨ [추가] 철거 및 반복문 진행도 증가 함수
+    public void AddDemolishProgress() { demolishProgress++; }
+    public void AddLoopUsageProgress() { loopUsageProgress++; }
 
     void CheckConditions() {
         if (Ingame_Manager_Resource.Instance == null) return;
@@ -70,8 +90,26 @@ public class Ingame_Manager_Quest : MonoBehaviour
             int currentValue = 0;
             string goalName = "";
 
-            // 🔥 [에러 방지 팁] 혹시 아래 에러가 나면 QuestGoalType Enum이 선언된 곳(아마 QuestData 스크립트)에 ChangeMinerName 을 꼭 추가해주세요!
-            if (goal.type.ToString() == "ChangeMinerName") { // 임시로 문자열 비교로 안전하게 해두거나 Enum을 쓰셔도 됩니다.
+            string typeName = goal.type.ToString();
+
+            // ✨ [새로운 목표 판정 추가]
+            if (typeName == "DemolishMachine") {
+                currentValue = demolishProgress;
+                goalName = "설치물 철거하기";
+            }
+            else if (typeName == "UseLoopCode") {
+                currentValue = loopUsageProgress;
+                goalName = "반복문 코드 적용하기";
+            }
+            else if (typeName == "CollectWithStorage") {
+                currentValue = storageCollectionProgress;
+                goalName = "창고로 자원 수집";
+            }
+            else if (typeName == "SellWithMarket") {
+                currentValue = marketSaleProgress;
+                goalName = "판매소로 상품 판매(G)";
+            }
+            else if (typeName == "ChangeMinerName") {
                 currentValue = isMinerNameChanged ? 1 : 0;
                 goalName = "채굴기 이름 지정하기";
             }
@@ -131,7 +169,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
         }
 
         resMgr.EarnGold(0); 
-
         StartQuest(currentQuestId + 1);
     }
     

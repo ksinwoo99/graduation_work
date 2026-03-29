@@ -27,7 +27,9 @@ public abstract class logic_CodingBase : MonoBehaviour
         Valid, 
         Error_LoopLocked,     // 반복문 자체 금지
         Error_LoopLimit,      // 10회 초과
-        Error_InfiniteLocked  // 무한루프 금지
+        Error_InfiniteLocked,  // 무한루프 금지
+        Error_ConveyorLocked,     // 아예 사용 불가
+        Error_ConveyorFastLocked  // 고속 모드 사용 불가
     }
     
     public virtual string GetMachineName()

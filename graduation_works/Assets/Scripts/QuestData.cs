@@ -9,8 +9,12 @@ public enum QuestGoalType {
     CollectCommonResource,
     CollectRareResource,
     CollectSpecialResource,
+    CollectWithStorage,
+    SellWithMarket,
     EarnGold,
-    ChangeMinerName
+    ChangeMinerName,
+    DemolishMachine,
+    UseLoopCode
 }
 
 [System.Serializable]
