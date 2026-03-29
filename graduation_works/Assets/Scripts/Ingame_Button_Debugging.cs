@@ -161,6 +161,10 @@ public class Ingame_Button_Debugging : MonoBehaviour
                     SetUI("아직 무한 루프(while)를 사용할 수 있는 시스템 권한이 없습니다!" + timeMsg, Color.red, true);
                 } else if (applyResult == -4) {
                     SetUI("기계의 이름(name 변수)을 필수로 지정해야 합니다!" + timeMsg, Color.red, true);
+                } else if (applyResult == -5) {
+                    SetUI("시스템 권한 부족: 아직 컨베이어 벨트를 가동할 수 없습니다!" + timeMsg, Color.red, true);
+                } else if (applyResult == -6) {
+                    SetUI("시스템 권한 부족: 아직 컨베이어 벨트 고속(fast) 모드를 사용할 수 없습니다!" + timeMsg, Color.red, true);
                 } else {
                     SetUI("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다." + timeMsg, Color.red, true);
                 }

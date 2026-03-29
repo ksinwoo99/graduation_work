@@ -18,7 +18,6 @@ public class DemolishedInfo {
     public SpentCost originalCost; 
     public TileBase originalTile;
     public SpentCost refundedCost; 
-    // ✨ [추가] 2x2 등 여러 칸을 차지하는 건물의 철거 복구를 위해 모든 좌표를 저장합니다.
     public List<Vector3Int> occupiedCells = new List<Vector3Int>(); 
 }
 
@@ -90,13 +89,11 @@ public class Ingame_Manager_Build : MonoBehaviour {
         return tilemapInstallations.HasTile(pos) || installedObjects.ContainsKey(pos);
     }
 
-    // ✨ [핵심 추가 1] 건물의 크기(예: 2x2)와 방향을 계산해서 차지하는 모든 타일 좌표를 반환하는 함수
     public List<Vector3Int> GetBuildingCells(Vector3Int origin, Vector2Int baseSize, BuildDirection dir) {
         List<Vector3Int> cells = new List<Vector3Int>();
         int width = baseSize.x;
         int height = baseSize.y;
 
-        // 회전 시 가로세로 길이 반전 (1x2 건물 등을 위함)
         if (dir == BuildDirection.Left || dir == BuildDirection.Right) {
             width = baseSize.y;
             height = baseSize.x;
@@ -110,7 +107,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         return cells;
     }
 
-    // ✨ [핵심 추가 2] 여러 칸이 모두 비어있고, 바닥이 깔려있는지 검사
     public bool CanBuildArea(List<Vector3Int> cells) {
         foreach (var cell in cells) {
             if (!tilemapFloor.HasTile(cell) || IsOccupied(cell)) return false;
@@ -152,7 +148,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
             if (Shared_Manager_Session.IsVisiting) return; 
 
             if (isDemolishMode) TryDemolishMachine(cellPos);
-            // ✨ [수정됨] 선택된 타일이 있을 때(건축 모드일 때)만 건축을 시도합니다!
             else if (selectedTile != null) { 
                 if (!isPlacementAllowed) {
                     Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -203,7 +198,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void OnClick_RollbackSave() {
-        // ✨ [수정] 2x2 건물 롤백 시 4칸을 모두 삭제하도록 수정
         foreach (Vector3Int pos in sessionBuilt) {
             if (installedObjects.ContainsKey(pos)) {
                 GameObject machine = installedObjects[pos];
@@ -235,7 +229,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             if (info.machineInstance != null) info.machineInstance.SetActive(true);
             
-            // ✨ [수정] 2x2 건물 복구 시 4칸 모두 딕셔너리에 복구
             foreach(var cell in info.occupiedCells) {
                 installedObjects[cell] = info.machineInstance;
             }
@@ -348,7 +341,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
             if (IsOccupied(pos)) {
                 GameObject targetObj = installedObjects.ContainsKey(pos) ? installedObjects[pos] : null;
                 if (targetObj != null) {
-                    // 철거 모드 시 2x2 건물의 모든 타일이 빨갛게 변하도록
                     foreach (var kvp in installedObjects) {
                         if (kvp.Value == targetObj) {
                             tilemapPreview.SetTile(kvp.Key, demolishBaseTile); 
@@ -361,21 +353,14 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
 
         if (selectedInfo != null) {
-            // 1. 건물이 차지할 모든 칸을 가져옵니다. (2x2라면 4칸)
             List<Vector3Int> cells = GetBuildingCells(pos, selectedInfo.buildingSize, currentDirection);
-            
-            // 2. 4칸 중 단 한 칸이라도 막혀있거나 타일 바깥이라면 false!
             bool canBuild = CanBuildArea(cells);
-            
-            // 3. 상태에 따라 전체 이미지의 색상을 초록색 또는 빨간색으로 결정
             Color previewColor = (isPlacementAllowed && canBuild) ? new Color(0, 1, 0, 0.6f) : new Color(1, 0, 0, 0.6f);
 
-            // ✨ 4. 기존처럼 여러 칸에 그리지 않고, 기준점(pos)에 딱 하나의 이미지만 그립니다!
             tilemapPreview.SetTile(pos, selectedTile);
             tilemapPreview.SetTileFlags(pos, TileFlags.None);
-            tilemapPreview.SetColor(pos, previewColor); // 이미지 하나가 통째로 붉게/초록으로 변함
+            tilemapPreview.SetColor(pos, previewColor); 
 
-            // ✨ 5. 이 하나의 이미지를 2x2 (또는 지정된 크기)로 쫙 늘리고 정중앙으로 이동시킵니다.
             int w = selectedInfo.buildingSize.x;
             int h = selectedInfo.buildingSize.y;
             
@@ -391,18 +376,20 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 angle = -(int)currentDirection * 90f;
             }
 
-            // 오프셋: 기준점(좌하단)에 있는 이미지를 2x2 영역의 정중앙으로 끌어옵니다.
             Vector3 offset = new Vector3((w - 1) / 2f, (h - 1) / 2f, 0f);
-            
-            // 스케일: 이미지를 2배 (건물의 크기 비율)로 잡아늘립니다.
             Vector3 scale = new Vector3(selectedInfo.buildingSize.x, selectedInfo.buildingSize.y, 1f);
 
-            // 계산된 위치, 회전, 크기를 적용!
+            // (ShowPreview 함수 내부 중간쯤에 있는 이 부분을 찾아 덮어씌우세요!)
             Matrix4x4 matrix = Matrix4x4.TRS(offset, Quaternion.Euler(0, 0, angle), scale);
             tilemapPreview.SetTransformMatrix(pos, matrix);
 
-            // 화살표가 있다면 화살표 위치도 건물의 정중앙으로 예쁘게 맞춰줍니다.
-            if (previewArrowPrefab != null) {
+            // ✨ [수정] 1x1, 2x2 상관없이 창고나 판매소(logic_Storage 보유)라면 화살표를 숨깁니다!
+            bool showArrow = true;
+            if (selectedInfo.machinePrefab != null && selectedInfo.machinePrefab.GetComponentInChildren<logic_Storage>() != null) {
+                showArrow = false;
+            }
+
+            if (previewArrowPrefab != null && showArrow) {
                 if (previewArrowInstance == null) {
                     previewArrowInstance = Instantiate(previewArrowPrefab);
                     previewArrowInstance.name = "PreviewArrow";
@@ -429,7 +416,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         Vector3 tileWorldPos = tilemapInstallations.GetCellCenterWorld(pos);
         tileWorldPos.z = -1f;
 
-        // ✨ [수정] 건물의 크기만큼 공간이 비어있는지 확인!
         List<Vector3Int> cells = GetBuildingCells(pos, selectedInfo.buildingSize, currentDirection);
         if (!CanBuildArea(cells)) {
             ShowFloatingText("설치 공간이 부족합니다!", tileWorldPos);
@@ -472,7 +458,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
                 if (createdProductor != null) createdProductor.InitializeProductor(-1); 
 
-                // ✨ [핵심] 차지하는 모든 칸을 딕셔너리에 등록 (어디를 눌러도 인식되도록)
                 foreach (var cell in cells) {
                     tilemapInstallations.SetTile(cell, null); 
                     if (installedObjects.ContainsKey(cell)) installedObjects[cell] = machine;
@@ -491,14 +476,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
         GameObject targetMachine = installedObjects.ContainsKey(clickPos) ? installedObjects[clickPos] : null;
         if (targetMachine == null) return;
 
-        // ✨ [핵심] 2x2 중 아무 칸이나 클릭해도 건물의 기준점(Origin)과 차지하던 모든 칸을 찾아냅니다.
         Vector3Int originPos = clickPos;
         List<Vector3Int> occupiedCells = new List<Vector3Int>();
 
         foreach (var kvp in installedObjects) {
             if (kvp.Value == targetMachine) {
                 occupiedCells.Add(kvp.Key);
-                // 기준점(결제/방향 데이터가 들어있는 진짜 좌표) 찾기
                 if (installedCosts.ContainsKey(kvp.Key)) originPos = kvp.Key; 
             }
         }
@@ -523,7 +506,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
             originalCost = original,
             originalTile = tilemapInstallations.GetTile(originPos),
             refundedCost = refund,
-            occupiedCells = occupiedCells // 롤백을 위해 저장
+            occupiedCells = occupiedCells 
         };
         
         if (info.machineInstance != null) info.machineInstance.SetActive(false); 
@@ -531,7 +514,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
         installedCosts.Remove(originPos);
         installedDirections.Remove(originPos);
         
-        // 차지하던 모든 칸을 비워줍니다.
         foreach (var cell in occupiedCells) {
             tilemapInstallations.SetTile(cell, null);
             installedObjects.Remove(cell);
@@ -552,6 +534,11 @@ public class Ingame_Manager_Build : MonoBehaviour {
         if (Ingame_Manager_Resource.Instance != null) {
             RefundCost(refund.gold, refund.resources); 
             ShowFloatingText("철거 완료", tileWorldPos); 
+            
+            // ✨ [핵심 추가] 철거 퀘스트 진행도 증가!
+            if (Ingame_Manager_Quest.Instance != null) {
+                Ingame_Manager_Quest.Instance.AddDemolishProgress();
+            }
         }
     }
     
@@ -590,7 +577,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
             if (!installedCosts.ContainsKey(pos)) installedCosts.Add(pos, cost);
         }
 
-        // ✨ [수정] 로드할 때도 대형 건물이면 여러 칸을 선점하도록 처리 (이름으로 추론 방어 코드)
         Vector2Int size = new Vector2Int(1, 1);
         if (prefab.name.Contains("대형") || prefab.name.Contains("도매상") || prefab.name.Contains("Large") || prefab.name.Contains("2x2")) {
             size = new Vector2Int(2, 2);
@@ -606,7 +592,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void ClearAllBuildingsForLoad() {
-        // ✨ [핵심 추가] 불러오기 직전, 바닥에 떨어진 모든 자원/상품을 찾아 싹 지워줍니다!
         Ingame_Item_Dropped[] droppedItems = FindObjectsOfType<Ingame_Item_Dropped>();
         foreach (var item in droppedItems) {
             if (item != null) Destroy(item.gameObject);
@@ -741,20 +726,18 @@ public class Ingame_Manager_Build : MonoBehaviour {
         int storageCount = 0;
         int marketCount = 0;
 
-        // ✨ [핵심 수정] 2x2 건물은 딕셔너리에 4번 들어가 있으므로, 중복 계산을 방지합니다.
         Dictionary<GameObject, int> machineAreaMap = new Dictionary<GameObject, int>();
 
         foreach (GameObject obj in installedObjects.Values) {
             if (obj == null) continue;
             if (!machineAreaMap.ContainsKey(obj)) machineAreaMap[obj] = 0;
-            machineAreaMap[obj]++; // 1칸이면 1, 4칸(2x2)이면 4가 저장됨
+            machineAreaMap[obj]++; 
         }
 
         foreach (var kvp in machineAreaMap) {
             GameObject obj = kvp.Key;
             int area = kvp.Value; 
 
-            // 🎯 면적이 4칸 이상인 건물은 1.5배 효율 가중치 부여! (4칸 -> 6배 효율)
             int weight = area >= 4 ? (int)(area * 1.5f) : area;
 
             if (obj.GetComponent<logic_Miner_Master>() != null) minerCount++;

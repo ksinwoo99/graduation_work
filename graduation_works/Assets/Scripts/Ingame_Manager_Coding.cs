@@ -12,7 +12,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public Button btnVerify;
     public Image statusLight;
     public TextMeshProUGUI txtLoopLevelInfo; 
-    public TextMeshProUGUI txtConveyorSpeedInfo; // ✨ [추가] 컨베이어 속도 상태 텍스트
+    public TextMeshProUGUI txtConveyorSpeedInfo;
 
     [Header("매니저 연결")]
     public Ingame_Manager_Build buildManager;
@@ -27,27 +27,25 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (codingPanel != null) codingPanel.SetActive(false);
         if (btnVerify != null) btnVerify.onClick.AddListener(OnClick_Verify);
         
-        // ✨ [수정] 게임 시작 시 반복문과 컨베이어 상태를 한 번에 갱신합니다!
         UpdateSystemStatusText();
     }
 
-    // ✨ [수정] 이름이 변경되었으며 컨베이어 갱신 로직이 추가되었습니다.
     public void UpdateSystemStatusText() {
         if (Ingame_Manager_Quest.Instance == null) return;
 
-        // 1. 반복문 레벨 표시
         if (txtLoopLevelInfo != null) {
             int lvl = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
-            if (lvl == 0) txtLoopLevelInfo.text = "시스템: [반복문 사용 불가]";
-            else if (lvl == 1) txtLoopLevelInfo.text = "시스템: [for문 최대 10회 가능]";
-            else txtLoopLevelInfo.text = "시스템: [무한 루프 사용 가능]";
+            if (lvl == 0) txtLoopLevelInfo.text = "사용 불가";
+            else if (lvl == 1) txtLoopLevelInfo.text = "최대 10회";
+            else txtLoopLevelInfo.text = "무한 루프 가능";
         }
 
-        // 2. ✨ [핵심 추가] 컨베이어 속도 표시
         if (txtConveyorSpeedInfo != null) {
-            bool isUpgraded = Ingame_Manager_Quest.Instance.isConveyorUpgraded;
-            if (isUpgraded) txtConveyorSpeedInfo.text = "컨베이어: [고속(fast) 모드 해금됨]";
-            else txtConveyorSpeedInfo.text = "컨베이어: [일반(slow) 모드]";
+            int convLevel = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel;
+            
+            if (convLevel == 0) txtConveyorSpeedInfo.text = "사용 불가";
+            else if (convLevel == 1) txtConveyorSpeedInfo.text = "일반(slow) 모드";
+            else txtConveyorSpeedInfo.text = "고속(fast) 모드";
         }
     }
 
@@ -79,7 +77,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (buildManager != null) buildManager.StartBuildMode(tile, btnImage);
         
-        // ✨ 코딩창을 열 때도 상태 텍스트 갱신!
         UpdateSystemStatusText();
 
         CheckCodeAndApply(savedCode);
@@ -171,15 +168,29 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             logic_CodingBase.CodeState state = currentLogic.ValidateCode(validationCode);
 
             if (state == logic_CodingBase.CodeState.Valid) {
-                SetStatus(Color.green, true); return 2; 
+                
+                // ✨ [핵심 추가] 유효한 코드이면서 반복문 키워드가 들어있으면 퀘스트 진행도 증가!
+                string clean = code.Replace(" ", "").ToLower();
+                if (clean.Contains("for") || clean.Contains("while") || clean.Contains("loop:")) {
+                    if (Ingame_Manager_Quest.Instance != null) {
+                        Ingame_Manager_Quest.Instance.AddLoopUsageProgress();
+                    }
+                }
+
+                SetStatus(Color.green, true); 
+                return 2; 
             } else if (state == logic_CodingBase.CodeState.Empty) {
                 SetStatus(Color.yellow, false); return 1; 
             } else if (state == logic_CodingBase.CodeState.Error_LoopLocked) {
                 SetStatus(Color.red, false); return -1; 
             } else if (state == logic_CodingBase.CodeState.Error_LoopLimit) {
-                SetStatus(Color.red, false); return -2; 
+                SetStatus(Color.red, false); return -2;
             } else if (state == logic_CodingBase.CodeState.Error_InfiniteLocked) {
                 SetStatus(Color.red, false); return -3; 
+            } else if (state == logic_CodingBase.CodeState.Error_ConveyorLocked) {
+                SetStatus(Color.red, false); return -5; 
+            } else if (state == logic_CodingBase.CodeState.Error_ConveyorFastLocked) {
+                SetStatus(Color.red, false); return -6; 
             } else {
                 SetStatus(Color.red, false); return 0; 
             }
