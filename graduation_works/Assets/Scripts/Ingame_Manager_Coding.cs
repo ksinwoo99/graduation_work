@@ -14,6 +14,11 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public TextMeshProUGUI txtLoopLevelInfo; 
     public TextMeshProUGUI txtConveyorSpeedInfo;
 
+    [Header("폰트 줌(확대/축소) 설정")] 
+    public float minFontSize = 10f;   
+    public float maxFontSize = 60f;   
+    public float fontZoomSpeed = 3f;  
+
     [Header("매니저 연결")]
     public Ingame_Manager_Build buildManager;
     
@@ -30,6 +35,52 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         UpdateSystemStatusText();
     }
 
+    void Update() {
+        if (codingPanel != null && codingPanel.activeSelf) {
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
+                float scroll = Input.mouseScrollDelta.y;
+                
+                if (scroll != 0) {
+                    var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+                    
+                    if (codeEditor != null) {
+                        TMP_Text[] allTexts = codeEditor.GetComponentsInChildren<TMP_Text>(true);
+                        
+                        if (allTexts.Length > 0) {
+                            float currentSize = allTexts[0].fontSize;
+                            float newSize = Mathf.Clamp(currentSize + (scroll * fontZoomSpeed), minFontSize, maxFontSize);
+                            
+                            // 1. 모든 텍스트 크기 조절
+                            foreach (var txt in allTexts) {
+                                txt.fontSize = newSize;
+                            }
+
+                            // ✨ 2. [추가] 회색 하이라이트 바(LineHighlight)의 높이도 폰트 비율에 맞춰 키워줍니다!
+                            Transform highlight = codeEditor.transform.Find("LineHighlight");
+                            if (highlight != null) {
+                                RectTransform rt = highlight.GetComponent<RectTransform>();
+                                if (rt != null) {
+                                    // 기본 폰트 14일 때 높이가 21이므로, 1.5배 비율을 적용합니다.
+                                    rt.sizeDelta = new Vector2(rt.sizeDelta.x, newSize * 1.5f);
+                                }
+                            }
+                        }
+                    } 
+                    else if (inputField != null && inputField.textComponent != null) {
+                        float currentSize = inputField.textComponent.fontSize;
+                        float newSize = Mathf.Clamp(currentSize + (scroll * fontZoomSpeed), minFontSize, maxFontSize);
+                        
+                        inputField.textComponent.fontSize = newSize;
+                        if (inputField.placeholder != null) {
+                            TMP_Text placeholderText = inputField.placeholder.GetComponent<TMP_Text>();
+                            if (placeholderText != null) placeholderText.fontSize = newSize;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void UpdateSystemStatusText() {
         if (Ingame_Manager_Quest.Instance == null) return;
 
@@ -42,7 +93,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (txtConveyorSpeedInfo != null) {
             int convLevel = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel;
-            
             if (convLevel == 0) txtConveyorSpeedInfo.text = "사용 불가";
             else if (convLevel == 1) txtConveyorSpeedInfo.text = "일반(slow) 모드";
             else txtConveyorSpeedInfo.text = "고속(fast) 모드";
@@ -65,6 +115,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
 
         codingPanel.SetActive(true);
+
         if (titleText != null) titleText.text = $"{displayName}.py";
 
         string savedCode = "";
@@ -168,17 +219,13 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             logic_CodingBase.CodeState state = currentLogic.ValidateCode(validationCode);
 
             if (state == logic_CodingBase.CodeState.Valid) {
-                
-                // ✨ [핵심 추가] 유효한 코드이면서 반복문 키워드가 들어있으면 퀘스트 진행도 증가!
                 string clean = code.Replace(" ", "").ToLower();
                 if (clean.Contains("for") || clean.Contains("while") || clean.Contains("loop:")) {
                     if (Ingame_Manager_Quest.Instance != null) {
                         Ingame_Manager_Quest.Instance.AddLoopUsageProgress();
                     }
                 }
-
-                SetStatus(Color.green, true); 
-                return 2; 
+                SetStatus(Color.green, true); return 2; 
             } else if (state == logic_CodingBase.CodeState.Empty) {
                 SetStatus(Color.yellow, false); return 1; 
             } else if (state == logic_CodingBase.CodeState.Error_LoopLocked) {

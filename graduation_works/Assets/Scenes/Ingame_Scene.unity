@@ -762,7 +762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uACE0\uC131\uB2A5 \uCC44\uAD74\uAE30"
-  codeSyntax: "mining() \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
+  codeSyntax: "mining(resSpecial) \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 1000
   requiredResources:
@@ -934,8 +934,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uC0C1\uD488 \uD310\uB9E4\uC18C"
-  codeSyntax: "\uD310\uB9E4\uCC98\uC6A9 \uCF54\uB4DC"
+  machineName: "\uB3C4\uB9E4\uC18C"
+  codeSyntax: '-'
   buildingSize: {x: 2, y: 2}
   buildCost: 200
   requiredResources: []
@@ -1779,7 +1779,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8"
-  codeSyntax: "\uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8\uC6A9 \uCF54\uB4DC"
+  codeSyntax: "Move() \uD568\uC218\uB97C \uD1B5\uD55C \uC774\uB3D9\uC2DD \uCEE8\uBCA0\uC774\uC5B4
+    \uC791\uB3D9"
   buildingSize: {x: 1, y: 1}
   buildCost: 5
   requiredResources: []
@@ -2168,7 +2169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uC790\uC6D0 \uCC3D\uACE0"
-  codeSyntax: "\uC800\uC7A5\uC18C\uC6A9 \uCF54\uB4DC"
+  codeSyntax: '-'
   buildingSize: {x: 1, y: 1}
   buildCost: 50
   requiredResources: []
@@ -3153,7 +3154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uCD5C\uC2E0 \uAC00\uACF5\uAE30"
-  codeSyntax: Production()
+  codeSyntax: "Producting(High) \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 800
   requiredResources:
@@ -3643,7 +3644,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uAE30\uCD08 \uAC00\uACF5\uAE30"
-  codeSyntax: Producting()
+  codeSyntax: "Producting() \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 200
   requiredResources:
@@ -4698,7 +4699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uACE0\uAE09 \uCC44\uAD74\uAE30"
-  codeSyntax: "mining() \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
+  codeSyntax: "mining(resRare) \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 500
   requiredResources:
@@ -6166,7 +6167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uBBF8\uB798\uD615 \uAC00\uACF5\uAE30"
-  codeSyntax: Production(Common_Resource)
+  codeSyntax: "Producting(Luxury) \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 3000
   requiredResources:
@@ -6561,7 +6562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uC0C1\uD488 \uD310\uB9E4\uC18C"
-  codeSyntax: "\uD310\uB9E4\uCC98\uC6A9 \uCF54\uB4DC"
+  codeSyntax: '-'
   buildingSize: {x: 1, y: 1}
   buildCost: 50
   requiredResources: []
@@ -9994,7 +9995,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 62.170044, y: -2.5697021}
+  m_AnchoredPosition: {x: 62.16992, y: -2.5697021}
   m_SizeDelta: {x: 120.98, y: 25.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1140857397
@@ -11174,7 +11175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uCD5C\uACE0\uAE09 \uAC00\uACF5\uAE30"
-  codeSyntax: producting(Premium)
+  codeSyntax: "Producting(Premium) \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 1500
   requiredResources:
@@ -12934,6 +12935,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c91100996290e5b4b8a30b41267dbc4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  questPanel: {fileID: 0}
+  btnCloseQuest: {fileID: 0}
   questTitleText: {fileID: 1066303121}
   questGoalText: {fileID: 1399273639}
   rewardText: {fileID: 1155617578}
@@ -13697,8 +13700,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uC790\uC6D0 \uCC3D\uACE0"
-  codeSyntax: "\uC800\uC7A5\uC18C\uC6A9 \uCF54\uB4DC"
+  machineName: "\uB300\uD615 \uCC3D\uACE0"
+  codeSyntax: '-'
   buildingSize: {x: 2, y: 2}
   buildCost: 200
   requiredResources: []
@@ -13989,7 +13992,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -50.002563, y: -39.999023}
+  m_AnchoredPosition: {x: -50.00244, y: -39.999023}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1581588008
@@ -14226,6 +14229,9 @@ MonoBehaviour:
   statusLight: {fileID: 3758114311738337546}
   txtLoopLevelInfo: {fileID: 1549217646}
   txtConveyorSpeedInfo: {fileID: 577882029}
+  minFontSize: 10
+  maxFontSize: 60
+  fontZoomSpeed: 3
   buildManager: {fileID: 1186738512}
   currentLogic: {fileID: 46644562}
 --- !u!4 &1617483140
@@ -17572,7 +17578,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 62.619995, y: 186.2}
+  m_AnchoredPosition: {x: 62.620117, y: 186.2}
   m_SizeDelta: {x: 125.24, y: 59.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2042317030
@@ -17688,7 +17694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   machineName: "\uBBF8\uB798\uD615 \uCC44\uAD74\uAE30"
-  codeSyntax: "mining() \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
+  codeSyntax: "mining(resExotic) \uD568\uC218\uB97C \uD1B5\uD55C \uCC44\uAD74"
   buildingSize: {x: 1, y: 1}
   buildCost: 2000
   requiredResources:
