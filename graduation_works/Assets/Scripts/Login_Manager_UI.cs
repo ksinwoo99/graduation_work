@@ -24,7 +24,7 @@ public class Login_Manager_UI : MonoBehaviour {
     public RectTransform registerPanelRect;
     public RectTransform registerSuccessPanelRect;
 
-    private Vector2 originalRegisterSize = new Vector2(500, 380);
+    private Vector2 originalRegisterSize = new Vector2(500, 430);
     private Vector2 expandedRegisterSize = new Vector2(500, 820);
     private Dictionary<GameObject, Coroutine> hideRoutines = new();
 

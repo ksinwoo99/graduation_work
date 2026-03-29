@@ -11,7 +11,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public TMP_InputField inputField;
     public Button btnVerify;
     public Image statusLight;
-    public TextMeshProUGUI txtLoopLevelInfo; // ✨ 반복문 상태 텍스트
+    public TextMeshProUGUI txtLoopLevelInfo; 
+    public TextMeshProUGUI txtConveyorSpeedInfo; // ✨ [추가] 컨베이어 속도 상태 텍스트
 
     [Header("매니저 연결")]
     public Ingame_Manager_Build buildManager;
@@ -26,17 +27,27 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (codingPanel != null) codingPanel.SetActive(false);
         if (btnVerify != null) btnVerify.onClick.AddListener(OnClick_Verify);
         
-        // ✨ [핵심 해결] 게임이 시작되자마자 즉시 텍스트를 갱신합니다!
-        UpdateLoopLevelText();
+        // ✨ [수정] 게임 시작 시 반복문과 컨베이어 상태를 한 번에 갱신합니다!
+        UpdateSystemStatusText();
     }
 
-    // ✨ [추가] 텍스트 갱신만 전담하는 깔끔한 함수
-    public void UpdateLoopLevelText() {
-        if (txtLoopLevelInfo != null && Ingame_Manager_Quest.Instance != null) {
+    // ✨ [수정] 이름이 변경되었으며 컨베이어 갱신 로직이 추가되었습니다.
+    public void UpdateSystemStatusText() {
+        if (Ingame_Manager_Quest.Instance == null) return;
+
+        // 1. 반복문 레벨 표시
+        if (txtLoopLevelInfo != null) {
             int lvl = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
             if (lvl == 0) txtLoopLevelInfo.text = "시스템: [반복문 사용 불가]";
             else if (lvl == 1) txtLoopLevelInfo.text = "시스템: [for문 최대 10회 가능]";
             else txtLoopLevelInfo.text = "시스템: [무한 루프 사용 가능]";
+        }
+
+        // 2. ✨ [핵심 추가] 컨베이어 속도 표시
+        if (txtConveyorSpeedInfo != null) {
+            bool isUpgraded = Ingame_Manager_Quest.Instance.isConveyorUpgraded;
+            if (isUpgraded) txtConveyorSpeedInfo.text = "컨베이어: [고속(fast) 모드 해금됨]";
+            else txtConveyorSpeedInfo.text = "컨베이어: [일반(slow) 모드]";
         }
     }
 
@@ -68,8 +79,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (buildManager != null) buildManager.StartBuildMode(tile, btnImage);
         
-        // 코딩창을 열 때도 상태가 바뀌었을 수 있으니 한 번 더 갱신!
-        UpdateLoopLevelText();
+        // ✨ 코딩창을 열 때도 상태 텍스트 갱신!
+        UpdateSystemStatusText();
 
         CheckCodeAndApply(savedCode);
     }
