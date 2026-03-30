@@ -13,24 +13,30 @@ public class ResourceCost
 // 🗂️ 모든 아이템 버튼의 공통 조상
 public class Iteminfo_Base : MonoBehaviour
 {
-    [Header("📝 기본 정보")]
+    [Header("기본 정보")]
     public string machineName = "기계 이름";
+    
+    // ✨ [추가] 기계에 대한 상세 설명
+    [Header("설치물 설명")]
+    [TextArea(3, 5)] 
+    public string machineDescription = "기계가 하는 역할을 설명해주세요.";
     
     [TextArea(2, 4)] 
     public string codeSyntax = "사용 예시:\nmining()";
 
     // ✨ [추가] 건물이 차지하는 타일 크기 (기본값은 1x1)
-    [Header("📐 크기 정보")]
+    [Header("크기 정보")]
     public Vector2Int buildingSize = new Vector2Int(1, 1);
     
-    [Header("💰 설치 비용")]
+    [Header("설치 비용")]
     public int buildCost = 100; 
     
     public List<ResourceCost> requiredResources = new List<ResourceCost>();
     
-    [Header("🏗️ 설치 정보")]
+    [Header("설치 정보")]
     public GameObject machinePrefab; 
     public TileBase iconTile;        
+    
 
     public logic_CodingBase GetLogicFromPrefab()
     {
