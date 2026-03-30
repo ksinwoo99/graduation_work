@@ -46,4 +46,10 @@ public class logic_Storage : logic_CodingBase {
             }
         }
     }
+    
+    // 정지 기능을 무시하고 무조건 켜진 상태 유지
+    public override void ToggleOperation() 
+    {
+        isOperating = true; 
+    }
 }

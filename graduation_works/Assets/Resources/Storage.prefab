@@ -145,5 +145,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildManager: {fileID: 0}
   myTile: {fileID: 0}
+  statusIconRenderer: {fileID: 0}
+  spriteRunning: {fileID: 0}
+  spriteStopping: {fileID: 0}
+  spriteStopped: {fileID: 0}
+  isOperating: 1
+  isStopping: 0
   acceptResource: 1
   acceptProduct: 0
