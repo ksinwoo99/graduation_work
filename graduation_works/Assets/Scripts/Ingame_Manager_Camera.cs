@@ -43,6 +43,9 @@ public class Ingame_Manager_Camera : MonoBehaviour
 
     void HandleZoom()
     {
+        // ✨ [핵심 추가] 컨트롤(Ctrl) 키를 누르고 있다면, 코딩창 확대/축소 중이므로 카메라 줌을 완벽히 차단합니다!
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return;
+
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
         {
