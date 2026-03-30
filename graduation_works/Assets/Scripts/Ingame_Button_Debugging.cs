@@ -37,6 +37,11 @@ public class MLSubmitRequest
     public bool is_success;
     public float execution_time;
     public string output_log;
+    public int res_common;
+    public int res_rare;
+    public int res_special;
+    public int res_exotic;
+    public int gold;
 }
 // ML 응답용
 [System.Serializable]
@@ -167,9 +172,8 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
     IEnumerator SendLogToPythonDB(string userId, string machineType, string code, bool isPyValid, bool isMachValid, bool isSuccess, float execTime, string outputLog)
     {
-        string logUrl = "http://127.0.0.1:8000/api/submit_code";       // 로컬 테스트용
-        // string logUrl = "http://13.237.51.219:8000/api/submit_code"; // AWS
-
+        // string logUrl = "http://127.0.0.1:8000/api/submit_code";       // 로컬 테스트용
+        string logUrl = "http://13.237.51.219:8000/api/submit_code"; // AWS
         MLSubmitRequest mlData = new MLSubmitRequest
         {
             user_id = userId,
@@ -181,7 +185,14 @@ public class Ingame_Button_Debugging : MonoBehaviour
             execution_time = execTime,
             output_log = outputLog
         };
-
+        if (Ingame_Manager_Resource.Instance != null)
+        {
+            mlData.res_common = Ingame_Manager_Resource.Instance.resCommon;
+            mlData.res_rare = Ingame_Manager_Resource.Instance.resRare;
+            mlData.res_special = Ingame_Manager_Resource.Instance.resSpecial;
+            mlData.res_exotic = Ingame_Manager_Resource.Instance.resExotic;
+            mlData.gold = Ingame_Manager_Resource.Instance.currentGold; // 드디어 currentGold 적용!
+        }
         string json = JsonUtility.ToJson(mlData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(json);
 
