@@ -152,7 +152,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 if (!isPlacementAllowed) {
                     Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     clickPos.z = -5f;
-                    ShowFloatingText("코드 오류!", clickPos);
+                    ShowFloatingText("코드 오류.", clickPos);
                 } else TryBuildMachine(cellPos);
             }
         }
@@ -277,7 +277,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         if (codingManager != null) {
             logic_CodingBase prefabLogic = info.GetLogicFromPrefab();
-            if (prefabLogic != null) {
+            
+            if (prefabLogic != null && !(prefabLogic is logic_Storage)) {
                 string engName = info.machinePrefab != null ? info.machinePrefab.name : info.machineName;
                 int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
                 codingManager.OpenFromExternal(mId, info.machineName, info.iconTile, buttonImage, prefabLogic);
@@ -359,7 +360,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             tilemapPreview.SetTile(pos, selectedTile);
             tilemapPreview.SetTileFlags(pos, TileFlags.None);
-            tilemapPreview.SetColor(pos, previewColor); 
+            tilemapPreview.SetColor(pos, previewColor);
 
             int w = selectedInfo.buildingSize.x;
             int h = selectedInfo.buildingSize.y;
@@ -377,13 +378,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
             }
 
             Vector3 offset = new Vector3((w - 1) / 2f, (h - 1) / 2f, 0f);
-            Vector3 scale = new Vector3(selectedInfo.buildingSize.x, selectedInfo.buildingSize.y, 1f);
 
-            // (ShowPreview 함수 내부 중간쯤에 있는 이 부분을 찾아 덮어씌우세요!)
+            // ✨ [핵심 해결] 1x1짜리 아이콘 타일 그림을 실제 건물 크기(2x2 등)에 맞게 쫙 늘려줍니다.
+            Vector3 scale = new Vector3(selectedInfo.buildingSize.x, selectedInfo.buildingSize.y, 1f);
             Matrix4x4 matrix = Matrix4x4.TRS(offset, Quaternion.Euler(0, 0, angle), scale);
             tilemapPreview.SetTransformMatrix(pos, matrix);
 
-            // ✨ [수정] 1x1, 2x2 상관없이 창고나 판매소(logic_Storage 보유)라면 화살표를 숨깁니다!
             bool showArrow = true;
             if (selectedInfo.machinePrefab != null && selectedInfo.machinePrefab.GetComponentInChildren<logic_Storage>() != null) {
                 showArrow = false;
@@ -404,6 +404,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 
                 float arrowAngle = -(int)currentDirection * 90f; 
                 previewArrowInstance.transform.rotation = Quaternion.Euler(0, 0, arrowAngle);
+            } else {
+                if (previewArrowInstance != null) previewArrowInstance.SetActive(false);
             }
         } else {
             if (previewArrowInstance != null) previewArrowInstance.SetActive(false);
@@ -418,7 +420,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         List<Vector3Int> cells = GetBuildingCells(pos, selectedInfo.buildingSize, currentDirection);
         if (!CanBuildArea(cells)) {
-            ShowFloatingText("설치 공간이 부족합니다!", tileWorldPos);
+            ShowFloatingText("설치 공간이 부족합니다.", tileWorldPos);
             return;
         }
 
@@ -432,7 +434,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         
         if (Ingame_Manager_Resource.Instance != null) {
             if (!CanAfford(goldCost, resCosts)) {
-                ShowFloatingText("자원이 부족합니다!", tileWorldPos);
+                ShowFloatingText("자원이 부족합니다.", tileWorldPos);
                 return;
             }
 
@@ -446,8 +448,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             if (installedDirections.ContainsKey(pos)) installedDirections[pos] = currentDirection;
             else installedDirections.Add(pos, currentDirection);
-            CreateInstalledArrow(pos, currentDirection);
-
+            
             if (selectedInfo.machinePrefab != null) {
                 GameObject machine = Instantiate(selectedInfo.machinePrefab, tileWorldPos, Quaternion.identity);
                 machine.SendMessage("SetDirection", (int)currentDirection, SendMessageOptions.DontRequireReceiver);
@@ -466,6 +467,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 
                 if (!sessionBuilt.Contains(pos)) sessionBuilt.Add(pos);
             }
+
+            CreateInstalledArrow(pos, currentDirection);
         }
     }
 
@@ -533,12 +536,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         if (Ingame_Manager_Resource.Instance != null) {
             RefundCost(refund.gold, refund.resources); 
-            ShowFloatingText("철거 완료", tileWorldPos); 
-            
-            // ✨ [핵심 추가] 철거 퀘스트 진행도 증가!
-            if (Ingame_Manager_Quest.Instance != null) {
-                Ingame_Manager_Quest.Instance.AddDemolishProgress();
-            }
+            ShowFloatingText("철거 완료.", tileWorldPos); 
         }
     }
     
@@ -621,6 +619,13 @@ public class Ingame_Manager_Build : MonoBehaviour {
     void CreateInstalledArrow(Vector3Int pos, BuildDirection dir) {
         if (installedArrowDict.ContainsKey(pos)) return;
         if (previewArrowPrefab == null) return;
+
+        if (installedObjects.ContainsKey(pos)) {
+            GameObject obj = installedObjects[pos];
+            if (obj != null && obj.GetComponentInChildren<logic_Storage>() != null) {
+                return; 
+            }
+        }
 
         GameObject arrow = Instantiate(previewArrowPrefab);
         arrow.name = $"InstalledArrow_{pos.x}_{pos.y}";

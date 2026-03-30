@@ -7,6 +7,7 @@ public class Ingame_UI_MachineInfo : MonoBehaviour
     public TextMeshProUGUI txtMachineName;
     public TextMeshProUGUI txtSyntax;
     public TextMeshProUGUI txtCost;
+    public TextMeshProUGUI txtDescription; // ✨ [추가] 설명 텍스트를 띄울 UI
 
     public void ShowInfo(Iteminfo_Base info)
     {
@@ -16,6 +17,9 @@ public class Ingame_UI_MachineInfo : MonoBehaviour
         
         if (txtMachineName != null) txtMachineName.text = info.machineName;
         if (txtSyntax != null) txtSyntax.text = info.codeSyntax;
+        
+        // ✨ [핵심 추가] Iteminfo_Base에 적힌 설명을 UI 텍스트에 적용합니다.
+        if (txtDescription != null) txtDescription.text = info.machineDescription;
         
         if (txtCost != null)
         {
