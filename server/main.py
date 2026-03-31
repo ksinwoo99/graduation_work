@@ -33,10 +33,11 @@ class CodeSubmitRequest(BaseModel):
     source_code: str         # 유저가 작성한 코드 원본
     
     # 자원 보유량 변수
-    # res_common: int
-    # res_rare: int
-    # res_special: int
-    # res_exotic: int
+    res_common: int = 0
+    res_rare: int = 0
+    res_special: int = 0
+    res_exotic: int = 0
+    gold: int = 0
 
     is_python_valid: bool    # 파이썬 문법 검사 및 통과 여부
     is_machine_valid: bool   # 유니티 기계 조건 통과 여부
@@ -91,12 +92,22 @@ def generate_hint(request: CodeSubmitRequest, calculated_score: float):
         
     # 2단계 실패 : 기계별 문법에 따른 힌트 (추가 예정)
     if not request.is_machine_valid:
-        if request.machine_type == "":
-            return "이 기계는 채굴(mining)에 특화되어 있습니다. 다른 명령어를 입력하지는 않았나요?"
-        elif request.machine_type == "":
+        source_code = request.source_code.replace(" ", "") # 공백을 제거하여 검사하기 쉽게 만듦
+        
+        # [핵심 추가] name 변수 할당 누락 체크
+        if "name=" not in source_code:
+            return "기계를 작동시키려면 먼저 이름을 지어줘야 해요! 코드 맨 윗줄에 'name = \"이름\"'을 추가해보세요."
+
+        # 기계 타입별 특화 힌트
+        if request.machine_type == "Miner_Common": 
+            if "mining()" not in source_code:
+                return "이 기계는 채굴(mining)에 특화되어 있습니다. 다른 명령어를 입력하지는 않았나요?"
+            
+        elif request.machine_type == "다른_머신_타입": # 나중에 다른 기계 추가 시 활용
             return "이 기계는..."
+            
         return "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
-    
+
     # 글자 자체에서 뽑아낸 특징
     features = extract_features(request.source_code)
 
@@ -151,13 +162,16 @@ async def submit_code(request: CodeSubmitRequest):
         # 로그 저장
         insert_sql = """
             INSERT INTO code_logs 
-            (user_pk, machine_type, source_code, is_success, output_log, execution_time, score, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+            (user_pk, machine_type, source_code, is_success, output_log, execution_time, score, 
+             ast_complexity, res_common, res_rare, res_special, res_exotic, gold, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
         """
 
         cursor.execute(insert_sql, (
             real_user_pk, request.machine_type, request.source_code, 
-            request.is_success, request.output_log, request.execution_time, calculated_score
+            request.is_success, request.output_log, request.execution_time, calculated_score,
+            0, # 👈 ast_complexity 수정 필요
+            request.res_common, request.res_rare, request.res_special, request.res_exotic, request.gold
         ))
         
         conn.commit()
