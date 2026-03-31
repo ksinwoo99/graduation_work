@@ -190,7 +190,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
     IEnumerator SendLogToPythonDB(string userId, string machineType, string code, bool isPyValid, bool isMachValid, bool isSuccess, float execTime, string outputLog)
     {
         // string logUrl = "http://127.0.0.1:8000/api/submit_code";       // 로컬 테스트용
-        string logUrl = "http://13.237.51.219:8000/api/submit_code"; // AWS
+        string logUrl = "http://13.237.51.219:8001/api/submit_code"; // AWS
         MLSubmitRequest mlData = new MLSubmitRequest
         {
             user_id = userId,
