@@ -6,22 +6,23 @@ using System.Text.RegularExpressions;
 public class logic_Conveyor : logic_CodingBase { 
     
     [Header("컨베이어 설정")]
-    public float animSpeed = 0.4f; // 기본은 느리게 시작
+    public float animSpeed = 0.4f; 
     public Sprite[] animSprites;   
 
     [Header("상태 (자동할당)")]
     public BuildDirection myDirection = BuildDirection.Down;
     private SpriteRenderer spriteRenderer;
-    public bool isWorking = true; 
+    
+    // ✨ [수정] 처음 지었을 때는 코드가 없으니 일단 정지 상태(false)로 둡니다!
+    public bool isWorking = false; 
 
-    // 실제 아이템 이동에 걸리는 시간
     public float itemMoveDuration = 2.0f; 
 
     private int currentFrame = 0; 
 
     protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        base.Awake(); // 부모의 Awake(상태 아이콘 찾기) 실행!
+        base.Awake(); 
     }
 
     void Start() {
@@ -31,48 +32,48 @@ public class logic_Conveyor : logic_CodingBase {
         StartCoroutine(ConveyorAnimRoutine());
     }
 
-    public override string GetDefaultCode() { 
-        return "name = \"컨베이어 벨트\"\nmove()"; 
+    // ✨ [핵심 1] 컨베이어를 지었을 때 기본적으로 코딩 창이 비어있게 만듭니다.
+    public override string GetDefaultCode() {
+        return ""; 
     }
 
-    // ✨ [핵심 로직] 파이썬 코드를 검사하고 문자에 따라 속도를 적용하는 함수
-    // ValidateCode 함수 전체를 덮어씌워 주세요.
+    // ✨ [핵심 2] 코드가 없으면 멈추고, move()가 확인되면 즉시 가동합니다!
     public override CodeState ValidateCode(string code) {
-        Match match = Regex.Match(code, @"move\(\s*([^)]*)\s*\)");
-        
-        if (!match.Success) return CodeState.Error;
+        string noTags = Regex.Replace(code, "<.*?>", string.Empty);
+        string cleanCode = Regex.Replace(noTags, @"\s+", "").ToLower();
 
-        string arg = match.Groups[1].Value.Trim().Replace("\"", "").Replace("'", "").ToLower();
-
-        // ✨ 퀘스트 매니저에서 현재 컨베이어 해금 레벨(0, 1, 2)을 가져옵니다.
-        int convLevel = 0;
-        if (Ingame_Manager_Quest.Instance != null) {
-            convLevel = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel; 
+        if (string.IsNullOrEmpty(cleanCode)) {
+            isWorking = false; // 코드가 지워지면 멈춤
+            return CodeState.Empty;
         }
 
-        // 🚨 0단계: 아예 사용 불가!
-        if (convLevel == 0) return CodeState.Error_ConveyorLocked;
-
-        // 🟢 1단계: 일반 속도 (slow) 통과
-        if (string.IsNullOrEmpty(arg) || arg == "slow") {
-            itemMoveDuration = 2.0f; 
-            animSpeed = 0.4f;        
+        if (cleanCode.Contains("move()")) {
+            isWorking = true; // 정상 코드면 작동 시작!
+            ApplyCurrentSpeed(); 
             return CodeState.Valid;
         }
 
-        // 🟢 2단계: 빠른 속도 (fast) 검사
-        if (arg == "fast") {
-            if (convLevel < 2) {
-                // 아직 고속 모드가 해금되지 않았을 때!
-                return CodeState.Error_ConveyorFastLocked; 
-            }
-
-            itemMoveDuration = 1.0f; 
-            animSpeed = 0.2f;        
-            return CodeState.Valid;
-        }
-
+        isWorking = false; // 오타가 나면 멈춤
         return CodeState.Error;
+    }
+
+    // ✨ [핵심 3] 글로벌 업그레이드 레벨에 따라 3단계 속도를 자동으로 세팅해줍니다.
+    public void ApplyCurrentSpeed() {
+        int level = 0;
+        if (Ingame_Manager_Quest.Instance != null) {
+            level = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel;
+        }
+
+        if (level == 0) { // 0단계 (Slow)
+            itemMoveDuration = 2.0f;
+            animSpeed = 0.4f;
+        } else if (level == 1) { // 1단계 (Normal)
+            itemMoveDuration = 1.0f;
+            animSpeed = 0.2f;
+        } else { // 2단계 (Fast)
+            itemMoveDuration = 0.5f;
+            animSpeed = 0.1f;
+        }
     }
 
     public void SetDirection(int dirIndex) {
@@ -98,6 +99,9 @@ public class logic_Conveyor : logic_CodingBase {
         while (true) {
             bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
             bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
+
+            // ✨ 실시간으로 업그레이드 버튼의 상태를 체크해서 속도를 갱신합니다.
+            ApplyCurrentSpeed();
 
             if (!isBuildMode && !isPaused && isWorking && animSprites != null && animSprites.Length > 0) {
                 timer += Time.deltaTime;
