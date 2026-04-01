@@ -23,3 +23,24 @@ UserSettings/
 Thumbs.db
 graduation_works/Assembly-CSharp-firstpass.csproj
 graduation_works/Assembly-CSharp.csproj
+# ======================
+# Python (venv)
+# ======================
+venv/
+.venv/
+env/
+bin/
+lib/
+share/
+Include/
+pyvenv.cfg
+*.py[cod]
+
+*$py.class
+
+# ======================
+# Python Distribution / Build
+# ======================
+dist/
+build/
+*.egg-info/

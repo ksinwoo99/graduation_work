@@ -1,4 +1,4 @@
-# 터미널에 복사해서 실행 : pip install scikit-learn joblib fastapi "uvicorn[standard]" pymysql pandas
+# 터미널에 복사해서 실행 : pip install -r requirements.txt
 import pymysql
 import os
 from dotenv import load_dotenv
