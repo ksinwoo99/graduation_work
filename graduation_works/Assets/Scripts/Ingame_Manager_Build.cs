@@ -83,7 +83,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
     
     void Awake() { if (Instance == null) Instance = this; }
 
-    void Start() { GenerateFloor(); }
+    void Start() { 
+        GenerateFloor();
+    }
 
     public bool IsOccupied(Vector3Int pos) {
         return tilemapInstallations.HasTile(pos) || installedObjects.ContainsKey(pos);
@@ -184,6 +186,12 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void OnClick_ConfirmSave() {
+        if (Ingame_Manager_Quest.Instance != null && sessionDemolished.Count > 0) {
+            for (int i = 0; i < sessionDemolished.Count; i++) {
+                Ingame_Manager_Quest.Instance.AddDemolishProgress();
+            }
+        }
+        
         foreach (var kvp in sessionDemolished) {
             if (kvp.Value.machineInstance != null) Destroy(kvp.Value.machineInstance);
         }
@@ -379,7 +387,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             Vector3 offset = new Vector3((w - 1) / 2f, (h - 1) / 2f, 0f);
 
-            // ✨ [핵심 해결] 1x1짜리 아이콘 타일 그림을 실제 건물 크기(2x2 등)에 맞게 쫙 늘려줍니다.
             Vector3 scale = new Vector3(selectedInfo.buildingSize.x, selectedInfo.buildingSize.y, 1f);
             Matrix4x4 matrix = Matrix4x4.TRS(offset, Quaternion.Euler(0, 0, angle), scale);
             tilemapPreview.SetTransformMatrix(pos, matrix);
@@ -419,10 +426,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         tileWorldPos.z = -1f;
 
         List<Vector3Int> cells = GetBuildingCells(pos, selectedInfo.buildingSize, currentDirection);
-        if (!CanBuildArea(cells)) {
-            ShowFloatingText("설치 공간이 부족합니다.", tileWorldPos);
-            return;
-        }
+        if (!CanBuildArea(cells)) { ShowFloatingText("설치 공간이 부족합니다.", tileWorldPos); return; }
 
         if (sessionDemolished.ContainsKey(pos)) {
             if (sessionDemolished[pos].machineInstance != null) Destroy(sessionDemolished[pos].machineInstance);
@@ -433,11 +437,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         List<ResourceCost> resCosts = selectedInfo.requiredResources;
         
         if (Ingame_Manager_Resource.Instance != null) {
-            if (!CanAfford(goldCost, resCosts)) {
-                ShowFloatingText("자원이 부족합니다.", tileWorldPos);
-                return;
-            }
-
+            if (!CanAfford(goldCost, resCosts)) { ShowFloatingText("자원이 부족합니다.", tileWorldPos); return; }
             PayCost(goldCost, resCosts);
             
             SpentCost newCost = new SpentCost { gold = goldCost };
@@ -453,11 +453,22 @@ public class Ingame_Manager_Build : MonoBehaviour {
                 GameObject machine = Instantiate(selectedInfo.machinePrefab, tileWorldPos, Quaternion.identity);
                 machine.SendMessage("SetDirection", (int)currentDirection, SendMessageOptions.DontRequireReceiver);
 
-                logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
-                if (createdMiner != null) createdMiner.InitializeMiner(-1); 
+                logic_CodingBase logic = machine.GetComponent<logic_CodingBase>();
+                if (logic != null && !(logic is logic_Storage)) {
+                    string engName = selectedInfo.machinePrefab.name;
+                    int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
+                    string code = codingManager != null ? codingManager.GetSavedCode(mId) : "";
 
-                logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
-                if (createdProductor != null) createdProductor.InitializeProductor(-1); 
+                    if (!string.IsNullOrEmpty(code)) {
+                        logic.ValidateCode(code); 
+                        
+                        logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
+                        if (createdMiner != null) createdMiner.InitializeMiner(createdMiner.miningCount); 
+
+                        logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
+                        if (createdProductor != null) createdProductor.InitializeProductor(createdProductor.processingCount); 
+                    }
+                }
 
                 foreach (var cell in cells) {
                     tilemapInstallations.SetTile(cell, null); 
@@ -536,7 +547,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         if (Ingame_Manager_Resource.Instance != null) {
             RefundCost(refund.gold, refund.resources); 
-            ShowFloatingText("철거 완료.", tileWorldPos); 
+            ShowFloatingText("철거 예정", tileWorldPos);
         }
     }
     
@@ -558,14 +569,19 @@ public class Ingame_Manager_Build : MonoBehaviour {
         BuildDirection dir = (BuildDirection)(-(int)(data.rotation_y / 90f));
         machine.SendMessage("SetDirection", (int)dir, SendMessageOptions.DontRequireReceiver);
 
-        logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
-        if (createdMiner != null) createdMiner.InitializeMiner(-1);
-        
-        logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
-        if (createdProductor != null) createdProductor.InitializeProductor(-1);
-
         if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
             codingManager.SetSavedCode(data.machine_type, data.source_code);
+            
+            logic_CodingBase logic = machine.GetComponent<logic_CodingBase>();
+            if (logic != null && !(logic is logic_Storage)) {
+                logic.ValidateCode(data.source_code);
+                
+                logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
+                if (createdMiner != null) createdMiner.InitializeMiner(createdMiner.miningCount);
+                
+                logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
+                if (createdProductor != null) createdProductor.InitializeProductor(createdProductor.processingCount);
+            }
         }
 
         Iteminfo_Base info = prefab.GetComponent<Iteminfo_Base>();
@@ -775,17 +791,26 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    public int GetCurrentExpandCost() { return baseExpandCost * (expandCount + 1); }
+    public int GetCurrentExpandCost() { 
+        if (expandCount == 0) return 0;
+        return baseExpandCost * (expandCount + 1); 
+    }
 
     public bool TryExpandMap() {
         var resMgr = Ingame_Manager_Resource.Instance;
         int cost = GetCurrentExpandCost();
         
-        if (resMgr != null && resMgr.HasEnoughGold(cost)) {
-            resMgr.SpendGold(cost);
+        if (resMgr != null && (cost == 0 || resMgr.HasEnoughGold(cost))) {
+            if (cost > 0) resMgr.SpendGold(cost);
+            
             expandCount++;
             currentMapSize += expandSizeStep; 
             GenerateFloor(); 
+            
+            if (Ingame_Manager_Quest.Instance != null) {
+                Ingame_Manager_Quest.Instance.AddExpandProgress();
+            }
+            
             return true;
         }
         return false;

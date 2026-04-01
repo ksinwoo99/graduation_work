@@ -39,5 +39,9 @@ public class QuestData {
     public int rewardSpecialResource;  
 
     [Header("해금될 하단 메뉴 버튼들")]
-    public List<Button> unlockButtons = new List<Button>(); 
+    public List<Button> unlockButtons = new List<Button>();
+
+    [Header("시스템 해금 보상")]
+    public int rewardLoopLevelUp = 0;      // 1을 넣으면 반복문 레벨업
+    public int rewardConveyorLevelUp = 0;  // 1을 넣으면 컨베이어 레벨업
 }
