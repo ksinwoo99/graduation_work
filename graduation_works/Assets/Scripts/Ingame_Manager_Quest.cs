@@ -9,8 +9,8 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public static Ingame_Manager_Quest Instance;
 
     [Header("UI 연결")]
-    public GameObject questPanel;          // ✨ [추가] 퀘스트 패널 전체 (끄기 위해 필요)
-    public Button btnCloseQuest;           // ✨ [추가] 퀘스트 완료 후 나타날 닫기 버튼
+    public GameObject questPanel;          
+    public Button btnCloseQuest;           
     public TextMeshProUGUI questTitleText; 
     public TextMeshProUGUI questGoalText;  
     public TextMeshProUGUI rewardText;     
@@ -30,7 +30,10 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public int storageCollectionProgress = 0;
     public int marketSaleProgress = 0;
     public int demolishProgress = 0;
-    public int loopUsageProgress = 0;
+    public int expandProgress = 0; // ✨ [추가] 공장 확장 진행도 카운트
+    
+    public bool isMinerLoopUsed = false;
+    public bool isProductorLoopUsed = false;
 
     void Awake() {
         if (Instance == null) Instance = this;
@@ -38,21 +41,17 @@ public class Ingame_Manager_Quest : MonoBehaviour
     }
 
     void Start() {
-        // ✨ 시작할 때 닫기 버튼은 숨겨둡니다.
         if (btnCloseQuest != null) {
             btnCloseQuest.gameObject.SetActive(false);
-            btnCloseQuest.onClick.AddListener(CloseQuestPanel); // 클릭 이벤트 자동 연결
+            btnCloseQuest.onClick.AddListener(CloseQuestPanel); 
         }
 
         StartQuest(0); 
         StartCoroutine(QuestCheckRoutine());
     }
 
-    // ✨ [추가] 퀘스트 패널을 끄는 함수
     public void CloseQuestPanel() {
-        if (questPanel != null) {
-            questPanel.SetActive(false);
-        }
+        if (questPanel != null) questPanel.SetActive(false);
     }
 
     void StartQuest(int id) {
@@ -61,7 +60,9 @@ public class Ingame_Manager_Quest : MonoBehaviour
         storageCollectionProgress = 0;
         marketSaleProgress = 0;
         demolishProgress = 0;
-        loopUsageProgress = 0;
+        expandProgress = 0; // ✨ 새 퀘스트 시작 시 확장 진행도 초기화
+        isMinerLoopUsed = false;
+        isProductorLoopUsed = false;
 
         if (Ingame_Manager_Resource.Instance != null) {
             questStartTotalGold = Ingame_Manager_Resource.Instance.totalEarnedGold;
@@ -78,7 +79,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public void AddStorageProgress(int amount) { storageCollectionProgress += amount; }
     public void AddMarketProgress(int gold) { marketSaleProgress += gold; }
     public void AddDemolishProgress() { demolishProgress++; }
-    public void AddLoopUsageProgress() { loopUsageProgress++; }
+    public void AddExpandProgress() { expandProgress++; } // ✨ [추가] 공장 확장 카운트 증가
 
     void CheckConditions() {
         if (Ingame_Manager_Resource.Instance == null) return;
@@ -88,7 +89,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
             if (questGoalText != null) questGoalText.text = "공장을 자유롭게 확장하세요!";
             if (rewardText != null) rewardText.text = "";
             
-            // ✨ [핵심] 모든 퀘스트 완료 시 닫기 버튼 등장!
             if (btnCloseQuest != null && !btnCloseQuest.gameObject.activeSelf) {
                 btnCloseQuest.gameObject.SetActive(true);
             }
@@ -109,8 +109,13 @@ public class Ingame_Manager_Quest : MonoBehaviour
             if (typeName == "DemolishMachine") {
                 currentValue = demolishProgress; goalName = "설치물 철거하기";
             }
+            // ✨ [추가] 공장 확장 퀘스트 목표 처리
+            else if (typeName == "ExpandFactory") {
+                currentValue = expandProgress; goalName = "공장 부지 확장하기";
+            }
             else if (typeName == "UseLoopCode") {
-                currentValue = loopUsageProgress; goalName = "반복문 코드 적용하기";
+                currentValue = (isMinerLoopUsed ? 1 : 0) + (isProductorLoopUsed ? 1 : 0); 
+                goalName = "채굴기와 가공기에 반복문 적용";
             }
             else if (typeName == "CollectWithStorage") {
                 currentValue = storageCollectionProgress; goalName = "창고로 자원 수집";
@@ -169,6 +174,18 @@ public class Ingame_Manager_Quest : MonoBehaviour
             if (btn != null) {
                 btn.interactable = true;
             }
+        }
+
+        if (quest.rewardLoopLevelUp > 0) {
+            loopUpgradeLevel += quest.rewardLoopLevelUp;
+            // ✨ [수정] 코딩 매니저 대신 통합 UI 매니저 호출!
+            if (Ingame_UI_SystemControl.Instance != null) Ingame_UI_SystemControl.Instance.UpdateAllUI();
+        }
+
+        if (quest.rewardConveyorLevelUp > 0) {
+            conveyorUpgradeLevel += quest.rewardConveyorLevelUp;
+            // ✨ [수정] 코딩 매니저 대신 통합 UI 매니저 호출!
+            if (Ingame_UI_SystemControl.Instance != null) Ingame_UI_SystemControl.Instance.UpdateAllUI();
         }
 
         resMgr.EarnGold(0); 

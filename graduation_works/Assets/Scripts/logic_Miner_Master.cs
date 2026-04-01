@@ -33,20 +33,27 @@ public class logic_Miner_Master : logic_CodingBase {
     }
 
     void Start() {
-        if (spriteRenderer != null && spriteIdle != null)
-            spriteRenderer.sprite = spriteIdle;
+        if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
+        UpdateStatusUI();
     }
 
-    // ✨ [추가] 상태가 변할 때마다 UpdateStatusUI() 호출!
     public override void ToggleOperation() {
+        if (miningCount == 0) {
+            if (Ingame_Manager_Build.Instance != null) {
+                Vector3 pos = transform.position; pos.z = -5f;
+                Ingame_Manager_Build.Instance.ShowFloatingText("명령어가 없습니다.", pos);
+            }
+            return;
+        }
+
         if (isOperating) {
             isOperating = false;
             isStopping = true;
-            UpdateStatusUI(); // ⏳ 멈추는 중 아이콘으로 변경!
+            UpdateStatusUI(); 
         } else {
             isOperating = true;
             isStopping = false;
-            UpdateStatusUI(); // ▶️ 실행 중 아이콘으로 변경!
+            UpdateStatusUI(); 
             InitializeMiner(this.miningCount); 
         }
     }
@@ -62,47 +69,57 @@ public class logic_Miner_Master : logic_CodingBase {
         string cleanCode = System.Text.RegularExpressions.Regex.Replace(noTags, @"\s+", "").ToLower();
         string targetSyntax = requiredSyntax.Replace(" ", "").ToLower();
 
-        if (!cleanCode.Contains(targetSyntax)) return CodeState.Empty;
-
-        // ✨ 퀘스트 매니저에서 현재 해금 레벨을 가져옵니다.
-        int loopLevel = 0;
-        if (Ingame_Manager_Quest.Instance != null) {
-            loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
+        if (!cleanCode.Contains(targetSyntax)) {
+            miningCount = 0; 
+            return CodeState.Empty;
         }
 
-        // 🔄 무한 반복 (while) 검사
+        int loopLevel = 0;
+        if (Ingame_Manager_Quest.Instance != null) loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
+
+        // 1. 무한 반복 (while true) 검사
         if (cleanCode.Contains("whiletrue:") || cleanCode.Contains("while(true)") || cleanCode.Contains("loop:")) {
-            if (loopLevel < 2) return CodeState.Error_InfiniteLocked; // 레벨 2 미만이면 컷!
-            
-            miningCount = -1; // 가공기 스크립트에서는 processingCount = -1; 로 변경해주세요!
+            if (loopLevel < 2) { miningCount = 0; return CodeState.Error_InfiniteLocked; }
+            miningCount = -1; 
             return CodeState.Valid;
         }
 
-        // 🔄 횟수 반복 (for) 검사
+        // 2. 횟수 반복 (for range) 검사
         if (cleanCode.Contains("for") && cleanCode.Contains("range(")) {
-            if (loopLevel < 1) return CodeState.Error_LoopLocked; // 레벨 1 미만이면 컷!
-            
+            if (loopLevel < 1) { miningCount = 0; return CodeState.Error_LoopLocked; }
             try {
                 int start = cleanCode.IndexOf("range(") + 6;
                 int end = cleanCode.IndexOf(")", start);
                 int count = int.Parse(cleanCode.Substring(start, end - start));
-                
-                if (count <= 0) return CodeState.Error;
-                
-                // 레벨 1인데 10회를 초과해서 적었다면 컷!
-                if (loopLevel == 1 && count > 10) return CodeState.Error_LoopLimit;
+                if (count <= 0) { miningCount = 0; return CodeState.Error; }
+                if (loopLevel == 1 && count > 10) { miningCount = 0; return CodeState.Error_LoopLimit; }
 
-                miningCount = count; // 가공기: processingCount = count;
+                miningCount = count; 
                 return CodeState.Valid;
-            } catch { return CodeState.Error; }
+            } catch { miningCount = 0; return CodeState.Error; }
         }
 
-        // ⛏️ 그냥 명령어 1줄만 쳤을 때
+        // ✨ 3. [핵심 추가] 횟수 반복 (while 조건문 숫자로 파싱) 검사
+        System.Text.RegularExpressions.Match whileMatch = System.Text.RegularExpressions.Regex.Match(cleanCode, @"while.*?([0-9]+).*?:");
+        if (whileMatch.Success) {
+            if (loopLevel < 1) { miningCount = 0; return CodeState.Error_LoopLocked; }
+            try {
+                int count = int.Parse(whileMatch.Groups[1].Value);
+                if (count <= 0) { miningCount = 0; return CodeState.Error; }
+                if (loopLevel == 1 && count > 10) { miningCount = 0; return CodeState.Error_LoopLimit; }
+
+                miningCount = count; 
+                return CodeState.Valid;
+            } catch { miningCount = 0; return CodeState.Error; }
+        }
+
+        // 4. 일반 1회 실행
         if (cleanCode.Contains(targetSyntax)) {
-            miningCount = 1; // ✨ [핵심 수정] 이제 기본은 1회 실행 후 멈춥니다! (가공기: processingCount = 1;)
+            miningCount = 1; 
             return CodeState.Valid;
         }
         
+        miningCount = 0;
         return CodeState.Error;
     }
 
@@ -113,7 +130,7 @@ public class logic_Miner_Master : logic_CodingBase {
         
         isOperating = true; 
         isStopping = false;
-        UpdateStatusUI(); // 루프 시작 시 실행 아이콘 확인
+        UpdateStatusUI(); 
 
         while (miningCount == -1 || currentCount < miningCount) {
             float timer = 0;
@@ -137,40 +154,30 @@ public class logic_Miner_Master : logic_CodingBase {
             SpawnResource();
             if (miningCount != -1) currentCount++;
 
-            if (isStopping) {
-                break; // 이번 사이클 끝내고 멈춤 예약 확인
-            }
+            if (isStopping) break; 
         }
         
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
         
         isOperating = false; 
         isStopping = false;
-        UpdateStatusUI(); // ⏹️ 완전히 정지 아이콘으로 변경!
+        UpdateStatusUI(); 
         miningCoroutine = null; 
     }
 
     void SpawnResource() {
         if (dropList.Count == 0 || Ingame_Manager_Build.Instance == null) return;
-
         var buildMgr = Ingame_Manager_Build.Instance;
         Vector3Int myCell = buildMgr.tilemapInstallations.WorldToCell(transform.position);
         Vector3 targetDropPos = buildMgr.GetDropPosition(myCell);
 
-        Vector3 spawnPos = transform.position;
-        spawnPos.y -= 0.5f; 
-        spawnPos.z = -1f;
-
-        float rand = Random.Range(0f, 100f);
-        float cumulative = 0f;
+        Vector3 spawnPos = transform.position; spawnPos.y -= 0.5f; spawnPos.z = -1f;
+        float rand = Random.Range(0f, 100f); float cumulative = 0f;
         GameObject prefabToDrop = null;
 
         foreach (var drop in dropList) {
             cumulative += drop.probability;
-            if (rand <= cumulative) {
-                prefabToDrop = drop.itemPrefab;
-                break;
-            }
+            if (rand <= cumulative) { prefabToDrop = drop.itemPrefab; break; }
         }
 
         if (prefabToDrop == null) prefabToDrop = dropList[dropList.Count - 1].itemPrefab;
