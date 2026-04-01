@@ -113,7 +113,6 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\Scripts\Ingame_System_Save.cs" />
-    <Compile Include="Assets\Scripts\Ingame_UI_ExpandMap.cs" />
     <Compile Include="Assets\Scripts\Menu_Manager_UI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\Scripts\Ingame_Button_Build.cs" />
@@ -138,6 +137,7 @@
     <Compile Include="Assets\Scripts\logic_Storage.cs" />
     <Compile Include="Assets\Scripts\logic_Miner_Master.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
+    <Compile Include="Assets\Scripts\Ingame_UI_SystemControl.cs" />
     <Compile Include="Assets\InGameCodeEditor\Scripts\Lexer\ILexer.cs" />
     <Compile Include="Assets\Scripts\logic_CodingBase.cs" />
     <Compile Include="Assets\InGameCodeEditor\Scripts\AutoIndent.cs" />
