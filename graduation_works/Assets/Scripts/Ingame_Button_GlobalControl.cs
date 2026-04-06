@@ -45,7 +45,7 @@ public class Ingame_Button_GlobalControl : MonoBehaviour
         {
             Vector3 center = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height * 0.8f, 0));
             center.z = -5f;
-            string msg = isStartButton ? $"▶️ {affectedCount}대의 기계 재가동!" : $"⏸️ {affectedCount}대의 기계 정지 대기중...";
+            string msg = isStartButton ? $"{affectedCount}대의 기계 재가동!" : $"{affectedCount}대의 기계 정지 대기중...";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, center);
         }
     }

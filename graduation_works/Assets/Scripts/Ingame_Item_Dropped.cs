@@ -14,6 +14,11 @@ public class Ingame_Item_Dropped : MonoBehaviour
     [Header("상품 모드 (Is Product = true)")]
     public int sellPrice = 100;
 
+    [Header("고품질(대박) 설정")]
+    public GameObject sparkleEffectObject;      // ✨ 인스펙터에서 자식 반짝이 오브젝트를 연결해주세요.
+    public bool isHighQuality = false;          // 외부에서 체크할 변수
+    public float qualityMultiplier = 2.0f;      // ✨ 고품질일 때 자원/가격 배율 (기본 2배)
+
     [Header("연출 설정")]
     public float popHeight = 0.8f;   
     public float popDuration = 0.5f; 
@@ -25,6 +30,22 @@ public class Ingame_Item_Dropped : MonoBehaviour
 
     public void SetDropTarget(Vector3 target) {
         forcedTargetPos = target;
+    }
+
+    // ✨ [핵심 추가] 가공기에서 로또 터지면 이 함수를 호출합니다!
+    public void SetHighQuality()
+    {
+        isHighQuality = true;
+        
+        // 미리 세팅해둔 반짝이 이펙트를 켭니다!
+        if (sparkleEffectObject != null)
+        {
+            sparkleEffectObject.SetActive(true);
+            
+            // 파티클 시스템이라면 재생시켜줍니다.
+            ParticleSystem ps = sparkleEffectObject.GetComponent<ParticleSystem>();
+            if (ps != null) ps.Play();
+        }
     }
 
     void Start() {
@@ -47,15 +68,22 @@ public class Ingame_Item_Dropped : MonoBehaviour
             return;
         }
 
+        // ✨ 수집할 때 고품질 여부에 따라 보상과 텍스트를 다르게 줍니다!
         if (isProduct) {
+            int finalPrice = isHighQuality ? (int)(sellPrice * qualityMultiplier) : sellPrice;
+            
             if (Ingame_Manager_Resource.Instance != null)
-                Ingame_Manager_Resource.Instance.EarnGold(sellPrice);
-            string msg = $"<color=#FFD700>+{sellPrice} G</color>"; 
+                Ingame_Manager_Resource.Instance.EarnGold(finalPrice);
+            
+            string qualityTag = isHighQuality ? "대박! " : "";
+            string msg = $"<color=#FFD700>{qualityTag}+{finalPrice} G</color>"; 
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
         else {
+            int finalAmount = isHighQuality ? (int)(amount * qualityMultiplier) : amount;
+
             if (Ingame_Manager_Resource.Instance != null)
-                Ingame_Manager_Resource.Instance.AddResource(resourceType, amount);
+                Ingame_Manager_Resource.Instance.AddResource(resourceType, finalAmount);
                 
             string krName = GetKoreanName(resourceType);
             
@@ -64,7 +92,8 @@ public class Ingame_Item_Dropped : MonoBehaviour
             if (resourceType == ResourceType.Special) colorCode = "#FF00FF"; 
             if (resourceType == ResourceType.Exotic) colorCode = "#FF4500"; 
             
-            string msg = $"<color={colorCode}>{krName} +{amount}</color>";
+            string qualityTag = isHighQuality ? "대박! " : "";
+            string msg = $"<color={colorCode}>{qualityTag}{krName} +{finalAmount}</color>";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
         Destroy(gameObject); 
@@ -123,7 +152,6 @@ public class Ingame_Item_Dropped : MonoBehaviour
 
                     float moveTimer = 0f;
                     
-                    // ✨ [핵심 수정] 아이템 자체의 기본 속도가 아닌, 현재 밟고 있는 컨베이어의 속도(itemMoveDuration)를 가져옵니다!
                     float currentConveyorSpeed = conveyor.itemMoveDuration; 
 
                     while (moveTimer < currentConveyorSpeed) {
