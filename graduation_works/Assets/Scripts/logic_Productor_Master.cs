@@ -1,32 +1,45 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
+// [데이터 구조] 인스펙터 레시피 등록용
 [System.Serializable]
-public class RequireResourceInfo {
-    public ResourceType resourceType;
-    public int amount;
+public class ProductorRecipe {
+    [Header("코딩 조건 (예: Common, 100)")]
+    public string targetTier = "Common";   
+    public int consumeAmount = 100;        
+    
+    [Header("실제 소모될 자원 종류")]
+    public ResourceType resourceType;      
+    
+    [Header("결과물")]
+    public GameObject resultPrefab;        
 }
 
-[System.Serializable]
-public class ProductorDropRate {
-    public GameObject productPrefab;
-    [Range(0f, 100f)] public float probability;
+// [내부 엔진] 유저 코드 저장용
+public class ProcessRule {
+    public bool isElse = false;
+    public string condRes = "";    
+    public string condOp = "";     
+    public int condVal = 0;        
+    public string actionTier = ""; 
+    public int actionAmount = 0;   
+    public bool hasAction = false; 
 }
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class logic_Productor_Master : logic_CodingBase
 {
-    [Header("코딩 설정")]
-    public string requiredSyntax = "producting()";
+    [Header("다중 가공 레시피 설정 (if-else 연동)")]
+    public List<ProductorRecipe> multiRecipes = new List<ProductorRecipe>();
 
-    [Header("마스터 가공 소모 자원 설정")]
-    public List<RequireResourceInfo> consumeList = new List<RequireResourceInfo>(); 
-    [Header("마스터 가공 결과 (가챠) 설정")]
-    public List<ProductorDropRate> resultList = new List<ProductorDropRate>();
-
+    [Header("가공기 기본 설정")]
     public float checkInterval = 1.0f; 
     public float processingTime = 5.0f; 
+
+    [Header("고품질(대박) 아이템 설정")]
+    [Range(0f, 100f)] public float highQualityChance = 15.0f; // ✨ 15% 확률 인스펙터 노출
 
     [Header("애니메이션 설정")]
     public Sprite spriteIdle;   
@@ -35,6 +48,8 @@ public class logic_Productor_Master : logic_CodingBase
     private SpriteRenderer spriteRenderer;
     public int processingCount = 0; 
     private Coroutine processingCoroutine;
+
+    private List<ProcessRule> parsedRules = new List<ProcessRule>();
 
     protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -51,7 +66,7 @@ public class logic_Productor_Master : logic_CodingBase
         if (processingCount == 0) {
             if (Ingame_Manager_Build.Instance != null) {
                 Vector3 pos = transform.position; pos.z = -5f;
-                Ingame_Manager_Build.Instance.ShowFloatingText("명령어가 없습니다.", pos);
+                Ingame_Manager_Build.Instance.ShowFloatingText("명령어가 없거나 오류가 있습니다.", pos);
             }
             return;
         }
@@ -75,68 +90,98 @@ public class logic_Productor_Master : logic_CodingBase
     }
 
     public override CodeState ValidateCode(string code) {
-        string noTags = System.Text.RegularExpressions.Regex.Replace(code, "<.*?>", string.Empty);
-        string cleanCode = System.Text.RegularExpressions.Regex.Replace(noTags, @"\s+", "").ToLower();
-        string targetSyntax = requiredSyntax.Replace(" ", "").ToLower();
+        parsedRules.Clear();
+        string noTags = Regex.Replace(code, "<.*?>", string.Empty);
+        string[] lines = noTags.Split('\n', '\r');
+        ProcessRule currentRule = null;
+        bool codeIsValid = false;
 
-        if (!cleanCode.Contains(targetSyntax)) {
-            processingCount = 0;
-            return CodeState.Empty;
+        foreach (string rawLine in lines) {
+            string line = rawLine.Replace(" ", "").ToLower();
+            if (string.IsNullOrEmpty(line)) continue;
+
+            if (line.StartsWith("if")) {
+                Match m = Regex.Match(line, @"if(rescommon|resrare|resspecial|resexotic)(>=|<=|>|<|==)([0-9]+):");
+                if (m.Success) {
+                    currentRule = new ProcessRule { condRes = m.Groups[1].Value, condOp = m.Groups[2].Value, condVal = int.Parse(m.Groups[3].Value) };
+                    parsedRules.Add(currentRule);
+                }
+            } 
+            else if (line.StartsWith("elif")) {
+                Match m = Regex.Match(line, @"elif(rescommon|resrare|resspecial|resexotic)(>=|<=|>|<|==)([0-9]+):");
+                if (m.Success) {
+                    currentRule = new ProcessRule { condRes = m.Groups[1].Value, condOp = m.Groups[2].Value, condVal = int.Parse(m.Groups[3].Value) };
+                    parsedRules.Add(currentRule);
+                }
+            } 
+            else if (line.StartsWith("else:")) {
+                currentRule = new ProcessRule { isElse = true };
+                parsedRules.Add(currentRule);
+            } 
+            else if (line.StartsWith("producting(")) {
+                Match m = Regex.Match(line, @"producting\((common|advanced|hightech|superior),([0-9]+)\)");
+                if (m.Success) {
+                    if (currentRule != null) {
+                        currentRule.actionTier = m.Groups[1].Value;
+                        currentRule.actionAmount = int.Parse(m.Groups[2].Value);
+                        currentRule.hasAction = true;
+                        codeIsValid = true;
+                    } else {
+                        currentRule = new ProcessRule { isElse = true, actionTier = m.Groups[1].Value, actionAmount = int.Parse(m.Groups[2].Value), hasAction = true };
+                        parsedRules.Add(currentRule);
+                        codeIsValid = true;
+                    }
+                }
+            }
         }
 
+        if (!codeIsValid) { processingCount = 0; return CodeState.Error; }
+
+        string cleanCodeAll = Regex.Replace(noTags, @"\s+", "").ToLower();
         int loopLevel = 0;
         if (Ingame_Manager_Quest.Instance != null) loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
 
-        // 1. 무한 반복 검사
-        if (cleanCode.Contains("whiletrue:") || cleanCode.Contains("while(true)") || cleanCode.Contains("loop:")) {
+        if (cleanCodeAll.Contains("whiletrue:") || cleanCodeAll.Contains("while(true)") || cleanCodeAll.Contains("loop:")) {
             if (loopLevel < 2) { processingCount = 0; return CodeState.Error_InfiniteLocked; }
-            processingCount = -1; 
-            return CodeState.Valid;
+            processingCount = -1; return CodeState.Valid;
         }
 
-        // 2. for 횟수 반복 검사
-        if (cleanCode.Contains("for") && cleanCode.Contains("range(")) {
+        Match whileMatch = Regex.Match(cleanCodeAll, @"while.*?([0-9]+).*?:");
+        if (whileMatch.Success && !cleanCodeAll.Contains("whiletrue")) {
             if (loopLevel < 1) { processingCount = 0; return CodeState.Error_LoopLocked; }
-            try {
-                int start = cleanCode.IndexOf("range(") + 6;
-                int end = cleanCode.IndexOf(")", start);
-                int count = int.Parse(cleanCode.Substring(start, end - start));
-                
-                if (count <= 0) { processingCount = 0; return CodeState.Error; }
-                if (loopLevel == 1 && count > 10) { processingCount = 0; return CodeState.Error_LoopLimit; }
-
-                processingCount = count; 
-                return CodeState.Valid;
-            } catch { processingCount = 0; return CodeState.Error; }
+            int count = int.Parse(whileMatch.Groups[1].Value);
+            if (loopLevel == 1 && count > 10) { processingCount = 0; return CodeState.Error_LoopLimit; }
+            processingCount = count; return CodeState.Valid;
         }
 
-        // ✨ 3. [핵심 추가] while 조건문 숫자로 파싱 검사
-        System.Text.RegularExpressions.Match whileMatch = System.Text.RegularExpressions.Regex.Match(cleanCode, @"while.*?([0-9]+).*?:");
-        if (whileMatch.Success) {
+        if (cleanCodeAll.Contains("for") && cleanCodeAll.Contains("range(")) {
             if (loopLevel < 1) { processingCount = 0; return CodeState.Error_LoopLocked; }
-            try {
-                int count = int.Parse(whileMatch.Groups[1].Value);
-                if (count <= 0) { processingCount = 0; return CodeState.Error; }
-                if (loopLevel == 1 && count > 10) { processingCount = 0; return CodeState.Error_LoopLimit; }
-
-                processingCount = count; 
-                return CodeState.Valid;
-            } catch { processingCount = 0; return CodeState.Error; }
+            int start = cleanCodeAll.IndexOf("range(") + 6;
+            int end = cleanCodeAll.IndexOf(")", start);
+            int count = int.Parse(cleanCodeAll.Substring(start, end - start));
+            if (loopLevel == 1 && count > 10) { processingCount = 0; return CodeState.Error_LoopLimit; }
+            processingCount = count; return CodeState.Valid;
         }
 
-        // 4. 일반 1회 실행
-        if (cleanCode.Contains(targetSyntax)) {
-            processingCount = 1; 
-            return CodeState.Valid;
+        processingCount = 1; return CodeState.Valid;
+    }
+
+    private int GetResourceAmount(string resName) {
+        var resMgr = Ingame_Manager_Resource.Instance;
+        if (resMgr == null) return 0;
+        switch (resName) {
+            case "rescommon": return resMgr.resCommon;
+            case "resrare": return resMgr.resRare;
+            case "resspecial": return resMgr.resSpecial;
+            case "resexotic": return resMgr.resExotic;
+            default: return 0;
         }
-        
-        processingCount = 0;
-        return CodeState.Error;
     }
 
     IEnumerator MasterRoutine() {
         int currentCount = 0;
-        
+        var resMgr = Ingame_Manager_Resource.Instance;
+
         isOperating = true; 
         isStopping = false;
         UpdateStatusUI(); 
@@ -145,37 +190,47 @@ public class logic_Productor_Master : logic_CodingBase
             bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
             bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
 
-            if (!isBuildMode && !isPaused) {
-                if (CheckAndConsumeResources()) {
-                    yield return StartCoroutine(ProcessingAnimationRoutine());
-                    SpawnProduct();
-                    if (processingCount != -1) currentCount++;
-
-                    if (isStopping) break; 
-                } else {
-                    yield return new WaitForSeconds(checkInterval);
-                    if (isStopping) break;
+            if (!isBuildMode && !isPaused && resMgr != null) {
+                ProcessRule activeRule = null;
+                foreach (var rule in parsedRules) {
+                    if (!rule.hasAction) continue;
+                    if (rule.isElse) { activeRule = rule; break; }
+                    int currentAmount = GetResourceAmount(rule.condRes);
+                    bool conditionMet = false;
+                    switch (rule.condOp) {
+                        case ">=": conditionMet = currentAmount >= rule.condVal; break;
+                        case "<=": conditionMet = currentAmount <= rule.condVal; break;
+                        case ">": conditionMet = currentAmount > rule.condVal; break;
+                        case "<": conditionMet = currentAmount < rule.condVal; break;
+                        case "==": conditionMet = currentAmount == rule.condVal; break;
+                    }
+                    if (conditionMet) { activeRule = rule; break; }
                 }
-            } else {
-                yield return null;
-            }
+
+                if (activeRule != null) {
+                    ProductorRecipe recipe = multiRecipes.Find(r => r.targetTier.ToLower() == activeRule.actionTier && r.consumeAmount == activeRule.actionAmount);
+                    if (recipe != null) {
+                        if (resMgr.HasEnoughResource(recipe.resourceType, recipe.consumeAmount)) {
+                            resMgr.ConsumeResource(recipe.resourceType, recipe.consumeAmount);
+                            yield return StartCoroutine(ProcessingAnimationRoutine());
+
+                            // ✨ [수정 핵심 로직] 아이템 생성 전 로또를 굴립니다!
+                            float roll = Random.Range(0f, 100f);
+                            bool isJackpot = roll <= highQualityChance; // 15% 이하로 나오면 당첨
+
+                            // 생성 함수에 당첨 여부를 같이 전달합니다.
+                            SpawnProduct(recipe.resultPrefab, isJackpot);
+                            
+                            if (processingCount != -1) currentCount++;
+                        } else { yield return new WaitForSeconds(checkInterval); }
+                    } else { yield return new WaitForSeconds(checkInterval); }
+                } else { yield return new WaitForSeconds(checkInterval); }
+                if (isStopping) break; 
+            } else { yield return null; }
         }
         
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
-        
-        isOperating = false; 
-        isStopping = false;
-        UpdateStatusUI(); 
-        processingCoroutine = null;
-    }
-
-    bool CheckAndConsumeResources() {
-        var resMgr = Ingame_Manager_Resource.Instance;
-        if (resMgr == null || consumeList.Count == 0) return false;
-        foreach (var req in consumeList) { if (!resMgr.HasEnoughResource(req.resourceType, req.amount)) return false; }
-        foreach (var req in consumeList) { resMgr.ConsumeResource(req.resourceType, req.amount); }
-        resMgr.EarnGold(0); 
-        return true;
+        isOperating = false; isStopping = false; UpdateStatusUI(); processingCoroutine = null;
     }
 
     IEnumerator ProcessingAnimationRoutine() {
@@ -183,7 +238,6 @@ public class logic_Productor_Master : logic_CodingBase
         while (timer < processingTime) {
             bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
             bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
-
             if (!isBuildMode && !isPaused) {
                 timer += Time.deltaTime; animTimer += Time.deltaTime;
                 if (animTimer >= 0.5f) {
@@ -196,26 +250,27 @@ public class logic_Productor_Master : logic_CodingBase
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
     }
 
-    void SpawnProduct() {
-        if (resultList.Count == 0 || Ingame_Manager_Build.Instance == null) return;
+    // ✨ [함수 서명 수정] bool isHighQuality 파라미터가 추가되었습니다.
+    void SpawnProduct(GameObject prefabToDrop, bool isHighQuality) {
+        if (prefabToDrop == null || Ingame_Manager_Build.Instance == null) return;
         var buildMgr = Ingame_Manager_Build.Instance;
         Vector3Int myCell = buildMgr.tilemapInstallations.WorldToCell(transform.position);
         Vector3 targetDropPos = buildMgr.GetDropPosition(myCell);
 
         Vector3 spawnPos = transform.position; spawnPos.y -= 0.5f; spawnPos.z = -1f;
-        float rand = Random.Range(0f, 100f); float cumulative = 0f;
-        GameObject prefabToDrop = null;
-
-        foreach (var result in resultList) {
-            cumulative += result.probability;
-            if (rand <= cumulative) { prefabToDrop = result.productPrefab; break; }
-        }
-
-        if (prefabToDrop == null) prefabToDrop = resultList[resultList.Count - 1].productPrefab;
-        if (prefabToDrop == null) return;
-
         GameObject productObj = Instantiate(prefabToDrop, spawnPos, Quaternion.identity);
+
+        // ✨ [핵심 수정 로직] 생성된 아이템의 스크립트를 가져와서 고품질 설정을 켜줍니다.
         Ingame_Item_Dropped itemScript = productObj.GetComponent<Ingame_Item_Dropped>();
-        if (itemScript != null) itemScript.SetDropTarget(targetDropPos);
+        if (itemScript != null) {
+            itemScript.SetDropTarget(targetDropPos); // 기존 이동 로직
+
+            // 만약 로또에 당첨되었다면, 아이템에게 "반짝여라!" 명령!
+            if (isHighQuality) {
+                itemScript.SetHighQuality();
+                // 시각적 피드백 (Floating Text)
+                if(buildMgr != null) buildMgr.ShowFloatingText("대박! 고품질!", transform.position + Vector3.up);
+            }
+        }
     }
 }
