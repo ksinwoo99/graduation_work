@@ -1,5 +1,21 @@
 import ast
 
+# while True / while 1 감지 시 loop_efficiency 에 부여하는 대표값
+# calculate_score 공식 기준: min(10, 값 × 5) → 2.0 이면 최대 효율 보너스(+10) 획득
+_INFINITE_WHILE_EFFICIENCY_PROXY = 2.0
+
+
+# ──────────────────────────────────────────────
+# 내부 헬퍼: 무한 루프 while 판별
+# ──────────────────────────────────────────────
+def _is_infinite_while(node: ast.While) -> bool:
+    """
+    while True: 또는 while 1: 패턴을 감지합니다.
+    Python 3.8+ 의 ast.Constant 기준으로 판별합니다.
+    """
+    test = node.test
+    return isinstance(test, ast.Constant) and test.value in (True, 1)
+
 
 # ──────────────────────────────────────────────
 # 내부 헬퍼: 제어 흐름 최대 중첩 깊이 계산
@@ -69,10 +85,12 @@ def extract_features(source_code: str) -> dict:
     반환 키 목록:
         기존: for_count, while_count, if_count, switch_count,
               ternary_count, func_call_count, assign_count, line_count
-        신규: max_nesting_depth  - 제어 흐름 최대 중첩 깊이
-              has_loop           - 루프 존재 여부 (0 or 1)
-              loop_efficiency    - for range(N) 합계 / 전체 라인 수
-                                   (루프 1줄로 몇 번의 작업을 줄였는지 나타냄)
+        신규: max_nesting_depth    - 제어 흐름 최대 중첩 깊이
+              has_loop             - 루프 존재 여부 (0 or 1)
+              loop_efficiency      - for range(N) 합계 / 전체 라인 수
+                                     while True/1 감지 시 _INFINITE_WHILE_EFFICIENCY_PROXY 로 대체
+              has_infinite_while   - while True / while 1 패턴 존재 여부 (0 or 1)
+                                     게임 최종 목표(무한루프 자동화) 달성 여부를 피처로 분리
     """
     features = {
         'for_count': 0,
@@ -87,6 +105,7 @@ def extract_features(source_code: str) -> dict:
         'max_nesting_depth': 0,
         'has_loop': 0,
         'loop_efficiency': 0.0,
+        'has_infinite_while': 0,
     }
 
     if not source_code:
@@ -120,6 +139,8 @@ def extract_features(source_code: str) -> dict:
 
             elif isinstance(node, ast.While):
                 features['while_count'] += 1
+                if _is_infinite_while(node):
+                    features['has_infinite_while'] = 1
             elif isinstance(node, ast.If):
                 features['if_count'] += 1
             elif isinstance(node, ast.IfExp):
@@ -142,6 +163,12 @@ def extract_features(source_code: str) -> dict:
             features['loop_efficiency'] = round(
                 for_range_total / features['line_count'], 4
             )
+
+        # while True / while 1 감지 시 loop_efficiency 를 프록시 값으로 설정
+        # for range(N) 으로는 표현할 수 없는 "무한 반복" 효율을 피처에 반영합니다.
+        # 기존 for 효율보다 낮을 때만 덮어씁니다 (for + while 혼용 시 더 높은 쪽 유지).
+        if features['has_infinite_while'] and features['loop_efficiency'] < _INFINITE_WHILE_EFFICIENCY_PROXY:
+            features['loop_efficiency'] = _INFINITE_WHILE_EFFICIENCY_PROXY
 
     except SyntaxError:
         print("특징 추출 실패 : 문법 오류가 있는 코드입니다.")
