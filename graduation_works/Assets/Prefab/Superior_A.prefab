@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -261027327186569933}
   - component: {fileID: 6174887212203338915}
   m_Layer: 0
-  m_Name: Item_Standard
+  m_Name: Superior_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 1667625145
   m_SortingLayer: 3
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 458c868742fc14081842631e0219002d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 635260a1b7f2c154e89b9e53d019a0bd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -124,7 +124,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 7.5, y: 7.5}
     newSize: {x: 23, y: 23}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -148,7 +148,10 @@ MonoBehaviour:
   isProduct: 1
   resourceType: 0
   amount: 1
-  sellPrice: 200
+  sellPrice: 25000
+  sparkleEffectObject: {fileID: 0}
+  isHighQuality: 0
+  qualityMultiplier: 2
   popHeight: 0.8
   popDuration: 0.5
   conveyorMoveSpeed: 1

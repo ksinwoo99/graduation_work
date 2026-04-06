@@ -106,21 +106,18 @@ MonoBehaviour:
   spriteStopped: {fileID: 21300000, guid: 9d9dd6293d56fd643acf50f24205aec3, type: 3}
   isOperating: 1
   isStopping: 0
-  requiredSyntax: producting(Luxury)
-  consumeList:
-  - resourceType: 1
-    amount: 50
-  - resourceType: 2
-    amount: 30
-  - resourceType: 3
-    amount: 20
-  resultList:
-  - productPrefab: {fileID: 6163365543507135205, guid: 21bbf5ebbfeeac14db6484bdfef3ae27, type: 3}
-    probability: 80
-  - productPrefab: {fileID: 6163365543507135205, guid: 00b6987f8756ff14c875b302f8e890f0, type: 3}
-    probability: 20
+  multiRecipes:
+  - targetTier: Exotic
+    consumeAmount: 40
+    resourceType: 3
+    resultPrefab: {fileID: 6163365543507135205, guid: 00b6987f8756ff14c875b302f8e890f0, type: 3}
+  - targetTier: Exotic
+    consumeAmount: 20
+    resourceType: 3
+    resultPrefab: {fileID: 6163365543507135205, guid: 4bec54616213e6647a4ecd4fb8f4a152, type: 3}
   checkInterval: 1
   processingTime: 5
+  highQualityChance: 15
   spriteIdle: {fileID: 21300000, guid: 17db302e06d930e4cb5b57cd8284040f, type: 3}
   spriteActive: {fileID: 21300000, guid: f5d78e0b754877c44a4f227765765239, type: 3}
   processingCount: 0
