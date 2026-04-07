@@ -70,11 +70,21 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (codingPanel.activeSelf && currentMachineId == machineId) { CloseWindow(); return; }
         if (codingPanel.activeSelf) SaveCurrentInput();
 
+        // 같은 기계인지 확인
+        bool isMachineChanged = (currentMachineId != machineId);
+
         currentMachineId = machineId;
         currentLogic = logicScript;
         if (btnImage != null) currentBuildButton = btnImage.GetComponent<Ingame_Button_Build>();
 
         codingPanel.SetActive(true);
+        
+        // 기계가 바뀌었을 때 결과창 끄기
+        if (isMachineChanged) {
+            Ingame_Button_Debugging debugger = codingPanel.GetComponentInChildren<Ingame_Button_Debugging>(true);
+            if (debugger != null) debugger.HideResult();
+        }
+
         if (titleText != null) titleText.text = $"{displayName}.py";
 
         string savedCode = "";
