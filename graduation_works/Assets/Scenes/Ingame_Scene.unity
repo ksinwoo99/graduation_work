@@ -14536,7 +14536,7 @@ MonoBehaviour:
     - type: 2
       targetAmount: 1
     - type: 8
-      targetAmount: 100
+      targetAmount: 50
     rewardGold: 0
     rewardCommonResource: 0
     rewardRareResource: 0
