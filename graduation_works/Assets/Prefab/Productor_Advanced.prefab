@@ -108,12 +108,14 @@ MonoBehaviour:
   isStopping: 0
   multiRecipes:
   - targetTier: Rare
-    consumeAmount: 80
+    targetType: A
     resourceType: 1
+    consumeAmount: 80
     resultPrefab: {fileID: 6163365543507135205, guid: 8fd84b7aec1816d4880c7e836e3a32d1, type: 3}
   - targetTier: Rare
-    consumeAmount: 40
+    targetType: B
     resourceType: 1
+    consumeAmount: 40
     resultPrefab: {fileID: 6163365543507135205, guid: 936e7dd3a2d96fe49b72a55ba10bb638, type: 3}
   checkInterval: 1
   processingTime: 5
