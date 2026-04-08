@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-// [데이터 구조] 인스펙터 레시피 등록용
+// ✨ [데이터 구조 변경] 인스펙터 레시피 세팅이 A/B 타입 방식으로 변경되었습니다!
 [System.Serializable]
 public class ProductorRecipe {
-    [Header("코딩 조건 (예: Common, 100)")]
-    public string targetTier = "Common";   
-    public int consumeAmount = 100;        
+    [Header("코딩 조건 (예: Common, A)")]
+    public string targetTier = "Common";   // Common, Advanced, Hightech, Superior
+    public string targetType = "A";        // A 또는 B (코딩과 매칭될 텍스트)
     
-    [Header("실제 소모될 자원 종류")]
-    public ResourceType resourceType;      
+    [Header("실제 소모될 자원 및 갯수")]
+    public ResourceType resourceType;      // 이 레시피가 먹을 자원
+    public int consumeAmount = 100;        // 실제 깎이는 자원량 (밸런스 패치용)
     
     [Header("결과물")]
-    public GameObject resultPrefab;        
+    public GameObject resultPrefab;        // 생성될 아이템 프리팹
 }
 
 // [내부 엔진] 유저 코드 저장용
@@ -24,14 +25,14 @@ public class ProcessRule {
     public string condOp = "";     
     public int condVal = 0;        
     public string actionTier = ""; 
-    public int actionAmount = 0;   
+    public string actionType = ""; // ✨ 기존 actionAmount(숫자)가 actionType(A/B)으로 변경!
     public bool hasAction = false; 
 }
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class logic_Productor_Master : logic_CodingBase
 {
-    [Header("다중 가공 레시피 설정 (if-else 연동)")]
+    [Header("다중 가공 레시피 설정 (A/B 타입)")]
     public List<ProductorRecipe> multiRecipes = new List<ProductorRecipe>();
 
     [Header("가공기 기본 설정")]
@@ -39,7 +40,7 @@ public class logic_Productor_Master : logic_CodingBase
     public float processingTime = 5.0f; 
 
     [Header("고품질(대박) 아이템 설정")]
-    [Range(0f, 100f)] public float highQualityChance = 15.0f; // ✨ 15% 확률 인스펙터 노출
+    [Range(0f, 100f)] public float highQualityChance = 15.0f; 
 
     [Header("애니메이션 설정")]
     public Sprite spriteIdle;   
@@ -118,16 +119,17 @@ public class logic_Productor_Master : logic_CodingBase
                 currentRule = new ProcessRule { isElse = true };
                 parsedRules.Add(currentRule);
             } 
+            // ✨ [핵심 파서 변경] producting(Common, A) 또는 따옴표가 있는 producting(Common, "A") 형태를 허용합니다!
             else if (line.StartsWith("producting(")) {
-                Match m = Regex.Match(line, @"producting\((common|advanced|hightech|superior),([0-9]+)\)");
+                Match m = Regex.Match(line, @"producting\((common|advanced|hightech|superior),['""]?(a|b)['""]?\)");
                 if (m.Success) {
                     if (currentRule != null) {
                         currentRule.actionTier = m.Groups[1].Value;
-                        currentRule.actionAmount = int.Parse(m.Groups[2].Value);
+                        currentRule.actionType = m.Groups[2].Value; // a 또는 b 로 저장됨
                         currentRule.hasAction = true;
                         codeIsValid = true;
                     } else {
-                        currentRule = new ProcessRule { isElse = true, actionTier = m.Groups[1].Value, actionAmount = int.Parse(m.Groups[2].Value), hasAction = true };
+                        currentRule = new ProcessRule { isElse = true, actionTier = m.Groups[1].Value, actionType = m.Groups[2].Value, hasAction = true };
                         parsedRules.Add(currentRule);
                         codeIsValid = true;
                     }
@@ -208,17 +210,18 @@ public class logic_Productor_Master : logic_CodingBase
                 }
 
                 if (activeRule != null) {
-                    ProductorRecipe recipe = multiRecipes.Find(r => r.targetTier.ToLower() == activeRule.actionTier && r.consumeAmount == activeRule.actionAmount);
+                    // ✨ [핵심 변경] 이제 티어(Common)와 타입(A, B)으로 레시피를 찾습니다!
+                    ProductorRecipe recipe = multiRecipes.Find(r => r.targetTier.ToLower() == activeRule.actionTier && r.targetType.ToLower() == activeRule.actionType);
+                    
                     if (recipe != null) {
+                        // 자원 소모량(consumeAmount)은 이제 인스펙터에 적힌 값을 기준으로 깎습니다.
                         if (resMgr.HasEnoughResource(recipe.resourceType, recipe.consumeAmount)) {
                             resMgr.ConsumeResource(recipe.resourceType, recipe.consumeAmount);
                             yield return StartCoroutine(ProcessingAnimationRoutine());
 
-                            // ✨ [수정 핵심 로직] 아이템 생성 전 로또를 굴립니다!
                             float roll = Random.Range(0f, 100f);
-                            bool isJackpot = roll <= highQualityChance; // 15% 이하로 나오면 당첨
+                            bool isJackpot = roll <= highQualityChance; 
 
-                            // 생성 함수에 당첨 여부를 같이 전달합니다.
                             SpawnProduct(recipe.resultPrefab, isJackpot);
                             
                             if (processingCount != -1) currentCount++;
@@ -250,7 +253,6 @@ public class logic_Productor_Master : logic_CodingBase
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
     }
 
-    // ✨ [함수 서명 수정] bool isHighQuality 파라미터가 추가되었습니다.
     void SpawnProduct(GameObject prefabToDrop, bool isHighQuality) {
         if (prefabToDrop == null || Ingame_Manager_Build.Instance == null) return;
         var buildMgr = Ingame_Manager_Build.Instance;
@@ -260,15 +262,11 @@ public class logic_Productor_Master : logic_CodingBase
         Vector3 spawnPos = transform.position; spawnPos.y -= 0.5f; spawnPos.z = -1f;
         GameObject productObj = Instantiate(prefabToDrop, spawnPos, Quaternion.identity);
 
-        // ✨ [핵심 수정 로직] 생성된 아이템의 스크립트를 가져와서 고품질 설정을 켜줍니다.
         Ingame_Item_Dropped itemScript = productObj.GetComponent<Ingame_Item_Dropped>();
         if (itemScript != null) {
-            itemScript.SetDropTarget(targetDropPos); // 기존 이동 로직
-
-            // 만약 로또에 당첨되었다면, 아이템에게 "반짝여라!" 명령!
+            itemScript.SetDropTarget(targetDropPos); 
             if (isHighQuality) {
                 itemScript.SetHighQuality();
-                // 시각적 피드백 (Floating Text)
                 if(buildMgr != null) buildMgr.ShowFloatingText("대박! 고품질!", transform.position + Vector3.up);
             }
         }

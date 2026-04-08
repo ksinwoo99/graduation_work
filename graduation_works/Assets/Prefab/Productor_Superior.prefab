@@ -108,12 +108,14 @@ MonoBehaviour:
   isStopping: 0
   multiRecipes:
   - targetTier: Exotic
-    consumeAmount: 40
+    targetType: A
     resourceType: 3
+    consumeAmount: 40
     resultPrefab: {fileID: 6163365543507135205, guid: 00b6987f8756ff14c875b302f8e890f0, type: 3}
   - targetTier: Exotic
-    consumeAmount: 20
+    targetType: B
     resourceType: 3
+    consumeAmount: 20
     resultPrefab: {fileID: 6163365543507135205, guid: 4bec54616213e6647a4ecd4fb8f4a152, type: 3}
   checkInterval: 1
   processingTime: 5
