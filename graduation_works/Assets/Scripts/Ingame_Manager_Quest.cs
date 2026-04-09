@@ -18,7 +18,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
     [Header("퀘스트 목록")]
     public List<QuestData> questList = new List<QuestData>();
 
-    private int currentQuestId = 0;
+    public int currentQuestId = 0;
     private int questStartTotalGold = 0; 
 
     public int builtMinerCount = 0;
