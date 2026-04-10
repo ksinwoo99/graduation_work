@@ -267,7 +267,6 @@ public class logic_Productor_Master : logic_CodingBase
             itemScript.SetDropTarget(targetDropPos); 
             if (isHighQuality) {
                 itemScript.SetHighQuality();
-                if(buildMgr != null) buildMgr.ShowFloatingText("대박! 고품질!", transform.position + Vector3.up);
             }
         }
     }

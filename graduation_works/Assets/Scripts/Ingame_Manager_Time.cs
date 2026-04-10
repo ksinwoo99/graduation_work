@@ -19,7 +19,15 @@ public class Ingame_Manager_Time : MonoBehaviour {
         // 1. 현재 시간이 멈춰야 하는 상태인지 확인
         bool isStopped = isPaused || IsBuildOrCodingMode();
 
-        // 🔥 [수정] 상태에 따라 텍스트 색상 변경
+        // ✨ [핵심 추가] 튜토리얼이 켜져 있고, 액션 모드가 아니라면 시간 정지!
+        if (Ingame_UI_Tutorial.Instance != null && 
+            Ingame_UI_Tutorial.Instance.isTutorialActive && 
+            !Ingame_UI_Tutorial.Instance.isActionMode) 
+        {
+            isStopped = true;
+        }
+
+        // 🔥 상태에 따라 텍스트 색상 변경
         if (txtTime != null) {
             // 멈췄으면 회색(Gray), 흐르고 있으면 흰색(White)
             txtTime.color = isStopped ? Color.gray : Color.white;
