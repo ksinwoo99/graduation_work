@@ -39,14 +39,29 @@ public class Ingame_System_Save : MonoBehaviour {
 
     private string serverUrl = "http://13.237.51.219:8000";
 
+    // ✨ [신규 추가] 꺼져 있는 튜토리얼 패널을 켤 수 있도록 연결할 변수입니다.
+    [Header("튜토리얼 UI 연결")]
+    public GameObject tutorialPanel; 
+
     void Awake() { 
         if (Instance == null) Instance = this; 
     }
 
     void Start() {
+        // ✨ [핵심 로직] 게임 시작 시, 상태를 보고 튜토리얼 패널을 조작합니다.
         if (isLoadRequested) {
+            // 1. 불러오기로 들어왔다면 튜토리얼을 끈 상태로 유지합니다.
             isLoadRequested = false;
+            if (tutorialPanel != null) tutorialPanel.SetActive(false);
             OnClick_Load();
+        } 
+        else if (Shared_Manager_Session.IsVisiting) {
+            // 2. 남의 공장에 놀러왔다면 튜토리얼을 끕니다.
+            if (tutorialPanel != null) tutorialPanel.SetActive(false);
+        } 
+        else {
+            // 3. 둘 다 아니라면 새 게임(혹은 에디터 바로 실행)이므로 튜토리얼을 강제로 켭니다!
+            if (tutorialPanel != null) tutorialPanel.SetActive(true);
         }
     }
 
@@ -141,13 +156,13 @@ public class Ingame_System_Save : MonoBehaviour {
 
             if (Ingame_Manager_Build.Instance != null) {
                 Ingame_Manager_Build.Instance.ClearSessionLists();
-                }
+            }
             if (Ingame_Manager_Menu.Instance != null) {
                 Ingame_Manager_Menu.Instance.isSaved = true;
-                }
-            } else {
-                Debug.LogError("저장 실패: " + www.error);
             }
+        } else {
+            Debug.LogError("저장 실패: " + www.error);
+        }
     }
 
     public void OnClick_Load() {
