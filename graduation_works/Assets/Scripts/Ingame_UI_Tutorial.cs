@@ -56,9 +56,9 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     void Start()
     {
-        bubblePanel.SetActive(false);
+        bubblePanel.SetActive(false); 
         dimBackground.SetActive(false);
-        
+
         if (resizeHandle != null)
         {
             EventTrigger trigger = resizeHandle.GetComponent<EventTrigger>();
@@ -70,9 +70,17 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             trigger.triggers.Add(entry);
         }
 
-        ShowSkipPrompt();
+        if (Shared_Manager_Session.IsVisiting) // 놀러가기
+        {
+            isTutorialActive = false;
+            skipPanel.SetActive(false); 
+        }
+        else
+        {
+            ShowSkipPrompt(); // 내 공장
+        }
     }
-
+    
     void Update()
     {
         if (!isTutorialActive) return;
