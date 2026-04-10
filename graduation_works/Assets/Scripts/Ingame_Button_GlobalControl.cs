@@ -48,5 +48,13 @@ public class Ingame_Button_GlobalControl : MonoBehaviour
             string msg = isStartButton ? $"{affectedCount}대의 기계 재가동!" : $"{affectedCount}대의 기계 정지 대기중...";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, center);
         }
+
+        // =========================================================
+        // ✨ [튜토리얼 연동] 전체 재가동 버튼 클릭 감지!
+        // =========================================================
+        if (isStartButton && Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive)
+        {
+            Ingame_UI_Tutorial.Instance.TriggerMinerRestarted();
+        }
     }
 }
