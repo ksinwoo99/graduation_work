@@ -107,10 +107,10 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 currentStep++; PlayStep(currentStep);
             }
         }
-        // ✨ [핵심 수정] Step 11은 순수 텍스트(DialogMode)이므로 Update에서 검사할 필요가 없습니다. (다음 버튼으로 넘어감)
+        // Step 11, 12은 순수 텍스트(DialogMode)이므로 Update에서 검사할 필요 X
         
-        // ✨ [핵심 수정] Step 12가 실제 코딩 입력 감지입니다! (번호 싱크 맞춤)
-        else if (currentStep == 12)
+        // Step 13: 코딩 입력 감지
+        else if (currentStep == 13)
         {
             string currentCode = "";
             if (inputMinerCodeObj != null)
@@ -130,7 +130,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             }
         }
         // ✨ [핵심 수정] Step 14가 실제 퀘스트 완료 검사입니다! (번호 싱크 맞춤)
-        else if (currentStep == 14)
+        else if (currentStep == 15)
         {
             var questMgr = Ingame_Manager_Quest.Instance;
             if (questMgr != null && questMgr.currentQuestId > startQuestIdForInstall)
@@ -220,28 +220,33 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 break;
             case 10: 
                 if (txtTutorialMinerName != null) initialMinerName = txtTutorialMinerName.text;
-
-                HighlightPanel(panelInstallation); 
-                HighlightPanel(panelCoding);
-                HighlightPanel(panelInstallationInfo);
                 SetActionMode("자, 이제 첫 번째 퀘스트를\n진행해 볼까요?\n\n코딩 창에 name = \"이름\" 을 입력하고 저장 및 디버깅(F5)을 하여,\n채굴기의 이름을 지어주세요!");
                 break;
             case 11:
-                SetDialogMode("멋진 이름이네요!\n이렇게 python에서는\n'변수명 = 숫자 or 문자열' 을 입력하여,\n데이터를 저장하는 공간을\n만들 수 있습니다.");
+                HighlightPanel(panelInstallation); 
+                HighlightPanel(panelCoding);
+                HighlightPanel(panelInstallationInfo);
+                SetDialogMode("설치물 버튼의 이름을 보시면,\nname 변수에 저장한 내용으로 바뀌었습니다.\n\n멋진 이름이네요!");
                 break;
             case 12:
                 HighlightPanel(panelInstallation); 
                 HighlightPanel(panelCoding);
                 HighlightPanel(panelInstallationInfo);
-                SetActionMode("이번에는 실제 기능을\n적용해보겠습니다.\n\n채굴기의 코드에,\n'이 설치물이 필요로 하는 함수'를\n넣어줘야 합니다.\nmining() 이라고 적혀있는데,\n적어넣고 디버깅을 해볼까요?");
+                SetDialogMode("이렇게 python에서는\n'변수명 = 숫자 or 문자열' 을 입력하여,\n데이터를 저장하는 공간을\n만들 수 있습니다.\n\n다음에는 실제 기능을 적용해보죠!");
                 break;
-            case 13: 
+            case 13:
+                HighlightPanel(panelInstallation); 
+                HighlightPanel(panelCoding);
+                HighlightPanel(panelInstallationInfo);
+                SetActionMode("채굴기의 코드에,\n'이 설치물이 필요로 하는 함수'를\n넣어줘야 합니다.\nmining() 이라고 적혀있는데,\n적어넣고 디버깅을 해볼까요?");
+                break;
+            case 14: 
                 if (Ingame_Manager_Quest.Instance != null) {
                     startQuestIdForInstall = Ingame_Manager_Quest.Instance.currentQuestId;
                 }
                 SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가 가능해졌습니다.");
                 break;
-            case 14: 
+            case 15: 
                 SetActionMode("채굴기같은 설치물을 클릭 한 상태로 R키를 누르면\n'생성될 자원 및 상품의 위치 조절'이 가능해요.\n한번 설치해볼까요?");
                 btnNext.onClick.RemoveAllListeners();
                 btnNext.onClick.AddListener(EndTutorial);
