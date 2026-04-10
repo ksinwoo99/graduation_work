@@ -12,6 +12,12 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public Button btnVerify;
     public Image statusLight;
 
+    [Header("테마 설정 (다크/라이트 모드)")]
+    public Button btnThemeToggle; 
+    public InGameCodeEditor.CodeEditorTheme darkTheme;  // 다크 테마 에셋 드래그 앤 드롭
+    public InGameCodeEditor.CodeEditorTheme lightTheme; // 라이트 테마 에셋 드래그 앤 드롭
+    private bool isDarkMode = true; // 기본 상태 (다크모드)
+
     [Header("폰트 줌(확대/축소) 설정")] 
     public float minFontSize = 10f;   
     public float maxFontSize = 60f;   
@@ -29,6 +35,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void Start() {
         if (codingPanel != null) codingPanel.SetActive(false);
         if (btnVerify != null) btnVerify.onClick.AddListener(OnClick_Verify);
+        if (btnThemeToggle != null) btnThemeToggle.onClick.AddListener(ToggleTheme);
     }
 
     void Update() {
@@ -203,5 +210,24 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void SetStatus(Color color, bool isAllowed) {
         if (statusLight != null) statusLight.color = color;
         if (buildManager != null) buildManager.SetPlacementPermission(isAllowed);
+    }
+
+    public void ToggleTheme() {
+        // 1. 모드 상태 뒤집기 (true -> false -> true)
+        isDarkMode = !isDarkMode;
+        
+        // 2. CodeEditor 컴포넌트를 찾아서 테마 갈아끼우기
+        var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+        if (codeEditor != null) {
+            codeEditor.EditorTheme = isDarkMode ? darkTheme : lightTheme;
+        }
+        
+        // 3. (선택) 버튼의 글씨도 '라이트 모드' / '다크 모드'로 바꿔주기
+        if (btnThemeToggle != null) {
+            TextMeshProUGUI btnText = btnThemeToggle.GetComponentInChildren<TextMeshProUGUI>();
+            if (btnText != null) {
+                btnText.text = isDarkMode ? "라이트 모드" : "다크 모드";
+            }
+        }
     }
 }
