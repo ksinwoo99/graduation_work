@@ -582,7 +582,11 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void LoadBuildingFromServer(MachineData data, GameObject prefab) {
-        Vector3Int pos = new Vector3Int((int)data.pos_x, (int)data.pos_y, (int)data.pos_z);
+        Vector3Int pos = new Vector3Int(
+            Mathf.RoundToInt(data.pos_x), 
+            Mathf.RoundToInt(data.pos_y), 
+            Mathf.RoundToInt(data.pos_z)
+        );
         Vector3 worldPos = tilemapInstallations.GetCellCenterWorld(pos);
         worldPos.z = -1f;
 
