@@ -15,13 +15,13 @@ public class MachineData {
 
 [System.Serializable]
 public class LoadResources {
-    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count;
+    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step;
 }
 
 [System.Serializable]
 public class GameSaveRequest {
     public string user_id;
-    public int res1, res2, res3, res4, res5, play_time, expand_count; 
+    public int res1, res2, res3, res4, res5, play_time, expand_count, quest_id, tutorial_step;
     public List<MachineData> machines = new List<MachineData>();
 }
 
@@ -113,6 +113,14 @@ public class Ingame_System_Save : MonoBehaviour {
             data.play_time = (int)Ingame_Manager_Time.Instance.gameTime;
         }
 
+        if (Ingame_Manager_Quest.Instance != null) {
+            data.quest_id = Ingame_Manager_Quest.Instance.currentQuestId;
+        }
+
+        if (Ingame_UI_Tutorial.Instance != null) {
+            data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : -1;
+        }
+
         // 3. 빌드 및 맵 확장 데이터
         if (Ingame_Manager_Build.Instance != null) {
             var buildMgr = Ingame_Manager_Build.Instance;
@@ -201,6 +209,34 @@ public class Ingame_System_Save : MonoBehaviour {
         
         if (Ingame_Manager_Time.Instance != null && data.resources != null) {
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
+        }
+
+        // ✨ [추가] 퀘스트 진행도 복구 및 UI 갱신
+        if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
+            Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
+            Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
+        }
+
+        // ✨ [추가] 튜토리얼 단계 복구 및 재시작
+        if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
+            int savedStep = data.resources.tutorial_step;
+            
+            // [구버전 호환성 패치] 튜토리얼 데이터가 0(처음)인데, 이미 지어둔 기계가 있거나 맵을 확장한 올드 유저라면 스킵
+            if (savedStep == 0 && (data.machines.Count > 0 || data.resources.expand_count > 0)) {
+                savedStep = -1;
+            }
+
+            // -1 이면 이미 끝났거나 스킵한 유저 (또는 올드 유저)이므로 깔끔하게 끕니다.
+            if (savedStep == -1) {
+                Ingame_UI_Tutorial.Instance.EndTutorial();
+            } 
+            // 그 외의 숫자라면 해당 단계부터 다시 시작합니다!
+            else {
+                Ingame_UI_Tutorial.Instance.gameObject.SetActive(true);
+                Ingame_UI_Tutorial.Instance.isTutorialActive = true;
+                Ingame_UI_Tutorial.Instance.currentStep = savedStep;
+                Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
+            }
         }
 
         // 2. 맵 확장 및 기계 복구
