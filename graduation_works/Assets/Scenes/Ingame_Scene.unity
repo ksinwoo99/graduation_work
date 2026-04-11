@@ -8026,7 +8026,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   machineName: "\uBBF8\uB798\uD615 \uAC00\uACF5\uAE30"
   machineDescription: "\uC0AC\uCE58\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
-    \uD76C\uADC0 \uC790\uC6D0 40\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD76C\uADC0
+    \uACBD\uC774 \uC790\uC6D0 40\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uACBD\uC774
     \uC790\uC6D0 20\uC744 \uC18C\uBAA8"
   codeSyntax: "Producting(Exotic, '\uC0C1\uD488 \uD0C0\uC785') \uD568\uC218 \uD544\uC694\n\u203B
     \uC0C1\uD488 \uD0C0\uC785 = 'A' \uD639\uC740 'B'"
@@ -8035,8 +8035,8 @@ MonoBehaviour:
   requiredResources:
   - resourceType: 2
     amount: 100
-  machinePrefab: {fileID: 7186729108183596781, guid: 1be47907d73590c47a72d998176938cc, type: 3}
-  iconTile: {fileID: 11400000, guid: 9e5b3c7429b735942b170ea7dfeec990, type: 2}
+  machinePrefab: {fileID: 7186729108183596781, guid: 99c6f6cacca61af42bc1ade1ec34f3e5, type: 3}
+  iconTile: {fileID: 11400000, guid: 6d1d635117569f94f838abcf49f30b75, type: 2}
 --- !u!114 &691733478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13925,7 +13925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   machineName: "\uCD5C\uACE0\uAE09 \uAC00\uACF5\uAE30"
   machineDescription: "\uCD5C\uACE0\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
-    \uD76C\uADC0 \uC790\uC6D0 60\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD76C\uADC0
+    \uD2B9\uC218 \uC790\uC6D0 60\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD2B9\uC218
     \uC790\uC6D0 30\uC744 \uC18C\uBAA8"
   codeSyntax: "Producting(Special, '\uC0C1\uD488 \uD0C0\uC785') \uD568\uC218 \uD544\uC694\n\u203B
     \uC0C1\uD488 \uD0C0\uC785 = 'A' \uD639\uC740 'B'"
