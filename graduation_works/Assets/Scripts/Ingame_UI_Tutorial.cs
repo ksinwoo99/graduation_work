@@ -41,7 +41,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public Button btnTutorialExpand;    
     public Button btnTutorialDemolish;  
 
-    private int currentStep = 0;
+    public int currentStep = 0;
     
     public bool isTutorialActive = false;
     public bool isActionMode = false; 
@@ -77,7 +77,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     void Start()
     {
-        bubblePanel.SetActive(false);
+        bubblePanel.SetActive(false); 
         dimBackground.SetActive(false);
         skipPanel.SetActive(false); 
         
@@ -105,7 +105,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             ShowSkipPrompt();
         }
     }
-
+    
     void Update()
     {
         if (!isTutorialActive) return;

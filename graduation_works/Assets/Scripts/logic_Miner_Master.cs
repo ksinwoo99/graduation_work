@@ -12,7 +12,7 @@ public class MinerDropRate {
 public class logic_Miner_Master : logic_CodingBase {
 
     [Header("코딩 설정")]
-    public string requiredSyntax = "mining()"; 
+    public string requiredSyntax = "mining("; 
 
     [Header("마스터 채굴 드롭 설정")]
     public List<MinerDropRate> dropList = new List<MinerDropRate>(); 
