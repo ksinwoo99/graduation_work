@@ -20209,6 +20209,7 @@ MonoBehaviour:
   inputMinerCodeObj: {fileID: 640813521}
   btnDebug: {fileID: 1724868767}
   btnTutorialProductor: {fileID: 490805711}
+  btnTutorialConveyor: {fileID: 188314990}
   btnTutorialExpand: {fileID: 1433623759}
   btnTutorialDemolish: {fileID: 46644564}
   currentStep: 0

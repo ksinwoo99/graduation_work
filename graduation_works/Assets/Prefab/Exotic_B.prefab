@@ -152,7 +152,7 @@ MonoBehaviour:
   sellPrice: 15000
   sparkleEffectObject: {fileID: 8429190744241801712}
   isHighQuality: 0
-  qualityMultiplier: 1.5
+  qualityMultiplier: 1.4
   popHeight: 0.8
   popDuration: 0.5
   conveyorMoveSpeed: 1
