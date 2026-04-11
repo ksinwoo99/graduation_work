@@ -194,7 +194,7 @@ public class Ingame_System_Save : MonoBehaviour {
         }
     }
 
-    private void ApplyGameData(GameLoadResponse data) {
+private void ApplyGameData(GameLoadResponse data) {
         if (data == null) return;
 
         // 1. 자원 및 시간 복구
@@ -211,27 +211,23 @@ public class Ingame_System_Save : MonoBehaviour {
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
         }
 
-        // ✨ [추가] 퀘스트 진행도 복구 및 UI 갱신
+        // ✨ [순서 변경!] 기계를 불러오기 전에 "퀘스트"와 "튜토리얼" 권한을 먼저 복구합니다!
         if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
             Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
             Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
         }
 
-        // ✨ [추가] 튜토리얼 단계 복구 및 재시작
         if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
             int savedStep = data.resources.tutorial_step;
             
-            // [구버전 호환성 패치] 튜토리얼 데이터가 0(처음)인데, 이미 지어둔 기계가 있거나 맵을 확장한 올드 유저라면 스킵
+            // 올드 유저 예외 처리
             if (savedStep == 0 && (data.machines.Count > 0 || data.resources.expand_count > 0)) {
-                savedStep = -1;
+                savedStep = -1; 
             }
 
-            // -1 이면 이미 끝났거나 스킵한 유저 (또는 올드 유저)이므로 깔끔하게 끕니다.
             if (savedStep == -1) {
                 Ingame_UI_Tutorial.Instance.EndTutorial();
-            } 
-            // 그 외의 숫자라면 해당 단계부터 다시 시작합니다!
-            else {
+            } else {
                 Ingame_UI_Tutorial.Instance.gameObject.SetActive(true);
                 Ingame_UI_Tutorial.Instance.isTutorialActive = true;
                 Ingame_UI_Tutorial.Instance.currentStep = savedStep;
@@ -239,7 +235,7 @@ public class Ingame_System_Save : MonoBehaviour {
             }
         }
 
-        // 2. 맵 확장 및 기계 복구
+        // 2. 맵 확장 및 기계 복구 (이제 안심하고 기계를 깔고 코드를 검사합니다)
         if (Ingame_Manager_Build.Instance != null && data.resources != null) {
             var buildMgr = Ingame_Manager_Build.Instance;
             
@@ -255,12 +251,11 @@ public class Ingame_System_Save : MonoBehaviour {
                         buildMgr.LoadBuildingFromServer(mData, prefab);
                     }
                 }
-                buildMgr.UpdateQuestMachineCounts(); // 창고 수량만큼 최대 자원 동기화
                 
-                // 불러오기가 끝난 후 하단 UI 버튼들의 이름도 동기화!
+                buildMgr.UpdateQuestMachineCounts(); 
+                
                 if (buildMgr.codingManager != null) {
                     buildMgr.codingManager.SyncAllButtonNames();
-                    
                 }
             }
         }
