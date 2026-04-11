@@ -581,34 +581,26 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    public void LoadBuildingFromServer(MachineData data, GameObject prefab) {
-        Vector3Int pos = new Vector3Int((int)data.pos_x, (int)data.pos_y, (int)data.pos_z);
+    public GameObject LoadBuildingFromServer(MachineData data, GameObject prefab) {
+        Vector3Int pos = new Vector3Int(
+            Mathf.RoundToInt(data.pos_x), 
+            Mathf.RoundToInt(data.pos_y), 
+            Mathf.RoundToInt(data.pos_z)
+        );
         Vector3 worldPos = tilemapInstallations.GetCellCenterWorld(pos);
         worldPos.z = -1f;
 
         GameObject machine = Instantiate(prefab, worldPos, Quaternion.identity);
+
         BuildDirection dir = (BuildDirection)(-(int)(data.rotation_y / 90f));
         machine.SendMessage("SetDirection", (int)dir, SendMessageOptions.DontRequireReceiver);
-
-        if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
-            codingManager.SetSavedCode(data.machine_type, data.source_code);
-            
-            logic_CodingBase logic = machine.GetComponent<logic_CodingBase>();
-            if (logic != null && !(logic is logic_Storage)) {
-                logic.ValidateCode(data.source_code);
-                
-                logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
-                if (createdMiner != null) createdMiner.InitializeMiner(createdMiner.miningCount);
-                
-                logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
-                if (createdProductor != null) createdProductor.InitializeProductor(createdProductor.processingCount);
-            }
-        }
 
         Iteminfo_Base info = prefab.GetComponent<Iteminfo_Base>();
         if (info != null) {
             SpentCost cost = new SpentCost { gold = info.buildCost };
-            foreach(var r in info.requiredResources) cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
+            foreach(var r in info.requiredResources) {
+                cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
+            }
             if (!installedCosts.ContainsKey(pos)) installedCosts.Add(pos, cost);
         }
 
@@ -619,11 +611,27 @@ public class Ingame_Manager_Build : MonoBehaviour {
         
         List<Vector3Int> cells = GetBuildingCells(pos, size, dir);
         foreach (var cell in cells) {
-            if (!installedObjects.ContainsKey(cell)) installedObjects.Add(cell, machine);
+            if (installedObjects.ContainsKey(cell)) installedObjects[cell] = machine;
+            else installedObjects.Add(cell, machine);
         }
 
         if (!installedDirections.ContainsKey(pos)) installedDirections.Add(pos, dir);
         CreateInstalledArrow(pos, dir);
+
+        if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
+            codingManager.SetSavedCode(data.machine_type, data.source_code);
+            
+            logic_CodingBase logic = machine.GetComponentInChildren<logic_CodingBase>();
+            if (logic != null) {
+                logic.ValidateCode(data.source_code);
+                
+                if (logic is logic_Miner_Master miner) miner.InitializeMiner(miner.miningCount);
+                else if (logic is logic_Productor_Master productor) productor.InitializeProductor(productor.processingCount);
+                else if (logic is logic_Conveyor conveyor) conveyor.isWorking = true;
+            }
+        }
+
+        return machine;
     }
 
     public void ClearAllBuildingsForLoad() {
