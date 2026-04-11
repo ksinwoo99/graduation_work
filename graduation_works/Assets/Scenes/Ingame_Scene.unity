@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uACE0\uC131\uB2A5 \uCC44\uAD74\uAE30"
+  machineName: "\uCC44\uAD74\uAE30C"
   machineDescription: "\uB0AE\uC740 \uD655\uB960\uB85C \uAE30\uBCF8 \uC790\uC6D0\uC744
     \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uD76C\uADC0 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uB9E4\uC6B0
     \uB0AE\uC740 \uD655\uB960\uB85C \uD2B9\uC218 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
@@ -2165,7 +2165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8"
+  machineName: --
   machineDescription: "\uAE30\uACC4\uAC00 \uD558\uB294 \uC5ED\uD560\uC744 \uC124\uBA85\uD574\uC8FC\uC138\uC694."
   codeSyntax: "Move() \uD568\uC218\uB97C \uD1B5\uD55C \uC774\uB3D9\uC2DD \uCEE8\uBCA0\uC774\uC5B4
     \uC791\uB3D9"
@@ -3393,7 +3393,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBBF8\uB798\uD615 \uAC00\uACF5\uAE30"
+  m_text: "\uAC00\uACF5\uAE30D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -3863,7 +3863,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uCD5C\uACE0\uAE09 \uAC00\uACF5\uAE30"
+  m_text: "\uAC00\uACF5\uAE30C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -4113,7 +4113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uCD5C\uC2E0 \uAC00\uACF5\uAE30"
+  machineName: "\uAC00\uACF5\uAE30B"
   machineDescription: "\uACE0\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uD76C\uADC0 \uC790\uC6D0 80\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD76C\uADC0
     \uC790\uC6D0 40\uC744 \uC18C\uBAA8"
@@ -4502,7 +4502,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAC04\uC774 \uCC44\uAD74\uAE30"
+  m_text: "\uCC44\uAD74\uAE30A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -5326,7 +5326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uAE30\uCD08 \uAC00\uACF5\uAE30"
+  machineName: "\uAC00\uACF5\uAE30A"
   machineDescription: "\uC800\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uAE30\uBCF8 \uC790\uC6D0 100\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uAE30\uBCF8
     \uC790\uC6D0 50\uC744 \uC18C\uBAA8"
@@ -5709,7 +5709,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8"
+  m_text: --
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -6190,7 +6190,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uACE0\uAE09 \uCC44\uAD74\uAE30"
+  m_text: "\uCC44\uAD74\uAE30B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -6324,7 +6324,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uACE0\uC131\uB2A5 \uCC44\uAD74\uAE30"
+  m_text: "\uCC44\uAD74\uAE30B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -6455,7 +6455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uACE0\uAE09 \uCC44\uAD74\uAE30"
+  machineName: "\uCC44\uAD74\uAE30B"
   machineDescription: "\uAE30\uBCF8 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uB0AE\uC740
     \uD655\uB960\uB85C \uD76C\uADC0 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
   codeSyntax: "mining(resRare) \uD568\uC218 \uD544\uC694"
@@ -8024,7 +8024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uBBF8\uB798\uD615 \uAC00\uACF5\uAE30"
+  machineName: "\uAC00\uACF5\uAE30D"
   machineDescription: "\uC0AC\uCE58\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uACBD\uC774 \uC790\uC6D0 40\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uACBD\uC774
     \uC790\uC6D0 20\uC744 \uC18C\uBAA8"
@@ -8292,7 +8292,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAE30\uCD08 \uAC00\uACF5\uAE30"
+  m_text: "\uAC00\uACF5\uAE30A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -11760,7 +11760,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBBF8\uB798\uD615 \uCC44\uAD74\uAE30"
+  m_text: "\uCC44\uAD74\uAE30D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -12332,7 +12332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uAC04\uC774 \uCC44\uAD74\uAE30"
+  machineName: "\uCC44\uAD74\uAE30A"
   machineDescription: "\uAE30\uBCF8 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
   codeSyntax: "mining() \uD568\uC218 \uD544\uC694"
   buildingSize: {x: 1, y: 1}
@@ -13524,7 +13524,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC790\uC6D0 \uCC3D\uACE0"
+  m_text: "\uC790\uC6D0 \uC0C1\uC790"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -13923,7 +13923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uCD5C\uACE0\uAE09 \uAC00\uACF5\uAE30"
+  machineName: "\uAC00\uACF5\uAE30C"
   machineDescription: "\uCD5C\uACE0\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uD2B9\uC218 \uC790\uC6D0 60\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD2B9\uC218
     \uC790\uC6D0 30\uC744 \uC18C\uBAA8"
@@ -15210,7 +15210,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uCD5C\uC2E0 \uAC00\uACF5\uAE30"
+  m_text: "\uAC00\uACF5\uAE30B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -20087,7 +20087,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e2cc2eb0758ae824784883db7d6e967c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ff4cb7f9fc0e0124b8d94df504dc9a23, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -21738,7 +21738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6458d79e03cf3a54ea267b74a980db1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machineName: "\uBBF8\uB798\uD615 \uCC44\uAD74\uAE30"
+  machineName: "\uCC44\uAD74\uAE30D"
   machineDescription: "\uB0AE\uC740 \uD655\uB960\uB85C \uD76C\uADC0 \uC790\uC6D0\uC744
     \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uD2B9\uC218 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uB9E4\uC6B0
     \uB0AE\uC740 \uD655\uB960\uB85C \uACBD\uC774 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."

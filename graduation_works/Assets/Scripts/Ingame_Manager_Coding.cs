@@ -165,7 +165,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
             logic_CodingBase.CodeState state = currentLogic.ValidateCode(validationCode);
 
-            // ✨ [에러 원인 수정] 여기서 단 한 번만! allMachines를 선언해서 동기화 처리합니다.
             logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
             foreach(var m in allMachines) {
                 if (m.GetMachineName() == currentLogic.GetMachineName()) {
@@ -180,7 +179,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 string clean = code.Replace(" ", "").ToLower();
                 if (clean.Contains("for") || clean.Contains("while") || clean.Contains("loop:")) {
                     if (Ingame_Manager_Quest.Instance != null) {
-                        // ✨ [퀘스트 체크 로직] 기계 종류를 판별하여 각각의 퀘스트 진행도를 체크
                         if (currentLogic is logic_Miner_Master) 
                             Ingame_Manager_Quest.Instance.isMinerLoopUsed = true;
                         else if (currentLogic is logic_Productor_Master) 
@@ -203,5 +201,12 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void SetStatus(Color color, bool isAllowed) {
         if (statusLight != null) statusLight.color = color;
         if (buildManager != null) buildManager.SetPlacementPermission(isAllowed);
+
+        // ✨ [핵심 추가] 코딩 검사 결과가 '빨간불(Color.red)'인지 확인하여 튜토리얼 매니저로 즉시 전달!
+        // (노란불이나 초록불이라면 에러가 아닌 것으로 판정하여 튜토리얼이 통과됩니다)
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+            bool isError = (color == Color.red);
+            Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
+        }
     }
 }
