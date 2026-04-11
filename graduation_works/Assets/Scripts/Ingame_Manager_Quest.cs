@@ -46,12 +46,32 @@ public class Ingame_Manager_Quest : MonoBehaviour
             btnCloseQuest.onClick.AddListener(CloseQuestPanel); 
         }
 
-        StartQuest(0); 
+        StartQuest(currentQuestId); // ✨ 시작 시 현재 ID를 유지하도록 수정
         StartCoroutine(QuestCheckRoutine());
     }
 
     public void CloseQuestPanel() {
         if (questPanel != null) questPanel.SetActive(false);
+    }
+
+    // ✨ [신규 추가] 불러오기 완료 후 버튼들을 다시 깨워주는 핵심 함수!
+    public void RefreshButtonStates() {
+        // 1. 현재 퀘스트 ID보다 낮은(이미 완료한) 모든 퀘스트의 버튼들을 활성화합니다.
+        for (int i = 0; i < currentQuestId && i < questList.Count; i++) {
+            foreach (Button btn in questList[i].unlockButtons) {
+                if (btn != null) btn.interactable = true;
+            }
+        }
+
+        // 2. 만약 모든 퀘스트를 완료한 상태라면, 리스트의 모든 버튼을 다 활성화합니다.
+        if (currentQuestId >= questList.Count) {
+            foreach (var quest in questList) {
+                foreach (Button btn in quest.unlockButtons) {
+                    if (btn != null) btn.interactable = true;
+                }
+            }
+        }
+        Debug.Log($"<color=cyan>퀘스트 버튼 동기화 완료 (현재 ID: {currentQuestId})</color>");
     }
 
     void StartQuest(int id) {
