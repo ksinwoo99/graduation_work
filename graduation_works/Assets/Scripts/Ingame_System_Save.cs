@@ -193,8 +193,7 @@ public class Ingame_System_Save : MonoBehaviour {
             Debug.LogError("로드 실패: " + www.error);
         }
     }
-
-private void ApplyGameData(GameLoadResponse data) {
+    private void ApplyGameData(GameLoadResponse data) {
         if (data == null) return;
 
         // 1. 자원 및 시간 복구
@@ -211,7 +210,7 @@ private void ApplyGameData(GameLoadResponse data) {
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
         }
 
-        // ✨ [순서 변경!] 기계를 불러오기 전에 "퀘스트"와 "튜토리얼" 권한을 먼저 복구합니다!
+        // 2. 퀘스트 및 튜토리얼 데이터 복구
         if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
             Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
             Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
@@ -219,8 +218,6 @@ private void ApplyGameData(GameLoadResponse data) {
 
         if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
             int savedStep = data.resources.tutorial_step;
-            
-            // 올드 유저 예외 처리
             if (savedStep == 0 && (data.machines.Count > 0 || data.resources.expand_count > 0)) {
                 savedStep = -1; 
             }
@@ -234,24 +231,46 @@ private void ApplyGameData(GameLoadResponse data) {
                 Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
             }
         }
+
+        // 3. 맵 확장 및 기계 복구
         if (Ingame_Manager_Build.Instance != null && data.resources != null) {
             var buildMgr = Ingame_Manager_Build.Instance;
-        
             buildMgr.expandCount = data.resources.expand_count;
             buildMgr.currentMapSize = 4 + (buildMgr.expandCount * 2);
             buildMgr.GenerateFloor(); 
 
             if (data.machines != null) {
                 buildMgr.ClearAllBuildingsForLoad();
+                
                 foreach (var mData in data.machines) {
                     GameObject prefab = GetPrefabFromInt(mData.machine_type);
-                    if (prefab != null) buildMgr.LoadBuildingFromServer(mData, prefab);
+                    if (prefab != null) {
+                        // 딕셔너리에 코드 저장
+                        if (buildMgr.codingManager != null) {
+                            buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
+                        }
+
+                        // 기계 생성 및 즉시 가동
+                        GameObject newMachine = buildMgr.LoadBuildingFromServer(mData, prefab);
+                        if (newMachine != null) {
+                            logic_CodingBase logic = newMachine.GetComponentInChildren<logic_CodingBase>();
+                            if (logic != null && !string.IsNullOrEmpty(mData.source_code)) {
+                                logic.ValidateCode(mData.source_code);
+                                
+                                if (logic is logic_Miner_Master miner) miner.InitializeMiner(miner.miningCount);
+                                else if (logic is logic_Productor_Master productor) productor.InitializeProductor(productor.processingCount);
+                                else if (logic is logic_Conveyor conveyor) conveyor.isWorking = true;
+                            }
+                        }
+                    }
                 }
-            buildMgr.UpdateQuestMachineCounts(); 
-            if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
+
+                buildMgr.UpdateQuestMachineCounts(); 
+                if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
             }
-        }    
-        // 🚀 [최종 해결 위치] 모든 물리적 배치가 끝난 후, UI와 레벨을 최종 동기화합니다.
+        }
+
+        // 🚀 4. 모든 배치가 끝난 후 버튼 및 레벨 최종 동기화
         if (Ingame_Manager_Quest.Instance != null) {
             Ingame_Manager_Quest.Instance.RefreshButtonStates();
         }
