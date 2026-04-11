@@ -581,7 +581,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         }
     }
 
-    public void LoadBuildingFromServer(MachineData data, GameObject prefab) {
+    public GameObject LoadBuildingFromServer(MachineData data, GameObject prefab) {
         Vector3Int pos = new Vector3Int(
             Mathf.RoundToInt(data.pos_x), 
             Mathf.RoundToInt(data.pos_y), 
@@ -591,28 +591,16 @@ public class Ingame_Manager_Build : MonoBehaviour {
         worldPos.z = -1f;
 
         GameObject machine = Instantiate(prefab, worldPos, Quaternion.identity);
+
         BuildDirection dir = (BuildDirection)(-(int)(data.rotation_y / 90f));
         machine.SendMessage("SetDirection", (int)dir, SendMessageOptions.DontRequireReceiver);
-
-        if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
-            codingManager.SetSavedCode(data.machine_type, data.source_code);
-            
-            logic_CodingBase logic = machine.GetComponent<logic_CodingBase>();
-            if (logic != null && !(logic is logic_Storage)) {
-                logic.ValidateCode(data.source_code);
-                
-                logic_Miner_Master createdMiner = machine.GetComponent<logic_Miner_Master>();
-                if (createdMiner != null) createdMiner.InitializeMiner(createdMiner.miningCount);
-                
-                logic_Productor_Master createdProductor = machine.GetComponent<logic_Productor_Master>();
-                if (createdProductor != null) createdProductor.InitializeProductor(createdProductor.processingCount);
-            }
-        }
 
         Iteminfo_Base info = prefab.GetComponent<Iteminfo_Base>();
         if (info != null) {
             SpentCost cost = new SpentCost { gold = info.buildCost };
-            foreach(var r in info.requiredResources) cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
+            foreach(var r in info.requiredResources) {
+                cost.resources.Add(new ResourceCost { resourceType = r.resourceType, amount = r.amount });
+            }
             if (!installedCosts.ContainsKey(pos)) installedCosts.Add(pos, cost);
         }
 
@@ -623,11 +611,27 @@ public class Ingame_Manager_Build : MonoBehaviour {
         
         List<Vector3Int> cells = GetBuildingCells(pos, size, dir);
         foreach (var cell in cells) {
-            if (!installedObjects.ContainsKey(cell)) installedObjects.Add(cell, machine);
+            if (installedObjects.ContainsKey(cell)) installedObjects[cell] = machine;
+            else installedObjects.Add(cell, machine);
         }
 
         if (!installedDirections.ContainsKey(pos)) installedDirections.Add(pos, dir);
         CreateInstalledArrow(pos, dir);
+
+        if (codingManager != null && !string.IsNullOrEmpty(data.source_code)) {
+            codingManager.SetSavedCode(data.machine_type, data.source_code);
+            
+            logic_CodingBase logic = machine.GetComponentInChildren<logic_CodingBase>();
+            if (logic != null) {
+                logic.ValidateCode(data.source_code);
+                
+                if (logic is logic_Miner_Master miner) miner.InitializeMiner(miner.miningCount);
+                else if (logic is logic_Productor_Master productor) productor.InitializeProductor(productor.processingCount);
+                else if (logic is logic_Conveyor conveyor) conveyor.isWorking = true;
+            }
+        }
+
+        return machine;
     }
 
     public void ClearAllBuildingsForLoad() {
@@ -643,16 +647,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         HideAllInstalledArrows();
     }
     
-    public Dictionary<Vector3Int, GameObject> GetInstalledObjects() { 
-        Dictionary<Vector3Int, GameObject> uniqueObjects = new Dictionary<Vector3Int, GameObject>();
-        
-        foreach (var pos in installedDirections.Keys) {
-            if (installedObjects.ContainsKey(pos)) {
-                uniqueObjects.Add(pos, installedObjects[pos]);
-            }
-        }
-        return uniqueObjects;
-    }
+    public Dictionary<Vector3Int, GameObject> GetInstalledObjects() { return installedObjects; }
     
     void UpdateCursor(Vector3Int cellPos) {
         if (isDemolishMode && IsOccupied(cellPos)) Cursor.SetCursor(cursorDemolish, cursorHotspot, CursorMode.Auto);
