@@ -15607,9 +15607,9 @@ RectTransform:
   - {fileID: 1211022589}
   m_Father: {fileID: 983868467}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 113.94995, y: 303.66998}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -102.05005, y: -25.330017}
   m_SizeDelta: {x: 161, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1385376302
@@ -16307,7 +16307,7 @@ MonoBehaviour:
     - type: 3
       targetAmount: 20
     rewardGold: 200
-    rewardCommonResource: 60
+    rewardCommonResource: 110
     rewardRareResource: 0
     rewardSpecialResource: 0
     unlockButtons:
@@ -16320,7 +16320,7 @@ MonoBehaviour:
     - type: 2
       targetAmount: 1
     - type: 8
-      targetAmount: 50
+      targetAmount: 145
     rewardGold: 0
     rewardCommonResource: 0
     rewardRareResource: 0
@@ -20211,6 +20211,7 @@ MonoBehaviour:
   btnTutorialProductor: {fileID: 490805711}
   btnTutorialExpand: {fileID: 1433623759}
   btnTutorialDemolish: {fileID: 46644564}
+  currentStep: 0
   isTutorialActive: 0
   isActionMode: 0
 --- !u!1 &1928684505

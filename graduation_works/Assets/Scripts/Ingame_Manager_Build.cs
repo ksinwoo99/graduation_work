@@ -81,9 +81,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
     private bool isDemolishMode { get { return selectedDemolishLogic != null; } }
     
     // =========================================================
-    // ✨ [핵심 수정] 튜토리얼 모드 연동 기계 정지 트릭!
-    // Action 모드가 아닌 대화/설명 중일 때는 무조건 건축 모드라고 인식시켜서 
-    // 모든 기계들이 스스로 멈추도록(시간이 가지 않도록) 만듭니다.
+    // ✨ 튜토리얼 모드 연동 기계 정지 트릭!
     // =========================================================
     public bool isBuildMode { 
         get { 
@@ -181,6 +179,10 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void TryCancelBuildMode() {
+        // ✨ [튜토리얼 연동 1] 액션 모드가 아니면 우클릭(또는 ESC) 팝업 막기!
+        if (Ingame_UI_Tutorial.Instance != null && !Ingame_UI_Tutorial.Instance.CanExitBuildMode()) 
+            return; 
+
         if (sessionBuilt.Count > 0 || sessionDemolished.Count > 0) ShowConfirmUI();
         else CancelBuildMode(); 
     }
@@ -497,7 +499,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             CreateInstalledArrow(pos, currentDirection);
 
-            // ✨ [튜토리얼 연동] 채굴기(설치물) 설치 완료 감지!
+            // ✨ [튜토리얼 연동] 채굴기/가공기 설치 완료 감지
             if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
                 Ingame_UI_Tutorial.Instance.TriggerMachineInstalled();
             }
