@@ -81,13 +81,13 @@ class MachineData(BaseModel):
     tile_index: int = 0
     rotation_y: float = 0.0
     source_code: Optional[str] = ""
-    pos_x: float = Field(default=0.0, alias="x")
-    pos_y: float = Field(default=0.0, alias="y")
-    pos_z: float = Field(default=0.0, alias="z")
+    pos_x: float = 0.0
+    pos_y: float = 0.0
+    pos_z: float = 0.0
     
-    class Config:
-        populate_by_name = True                
-        allow_population_by_field_name = True  
+class Config:
+    populate_by_name = True                
+    allow_population_by_field_name = True  
 
 class GameSaveRequest(BaseModel):
     user_id: str
@@ -98,6 +98,8 @@ class GameSaveRequest(BaseModel):
     res5: int = 0
     play_time: int = 0
     expand_count: int = 0
+    quest_id: int = 0
+    tutorial_step: int = 0
     machines: List[MachineData] = []
 
 # =========================================================
@@ -205,7 +207,6 @@ class Machine:
             "slow": "slow",
             "fast": "fast",
             
-            # ✨ [핵심 수정] 글자가 아닌 진짜 숫자 값을 변수에 할당합니다!
             "resCommon": int(resCommon),
             "resRare": int(resRare),
             "resSpecial": int(resSpecial),
@@ -216,6 +217,9 @@ class Machine:
             "Premium": "Premium",
             "Luxury": "Luxury",
             "Common": "Common", 
+            "Rare": "Rare",
+            "Special": "Special",
+            "Exotic": "Exotic",
 
             "resCommon_Resource": resCommon,
             "resRare_Resource": resRare,
@@ -413,6 +417,47 @@ def execute_python_code(req: CodeExecRequest):
         user_view_output = tick_output if tick_output else (init_output if init_output else "실행 완료")
         status = "success"
 
+        # =========================================================
+        # ✨ [핵심 추가] 로그 압축 및 멀티라인(줄바꿈) 루프 포맷팅
+        # =========================================================
+        if user_view_output and status == "success":
+            lines = user_view_output.strip().split('\n')
+            
+            # (선택) 시스템 기본 출력인 "반복합니다." 텍스트를 깔끔하게 숨김
+            lines = [line for line in lines if line != "반복합니다."]
+            
+            compressed_lines = []
+            count = 1
+            
+            for i in range(1, len(lines)):
+                # 이전 줄과 현재 줄이 완벽히 똑같다면 카운트 증가
+                if lines[i] == lines[i-1]:
+                    count += 1
+                else:
+                    # 다르다면 모아둔 카운트를 출력 (줄바꿈 \n 적용!)
+                    if count > 1:
+                        compressed_lines.append(f"{count}번 루프 :\n{lines[i-1]}")
+                    else:
+                        compressed_lines.append(lines[i-1])
+                    count = 1
+            
+            # 마지막 줄 처리
+            if lines:
+                if count > 1:
+                    compressed_lines.append(f"{count}번 루프 :\n{lines[-1]}")
+                else:
+                    compressed_lines.append(lines[-1])
+            
+            user_view_output = '\n'.join(compressed_lines)
+            
+            # 🔥 무한 루프 감지: 파이썬 제너레이터가 살아있다면 (while True 중이라면)
+            if new_machine.generator is not None:
+                if user_view_output.strip():
+                    user_view_output = f"무한 루프 :\n{user_view_output}"
+                else:
+                    user_view_output = "무한 루프 :\n[상태] 실행 중..."
+        # =========================================================
+    
     except (SyntaxError, Exception) as e:
         status = "error"
         user_view_output = format_error_user(e, req.source_code)
@@ -438,8 +483,8 @@ def save_game_data(req: GameSaveRequest):
         user_pk = get_user_pk(cursor, req.user_id)
         if not user_pk: return {"status": "ERROR", "msg": "유저 없음"}
         
-        sql_res = "INSERT INTO game_saves (user_pk, resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE resource_1=%s, resource_2=%s, resource_3=%s, resource_4=%s, resource_5=%s, total_play_time=%s, expand_count=%s"
-        val_res = (user_pk, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count)
+        sql_res = "INSERT INTO game_saves (user_pk, resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE resource_1=%s, resource_2=%s, resource_3=%s, resource_4=%s, resource_5=%s, total_play_time=%s, expand_count=%s, quest_id=%s, tutorial_step=%s"
+        val_res = (user_pk, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.quest_id, req.tutorial_step, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.quest_id, req.tutorial_step)
         cursor.execute(sql_res, val_res)
         
         cursor.execute("DELETE FROM installed_machines WHERE user_pk = %s", (user_pk,))
@@ -485,8 +530,8 @@ def load_game_data(user_id: str):
         user_pk = get_user_pk(cursor, user_id)
         if not user_pk: return {"status": "ERROR", "msg": "유저 없음"}
         
-        cursor.execute("SELECT resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count FROM game_saves WHERE user_pk = %s", (user_pk,))
-        res = cursor.fetchone() or {"resource_1":0, "resource_2":0, "resource_3":0, "resource_4":300, "resource_5":0, "total_play_time":0, "expand_count":0}
+        cursor.execute("SELECT resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step FROM game_saves WHERE user_pk = %s", (user_pk,))
+        res = cursor.fetchone() or {"resource_1":0, "resource_2":0, "resource_3":0, "resource_4":300, "resource_5":0, "total_play_time":0, "expand_count":0, "quest_id":0, "tutorial_step":0}
         
         cursor.execute("SELECT machine_type, tile_index, pos_x, pos_y, pos_z, rotation_y, source_code FROM installed_machines WHERE user_pk = %s", (user_pk,))
         mac = cursor.fetchall()
