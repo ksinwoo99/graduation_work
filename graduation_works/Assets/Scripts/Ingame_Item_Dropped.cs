@@ -60,21 +60,17 @@ public class Ingame_Item_Dropped : MonoBehaviour
                             
         StartCoroutine(PopAnimation(targetPos));
 
-        // [튜토리얼 연동] 자원 스폰 감지 트리거
+        // ✨ [튜토리얼 연동 2] 자원인지 상품인지 구분해서 전달!
         if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
-            Ingame_UI_Tutorial.Instance.TriggerResourceSpawned();
+            Ingame_UI_Tutorial.Instance.TriggerResourceSpawned(isProduct);
         }
     }
 
     private void OnMouseDown() 
     {
-        // 1. 남의 공장 방문 중이면 클릭 금지
         if (Shared_Manager_Session.IsVisiting) return;
-
-        // 2. 마우스가 UI(버튼, 튜토리얼 회색 배경 등) 위에 올려져 있다면 클릭 무시
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
-        // 3. 튜토리얼 중, 클릭을 허용하는 Action 모드가 아니라면 무시
         if (Ingame_UI_Tutorial.Instance != null && 
             Ingame_UI_Tutorial.Instance.isTutorialActive && 
             !Ingame_UI_Tutorial.Instance.isActionMode) return;
@@ -94,7 +90,6 @@ public class Ingame_Item_Dropped : MonoBehaviour
             if (Ingame_Manager_Resource.Instance != null)
                 Ingame_Manager_Resource.Instance.EarnGold(finalPrice);
             
-            // ✨ "대박! " 텍스트 제거
             string msg = $"<color=#FFD700>+{finalPrice} G</color>"; 
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
@@ -111,14 +106,13 @@ public class Ingame_Item_Dropped : MonoBehaviour
             if (resourceType == ResourceType.Special) colorCode = "#FF00FF"; 
             if (resourceType == ResourceType.Exotic) colorCode = "#FF4500"; 
             
-            // ✨ "대박! " 텍스트 제거
             string msg = $"<color={colorCode}>{krName} +{finalAmount}</color>";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
 
-        // ✨ [튜토리얼 연동] 자원 획득 감지 트리거!
+        // ✨ [튜토리얼 연동 2] 자원인지 상품인지 구분해서 전달!
         if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
-            Ingame_UI_Tutorial.Instance.TriggerResourceCollected();
+            Ingame_UI_Tutorial.Instance.TriggerResourceCollected(isProduct);
         }
 
         Destroy(gameObject); 
