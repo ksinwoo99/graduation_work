@@ -230,4 +230,36 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             }
         }
     }
+
+    // ✨ [추가] 로드 직후 모든 하단 UI 버튼의 이름을 코드에서 읽어와 강제 동기화하는 함수
+    public void SyncAllButtonNames() {
+        Ingame_Button_Build[] allButtons = FindObjectsOfType<Ingame_Button_Build>(true);
+        foreach (var btn in allButtons) {
+            Iteminfo_Base info = btn.GetComponent<Iteminfo_Base>();
+            if (info != null && Ingame_System_Save.Instance != null) {
+                string engName = info.machinePrefab != null ? info.machinePrefab.name : info.machineName;
+                int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
+                string code = GetSavedCode(mId);
+
+                if (!string.IsNullOrEmpty(code)) {
+                    string newName = "";
+                    Match directMatch = Regex.Match(code, @"name\s*=\s*[""']([^""']+)[""']");
+                    if (directMatch.Success) newName = directMatch.Groups[1].Value;
+                    else {
+                        Match varMatch = Regex.Match(code, @"name\s*=\s*([a-zA-Z_][a-zA-Z0-9_]*)");
+                        if (varMatch.Success) {
+                            string targetVar = varMatch.Groups[1].Value; 
+                            Match valueMatch = Regex.Match(code, targetVar + @"\s*=\s*[""']([^""']+)[""']");
+                            if (valueMatch.Success) newName = valueMatch.Groups[1].Value;
+                        }
+                    }
+
+                    // 코드를 읽어서 알아낸 이름이 있다면 버튼 텍스트에 덮어씌움!
+                    if (!string.IsNullOrEmpty(newName) && btn.nameText != null) {
+                        btn.nameText.text = newName;
+                    }
+                }
+            }
+        }
+    }
 }
