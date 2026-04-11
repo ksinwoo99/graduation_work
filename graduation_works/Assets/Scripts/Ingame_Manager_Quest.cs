@@ -56,23 +56,40 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
     // ✨ [신규 추가] 불러오기 완료 후 버튼들을 다시 깨워주는 핵심 함수!
     public void RefreshButtonStates() {
-        // 1. 현재 퀘스트 ID보다 낮은(이미 완료한) 모든 퀘스트의 버튼들을 활성화합니다.
-        for (int i = 0; i < currentQuestId && i < questList.Count; i++) {
-            foreach (Button btn in questList[i].unlockButtons) {
+    // 0. 레벨 초기화 (불러오기 시 중복 합산을 막기 위해 0부터 다시 계산합니다)
+    loopUpgradeLevel = 0;
+    conveyorUpgradeLevel = 0;
+
+    // 1. 현재 퀘스트 ID 직전까지의 모든 보상을 다시 훑습니다.
+    for (int i = 0; i < currentQuestId && i < questList.Count; i++) {
+        QuestData q = questList[i];
+        
+        // 버튼 활성화
+        foreach (Button btn in q.unlockButtons) {
+            if (btn != null) btn.interactable = true;
+        }
+
+        // 반복문 및 컨베이어 레벨 복구
+        loopUpgradeLevel += q.rewardLoopLevelUp;
+        conveyorUpgradeLevel += q.rewardConveyorLevelUp;
+    }
+
+    // 2. 만약 모든 퀘스트 완료 상태라면
+    if (currentQuestId >= questList.Count) {
+        foreach (var q in questList) {
+            foreach (Button btn in q.unlockButtons) {
                 if (btn != null) btn.interactable = true;
             }
         }
-
-        // 2. 만약 모든 퀘스트를 완료한 상태라면, 리스트의 모든 버튼을 다 활성화합니다.
-        if (currentQuestId >= questList.Count) {
-            foreach (var quest in questList) {
-                foreach (Button btn in quest.unlockButtons) {
-                    if (btn != null) btn.interactable = true;
-                }
-            }
-        }
-        Debug.Log($"<color=cyan>퀘스트 버튼 동기화 완료 (현재 ID: {currentQuestId})</color>");
     }
+
+    // 3. ✨ [중요] 우측 패널 UI에 변경된 레벨을 즉시 반영합니다.
+    if (Ingame_UI_SystemControl.Instance != null) {
+        Ingame_UI_SystemControl.Instance.UpdateAllUI();
+    }
+    
+    Debug.Log($"<color=cyan>데이터 복구 완료: 반복문 Lv.{loopUpgradeLevel}, 컨베이어 Lv.{conveyorUpgradeLevel}</color>");
+}
 
     void StartQuest(int id) {
         currentQuestId = id;

@@ -234,11 +234,9 @@ private void ApplyGameData(GameLoadResponse data) {
                 Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
             }
         }
-
-        // 2. 맵 확장 및 기계 복구 (이제 안심하고 기계를 깔고 코드를 검사합니다)
         if (Ingame_Manager_Build.Instance != null && data.resources != null) {
             var buildMgr = Ingame_Manager_Build.Instance;
-            
+        
             buildMgr.expandCount = data.resources.expand_count;
             buildMgr.currentMapSize = 4 + (buildMgr.expandCount * 2);
             buildMgr.GenerateFloor(); 
@@ -247,21 +245,15 @@ private void ApplyGameData(GameLoadResponse data) {
                 buildMgr.ClearAllBuildingsForLoad();
                 foreach (var mData in data.machines) {
                     GameObject prefab = GetPrefabFromInt(mData.machine_type);
-                    if (prefab != null) {
-                        buildMgr.LoadBuildingFromServer(mData, prefab);
-                    }
+                    if (prefab != null) buildMgr.LoadBuildingFromServer(mData, prefab);
                 }
-                
-                buildMgr.UpdateQuestMachineCounts(); 
-                
-                if (buildMgr.codingManager != null) {
-                    buildMgr.codingManager.SyncAllButtonNames();
-                }
-                if (Ingame_Manager_Quest.Instance != null) {
-                    // 퀘스트 매니저 안에 버튼 상태를 새로고침하는 함수를 호출합니다.
-                    Ingame_Manager_Quest.Instance.RefreshButtonStates();
-                }
+            buildMgr.UpdateQuestMachineCounts(); 
+            if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
             }
+        }    
+        // 🚀 [최종 해결 위치] 모든 물리적 배치가 끝난 후, UI와 레벨을 최종 동기화합니다.
+        if (Ingame_Manager_Quest.Instance != null) {
+            Ingame_Manager_Quest.Instance.RefreshButtonStates();
         }
     }
 
