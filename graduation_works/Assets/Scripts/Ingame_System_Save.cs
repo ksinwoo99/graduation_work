@@ -257,6 +257,10 @@ private void ApplyGameData(GameLoadResponse data) {
                 if (buildMgr.codingManager != null) {
                     buildMgr.codingManager.SyncAllButtonNames();
                 }
+                if (Ingame_Manager_Quest.Instance != null) {
+                    // 퀘스트 매니저 안에 버튼 상태를 새로고침하는 함수를 호출합니다.
+                    Ingame_Manager_Quest.Instance.RefreshButtonStates();
+                }
             }
         }
     }
