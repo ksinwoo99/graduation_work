@@ -193,88 +193,70 @@ public class Ingame_System_Save : MonoBehaviour {
             Debug.LogError("로드 실패: " + www.error);
         }
     }
+    
     private void ApplyGameData(GameLoadResponse data) {
-        if (data == null) return;
+    if (data == null) return;
 
-        // 1. 자원 및 시간 복구
-        if (Ingame_Manager_Resource.Instance != null && data.resources != null) {
-            var mgr = Ingame_Manager_Resource.Instance;
-            mgr.resCommon = data.resources.resource_1; 
-            mgr.resRare = data.resources.resource_2;
-            mgr.resSpecial = data.resources.resource_3; 
-            mgr.currentGold = data.resources.resource_4;
-            mgr.resExotic = data.resources.resource_5;
-        }
-        
-        if (Ingame_Manager_Time.Instance != null && data.resources != null) {
-            Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
-        }
+    // 🔥 [추가] 건축 모드 강제 종료 (이게 없으면 기계가 멈춘 채로 로드됩니다)
+    if (Ingame_Manager_Build.Instance != null) {
+        Ingame_Manager_Build.Instance.CancelBuildMode(); 
+    }
 
-        // 2. 퀘스트 및 튜토리얼 데이터 복구
-        if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
-            Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
-            Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
-        }
+    // 1. 자원 및 시간 복구 (기존 로직 동일)
+    if (Ingame_Manager_Resource.Instance != null && data.resources != null) {
+        var mgr = Ingame_Manager_Resource.Instance;
+        mgr.resCommon = data.resources.resource_1; 
+        mgr.resRare = data.resources.resource_2;
+        mgr.resSpecial = data.resources.resource_3; 
+        mgr.currentGold = data.resources.resource_4;
+        mgr.resExotic = data.resources.resource_5;
+    }
+    
+    if (Ingame_Manager_Time.Instance != null && data.resources != null) {
+        Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
+    }
 
-        if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
-            int savedStep = data.resources.tutorial_step;
-            if (savedStep == 0 && (data.machines.Count > 0 || data.resources.expand_count > 0)) {
-                savedStep = -1; 
-            }
+    // 2. 퀘스트 및 레벨 데이터 선행 복구
+    // 🚀 [중요] 기계를 생성하기 전에 호출해야 기계들이 생성 즉시 반복문 권한을 확인합니다.
+    if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
+        Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
+        Ingame_Manager_Quest.Instance.RefreshButtonStates(); // 여기서 반복문 레벨 복구 완료!
+        Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
+    }
 
-            if (savedStep == -1) {
-                Ingame_UI_Tutorial.Instance.EndTutorial();
-            } else {
-                Ingame_UI_Tutorial.Instance.gameObject.SetActive(true);
-                Ingame_UI_Tutorial.Instance.isTutorialActive = true;
-                Ingame_UI_Tutorial.Instance.currentStep = savedStep;
-                Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
-            }
-        }
-
-        // 3. 맵 확장 및 기계 복구
-        if (Ingame_Manager_Build.Instance != null && data.resources != null) {
-            var buildMgr = Ingame_Manager_Build.Instance;
-            buildMgr.expandCount = data.resources.expand_count;
-            buildMgr.currentMapSize = 4 + (buildMgr.expandCount * 2);
-            buildMgr.GenerateFloor(); 
-
-            if (data.machines != null) {
-                buildMgr.ClearAllBuildingsForLoad();
-                
-                foreach (var mData in data.machines) {
-                    GameObject prefab = GetPrefabFromInt(mData.machine_type);
-                    if (prefab != null) {
-                        // 딕셔너리에 코드 저장
-                        if (buildMgr.codingManager != null) {
-                            buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
-                        }
-
-                        // 기계 생성 및 즉시 가동
-                        GameObject newMachine = buildMgr.LoadBuildingFromServer(mData, prefab);
-                        if (newMachine != null) {
-                            logic_CodingBase logic = newMachine.GetComponentInChildren<logic_CodingBase>();
-                            if (logic != null && !string.IsNullOrEmpty(mData.source_code)) {
-                                logic.ValidateCode(mData.source_code);
-                                
-                                if (logic is logic_Miner_Master miner) miner.InitializeMiner(miner.miningCount);
-                                else if (logic is logic_Productor_Master productor) productor.InitializeProductor(productor.processingCount);
-                                else if (logic is logic_Conveyor conveyor) conveyor.isWorking = true;
-                            }
-                        }
-                    }
-                }
-
-                buildMgr.UpdateQuestMachineCounts(); 
-                if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
-            }
-        }
-
-        // 🚀 4. 모든 배치가 끝난 후 버튼 및 레벨 최종 동기화
-        if (Ingame_Manager_Quest.Instance != null) {
-            Ingame_Manager_Quest.Instance.RefreshButtonStates();
+    // 3. 튜토리얼 데이터 복구 (기존 로직 동일)
+    if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
+        int savedStep = data.resources.tutorial_step;
+        if (savedStep == -1 || (savedStep == 0 && data.machines.Count > 0)) {
+            Ingame_UI_Tutorial.Instance.EndTutorial();
+        } else {
+            Ingame_UI_Tutorial.Instance.isTutorialActive = true;
+            Ingame_UI_Tutorial.Instance.currentStep = savedStep;
+            Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
         }
     }
+
+    // 4. 맵 확장 및 기계 복구 (엔진 가동)
+    if (Ingame_Manager_Build.Instance != null && data.resources != null) {
+        var buildMgr = Ingame_Manager_Build.Instance;
+        buildMgr.expandCount = data.resources.expand_count;
+        buildMgr.currentMapSize = 4 + (buildMgr.expandCount * 2);
+        buildMgr.GenerateFloor(); 
+
+        if (data.machines != null) {
+            buildMgr.ClearAllBuildingsForLoad();
+            foreach (var mData in data.machines) {
+                GameObject prefab = GetPrefabFromInt(mData.machine_type);
+                if (prefab != null) {
+                    // 이제 이 함수가 기계를 생성하고, 코드를 심고, Initialize까지 한 번에 처리합니다.
+                    buildMgr.LoadBuildingFromServer(mData, prefab);
+                }
+            }
+            buildMgr.UpdateQuestMachineCounts(); 
+            if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
+        }
+    }
+}
 
     private GameObject GetPrefabFromInt(int type) {
         var buildMgr = Ingame_Manager_Build.Instance;
