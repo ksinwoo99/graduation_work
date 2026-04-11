@@ -643,7 +643,16 @@ public class Ingame_Manager_Build : MonoBehaviour {
         HideAllInstalledArrows();
     }
     
-    public Dictionary<Vector3Int, GameObject> GetInstalledObjects() { return installedObjects; }
+    public Dictionary<Vector3Int, GameObject> GetInstalledObjects() { 
+        Dictionary<Vector3Int, GameObject> uniqueObjects = new Dictionary<Vector3Int, GameObject>();
+        
+        foreach (var pos in installedDirections.Keys) {
+            if (installedObjects.ContainsKey(pos)) {
+                uniqueObjects.Add(pos, installedObjects[pos]);
+            }
+        }
+        return uniqueObjects;
+    }
     
     void UpdateCursor(Vector3Int cellPos) {
         if (isDemolishMode && IsOccupied(cellPos)) Cursor.SetCursor(cursorDemolish, cursorHotspot, CursorMode.Auto);

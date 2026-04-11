@@ -76,8 +76,11 @@ public class Ingame_System_Save : MonoBehaviour {
         if (name.Contains("Productor_Hightech")) return 7;
         if (name.Contains("Productor_Superior")) return 8;
         if (name.Contains("Conveyor")) return 9;
+        // 대형 추가 / 긴 이름(Large)을 무조건 먼저 검사해야 혼동하지 않습니다!
+        if (name.Contains("Storage_Large") || name.Contains("대형 창고")) return 11;
         if (name.Contains("Storage")) return 10;
-        if (name.Contains("Market")) return 11;
+        if (name.Contains("Market_Large") || name.Contains("도매상")) return 13;
+        if (name.Contains("Market")) return 12;
         return 0;
     }
 
@@ -215,6 +218,13 @@ public class Ingame_System_Save : MonoBehaviour {
                     if (prefab != null) {
                         buildMgr.LoadBuildingFromServer(mData, prefab);
                     }
+                }
+                buildMgr.UpdateQuestMachineCounts(); // 창고 수량만큼 최대 자원 동기화
+                
+                // 불러오기가 끝난 후 하단 UI 버튼들의 이름도 동기화!
+                if (buildMgr.codingManager != null) {
+                    buildMgr.codingManager.SyncAllButtonNames();
+                    
                 }
             }
         }
