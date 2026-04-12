@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class Ingame_Item_Dropped : MonoBehaviour
 {
@@ -15,9 +16,9 @@ public class Ingame_Item_Dropped : MonoBehaviour
     public int sellPrice = 100;
 
     [Header("고품질(대박) 설정")]
-    public GameObject sparkleEffectObject;      // ✨ 인스펙터에서 자식 반짝이 오브젝트를 연결해주세요.
-    public bool isHighQuality = false;          // 외부에서 체크할 변수
-    public float qualityMultiplier = 2.0f;      // ✨ 고품질일 때 자원/가격 배율 (기본 2배)
+    public GameObject sparkleEffectObject;      
+    public bool isHighQuality = false;          
+    public float qualityMultiplier = 2.0f;      
 
     [Header("연출 설정")]
     public float popHeight = 0.8f;   
@@ -32,19 +33,22 @@ public class Ingame_Item_Dropped : MonoBehaviour
         forcedTargetPos = target;
     }
 
-    // ✨ [핵심 추가] 가공기에서 로또 터지면 이 함수를 호출합니다!
     public void SetHighQuality()
     {
+        Debug.Log("🎉 [테스트] 대박 판정 성공! 이펙트 켜기를 시도합니다!");
         isHighQuality = true;
         
-        // 미리 세팅해둔 반짝이 이펙트를 켭니다!
         if (sparkleEffectObject != null)
         {
+            Debug.Log("✨ [테스트] 자식 오브젝트가 연결되어 있습니다. 켭니다!");
             sparkleEffectObject.SetActive(true);
             
-            // 파티클 시스템이라면 재생시켜줍니다.
             ParticleSystem ps = sparkleEffectObject.GetComponent<ParticleSystem>();
             if (ps != null) ps.Play();
+        }
+        else
+        {
+            Debug.LogError("🚨 [테스트 실패] Sparkle Effect Object 빈칸이 비어있습니다!");
         }
     }
 
@@ -55,10 +59,22 @@ public class Ingame_Item_Dropped : MonoBehaviour
                             : startPos + (Vector3)Random.insideUnitCircle * 0.8f;
                             
         StartCoroutine(PopAnimation(targetPos));
+
+        // ✨ [튜토리얼 연동 2] 자원인지 상품인지 구분해서 전달!
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+            Ingame_UI_Tutorial.Instance.TriggerResourceSpawned(isProduct);
+        }
     }
 
-    private void OnMouseDown() {
+    private void OnMouseDown() 
+    {
         if (Shared_Manager_Session.IsVisiting) return;
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+
+        if (Ingame_UI_Tutorial.Instance != null && 
+            Ingame_UI_Tutorial.Instance.isTutorialActive && 
+            !Ingame_UI_Tutorial.Instance.isActionMode) return;
+
         CollectItem();
     }
 
@@ -68,15 +84,13 @@ public class Ingame_Item_Dropped : MonoBehaviour
             return;
         }
 
-        // ✨ 수집할 때 고품질 여부에 따라 보상과 텍스트를 다르게 줍니다!
         if (isProduct) {
             int finalPrice = isHighQuality ? (int)(sellPrice * qualityMultiplier) : sellPrice;
             
             if (Ingame_Manager_Resource.Instance != null)
                 Ingame_Manager_Resource.Instance.EarnGold(finalPrice);
             
-            string qualityTag = isHighQuality ? "대박! " : "";
-            string msg = $"<color=#FFD700>{qualityTag}+{finalPrice} G</color>"; 
+            string msg = $"<color=#FFD700>+{finalPrice} G</color>"; 
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
         else {
@@ -92,10 +106,15 @@ public class Ingame_Item_Dropped : MonoBehaviour
             if (resourceType == ResourceType.Special) colorCode = "#FF00FF"; 
             if (resourceType == ResourceType.Exotic) colorCode = "#FF4500"; 
             
-            string qualityTag = isHighQuality ? "대박! " : "";
-            string msg = $"<color={colorCode}>{qualityTag}{krName} +{finalAmount}</color>";
+            string msg = $"<color={colorCode}>{krName} +{finalAmount}</color>";
             Ingame_Manager_Build.Instance.ShowFloatingText(msg, transform.position);
         }
+
+        // ✨ [튜토리얼 연동 2] 자원인지 상품인지 구분해서 전달!
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+            Ingame_UI_Tutorial.Instance.TriggerResourceCollected(isProduct);
+        }
+
         Destroy(gameObject); 
     }
 

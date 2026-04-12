@@ -44,7 +44,7 @@ public class Menu_Manager_UI : MonoBehaviour {
         fadeCanvasGroup.alpha = 0f;
 
         // UserSession -> Shared_Manager_Session 변경
-        welcomeText.text = $"{Shared_Manager_Session.CurrentUserId}님 환영합니다!";
+        welcomeText.text = $"{Shared_Manager_Session.CurrentUserId}님,\n 환영합니다!";
 
         DOVirtual.DelayedCall(2f, ExpandPanelWithTitleOut);
     }
