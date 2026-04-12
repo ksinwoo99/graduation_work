@@ -26,6 +26,7 @@ namespace InGameCodeEditor
         private bool delayedRefresh = false;
         private float lastScrollValue = 0f;
         private bool lineHighlightLocked = false;
+        private bool suppressNextNewline = false;
 
 #pragma warning disable 0649
         [Header("Elements")]
@@ -183,8 +184,82 @@ namespace InGameCodeEditor
             if (inputField != null)
             {
                 inputField.onValidateInput += (string text, int charIndex, char addedChar) => {
-                    return addedChar == '\t' ? '\0' : addedChar;
+                    if (addedChar == '\t') return '\0';
+                    if (addedChar == '\n' && suppressNextNewline)
+                    {
+                        suppressNextNewline = false;
+                        return '\0';
+                    }
+                    return addedChar;
                 };
+            }
+        }
+
+        public void Update()
+        {
+            if (inputField == null || !inputField.isFocused) return;
+
+            // Return: \n + 들여쓰기를 직접 삽입하고, TMP의 \n 삽입은 onValidateInput으로 차단
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                suppressNextNewline = true;
+
+                int pos = inputField.stringPosition;
+                string text = inputField.text;
+
+                // 커서 앞 현재 줄 텍스트 추출
+                int lastNewlineIdx = pos > 0 ? text.LastIndexOf('\n', pos - 1) : -1;
+                string currentLineText = lastNewlineIdx >= 0
+                    ? text.Substring(lastNewlineIdx + 1, pos - lastNewlineIdx - 1)
+                    : text.Substring(0, pos);
+
+                // 앞쪽 공백 수 계산 (기존 들여쓰기 유지)
+                int spaceCount = 0;
+                while (spaceCount < currentLineText.Length && currentLineText[spaceCount] == ' ')
+                    spaceCount++;
+
+                // :, (, [ 로 끝나면 4칸 추가 들여쓰기
+                string trimmed = currentLineText.TrimEnd();
+                if (trimmed.EndsWith(":") || trimmed.EndsWith("(") || trimmed.EndsWith("["))
+                    spaceCount += 4;
+
+                string indent = new string(' ', spaceCount);
+
+                // \n + 들여쓰기 직접 삽입
+                inputField.text = text.Insert(pos, "\n" + indent);
+                inputField.stringPosition = pos + 1 + indent.Length;
+                inputField.ForceLabelUpdate();
+
+                Refresh(true);
+                delayedRefresh = true;
+            }
+
+            // Backspace: 커서 앞 4칸이 모두 줄 시작 공백이면 4칸 선택 → TMP가 선택 영역 전체 삭제
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                int pos = inputField.stringPosition;
+                string text = inputField.text;
+
+                if (pos >= 4 && text.Substring(pos - 4, 4) == "    ")
+                {
+                    // 줄 시작부터 커서까지 전부 공백인지 확인 (줄 중간 공백은 제외)
+                    int lineStart = pos - 1;
+                    while (lineStart > 0 && text[lineStart - 1] != '\n')
+                        lineStart--;
+
+                    bool allSpaces = true;
+                    for (int i = lineStart; i < pos; i++)
+                    {
+                        if (text[i] != ' ') { allSpaces = false; break; }
+                    }
+
+                    if (allSpaces)
+                    {
+                        // 4칸 선택 → TMP LateUpdate가 선택 영역(4칸)을 한 번에 삭제
+                        inputField.selectionAnchorPosition = pos - 4;
+                        inputField.selectionFocusPosition = pos;
+                    }
+                }
             }
         }
 
@@ -211,25 +286,7 @@ namespace InGameCodeEditor
                     Refresh(true);
                 }
 
-                if (Input.GetKeyDown(KeyCode.Backspace))
-                {
-                    int pos = inputField.stringPosition;
-                    if (pos >= 4 && inputField.text.Substring(pos - 4, 4) == "    ")
-                    {
-                        inputField.text = inputField.text.Remove(pos - 4, 4);
-                        inputField.stringPosition = pos - 4;
-                        Refresh(true);
-                    }
-                }
-
-                if (Input.GetKeyDown(KeyCode.Return))
-                {
-                    AutoIndentCaret(false);
-                }
-                else if (Input.anyKeyDown && Input.inputString.Contains(languageTheme.autoIndent.IndentDecreaseString))
-                {
-                    AutoIndentCaret(true);
-                }
+                // Backspace / Return 은 Update()에서 처리
             }
 
             if (inputField.isFocused || delayedRefresh)
@@ -417,69 +474,6 @@ namespace InGameCodeEditor
             inputText = highlightedBuilder.ToString();
             return inputText;
         }
-        private void AutoIndentCaret(bool isClosingToken = false)
-        {
-            // [1] 유저가 엔터(Return)를 쳤을 때
-            if (Input.GetKeyDown(KeyCode.Return) == true)
-            {
-                // ✨ [파이썬 전용 로직] 전체 파일이 아닌 '직전 줄'만 분석합니다!
-                string textBeforeCaret = inputField.text.Substring(0, inputField.stringPosition);
-                
-                // 직전 줄 텍스트 추출 (엔터 직후이므로 텍스트의 끝은 \n 상태임)
-                string[] lines = textBeforeCaret.Split(new[] { '\n' });
-                string lastLine = lines.Length > 1 && textBeforeCaret.EndsWith("\n") 
-                                  ? lines[lines.Length - 2] 
-                                  : (lines.Length > 0 ? lines[lines.Length - 1] : "");
-
-                // 1. 직전 줄의 맨 앞에 스페이스가 몇 개 있는지 셉니다. (기본 들여쓰기 유지)
-                int spaceCount = 0;
-                while (spaceCount < lastLine.Length && lastLine[spaceCount] == ' ')
-                {
-                    spaceCount++;
-                }
-
-                // 2. 만약 직전 줄이 콜론(:)으로 끝났다면 들여쓰기를 4칸 더 추가합니다.
-                if (lastLine.TrimEnd().EndsWith(":"))
-                {
-                    spaceCount += 4;
-                }
-
-                // 3. 최종 스페이스 문자열 생성
-                string indent = new string(' ', spaceCount);
-
-                // 커서 위치에 스페이스 강제 삽입
-                if (indent.Length > 0)
-                {
-                    int insertPos = Mathf.Clamp(inputField.stringPosition, 0, inputField.text.Length);
-                    inputField.text = inputField.text.Insert(insertPos, indent);
-                    inputField.stringPosition = insertPos + indent.Length;
-                }
-
-                // UI 강제 업데이트 적용
-                inputText.text = inputField.text;
-                inputText.SetText(inputField.text, true);
-                inputText.Rebuild(CanvasUpdate.Prelayout);
-                inputField.ForceLabelUpdate();
-                inputField.Rebuild(CanvasUpdate.Prelayout);
-                Refresh(true);
-                delayedRefresh = true;
-            }
-
-            // [2] 유저가 백스페이스를 쳐서 들여쓰기(4칸)를 한 번에 지우려 할 때 (기존 로직 유지)
-            if (isClosingToken == true)
-            {
-                if (inputField.stringPosition >= 4) 
-                {
-                    string lastFour = inputField.text.Substring(inputField.stringPosition - 4, 4);
-                    if (lastFour == "    ")
-                    {
-                        inputField.text = inputField.text.Remove(inputField.stringPosition - 4, 4);
-                        inputField.stringPosition = inputField.stringPosition - 4;
-                    }
-                }
-            }
-        }
-
         private string GetAutoIndentTab(int amount)
         {
             string indentUnit = "    "; 
