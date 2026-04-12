@@ -127,24 +127,25 @@ public class Ingame_System_Save : MonoBehaviour {
             data.expand_count = buildMgr.expandCount;
             var codingMgr = buildMgr.codingManager;
 
-            foreach (var kvp in buildMgr.GetInstalledObjects()) {
-                if (kvp.Value == null) continue;
-                
-                string engName = kvp.Value.name.Replace("(Clone)", "").Trim();
-                int mId = GetMachineTypeInt(engName);
+            // ✨ [핵심 수정] 4칸 중복 저장을 막기 위해, '기준점'이 담긴 installedDirections만 순회합니다!
+            foreach (var kvp in buildMgr.installedDirections) {
+                Vector3Int originPos = kvp.Key;
+                BuildDirection dir = kvp.Value;
 
-                // 방향(회전) 값 계산
-                float rotY = 0f;
-                if (buildMgr.installedDirections.ContainsKey(kvp.Key)) {
-                    rotY = -(int)buildMgr.installedDirections[kvp.Key] * 90f;
-                }
+                // 기준점에 기계가 실제로 존재하는지 확인
+                if (!buildMgr.GetInstalledObjects().ContainsKey(originPos)) continue;
+                GameObject machineObj = buildMgr.GetInstalledObjects()[originPos];
+                if (machineObj == null) continue;
+
+                string engName = machineObj.name.Replace("(Clone)", "").Trim();
+                int mId = GetMachineTypeInt(engName);
 
                 MachineData mData = new MachineData {
                     machine_type = mId,
-                    pos_x = kvp.Key.x, 
-                    pos_y = kvp.Key.y, 
-                    pos_z = kvp.Key.z,
-                    rotation_y = rotY,
+                    pos_x = originPos.x, 
+                    pos_y = originPos.y, 
+                    pos_z = originPos.z,
+                    rotation_y = -(int)dir * 90f,
                     source_code = (codingMgr != null) ? codingMgr.GetSavedCode(mId) : ""
                 };
                 data.machines.Add(mData);
@@ -224,15 +225,26 @@ public class Ingame_System_Save : MonoBehaviour {
         Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
     }
 
-    // 3. 튜토리얼 데이터 복구 (기존 로직 동일)
+    // 3. 튜토리얼 데이터 복구
     if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
         int savedStep = data.resources.tutorial_step;
+        
         if (savedStep == -1 || (savedStep == 0 && data.machines.Count > 0)) {
+            // 이미 스킵했거나(-1), 옛날 세이브 파일이라 기계가 있는데 튜토리얼이 0인 경우
             Ingame_UI_Tutorial.Instance.EndTutorial();
         } else {
-            Ingame_UI_Tutorial.Instance.isTutorialActive = true;
-            Ingame_UI_Tutorial.Instance.currentStep = savedStep;
-            Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
+            // ✨ [핵심 수정 1] 로딩 중 강제로 꺼졌던 튜토리얼 전체 패널을 다시 켜줍니다!
+            if (tutorialPanel != null) tutorialPanel.SetActive(true);
+
+            if (savedStep == 0) {
+                // ✨ [핵심 수정 2] 스텝이 0이라면 묻지도 않고 시작하지 말고, 스킵 팝업을 띄워줍니다.
+                Ingame_UI_Tutorial.Instance.ShowSkipPrompt();
+            } else {
+                // 진행 중이던 스텝(1 이상)이 있다면 그대로 이어서 진행합니다.
+                Ingame_UI_Tutorial.Instance.isTutorialActive = true;
+                Ingame_UI_Tutorial.Instance.currentStep = savedStep;
+                Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
+            }
         }
     }
 
