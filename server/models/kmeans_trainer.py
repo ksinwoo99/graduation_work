@@ -2,11 +2,12 @@ import sys
 import os
 import pymysql
 import pandas as pd
+import numpy as np
 from sklearn.cluster import KMeans
 import joblib
 import warnings
 from datetime import datetime
-from sklearn.preprocessing import StandardScaler 
+from sklearn.preprocessing import StandardScaler
 
 # 상위 폴더(server)에 있는 모듈들 불러오기
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -19,6 +20,20 @@ warnings.filterwarnings('ignore')
 # Pandas 터미널 출력 설정
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 1000)
+
+# ── 피처 가중치 ────────────────────────────────────────────
+# StandardScaler 정규화 이후에 곱해야 KMeans 거리 계산에 실제 반영됩니다.
+# (정규화 이전에 곱하면 스케일러가 다시 평탄화해 효과 없음)
+# predict_cluster_rank()에서도 동일 가중치를 반드시 적용해야 합니다.
+_LOOP_FEATURE_WEIGHTS: dict[str, float] = {
+    'has_loop':           3.0,   # 루프 유무를 클러스터 분리의 핵심 기준으로 강조
+    'loop_efficiency':    2.0,   # 루프 효율성도 중요하게 반영
+    'has_infinite_while': 2.0,   # while True 사용 여부 강조
+}
+
+# 군집 rank → 표시 레이블 (학습 로그 및 메타데이터용)
+_RANK_LABELS = ["단순 코드형", "일반 학습자형", "효율 최적화형"]
+
 
 def train():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -49,10 +64,20 @@ def train():
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(feature_df)
 
+    # ── 피처 가중치 적용 ──────────────────────────────────
+    # StandardScaler 이후에 곱해야 KMeans 거리 계산에 실제로 반영됩니다.
+    col_names   = feature_df.columns.tolist()
+    weights_arr = np.ones(len(col_names), dtype=float)
+    for col, w in _LOOP_FEATURE_WEIGHTS.items():
+        if col in col_names:
+            weights_arr[col_names.index(col)] = w
+
+    weighted_scaled = scaled_features * weights_arr
+
     print("K-Means 모델 학습 중...")
     try:
         kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
-        df['cluster_id'] = kmeans.fit_predict(scaled_features)
+        df['cluster_id'] = kmeans.fit_predict(weighted_scaled)
 
         feature_df['cluster_id'] = df['cluster_id']
         summary = feature_df.groupby('cluster_id').mean().round(4)
@@ -72,14 +97,14 @@ def train():
 
         print("\n[군집 의미 자동 정렬]")
         for raw_id, rank in sorted(cluster_rank_map.items()):
-            label = ["단순 코드형", "성장형", "효율 최적화형"][rank]
+            label = _RANK_LABELS[rank]
             print(f"  raw cluster {raw_id} (score 평균 {score_means[raw_id]:.2f}) → rank {rank} [{label}]")
 
         # ── 학습 메타데이터 구성 ─────────────────────────────────
         # /api/model_status 엔드포인트가 이 값을 읽어 AWS에서 디버깅에 활용
         cluster_summary = {}
         for raw_id, rank in cluster_rank_map.items():
-            label = ["단순 코드형", "성장형", "효율 최적화형"][rank]
+            label = _RANK_LABELS[rank]
             count = int((feature_df['cluster_id'] == raw_id).sum())
             row   = summary.loc[raw_id]
             cluster_summary[str(rank)] = {
@@ -99,10 +124,12 @@ def train():
         }
 
         joblib.dump({
-            'model':        kmeans,
-            'scaler':       scaler,
-            'cluster_rank': cluster_rank_map,
-            'meta':         meta,
+            'model':           kmeans,
+            'scaler':          scaler,
+            'cluster_rank':    cluster_rank_map,
+            'feature_weights': weights_arr.tolist(),   # predict_cluster_rank()에서 동일하게 적용
+            'feature_names':   col_names,              # 가중치-컬럼 매핑 검증용
+            'meta':            meta,
         }, MODEL_PATH)
         print(f"\n✅ 학습 완료 및 모델 업데이트 성공! (총 학습 데이터: {len(df)}개)")
 
