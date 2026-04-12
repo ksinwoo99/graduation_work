@@ -13794,10 +13794,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Theme
+  m_text: "\uB77C\uC774\uD2B8 \uBAA8\uB4DC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6bc218fdf244fe34795296a7b3a312f5, type: 2}
-  m_sharedMaterial: {fileID: 6984596346669937927, guid: 6bc218fdf244fe34795296a7b3a312f5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
+  m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -15609,8 +15609,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -102.05005, y: -25.330017}
-  m_SizeDelta: {x: 161, y: 30}
+  m_AnchoredPosition: {x: -80, y: -25.330017}
+  m_SizeDelta: {x: 130, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1385376302
 MonoBehaviour:
@@ -18040,6 +18040,7 @@ MonoBehaviour:
   btnThemeToggle: {fileID: 1385376302}
   darkTheme: {fileID: 11400000, guid: cc00b7a428afd6a4bb470014b4f75320, type: 2}
   lightTheme: {fileID: 11400000, guid: 112ff7dfadfdb9f4783b8a8ba0c83394, type: 2}
+  isDarkMode: 1
   minFontSize: 10
   maxFontSize: 60
   fontZoomSpeed: 3
