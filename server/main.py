@@ -16,6 +16,8 @@ import pymysql
 import joblib
 import os
 import datetime
+import re
+import difflib
 import pandas as pd
 
 from config import DB_CONFIG
@@ -60,10 +62,16 @@ _model_loaded_mtime: float = 0.0
 # /api/model_status 에서 사용합니다.
 _model_meta: dict = {}
 
+# 학습 시 StandardScaler 이후에 적용한 피처 가중치 배열 (numpy 호환 list)
+# predict_cluster_rank() 에서 동일하게 곱해야 학습·추론 피처 공간이 일치합니다.
+_feature_weights: list = []
+_feature_names:   list = []
+
 
 def _load_model() -> None:
     """pkl 파일을 읽어 전역 모델 변수를 갱신"""
-    global code_cluster_model, scaler, cluster_rank_map, _model_loaded_mtime, _model_meta
+    global code_cluster_model, scaler, cluster_rank_map, \
+           _model_loaded_mtime, _model_meta, _feature_weights, _feature_names
 
     if not os.path.exists(MODEL_PATH):
         print(f"[Model] pkl 파일 없음: {MODEL_PATH}")
@@ -76,11 +84,17 @@ def _load_model() -> None:
             # cluster_rank 키가 없는 구 포맷(하위 호환): 항등 매핑으로 대체
             cluster_rank_map   = saved.get('cluster_rank', {0: 0, 1: 1, 2: 2})
             _model_meta        = saved.get('meta', {})
+            # 피처 가중치 — kmeans_trainer.py 에서 학습 시 적용한 값
+            # 구 포맷 pkl 은 이 키가 없으므로 빈 리스트(가중치 미적용)로 폴백
+            _feature_weights   = saved.get('feature_weights', [])
+            _feature_names     = saved.get('feature_names',   [])
         else:
             # 이전 포맷(모델 단독 저장) 하위 호환
             code_cluster_model = saved
             cluster_rank_map   = {0: 0, 1: 1, 2: 2}
             _model_meta        = {}
+            _feature_weights   = []
+            _feature_names     = []
 
         _model_loaded_mtime = os.path.getmtime(MODEL_PATH)
         loaded_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -144,7 +158,13 @@ def predict_cluster_rank(features: dict, execution_time: float, score: float) ->
         feat_with_meta = {**features, 'execution_time': execution_time, 'score': score}
         user_df        = pd.DataFrame([feat_with_meta])
         scaled         = scaler.transform(user_df)
-        raw_cluster    = int(code_cluster_model.predict(scaled)[0])
+
+        # 학습 시 적용한 피처 가중치를 추론에도 동일하게 적용 (공간 일치)
+        if _feature_weights and len(_feature_weights) == scaled.shape[1]:
+            import numpy as _np
+            scaled = scaled * _np.array(_feature_weights, dtype=float)
+
+        raw_cluster = int(code_cluster_model.predict(scaled)[0])
         return cluster_rank_map.get(raw_cluster, raw_cluster)
     except Exception as e:
         print(f"군집 예측 실패: {e}")
@@ -224,25 +244,29 @@ def calculate_score(request: CodeSubmitRequest, features: dict) -> float:
 # 군집 이동 이력 기반 성장/정체 문구 생성
 # ──────────────────────────────────────────────────────────
 
-_RANK_LABELS_SHORT = {0: "단순 코드형", 1: "성장형", 2: "효율 최적화형"}
+_RANK_LABELS_SHORT = {0: "단순 코드형", 1: "일반 학습자형", 2: "효율 최적화형"}
 
+# 정체 감지 시 보여줄 다음 단계 유도 문구
 _STAGNATION_NUDGE = {
-    # rank 0: 아직 루프를 안 쓰는 유저 — 어떤 반복문이든 시작을 유도
-    0: "for i in range(5): mining() 처럼 반복문을 활용해보세요!",
-    # rank 1: 루프를 쓰지만 효율이 중간 — 루프 자체를 더 잘 쓰도록 유도 (while 강요 X)
-    1: "range()의 숫자를 더 키우거나, 작업에 맞는 조건식(while count < 10 등)을 시도해보세요.",
-    # rank 2: 이미 효율적 — 정체 감지 메시지 없음 (아래 _get_progression_note 에서 스킵)
+    # rank 0: 루프 미사용 — 반복문 첫 시도 유도
+    0: "for i in range(5): mining() 처럼 반복문을 시작해보세요!",
+    # rank 1: 루프 사용 중 — 더 효율적인 구조로 발전 유도
+    1: "range()의 숫자를 더 키우거나, while True 로 무한 반복에도 도전해보세요!",
 }
 
 
 def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
     """
-    직전 제출들의 cluster_rank와 비교하여 성장 또는 정체 문구를 반환합니다.
-    반환값은 기존 힌트 뒤에 그대로 이어붙입니다.
+    직전 제출들의 cluster_rank와 비교해 성장 / 정체 / 하락 문구를 반환합니다.
+    반환값은 generate_hint() 결과 뒤에 이어붙입니다.
 
-    - 성장 감지: 이전 rank < 현재 rank  →  축하 문구
-    - 정체 감지: 직전 2회 이상 동일 rank  →  전환 유도 문구
-    - 데이터 부족 / cluster_rank 컬럼 미존재  →  빈 문자열 반환 (조용히 처리)
+    감지 케이스:
+        성장 (rank ↑) : 이전 rank → 현재 rank 상승 축하
+        하락 (rank ↓) : 이전 rank → 현재 rank 하락 경고
+                        특히 효율 최적화형(2)에서 내려올 경우 별도 문구
+        유지/정체     : 직전 2회 + 현재 = 3연속 동일 rank → 전환 유도
+                        단, rank 2(효율 최적화형) 유지는 정체 아님 — 정체 메시지 없음
+        데이터 부족   : 빈 문자열 반환 (조용히 처리)
 
     현재 제출의 cluster_rank 는 아직 DB에 저장되기 전이므로
     이 함수가 읽는 rows 는 순수하게 이전 제출 기록만 포함합니다.
@@ -267,20 +291,35 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
     prev_ranks = [row['cluster_rank'] for row in rows]
     last_rank  = prev_ranks[0]   # 직전 제출의 rank
 
-    # ── 성장 감지 ────────────────────────────────────────────
+    cur_label  = _RANK_LABELS_SHORT.get(current_rank, str(current_rank))
+    prev_label = _RANK_LABELS_SHORT.get(last_rank,    str(last_rank))
+
+    # ── 성장 감지 (rank 상승) ─────────────────────────────────
     if current_rank > last_rank:
         return (
-            f"\n[ {_RANK_LABELS_SHORT.get(current_rank, str(current_rank))} 달성! ] "
-            f"{_RANK_LABELS_SHORT.get(last_rank, str(last_rank))}에서 "
-            f"{_RANK_LABELS_SHORT.get(current_rank, str(current_rank))}으로 올라섰어요! "
-            "계속 이 방향으로 나아가세요."
+            f"\n[ 성장 중! ] {prev_label}에서 {cur_label}으로 올라섰어요! "
+            "이 방향으로 계속 나아가세요."
         )
 
-    # ── 정체 감지: 직전 2회 + 현재 = 3회 연속 동일 rank ─────
-    # rank 2 는 이미 효율적인 코드 — 잘하고 있는데 "바꿔보세요" 메시지는 불필요
+    # ── 하락 감지 (rank 하락) ─────────────────────────────────
+    if current_rank < last_rank:
+        if last_rank == 2:
+            # 효율 최적화형에서 내려온 경우 — 루프 구조 약화를 명시
+            return (
+                f"\n[ 효율 하락 ] 이전에는 {prev_label}이었어요. "
+                "반복문(for/while)을 더 적극적으로 활용해보세요!"
+            )
+        return (
+            f"\n[ 패턴 단순화 ] 이전보다 코드 구조가 단순해졌어요. "
+            "반복문을 계속 활용해보세요!"
+        )
+
+    # ── 유지 / 정체 감지 ─────────────────────────────────────
+    # rank 2는 이미 최고 효율 코드 — 유지 자체가 좋은 것, 정체 메시지 불필요
     if current_rank == 2:
         return ""
 
+    # 직전 N회 중 연속으로 같은 rank 인 횟수
     consecutive = 0
     for r in prev_ranks:
         if r == current_rank:
@@ -288,12 +327,114 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
         else:
             break
 
-    if consecutive >= 2:   # 직전 2개가 같고 현재도 같으면 총 3연속
-        label = _RANK_LABELS_SHORT.get(current_rank, str(current_rank))
+    if consecutive >= 2:   # 직전 2개 + 현재 = 총 3연속
         nudge = _STAGNATION_NUDGE.get(current_rank, "새로운 방식을 시도해보세요.")
-        return f"\n[ {label} 지속 중 ] {consecutive + 1}번 연속 같은 스타일이에요. {nudge}"
+        return (
+            f"\n[ {cur_label} 유지 중 ] "
+            f"{consecutive + 1}번 연속 같은 패턴이에요. {nudge}"
+        )
 
     return ""
+
+
+# ──────────────────────────────────────────────────────────
+# AI 힌트 생성 — 헬퍼 상수 & 함수
+# ──────────────────────────────────────────────────────────
+
+# 게임 내 사용 가능한 명령어 목록 (오타 제안에 사용)
+_GAME_FUNCTIONS = ["mining", "producting", "move", "name"]
+
+# 자주 오타 나는 파이썬 내장 함수 목록
+_PYTHON_BUILTINS = [
+    "print", "range", "len", "int", "str", "float", "list",
+    "dict", "input", "type", "abs", "sum", "max", "min",
+    "round", "sorted", "enumerate", "zip", "map", "filter",
+    "True", "False", "None",
+]
+
+# for / while / if / def … 뒤에 : 가 오는 블록 시작 줄 패턴
+_BLOCK_START_RE = re.compile(
+    r'^\s*(for|while|if|elif|else|def|class|try|except|finally|with)\b.*:\s*$'
+)
+
+
+def _extract_name_from_nameerror(output_log: str) -> str:
+    """NameError 에서 미정의 이름을 원본 대소문자 그대로 추출합니다."""
+    m = re.search(r"NameError: name '([^']+)' is not defined", output_log)
+    return m.group(1) if m else ""
+
+
+def _looks_like_unquoted_string(name: str, source_code: str) -> bool:
+    """
+    해당 이름이 따옴표 없이 문자열 값으로 쓰인 패턴인지 검사합니다.
+    예) name = Alice  (따옴표 없음) → NameError: name 'Alice' is not defined
+    """
+    escaped = re.escape(name)
+    patterns = [
+        r'=\s*'      + escaped + r'\s*(?:#.*)?$',   # x = Alice
+        r'\(\s*'     + escaped + r'\s*\)',            # func(Alice)
+        r',\s*'      + escaped + r'\s*[,\)]',         # func(a, Alice)
+    ]
+    for pat in patterns:
+        if re.search(pat, source_code, re.MULTILINE):
+            return True
+    return False
+
+
+def _suggest_similar_name(name: str) -> tuple:
+    """
+    오타일 가능성이 있는 이름에 대해 (제안_이름, 카테고리) 를 반환합니다.
+    카테고리: "game" | "builtin" | ""
+    """
+    lower = name.lower()
+    game_matches = difflib.get_close_matches(lower, _GAME_FUNCTIONS, n=1, cutoff=0.6)
+    if game_matches:
+        return game_matches[0], "game"
+    builtin_matches = difflib.get_close_matches(lower, _PYTHON_BUILTINS, n=1, cutoff=0.6)
+    if builtin_matches:
+        return builtin_matches[0], "builtin"
+    return "", ""
+
+
+def _find_empty_block(source_code: str) -> str:
+    """
+    블록 헤더(for / while / if … :) 뒤에 들여쓰기된 본문이 없는
+    첫 번째 줄의 텍스트(최대 50자)를 반환합니다. 없으면 빈 문자열 반환.
+    """
+    lines = source_code.split('\n')
+    for i, line in enumerate(lines):
+        if not _BLOCK_START_RE.match(line):
+            continue
+        current_indent = len(line) - len(line.lstrip())
+        for j in range(i + 1, len(lines)):
+            next_line = lines[j]
+            if not next_line.strip():
+                continue                               # 빈 줄은 건너뜀
+            next_indent = len(next_line) - len(next_line.lstrip())
+            if next_indent <= current_indent:
+                return line.strip()[:50]               # 본문 없음
+            break                                      # 정상 들여쓰기 있음
+        else:
+            return line.strip()[:50]                   # 파일 끝에 본문 없음
+    return ""
+
+
+def _extract_attr_from_attributeerror(output_log: str) -> str:
+    """AttributeError 에서 없는 속성명을 추출합니다."""
+    m = re.search(
+        r"AttributeError: (?:'[^']+' object has no attribute '([^']+)'"
+        r"|module '[^']+' has no attribute '([^']+)')",
+        output_log,
+    )
+    if m:
+        return m.group(1) or m.group(2) or ""
+    return ""
+
+
+def _extract_fn_from_typeerror(output_log: str) -> str:
+    """TypeError: xxx() takes … 패턴에서 함수명을 추출합니다."""
+    m = re.search(r"([a-zA-Z_]\w*)\(\) takes", output_log)
+    return m.group(1) if m else ""
 
 
 # ──────────────────────────────────────────────────────────
@@ -312,78 +453,327 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
     """
     제출 결과에 따라 단계별로 힌트를 생성합니다.
 
-    1단계 (is_python_valid == False) : 파이썬 에러 유형별 힌트
+    1단계 (is_python_valid == False) : 파이썬 에러 유형별 세분화 힌트
     2단계 (is_machine_valid == False): 기계 조건 미충족 힌트
     3단계 (성공)                      : ML 군집 기반 맞춤 힌트
 
-    cluster_rank : predict_cluster_rank() 의 결과를 submit_code() 에서 미리 계산해 전달합니다.
-                   -1 이면 모델 미로드 상태로 간주해 기본 힌트를 반환합니다.
-    features     : submit_code() 에서 미리 추출해 전달합니다 (중복 ast.parse 방지).
+    주의: 8000.py 의 format_error_user() 는 IndentationError / TabError 포함
+          모든 SyntaxError 계열을 "SyntaxError: {msg}" 로 포맷합니다.
+          따라서 error_log 에서 "indentationerror" 문자열은 등장하지 않으며,
+          들여쓰기 오류는 SyntaxError 메시지 내용(unexpected indent 등)으로 판별합니다.
     """
 
-    # ── 1단계: 파이썬 문법 / 런타임 에러 ─────────────────────
+    # ══════════════════════════════════════════════════════
+    # 1단계: 파이썬 문법 / 런타임 에러
+    # ══════════════════════════════════════════════════════
     if not request.is_python_valid:
-        error_log = request.output_log.lower()
+        log       = request.output_log          # 원본 (대소문자 유지, regex 추출용)
+        error_log = log.lower()                  # 소문자 검색용
+        source    = request.source_code
 
-        if "indentation" in error_log or "taberror" in error_log:
-            return "파이썬은 들여쓰기가 생명이에요! 들여쓰기가 제대로 되었는지 확인해보세요. (4칸)"
+        # ── SyntaxError 계열 ─────────────────────────────
+        # (IndentationError / TabError 도 8000.py 에서 SyntaxError: 로 포맷됨)
+        if "syntaxerror" in error_log:
 
-        if "syntax" in error_log:
-            if "unexpected eof" in error_log or "never closed" in error_log:
-                return "괄호 '(' 또는 '{', '[' 를 열고 닫지 않았는지 확인해 보세요!"
-            if "unterminated string" in error_log or "eol while scanning" in error_log:
-                return "따옴표('' 나 \"\")를 열고 닫지 않았는지 확인해 보세요!"
-            return "명령어에 오타가 있거나, 조건문/반복문 뒤에 콜론(:)을 빠뜨렸을지도 몰라요!"
+            # 들여쓰기 없는 블록 본문 (IndentationError: expected an indented block)
+            if "expected an indented block" in error_log:
+                problem_line = _find_empty_block(source)
+                if problem_line:
+                    return (
+                        f"'{problem_line}' 아래에 실행할 코드가 없어요!\n"
+                        "콜론(:) 다음 줄을 4칸 들여쓰기 후 명령어를 써주세요."
+                    )
+                return (
+                    "콜론(:) 뒤에 실행할 코드 블록이 없어요.\n"
+                    "들여쓰기(4칸) 후 명령어를 추가해보세요."
+                )
 
+            # 불필요한 들여쓰기 (IndentationError: unexpected indent)
+            if "unexpected indent" in error_log:
+                return (
+                    "들여쓰기가 필요 없는 곳에 빈칸이 들어가 있어요!\n"
+                    "코드 앞의 불필요한 공백을 지워주세요."
+                )
+
+            # 탭/스페이스 혼용 (TabError)
+            if "inconsistent use of tabs" in error_log or "taberror" in error_log:
+                return (
+                    "탭(Tab)과 스페이스를 함께 쓰면 안 돼요!\n"
+                    "들여쓰기를 모두 스페이스 4칸으로 통일해보세요."
+                )
+
+            # 괄호 미닫기
+            if ("unexpected eof" in error_log
+                    or "never closed" in error_log
+                    or "was never closed" in error_log):
+                return "괄호 '(' 또는 '[' 를 열고 닫지 않았는지 확인해보세요!"
+
+            # 문자열 미닫기
+            if ("unterminated string" in error_log
+                    or "eol while scanning" in error_log):
+                return "따옴표('' 또는 \"\")를 열고 닫지 않았는지 확인해보세요!"
+
+            # return / break / continue 오용
+            if "return outside function" in error_log:
+                return (
+                    "return 은 def 로 만든 함수 안에서만 쓸 수 있어요!\n"
+                    "함수 정의(def) 없이 return 만 쓰지는 않았나요?"
+                )
+            if "break outside loop" in error_log:
+                return "break 는 for / while 반복문 안에서만 쓸 수 있어요!"
+            if "continue outside loop" in error_log:
+                return "continue 는 for / while 반복문 안에서만 쓸 수 있어요!"
+
+            # = 과 == 혼동
+            if ("cannot assign to" in error_log
+                    or "maybe you meant '=='" in error_log):
+                return (
+                    "조건식에서는 비교 연산자 == 을 써야 해요.\n"
+                    "대입(=)과 비교(==)를 헷갈린 건 아닌가요? 예) if a == 5:"
+                )
+
+            # 보이지 않는 특수문자 (다른 곳에서 복붙 시)
+            if "invalid character" in error_log:
+                return (
+                    "코드에 보이지 않는 특수문자가 섞여 있어요!\n"
+                    "다른 곳에서 복사·붙여넣기 했다면 직접 다시 입력해보세요."
+                )
+
+            # f-string 오류
+            if "f-string" in error_log:
+                return (
+                    "f-string 문법 오류예요.\n"
+                    "f\"...{변수이름}...\" 형식인지, 중괄호 {} 가 제대로 닫혔는지 확인해보세요."
+                )
+
+            # 일반 SyntaxError 폴백
+            return "명령어에 오타가 있거나, 조건문·반복문 뒤에 콜론(:)을 빠뜨렸을지도 몰라요!"
+
+        # ── NameError ─────────────────────────────────────
         if "nameerror" in error_log:
+            undef = _extract_name_from_nameerror(log)
+
+            if undef:
+                # 1순위: 기계 이름 필드에 따옴표를 빠뜨린 경우
+                if re.search(r'\bname\s*=\s*' + re.escape(undef), source):
+                    return (
+                        f"기계 이름 '{undef}' 을(를) 따옴표로 감싸지 않았어요!\n"
+                        f'name = "{undef}" 처럼 수정해보세요.'
+                    )
+
+                # 2순위: 일반적인 따옴표 없는 문자열 값
+                if _looks_like_unquoted_string(undef, source):
+                    return (
+                        f"'{undef}' 을(를) 텍스트로 쓰려면 따옴표로 감싸야 해요!\n"
+                        f'예시: 변수 = "{undef}"'
+                    )
+
+                # 3순위: 오타 제안 (게임 명령어 / 파이썬 내장 함수)
+                suggestion, category = _suggest_similar_name(undef)
+                if suggestion:
+                    ctx = "게임 명령어" if category == "game" else "파이썬 기본 명령어"
+                    return (
+                        f"'{undef}' 를 찾을 수 없어요.\n"
+                        f"{ctx} '{suggestion}' 의 오타는 아닌가요?"
+                    )
+
             return "존재하지 않는 명령어(또는 변수)를 불렀어요. 오타가 발생했는지 확인해보세요!"
 
+        # ── TypeError ─────────────────────────────────────
         if "typeerror" in error_log:
+            # 문자열 + 숫자 연결 시도
+            if ("can only concatenate str" in error_log
+                    or "must be str, not" in error_log):
+                return (
+                    "문자열(글자)과 숫자를 바로 + 로 연결할 수 없어요!\n"
+                    "str(숫자) 로 변환 후 합쳐보세요. 예) \"결과: \" + str(5)"
+                )
+
+            # 인자 개수 오류
+            if "takes" in error_log and "argument" in error_log:
+                fn_name = _extract_fn_from_typeerror(log)
+                if fn_name:
+                    return (
+                        f"'{fn_name}()' 에 잘못된 개수의 값을 넣었어요.\n"
+                        "괄호 안에 값이 필요 없는 명령어일 수도 있어요! 예) mining()"
+                    )
+                return (
+                    "함수에 잘못된 개수의 인자를 전달했어요.\n"
+                    "괄호 안의 값 개수를 확인해보세요."
+                )
+
+            # None 값 오용
+            if "'nonetype'" in error_log:
+                return (
+                    "결과값이 없는(None) 값을 사용하려 했어요.\n"
+                    "함수의 반환값이 있는지, 변수에 제대로 저장했는지 확인해보세요."
+                )
+
+            # 대괄호 접근 불가
+            if "not subscriptable" in error_log:
+                return (
+                    "대괄호([])로 접근할 수 없는 값이에요.\n"
+                    "리스트(list)나 딕셔너리(dict)가 맞는지 확인해보세요."
+                )
+
+            # range() 에 문자열 전달
+            if "cannot be interpreted as an integer" in error_log:
+                return (
+                    "range() 안에는 정수(숫자)만 넣을 수 있어요.\n"
+                    "문자열이 들어가지는 않았나요? 예) range(5)"
+                )
+
             return "타입 에러가 발생했어요. 숫자가 들어갈 자리에 문자열(글자)을 넣지는 않았나요?"
 
+        # ── AttributeError ───────────────────────────────
+        if "attributeerror" in error_log:
+            attr = _extract_attr_from_attributeerror(log)
+            if attr:
+                suggestion, category = _suggest_similar_name(attr)
+                if suggestion:
+                    ctx = "게임 명령어" if category == "game" else "파이썬 기본 명령어"
+                    return (
+                        f"'{attr}' 를 찾을 수 없어요.\n"
+                        f"{ctx} '{suggestion}' 의 오타는 아닌가요?"
+                    )
+                return f"'{attr}' 는 존재하지 않는 속성이에요. 오타인지 확인해보세요!"
+            return "존재하지 않는 속성이나 메서드를 불렀어요. 오타가 없는지 확인해보세요!"
+
+        # ── ValueError ────────────────────────────────────
         if "valueerror" in error_log:
-            return "명령어의 형식은 맞지만, 올바르지 않은 값이 들어갔어요. 정확한 값을 입력했는지 확인해보세요."
+            if "invalid literal" in error_log and "int()" in error_log:
+                return (
+                    "숫자로 변환할 수 없는 값을 int()에 넣었어요.\n"
+                    "숫자로만 이루어진 문자열인지 확인해보세요. 예) int(\"123\")"
+                )
+            return (
+                "명령어의 형식은 맞지만, 올바르지 않은 값이 들어갔어요.\n"
+                "정확한 값을 입력했는지 확인해보세요."
+            )
 
-        if "timeouterror" in error_log or "recursionerror" in error_log:
-            return "코드가 너무 오래 실행되고 있어요. 무한 루프에 빠진 건 아닌지 확인해보세요!"
+        # ── ZeroDivisionError ─────────────────────────────
+        if "zerodivisionerror" in error_log:
+            return (
+                "0으로 나누기를 시도했어요!\n"
+                "나누는 수(분모)가 0이 되지 않도록 코드를 확인해보세요."
+            )
 
-        return "기계가 미지의 파이썬 에러를 뿜어내고 있습니다. 로그 창의 글씨를 번역해서 문제를 해결해 보세요!"
+        # ── IndexError ────────────────────────────────────
+        if "indexerror" in error_log:
+            return (
+                "리스트의 범위를 벗어난 위치에 접근했어요.\n"
+                "인덱스 번호가 리스트 길이(len())를 넘지 않는지 확인해보세요."
+            )
 
-    # ── 2단계: 기계별 조건 미충족 ────────────────────────────
+        # ── KeyError ─────────────────────────────────────
+        if "keyerror" in error_log:
+            m = re.search(r"KeyError: (.+)", log)
+            key_name = m.group(1).strip() if m else ""
+            if key_name:
+                return (
+                    f"딕셔너리에 {key_name} 키가 없어요!\n"
+                    "키 이름의 오타나 존재 여부를 확인해보세요."
+                )
+            return (
+                "딕셔너리에 없는 키에 접근했어요.\n"
+                "키 이름의 오타나 존재 여부를 확인해보세요."
+            )
+
+        # ── RecursionError ───────────────────────────────
+        if "recursionerror" in error_log:
+            return (
+                "함수가 자기 자신을 너무 많이 호출했어요(재귀 깊이 초과)!\n"
+                "함수 안에서 같은 함수를 계속 부르지는 않았나요?"
+            )
+
+        # ── TimeoutError ─────────────────────────────────
+        if "timeouterror" in error_log:
+            return (
+                "코드 실행 시간이 너무 오래 걸려요!\n"
+                "끝나지 않는 무한 루프에 빠진 건 아닌지 확인해보세요."
+            )
+
+        # ── 알 수 없는 에러 폴백 ─────────────────────────
+        return (
+            "기계가 미지의 파이썬 에러를 뿜어내고 있습니다.\n"
+            "로그 창의 에러 메시지를 번역해서 문제를 해결해보세요!"
+        )
+
+    # ══════════════════════════════════════════════════════
+    # 2단계: 기계별 조건 미충족
+    # ══════════════════════════════════════════════════════
     if not request.is_machine_valid:
         clean = request.source_code.replace(" ", "")
 
         if "name=" not in clean:
-            return "기계를 작동시키려면 먼저 이름을 지어줘야 해요! 코드 맨 윗줄에 'name = \"이름\"'을 추가해보세요."
+            return (
+                "기계를 작동시키려면 먼저 이름을 지어줘야 해요!\n"
+                "코드 맨 윗줄에 name = \"이름\" 을 추가해보세요."
+            )
 
         # REQUIRED_FUNCTIONS 딕셔너리 기반 체크 — 기계 추가 시 위 딕셔너리만 수정
         for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
             if fn.replace(" ", "") not in clean:
-                return f"이 기계는 {fn} 명령어가 필요합니다. 다른 명령어를 입력하지는 않았나요?"
+                return (
+                    f"이 기계는 {fn} 명령어가 필요합니다.\n"
+                    "다른 명령어를 입력하지는 않았나요?"
+                )
 
         return "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
 
-    # ── 3단계: 성공 — ML 군집 기반 힌트 ─────────────────────
-    # cluster_rank 는 submit_code() 에서 predict_cluster_rank() 로 미리 계산됩니다.
+    # ══════════════════════════════════════════════════════
+    # 3단계: 성공 — ML 군집 기반 맞춤 힌트
+    # features 를 활용해 같은 rank 안에서도 코드 특성별로 세분화합니다.
+    # 성장/정체/하락 문구는 _get_progression_note() 가 담당하므로
+    # 여기서는 "현재 코드의 특성"과 "다음 단계 방향" 만 안내합니다.
+    # ══════════════════════════════════════════════════════
     if cluster_rank == 0:
+        # 단순 코드형: 반복문 없음
+        if features.get('if_count', 0) > 0:
+            # 조건문(if/elif)은 쓰지만 반복문 없음
+            return (
+                "[ 단순 코드형 ] "
+                "조건문(if)을 활용하고 있어요! "
+                "여기에 반복문(for)까지 더하면 훨씬 강력해집니다. "
+                "예시: for i in range(5): mining()"
+            )
+        # 완전 단순 — 명령어 나열만
         return (
             "[ 단순 코드형 ] "
-            "이 기계는 매번 명령을 하나씩 실행하고 있습니다. "
-            "반복문(for)을 사용하면 한 줄로 여러 번 채굴할 수 있어요! "
+            "명령을 하나씩 순서대로 실행하는 코드예요. "
+            "반복문(for)을 사용하면 같은 명령을 여러 번 한 번에 실행할 수 있어요! "
             "예시: for i in range(5): mining()"
         )
+
     if cluster_rank == 1:
+        # 일반 학습자형: 반복문 있음, 효율 중간
+        if features.get('while_count', 0) > 0 and not features.get('has_infinite_while', 0):
+            # 일반 while(조건식)을 쓰는 경우 — while True 로의 발전 유도
+            return (
+                "[ 일반 학습자형 ] "
+                "while 반복문을 사용하고 있어요! "
+                "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요."
+            )
+        # for range 사용 중 — 숫자를 늘리거나 while True 도전 유도
         return (
-            "[ 성장형 ] "
-            "반복문을 사용하고 있지만 더 효율적으로 만들 수 있어요! "
-            "range()의 범위를 더 크게 늘리거나, "
-            "작업 조건에 맞는 while 문을 활용해보세요."
+            "[ 일반 학습자형 ] "
+            "for 반복문을 활용하고 있어요! "
+            "range() 안의 숫자를 더 크게 늘려보거나, "
+            "while True 무한 반복에도 도전해보세요."
         )
+
     if cluster_rank == 2:
+        # 효율 최적화형: 루프 효율 높음
+        if features.get('has_infinite_while', 0):
+            return (
+                "[ 효율 최적화형 ] "
+                "while True 로 기계를 완전 자동화했어요! "
+                "최고 등급의 코드입니다."
+            )
         return (
             "[ 효율 최적화형 ] "
-            "이 기계의 코드는 매우 효율적으로 최적화되어 있습니다! "
-            "훌륭한 코드예요."
+            "효율적인 반복문 구조로 잘 최적화된 코드예요! "
+            "훌륭한 코드입니다."
         )
 
     # cluster_rank == -1: 모델 미로드 또는 예측 실패 시 기본 힌트
@@ -414,7 +804,14 @@ async def submit_code(request: CodeSubmitRequest):
         # 성공한 제출만 군집 예측 (실패 시 -1 저장)
         cluster_rank = predict_cluster_rank(features, request.execution_time, score) \
                        if request.is_success else -1
-        ai_hint      = generate_hint(request, score, features, cluster_rank)
+
+        # ── 보정 규칙: 반복문 전무 코드는 무조건 rank 0 ──────────
+        # KMeans가 if/elif, 다중 함수 호출 등의 복잡도로 인해
+        # 루프 없는 코드를 '일반 학습자형'으로 오분류하는 현상을 방지합니다.
+        if cluster_rank > 0 and features.get('has_loop', 0) == 0:
+            cluster_rank = 0
+
+        ai_hint = generate_hint(request, score, features, cluster_rank)
 
         # ast_complexity 는 별도 지표 (사이클로매틱 복잡도 + 최대 중첩 깊이)
         ast_complexity = calculate_ast_complexity(request.source_code)
