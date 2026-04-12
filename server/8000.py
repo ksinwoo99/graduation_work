@@ -100,6 +100,7 @@ class GameSaveRequest(BaseModel):
     expand_count: int = 0
     quest_id: int = 0
     tutorial_step: int = 0
+    conveyor_level: int = 1
     machines: List[MachineData] = []
 
 # =========================================================
@@ -481,10 +482,9 @@ def save_game_data(req: GameSaveRequest):
         user_pk = get_user_pk(cursor, req.user_id)
         if not user_pk: return {"status": "ERROR", "msg": "유저 없음"}
         
-        sql_res = "INSERT INTO game_saves (user_pk, resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE resource_1=%s, resource_2=%s, resource_3=%s, resource_4=%s, resource_5=%s, total_play_time=%s, expand_count=%s, quest_id=%s, tutorial_step=%s"
-        val_res = (user_pk, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.quest_id, req.tutorial_step, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.quest_id, req.tutorial_step)
-        cursor.execute(sql_res, val_res)
-        
+        sql_res = "INSERT INTO game_saves (user_pk, resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step, conveyor_level) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE resource_1=%s, resource_2=%s, resource_3=%s, resource_4=%s, resource_5=%s, total_play_time=%s, expand_count=%s, quest_id=%s, tutorial_step=%s, conveyor_level=%s"
+        val_res = (user_pk, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.quest_id, req.tutorial_step, req.conveyor_level, req.res1, req.res2, req.res3, req.res4, req.res5, req.play_time, req.expand_count, req.quest_id, req.tutorial_step, req.conveyor_level)
+        cursor.execute(sql_res, val_res)        
         cursor.execute("DELETE FROM installed_machines WHERE user_pk = %s", (user_pk,))
         
         if req.machines:
@@ -528,8 +528,8 @@ def load_game_data(user_id: str):
         user_pk = get_user_pk(cursor, user_id)
         if not user_pk: return {"status": "ERROR", "msg": "유저 없음"}
         
-        cursor.execute("SELECT resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step FROM game_saves WHERE user_pk = %s", (user_pk,))
-        res = cursor.fetchone() or {"resource_1":0, "resource_2":0, "resource_3":0, "resource_4":300, "resource_5":0, "total_play_time":0, "expand_count":0, "quest_id":0, "tutorial_step":0}
+        cursor.execute("SELECT resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step, conveyor_level FROM game_saves WHERE user_pk = %s", (user_pk,))        
+        res = cursor.fetchone() or {"resource_1":0, "resource_2":0, "resource_3":0, "resource_4":300, "resource_5":0, "total_play_time":0, "expand_count":0, "quest_id":0, "tutorial_step":0, "conveyor_level":1}
         
         cursor.execute("SELECT machine_type, tile_index, pos_x, pos_y, pos_z, rotation_y, source_code FROM installed_machines WHERE user_pk = %s", (user_pk,))
         mac = cursor.fetchall()
