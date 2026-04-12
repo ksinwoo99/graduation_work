@@ -3116,7 +3116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 0.6666667}
+  m_Color: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16289,7 +16289,7 @@ MonoBehaviour:
   - title: "\uBCC0\uC218\uB85C \uC774\uB984\uC9D3\uAE30"
     rewardText: "- \uACE8\uB4DC 100"
     goals:
-    - type: 9
+    - type: 10
       targetAmount: 1
     rewardGold: 100
     rewardCommonResource: 0
@@ -16304,7 +16304,7 @@ MonoBehaviour:
     goals:
     - type: 1
       targetAmount: 1
-    - type: 3
+    - type: 4
       targetAmount: 20
     rewardGold: 200
     rewardCommonResource: 110
@@ -16329,10 +16329,9 @@ MonoBehaviour:
     rewardLoopLevelUp: 1
     rewardConveyorLevelUp: 0
   - title: "\uC790\uB3D9\uD654\uC758 \uC2DC\uC791"
-    rewardText: "- \uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8 \uD574\uAE08\n- \uC790\uC6D0
-      \uC0C1\uC790 \uBC0F \uD310\uB9E4\uC18C \uD574\uAE08"
+    rewardText: "- \uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8 \uD574\uAE08"
     goals:
-    - type: 11
+    - type: 12
       targetAmount: 2
     rewardGold: 0
     rewardCommonResource: 0
@@ -16340,10 +16339,23 @@ MonoBehaviour:
     rewardSpecialResource: 0
     unlockButtons:
     - {fileID: 188314990}
+    rewardLoopLevelUp: 0
+    rewardConveyorLevelUp: 1
+  - title: "\uCCA0\uAC70\uD574\uBCF4\uAE30"
+    rewardText: "- \uC790\uC6D0 \uC0C1\uC790 \uBC0F \uC0C1\uD488 \uD310\uB9E4\uC18C
+      \uD574\uAE08"
+    goals:
+    - type: 11
+      targetAmount: 1
+    rewardGold: 0
+    rewardCommonResource: 0
+    rewardRareResource: 0
+    rewardSpecialResource: 0
+    unlockButtons:
     - {fileID: 245965597}
     - {fileID: 741066799}
     rewardLoopLevelUp: 0
-    rewardConveyorLevelUp: 1
+    rewardConveyorLevelUp: 0
   - title: "\uC790\uB3D9\uD654\uC758 \uD3B8\uB9AC\uD568"
     rewardText: "- \uACF5\uC7A5 \uD655\uC7A5 \uD574\uAE08"
     goals:
@@ -16360,23 +16372,10 @@ MonoBehaviour:
     rewardLoopLevelUp: 0
     rewardConveyorLevelUp: 0
   - title: "\uCCAB \uD655\uC7A5"
-    rewardText: "- \uCCA0\uAC70 \uAE30\uB2A5 \uD574\uAE08"
+    rewardText: "- \uBB34\uD55C \uBC18\uBCF5\uBB38 \uD574\uAE08"
     goals: []
     rewardGold: 0
     rewardCommonResource: 0
-    rewardRareResource: 0
-    rewardSpecialResource: 0
-    unlockButtons:
-    - {fileID: 46644564}
-    rewardLoopLevelUp: 0
-    rewardConveyorLevelUp: 0
-  - title: "\uCCA0\uAC70\uD574\uBCF4\uAE30"
-    rewardText: "- \uBB34\uD55C \uBC18\uBCF5\uBB38 \uC0AC\uC6A9 \uAC00\uB2A5"
-    goals:
-    - type: 10
-      targetAmount: 1
-    rewardGold: 300
-    rewardCommonResource: 100
     rewardRareResource: 0
     rewardSpecialResource: 0
     unlockButtons: []
@@ -16385,8 +16384,8 @@ MonoBehaviour:
   - title: "\uC900\uBE44 \uC644\uB8CC!"
     rewardText: "- \uBAA8\uB4E0 \uD018\uC2A4\uD2B8 \uC644\uB8CC"
     goals: []
-    rewardGold: 0
-    rewardCommonResource: 0
+    rewardGold: 300
+    rewardCommonResource: 100
     rewardRareResource: 0
     rewardSpecialResource: 0
     unlockButtons:
@@ -16404,6 +16403,7 @@ MonoBehaviour:
   currentQuestId: 0
   builtMinerCount: 0
   builtProductorCount: 0
+  builtConveyorCount: 0
   loopUpgradeLevel: 0
   conveyorUpgradeLevel: 0
   isMinerNameChanged: 0
@@ -21190,7 +21190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1978854431
 RectTransform:
   m_ObjectHideFlags: 0

@@ -80,9 +80,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
     private bool isDemolishMode { get { return selectedDemolishLogic != null; } }
     
-    // =========================================================
-    // ✨ 튜토리얼 모드 연동 기계 정지 트릭!
-    // =========================================================
     public bool isBuildMode { 
         get { 
             if (Ingame_UI_Tutorial.Instance != null && 
@@ -179,7 +176,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void TryCancelBuildMode() {
-        // ✨ [튜토리얼 연동 1] 액션 모드가 아니면 우클릭(또는 ESC) 팝업 막기!
         if (Ingame_UI_Tutorial.Instance != null && !Ingame_UI_Tutorial.Instance.CanExitBuildMode()) 
             return; 
 
@@ -499,7 +495,6 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             CreateInstalledArrow(pos, currentDirection);
 
-            // ✨ [튜토리얼 연동] 채굴기/가공기 설치 완료 감지
             if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
                 Ingame_UI_Tutorial.Instance.TriggerMachineInstalled();
             }
@@ -531,9 +526,9 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         if (installedCosts.ContainsKey(originPos)) {
             original = installedCosts[originPos];
-            refund.gold = (int)(original.gold * 0.8f); 
+            refund.gold = original.gold; 
             foreach(var res in original.resources) {
-                refund.resources.Add(new ResourceCost { resourceType = res.resourceType, amount = (int)(res.amount * 0.8f) });
+                refund.resources.Add(new ResourceCost { resourceType = res.resourceType, amount = res.amount });
             }
         }
 
@@ -775,6 +770,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         int minerCount = 0;
         int productorCount = 0;
+        int conveyorCount = 0; // ✨ [신규] 컨베이어 카운트 변수
         int storageCount = 0;
         int marketCount = 0;
 
@@ -794,6 +790,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
             if (obj.GetComponent<logic_Miner_Master>() != null) minerCount++;
             else if (obj.GetComponent<logic_Productor_Master>() != null) productorCount++;
+            else if (obj.GetComponent<logic_Conveyor>() != null) conveyorCount++; // ✨ [신규] 컨베이어 확인
             
             string objName = obj.name.ToLower();
             if (objName.Contains("storage") || objName.Contains("창고")) storageCount += weight;
@@ -802,6 +799,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
         Ingame_Manager_Quest.Instance.builtMinerCount = minerCount;
         Ingame_Manager_Quest.Instance.builtProductorCount = productorCount;
+        Ingame_Manager_Quest.Instance.builtConveyorCount = conveyorCount; // ✨ [신규] 매니저에 전달!
 
         if (Ingame_Manager_Resource.Instance != null) {
             Ingame_Manager_Resource.Instance.UpdateCapacities(storageCount, marketCount);
