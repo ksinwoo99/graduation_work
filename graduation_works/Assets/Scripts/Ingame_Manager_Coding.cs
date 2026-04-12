@@ -14,9 +14,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
     [Header("테마 설정 (다크/라이트 모드)")]
     public Button btnThemeToggle; 
-    public InGameCodeEditor.CodeEditorTheme darkTheme;  // 다크 테마 에셋 드래그 앤 드롭
-    public InGameCodeEditor.CodeEditorTheme lightTheme; // 라이트 테마 에셋 드래그 앤 드롭
-    public bool isDarkMode = true; // 기본 상태 (다크모드)
+    public InGameCodeEditor.CodeEditorTheme darkTheme;
+    public InGameCodeEditor.CodeEditorTheme lightTheme;
+    public bool isDarkMode = true;
 
     [Header("폰트 줌(확대/축소) 설정")] 
     public float minFontSize = 10f;   
@@ -77,7 +77,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (codingPanel.activeSelf && currentMachineId == machineId) { CloseWindow(); return; }
         if (codingPanel.activeSelf) SaveCurrentInput();
 
-        // 같은 기계인지 확인
         bool isMachineChanged = (currentMachineId != machineId);
 
         currentMachineId = machineId;
@@ -86,7 +85,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         codingPanel.SetActive(true);
         
-        // 기계가 바뀌었을 때 결과창 끄기
         if (isMachineChanged) {
             Ingame_Button_Debugging debugger = codingPanel.GetComponentInChildren<Ingame_Button_Debugging>(true);
             if (debugger != null) debugger.HideResult();
@@ -165,7 +163,22 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (hasName && !string.IsNullOrEmpty(newName)) {
             if (titleText != null) titleText.text = $"{newName}.py";
-            if (currentBuildButton != null && currentBuildButton.nameText != null) currentBuildButton.nameText.text = newName;
+            
+            if (currentBuildButton != null) {
+                if (currentBuildButton.nameText != null) currentBuildButton.nameText.text = newName;
+                
+                // ✨ [핵심 추가 1] Iteminfo_Base의 기본 이름도 코딩한 이름으로 덮어씌웁니다!
+                Iteminfo_Base info = currentBuildButton.GetComponent<Iteminfo_Base>();
+                if (info != null) {
+                    info.machineName = newName;
+                    
+                    // 만약 정보창(Info)이 이미 켜져 있다면, 즉시 바뀐 이름으로 새로고침합니다.
+                    if (buildManager != null && buildManager.machineInfoUI != null && buildManager.machineInfoUI.gameObject.activeSelf) {
+                        buildManager.machineInfoUI.ShowInfo(info);
+                    }
+                }
+            }
+
             if (Ingame_Manager_Quest.Instance != null) {
                 if (currentLogic.GetComponent<logic_Miner_Master>() != null) Ingame_Manager_Quest.Instance.isMinerNameChanged = true;
             }
@@ -209,8 +222,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (statusLight != null) statusLight.color = color;
         if (buildManager != null) buildManager.SetPlacementPermission(isAllowed);
 
-        // ✨ [핵심 추가] 코딩 검사 결과가 '빨간불(Color.red)'인지 확인하여 튜토리얼 매니저로 즉시 전달!
-        // (노란불이나 초록불이라면 에러가 아닌 것으로 판정하여 튜토리얼이 통과됩니다)
         if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
             bool isError = (color == Color.red);
             Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
@@ -218,16 +229,13 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     }
 
     public void ToggleTheme() {
-        // 1. 모드 상태 뒤집기 (true -> false -> true)
         isDarkMode = !isDarkMode;
         
-        // 2. CodeEditor 컴포넌트를 찾아서 테마 갈아끼우기
         var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
         if (codeEditor != null) {
             codeEditor.EditorTheme = isDarkMode ? darkTheme : lightTheme;
         }
         
-        // 3. (선택) 버튼의 글씨도 '라이트 모드' / '다크 모드'로 바꿔주기
         if (btnThemeToggle != null) {
             TextMeshProUGUI btnText = btnThemeToggle.GetComponentInChildren<TextMeshProUGUI>();
             if (btnText != null) {
@@ -236,7 +244,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
     }
 
-    // ✨ [추가] 로드 직후 모든 하단 UI 버튼의 이름을 코드에서 읽어와 강제 동기화하는 함수
     public void SyncAllButtonNames() {
         Ingame_Button_Build[] allButtons = FindObjectsOfType<Ingame_Button_Build>(true);
         foreach (var btn in allButtons) {
@@ -259,9 +266,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                         }
                     }
 
-                    // 코드를 읽어서 알아낸 이름이 있다면 버튼 텍스트에 덮어씌움!
-                    if (!string.IsNullOrEmpty(newName) && btn.nameText != null) {
-                        btn.nameText.text = newName;
+                    if (!string.IsNullOrEmpty(newName)) {
+                        if (btn.nameText != null) btn.nameText.text = newName;
+                        // ✨ [핵심 추가 2] 세이브를 불러왔을 때도 Info 창 이름이 정상 반영되도록 동기화!
+                        info.machineName = newName; 
                     }
                 }
             }

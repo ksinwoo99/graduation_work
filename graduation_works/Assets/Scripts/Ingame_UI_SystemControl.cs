@@ -14,7 +14,6 @@ public class Ingame_UI_SystemControl : MonoBehaviour
 
     [Header("2. 공통 팝업창 UI (확장/업그레이드)")]
     public GameObject popupPanel;             
-    // ✨ [수정] txtPopupContent 변수도 완전히 삭제했습니다!
     public TextMeshProUGUI txtPopupAlert;     
     public GameObject buttonGroup;            
 
@@ -110,7 +109,6 @@ public class Ingame_UI_SystemControl : MonoBehaviour
 
     public void OnClick_OpenExpandPopup() {
         PreparePopup(PopupType.ExpandMap, "확장하시겠습니까?");
-        // ✨ 불필요한 Content 및 Cost 업데이트 로직 삭제!
     }
 
     public void OnClick_OpenConveyorPopup() {
@@ -118,7 +116,6 @@ public class Ingame_UI_SystemControl : MonoBehaviour
         if (questMgr == null || questMgr.conveyorUpgradeLevel >= 3) return;
 
         PreparePopup(PopupType.UpgradeConveyor, "개선하시겠습니까?");
-        // ✨ 불필요한 Content 및 Cost 업데이트 로직 삭제!
     }
 
     private void PreparePopup(PopupType type, string alertText) {
@@ -137,6 +134,12 @@ public class Ingame_UI_SystemControl : MonoBehaviour
         if (currentPopupType == PopupType.ExpandMap) {
             if (buildMgr != null) {
                 if (buildMgr.TryExpandMap()) { 
+                    
+                    // ✨ [튜토리얼 연동 3] 확장 "예" 버튼을 눌러 확장이 성공했을 때 튜토리얼 진행!
+                    if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+                        Ingame_UI_Tutorial.Instance.TriggerMapExpanded();
+                    }
+
                     OnClick_CancelPopup(); 
                     UpdateAllUI();
                 } else {
