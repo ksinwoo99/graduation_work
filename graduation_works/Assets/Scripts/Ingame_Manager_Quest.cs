@@ -58,7 +58,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public void RefreshButtonStates() {
     // 0. 레벨 초기화 (불러오기 시 중복 합산을 막기 위해 0부터 다시 계산합니다)
     loopUpgradeLevel = 0;
-    conveyorUpgradeLevel = 0;
 
     // 1. 현재 퀘스트 ID 직전까지의 모든 보상을 다시 훑습니다.
     for (int i = 0; i < currentQuestId && i < questList.Count; i++) {
@@ -71,7 +70,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
         // 반복문 및 컨베이어 레벨 복구
         loopUpgradeLevel += q.rewardLoopLevelUp;
-        conveyorUpgradeLevel += q.rewardConveyorLevelUp;
     }
 
     // 2. 만약 모든 퀘스트 완료 상태라면
