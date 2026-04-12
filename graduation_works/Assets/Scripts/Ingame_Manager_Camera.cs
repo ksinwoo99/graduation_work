@@ -60,7 +60,7 @@ public class Ingame_Manager_Camera : MonoBehaviour
 
     void HandlePan()
     {
-        // ✨ [핵심 추가] 튜토리얼 중이고, 액션 모드가 아닐 때는 우클릭 카메라 이동을 막습니다!
+        // 튜토리얼 중, 액션 모드가 아닐 때는 우클릭 카메라 이동 제거
         if (Ingame_UI_Tutorial.Instance != null && 
             Ingame_UI_Tutorial.Instance.isTutorialActive && 
             !Ingame_UI_Tutorial.Instance.isActionMode)
