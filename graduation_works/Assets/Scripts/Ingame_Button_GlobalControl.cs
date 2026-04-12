@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Button))]
 public class Ingame_Button_GlobalControl : MonoBehaviour
@@ -15,28 +16,38 @@ public class Ingame_Button_GlobalControl : MonoBehaviour
 
     void OnClick_GlobalControl()
     {
-        logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
         int affectedCount = 0;
 
-        foreach (var machine in allMachines)
+        // ✨ [핵심 수정] 무식하게 다 찾는 대신, 빌드 매니저에게 "실제로 맵에 설치된 기계 목록"만 달라고 요청합니다!
+        if (Ingame_Manager_Build.Instance != null)
         {
-            // ✨ [핵심 추가] 창고나 판매소(logic_Storage)는 무조건 패스합니다!
-            if (machine is logic_Storage) continue;
+            Dictionary<Vector3Int, GameObject> installedObjects = Ingame_Manager_Build.Instance.GetInstalledObjects();
 
-            if (isStartButton)
+            foreach (GameObject obj in installedObjects.Values)
             {
-                if (!machine.isOperating) 
+                if (obj == null) continue;
+
+                logic_CodingBase machine = obj.GetComponent<logic_CodingBase>();
+                if (machine == null) continue; // 코딩 가능한 기계가 아니면 패스
+
+                // ✨ 창고나 판매소(logic_Storage)는 무조건 패스합니다!
+                if (machine is logic_Storage) continue;
+
+                if (isStartButton)
                 {
-                    machine.ToggleOperation();
-                    affectedCount++;
+                    if (!machine.isOperating) 
+                    {
+                        machine.ToggleOperation();
+                        affectedCount++;
+                    }
                 }
-            }
-            else
-            {
-                if (machine.isOperating) 
+                else
                 {
-                    machine.ToggleOperation();
-                    affectedCount++;
+                    if (machine.isOperating) 
+                    {
+                        machine.ToggleOperation();
+                        affectedCount++;
+                    }
                 }
             }
         }

@@ -23,6 +23,8 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
     public int builtMinerCount = 0;
     public int builtProductorCount = 0;
+    public int builtConveyorCount = 0; // ✨ [신규] 컨베이어 개수
+    
     public int loopUpgradeLevel = 0;
     public int conveyorUpgradeLevel = 0;
     public bool isMinerNameChanged = false;
@@ -30,7 +32,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public int storageCollectionProgress = 0;
     public int marketSaleProgress = 0;
     public int demolishProgress = 0;
-    public int expandProgress = 0; // ✨ [추가] 공장 확장 진행도 카운트
+    public int expandProgress = 0; 
     
     public bool isMinerLoopUsed = false;
     public bool isProductorLoopUsed = false;
@@ -46,7 +48,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
             btnCloseQuest.onClick.AddListener(CloseQuestPanel); 
         }
 
-        StartQuest(currentQuestId); // ✨ 시작 시 현재 ID를 유지하도록 수정
+        StartQuest(currentQuestId); 
         StartCoroutine(QuestCheckRoutine());
     }
 
@@ -54,10 +56,11 @@ public class Ingame_Manager_Quest : MonoBehaviour
         if (questPanel != null) questPanel.SetActive(false);
     }
 
-    // ✨ [신규 추가] 불러오기 완료 후 버튼들을 다시 깨워주는 핵심 함수!
     public void RefreshButtonStates() {
     // 0. 레벨 초기화 (불러오기 시 중복 합산을 막기 위해 0부터 다시 계산합니다)
     loopUpgradeLevel = 0;
+    // 컨베이어 레벨은 퀘스트 보상이 아닌 골드로 구매하므로 초기화하지 않는다.
+    // conveyorUpgradeLevel = 0; 
 
     // 1. 현재 퀘스트 ID 직전까지의 모든 보상을 다시 훑습니다.
     for (int i = 0; i < currentQuestId && i < questList.Count; i++) {
@@ -78,16 +81,23 @@ public class Ingame_Manager_Quest : MonoBehaviour
             foreach (Button btn in q.unlockButtons) {
                 if (btn != null) btn.interactable = true;
             }
+
+            loopUpgradeLevel += q.rewardLoopLevelUp;
+            conveyorUpgradeLevel += q.rewardConveyorLevelUp;
+        }
+
+        if (currentQuestId >= questList.Count) {
+            foreach (var q in questList) {
+                foreach (Button btn in q.unlockButtons) {
+                    if (btn != null) btn.interactable = true;
+                }
+            }
+        }
+
+        if (Ingame_UI_SystemControl.Instance != null) {
+            Ingame_UI_SystemControl.Instance.UpdateAllUI();
         }
     }
-
-    // 3. ✨ [중요] 우측 패널 UI에 변경된 레벨을 즉시 반영합니다.
-    if (Ingame_UI_SystemControl.Instance != null) {
-        Ingame_UI_SystemControl.Instance.UpdateAllUI();
-    }
-    
-    Debug.Log($"<color=cyan>데이터 복구 완료: 반복문 Lv.{loopUpgradeLevel}, 컨베이어 Lv.{conveyorUpgradeLevel}</color>");
-}
 
     void StartQuest(int id) {
         currentQuestId = id;
@@ -95,7 +105,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
         storageCollectionProgress = 0;
         marketSaleProgress = 0;
         demolishProgress = 0;
-        expandProgress = 0; // ✨ 새 퀘스트 시작 시 확장 진행도 초기화
+        expandProgress = 0; 
         isMinerLoopUsed = false;
         isProductorLoopUsed = false;
 
@@ -114,7 +124,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
     public void AddStorageProgress(int amount) { storageCollectionProgress += amount; }
     public void AddMarketProgress(int gold) { marketSaleProgress += gold; }
     public void AddDemolishProgress() { demolishProgress++; }
-    public void AddExpandProgress() { expandProgress++; } // ✨ [추가] 공장 확장 카운트 증가
+    public void AddExpandProgress() { expandProgress++; } 
 
     void CheckConditions() {
         if (Ingame_Manager_Resource.Instance == null) return;
@@ -139,26 +149,25 @@ public class Ingame_Manager_Quest : MonoBehaviour
         foreach (var goal in currentQuest.goals) {
             int currentValue = 0;
             string goalName = "";
-            string typeName = goal.type.ToString();
 
-            if (typeName == "DemolishMachine") {
+            // ✨ enum 타입으로 깔끔하게 매칭
+            if (goal.type == QuestGoalType.DemolishMachine) {
                 currentValue = demolishProgress; goalName = "설치물 철거하기";
             }
-            // ✨ [추가] 공장 확장 퀘스트 목표 처리
-            else if (typeName == "ExpandFactory") {
+            else if (goal.type == QuestGoalType.ExpandFactory) {
                 currentValue = expandProgress; goalName = "공장 부지 확장하기";
             }
-            else if (typeName == "UseLoopCode") {
+            else if (goal.type == QuestGoalType.UseLoopCode) {
                 currentValue = (isMinerLoopUsed ? 1 : 0) + (isProductorLoopUsed ? 1 : 0); 
-                goalName = "채굴기와 가공기에 반복문 적용";
+                goalName = "채굴기/가공기에 반복문 적용";
             }
-            else if (typeName == "CollectWithStorage") {
+            else if (goal.type == QuestGoalType.CollectWithStorage) {
                 currentValue = storageCollectionProgress; goalName = "창고로 자원 수집";
             }
-            else if (typeName == "SellWithMarket") {
+            else if (goal.type == QuestGoalType.SellWithMarket) {
                 currentValue = marketSaleProgress; goalName = "판매소로 상품 판매(G)";
             }
-            else if (typeName == "ChangeMinerName") {
+            else if (goal.type == QuestGoalType.ChangeMinerName) {
                 currentValue = isMinerNameChanged ? 1 : 0; goalName = "채굴기 이름 지정하기";
             }
             else if (goal.type == QuestGoalType.BuildMiner) {
@@ -166,6 +175,10 @@ public class Ingame_Manager_Quest : MonoBehaviour
             }
             else if (goal.type == QuestGoalType.BuildProductor) {
                 currentValue = builtProductorCount; goalName = "가공기 설치";
+            }
+            // ✨ [신규] 컨베이어 설치 감지
+            else if (goal.type == QuestGoalType.BuildConveyor) {
+                currentValue = builtConveyorCount; goalName = "컨베이어 설치";
             }
             else if (goal.type == QuestGoalType.CollectCommonResource) {
                 currentValue = Ingame_Manager_Resource.Instance.resCommon; goalName = "기본 자원 수집";
@@ -213,13 +226,11 @@ public class Ingame_Manager_Quest : MonoBehaviour
 
         if (quest.rewardLoopLevelUp > 0) {
             loopUpgradeLevel += quest.rewardLoopLevelUp;
-            // ✨ [수정] 코딩 매니저 대신 통합 UI 매니저 호출!
             if (Ingame_UI_SystemControl.Instance != null) Ingame_UI_SystemControl.Instance.UpdateAllUI();
         }
 
         if (quest.rewardConveyorLevelUp > 0) {
             conveyorUpgradeLevel += quest.rewardConveyorLevelUp;
-            // ✨ [수정] 코딩 매니저 대신 통합 UI 매니저 호출!
             if (Ingame_UI_SystemControl.Instance != null) Ingame_UI_SystemControl.Instance.UpdateAllUI();
         }
 

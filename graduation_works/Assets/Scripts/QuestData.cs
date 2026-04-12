@@ -6,6 +6,7 @@ public enum QuestGoalType {
     None,
     BuildMiner,
     BuildProductor,
+    BuildConveyor,         // ✨ [신규] 컨베이어 설치 목표
     CollectCommonResource,
     CollectRareResource,
     CollectSpecialResource,
@@ -14,7 +15,8 @@ public enum QuestGoalType {
     EarnGold,
     ChangeMinerName,
     DemolishMachine,
-    UseLoopCode
+    UseLoopCode,
+    ExpandFactory          // ✨ [신규] 공장 확장 목표
 }
 
 [System.Serializable]
@@ -42,6 +44,6 @@ public class QuestData {
     public List<Button> unlockButtons = new List<Button>();
 
     [Header("시스템 해금 보상")]
-    public int rewardLoopLevelUp = 0;      // 1을 넣으면 반복문 레벨업
-    public int rewardConveyorLevelUp = 0;  // 1을 넣으면 컨베이어 레벨업
+    public int rewardLoopLevelUp = 0;      
+    public int rewardConveyorLevelUp = 0;  
 }
