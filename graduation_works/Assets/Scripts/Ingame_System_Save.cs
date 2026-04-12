@@ -258,9 +258,15 @@ public class Ingame_System_Save : MonoBehaviour {
         if (data.machines != null) {
             buildMgr.ClearAllBuildingsForLoad();
             foreach (var mData in data.machines) {
+                // ✨ [핵심 추가: 유령 건물 방어막] 
+                // 소환할 위치에 이미 누군가 자리를 잡고 있다면(중복 데이터라면) 과감히 스킵!
+                Vector3Int checkPos = new Vector3Int(Mathf.RoundToInt(mData.pos_x), Mathf.RoundToInt(mData.pos_y), Mathf.RoundToInt(mData.pos_z));
+                if (buildMgr.GetInstalledObjects().ContainsKey(checkPos)) {
+                    continue; 
+                }
+
                 GameObject prefab = GetPrefabFromInt(mData.machine_type);
                 if (prefab != null) {
-                    // 이제 이 함수가 기계를 생성하고, 코드를 심고, Initialize까지 한 번에 처리합니다.
                     buildMgr.LoadBuildingFromServer(mData, prefab);
                 }
             }
