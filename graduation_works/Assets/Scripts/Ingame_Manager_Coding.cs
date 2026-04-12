@@ -16,7 +16,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public Button btnThemeToggle; 
     public InGameCodeEditor.CodeEditorTheme darkTheme;  // 다크 테마 에셋 드래그 앤 드롭
     public InGameCodeEditor.CodeEditorTheme lightTheme; // 라이트 테마 에셋 드래그 앤 드롭
-    private bool isDarkMode = true; // 기본 상태 (다크모드)
+    public bool isDarkMode = true; // 기본 상태 (다크모드)
 
     [Header("폰트 줌(확대/축소) 설정")] 
     public float minFontSize = 10f;   
