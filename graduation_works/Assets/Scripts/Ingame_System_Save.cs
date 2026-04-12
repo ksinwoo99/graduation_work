@@ -15,13 +15,14 @@ public class MachineData {
 
 [System.Serializable]
 public class LoadResources {
-    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step;
+    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step, conveyor_level;
 }
 
 [System.Serializable]
 public class GameSaveRequest {
     public string user_id;
     public int res1, res2, res3, res4, res5, play_time, expand_count, quest_id, tutorial_step;
+    public int conveyor_level;
     public List<MachineData> machines = new List<MachineData>();
 }
 
@@ -106,6 +107,7 @@ public class Ingame_System_Save : MonoBehaviour {
 
         if (Ingame_Manager_Quest.Instance != null) {
             data.quest_id = Ingame_Manager_Quest.Instance.currentQuestId;
+            data.conveyor_level = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel;
         }
 
         if (Ingame_UI_Tutorial.Instance != null) {
@@ -234,6 +236,7 @@ public class Ingame_System_Save : MonoBehaviour {
 
         if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
             Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
+            Ingame_Manager_Quest.Instance.conveyorUpgradeLevel = data.resources.conveyor_level;
             Ingame_Manager_Quest.Instance.RefreshButtonStates(); 
             Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
         }
