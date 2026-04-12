@@ -88,7 +88,6 @@ public class Ingame_System_Save : MonoBehaviour {
         StartCoroutine(SaveToServerCoroutine(GatherAllData(currentId)));
     }
 
-    // ✨ [완벽 수정] 기계 중복 저장 방지 로직
     private GameSaveRequest GatherAllData(string userId) {
         GameSaveRequest data = new GameSaveRequest { user_id = userId };
         
@@ -119,6 +118,7 @@ public class Ingame_System_Save : MonoBehaviour {
             var codingMgr = buildMgr.codingManager;
 
             HashSet<GameObject> savedMachines = new HashSet<GameObject>();
+            HashSet<int> savedMachineTypes = new HashSet<int>(); // ✨ 추가: 맵에 설치된 기계 타입 추적
 
             foreach (var kvp in buildMgr.installedDirections) {
                 Vector3Int originPos = kvp.Key;
@@ -133,6 +133,8 @@ public class Ingame_System_Save : MonoBehaviour {
 
                 string engName = machineObj.name.Replace("(Clone)", "").Trim();
                 int mId = GetMachineTypeInt(engName);
+                
+                savedMachineTypes.Add(mId); // ✨ 맵에 설치되었음을 기록
 
                 MachineData mData = new MachineData {
                     machine_type = mId,
@@ -143,6 +145,27 @@ public class Ingame_System_Save : MonoBehaviour {
                     source_code = (codingMgr != null) ? codingMgr.GetSavedCode(mId) : ""
                 };
                 data.machines.Add(mData);
+            }
+
+            // ✨ [핵심 추가] 맵에 설치되진 않았지만, 코드는 작성해둔 기계들 '유령 데이터'로 저장
+            if (codingMgr != null && codingMgr.globalCodes != null) {
+                foreach (var kvp in codingMgr.globalCodes) {
+                    int mId = kvp.Key;
+                    string code = kvp.Value;
+
+                    // 이미 필드에 설치되어 저장된 기계거나, 코드가 빈칸이면 패스
+                    if (savedMachineTypes.Contains(mId) || string.IsNullOrEmpty(code)) continue;
+
+                    MachineData dummyData = new MachineData {
+                        machine_type = mId,
+                        pos_x = -9999f, // ✨ 가상 좌표 (불러올 때 설치 스킵용)
+                        pos_y = -9999f,
+                        pos_z = -9999f,
+                        rotation_y = 0f,
+                        source_code = code
+                    };
+                    data.machines.Add(dummyData);
+                }
             }
         }
         return data;
@@ -189,7 +212,6 @@ public class Ingame_System_Save : MonoBehaviour {
         }
     }
     
-    // ✨ [완벽 수정] 절대 방어막이 포함된 불러오기 로직
     private void ApplyGameData(GameLoadResponse data) {
         if (data == null) return;
 
@@ -241,6 +263,14 @@ public class Ingame_System_Save : MonoBehaviour {
             if (data.machines != null) {
                 buildMgr.ClearAllBuildingsForLoad();
                 foreach (var mData in data.machines) {
+                    // ✨ [핵심 추가] 가상 좌표(-9999)로 저장된 "미설치 기계"인 경우, 코드만 살리고 맵 설치는 스킵!
+                    if (mData.pos_y <= -9000f) {
+                        if (buildMgr.codingManager != null && !string.IsNullOrEmpty(mData.source_code)) {
+                            buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
+                        }
+                        continue; // ⬅️ 건물을 짓지 않고 다음 데이터로 넘어감
+                    }
+
                     Vector3Int checkPos = new Vector3Int(Mathf.RoundToInt(mData.pos_x), Mathf.RoundToInt(mData.pos_y), Mathf.RoundToInt(mData.pos_z));
                     
                     GameObject prefab = GetPrefabFromInt(mData.machine_type);

@@ -26,7 +26,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     [Header("매니저 연결")]
     public Ingame_Manager_Build buildManager;
     
-    private Dictionary<int, string> globalCodes = new Dictionary<int, string>();
+    public Dictionary<int, string> globalCodes = new Dictionary<int, string>();
     public logic_CodingBase currentLogic;
     private int currentMachineId; 
 
