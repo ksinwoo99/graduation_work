@@ -100,7 +100,7 @@ class GameSaveRequest(BaseModel):
     expand_count: int = 0
     quest_id: int = 0
     tutorial_step: int = 0
-    conveyor_level: int = 1
+    conveyor_level: int = 0
     machines: List[MachineData] = []
 
 # =========================================================
@@ -529,7 +529,7 @@ def load_game_data(user_id: str):
         if not user_pk: return {"status": "ERROR", "msg": "유저 없음"}
         
         cursor.execute("SELECT resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step, conveyor_level FROM game_saves WHERE user_pk = %s", (user_pk,))        
-        res = cursor.fetchone() or {"resource_1":0, "resource_2":0, "resource_3":0, "resource_4":300, "resource_5":0, "total_play_time":0, "expand_count":0, "quest_id":0, "tutorial_step":0, "conveyor_level":1}
+        res = cursor.fetchone() or {"resource_1":0, "resource_2":0, "resource_3":0, "resource_4":300, "resource_5":0, "total_play_time":0, "expand_count":0, "quest_id":0, "tutorial_step":0, "conveyor_level":0}
         
         cursor.execute("SELECT machine_type, tile_index, pos_x, pos_y, pos_z, rotation_y, source_code FROM installed_machines WHERE user_pk = %s", (user_pk,))
         mac = cursor.fetchall()
