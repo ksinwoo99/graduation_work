@@ -75,7 +75,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     { 
         if (Instance == null) Instance = this; 
 
-        if (Shared_Manager_Session.IsVisiting) // 불러오기 튜토리얼 스킵 제거 Ingame_System_Save.isLoadRequested || 
+        if (Ingame_System_Save.isLoadRequested || Shared_Manager_Session.IsVisiting)
         {
             shouldSkipTutorialOnStart = true;
         }
