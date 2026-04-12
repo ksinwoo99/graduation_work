@@ -126,7 +126,7 @@ public class Login_Manager_UI : MonoBehaviour {
     }
 
     public void ShowLoginError() {
-        if (errorText != null) errorText.text = "<color=#FF5A5A>아이디 또는 비밀번호를 확인해주세요.</color>";
+        if (errorText != null) errorText.text = "<color=#FF5A5A>아이디 또는 비밀번호를\n확인해주세요.</color>";
         ShowTempPanel(errorPanel);
     }
 
