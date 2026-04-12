@@ -252,7 +252,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 7: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("이렇게, 코딩을 위한 개발환경과\n해당 설치물에 대한 설명이 뜹니다!"); break;
             case 8: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("코딩 창의 위를 누르고 드래그하여\n위치를 바꿀 수도 있어요.\n\n코딩 창의 글씨가 너무 작거나 크다면,\n'Ctrl + 마우스 휠'을 이용해 글자 크기를 조절해 보세요!"); break;
             case 9: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("패널 우측 하단의 손잡이를 드래그해서\n창의 크기도 마음대로 조절할 수 있습니다!"); break;
-            case 10: SetActionMode("자, 이제 첫 번째 퀘스트를\n진행해 볼까요?\n\n코딩 창에 name = \"원하는 이름\" 을 입력하고 저장 및 디버깅(F5)을 하여,\n채굴기의 이름을 지어주세요!"); break;
+            case 10: SetActionMode("자, 이제 첫 번째 퀘스트를\n진행해 볼까요?\n\n코딩 창에 name = \"이름\" 을 입력 후\n저장 및 디버깅(F5)을 하여,\n채굴기의 이름을 지어주세요!"); break;
             case 11: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("설치물 버튼의 이름을 보시면,\nname 변수에 저장한 내용으로\n변경되었습니다."); break;
             case 12: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("이렇게 python에서는\n'변수명 = 숫자 or 문자열' 을 입력하여,\n데이터를 저장하는 공간을\n만들 수 있습니다.\n\n다음에는 실제 기능을 적용해보죠!"); break;
             case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\nmining() 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
@@ -284,7 +284,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 34: SetDialogMode("훌륭합니다!\n가공기가 성공적으로\n배치되었습니다."); break;
             case 35: SetActionMode("이제 우클릭을 누르거나 취소 버튼을 눌러\n설치 모드에서 나가보세요."); break;
             case 36: SetDialogMode("설치 상태가 정상적으로 저장되고\n설치 모드에서 빠져나왔습니다!"); break;
-            case 37: SetActionMode("가공기가 자원을 가져가서 코딩된 대로\n상품을 만들어낼 때까지 기다려 볼까요?\n(자원이 부족하다면 채굴기를 켜주세요!)"); break;
+            case 37: SetActionMode("가공기가 자원을 가져가서 코딩된 대로\n상품을 만들어낼 때까지 기다려 볼까요?"); break;
             case 38: SetDialogMode("가공기에서 판매 가능한\n첫 상품을 만들어냈습니다!"); break;
             case 39: SetActionMode("생성된 상품을 마우스로 직접 클릭해서\n판매해 보세요."); break;
             case 40: SetDialogMode("첫 수익입니다, 축하드려요!\n이렇게 단일 품목만 만들 수도 있지만,\n자원 상태에 따라 나눌 수도 있습니다."); break;
@@ -294,7 +294,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 SetDialogMode("자원이 100개 이상일 땐 A를,\n50개 이상일 땐 B를 만들게 해볼까요?\n\n예시 코드를 보여드릴게요."); break;
             
             case 43: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
-                SetActionMode("    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')\n\n    입력 후 디버깅(F5) 하세요!");
+                SetActionMode("    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')\n\n        입력 후 디버깅(F5) 하세요!");
                 break;
             
             case 44: SetDialogMode("정확합니다!\n이제 자원 상황에 맞춰\n알아서 똑똑하게 생산할 겁니다."); break;
@@ -306,9 +306,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 49: SetDialogMode("매번 기계를 켜주는 건 번거롭죠.\nfor문이나 while문을 사용하면\n알아서 반복 작동합니다!"); break;
             case 50: SetDialogMode("다만!!!\n\n현재 공장 시스템의 과부하를 막기 위해\n반복문은 최대 10회까지만 허용됩니다."); break;
             
-            // ✨ [신규] 반복문 상세 설명 (좌측 정렬됨)
-            case 51: SetDialogMode("    for문을 사용하면\n  원하는 횟수만큼 반복할 수 있습니다.\n\n    예시:\n    for i in range(10):\n        mining()"); break;
-            case 52: SetDialogMode("    while문은 조건이 참인 동안 반복합니다.\n  (단, 10회 제한으로 인해 10번만 실행됨)\n\n    예시:\n    while resCommon < 100:\n        mining()"); break;
+            case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining()"); break;
+            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n          (단, 10회 제한으로 인해\n        10번 이하 조건만 실행 가능)\n\n      예시:\n      while resCommon < 100:\n          mining()"); break;
 
             case 53: 
                 HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
@@ -332,7 +331,6 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 64: HighlightPanel(panelInstallation); SetDialogMode("이렇게 운송된 아이템을\n자동으로 수집하려면\n'창고'와 '판매소'가 필요합니다."); break;
             case 65: HighlightPanel(panelInstallation); SetDialogMode("주의점!\n'창고'는 기본 자원만 보관하고,\n'판매소'는 상품만 골드로 판매합니다.\n\n(이 둘은 코딩 창이 따로 없습니다!)"); break;
 
-            // ✨ [신규] 창고/판매소 건설 및 퀘스트 대기!
             case 66: 
                 if (Ingame_Manager_Quest.Instance != null) startQuestIdForStorage = Ingame_Manager_Quest.Instance.currentQuestId;
                 HighlightPanel(panelInstallation); 
@@ -348,13 +346,17 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 SetActionMode("가운데 팝업창에서 '예' 버튼을 눌러\n공장 확장을 완료해 주세요!"); 
                 break;
             
-            case 71: HighlightPanel(panelInstallation); SetDialogMode("부지가 한결 넓어졌네요!"); break;
-            case 72: HighlightPanel(panelInstallation); SetDialogMode("마지막으로, 잘못 설치한 기계는 하단의\n'철거' 버튼을 눌러 지울 수 있습니다."); break;
-            case 73: SetPilotMode("하단의 '철거' 아이콘을 클릭하여\n기계들을 부술 준비를 해보세요!");
+            case 71: SetDialogMode("부지가 한결 넓어졌네요!"); break;
+            
+            // ✨ [수정] 72단계: PilotMode로 변경하여 사용자가 철거 버튼을 누르도록 유도
+            case 72: HighlightPanel(panelInstallation); SetPilotMode("마지막으로, 설치물 패널 가장 끝에\n'철거' 버튼이 있습니다."); 
                 if (btnTutorialDemolish != null) btnTutorialDemolish.onClick.AddListener(OnDemolishButtonClicked); break;
             
+            // ✨ [수정] 73단계: 버튼을 누른 후의 설명 텍스트
+            case 73: HighlightPanel(panelInstallation); SetDialogMode("철거 버튼 선택 중 설치물 클릭 시,\n설치 비용의 80%를 환급받고\n설치물을 제거할 수 있습니다!"); break;
+            
             case 74: SetDialogMode("이것으로 파견 AI 어시스턴트의\n모든 기초 안내가 끝났습니다!"); break;
-            case 75: SetDialogMode("이제 퀘스트 라인을 따라\n최고의 공장을 만들어 보세요!");
+            case 75: SetDialogMode("이제 자유롭게 발전해 보세요!");
                 btnNext.onClick.RemoveAllListeners(); btnNext.onClick.AddListener(EndTutorial); break;
                 
             default: EndTutorial(); break;
@@ -378,7 +380,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     }
 
     private void OnDemolishButtonClicked() {
-        if (currentStep == 73) { btnTutorialDemolish.onClick.RemoveListener(OnDemolishButtonClicked); currentStep++; PlayStep(currentStep); }
+        // ✨ [수정] 72단계에서 눌렀을 때 73단계로 진행되도록 맞춤
+        if (currentStep == 72) { btnTutorialDemolish.onClick.RemoveListener(OnDemolishButtonClicked); currentStep++; PlayStep(currentStep); }
     }
 
     private void OnResizeHandleDragged() {
