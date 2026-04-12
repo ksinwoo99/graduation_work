@@ -49,6 +49,8 @@ public class logic_Productor_Master : logic_CodingBase
     private SpriteRenderer spriteRenderer;
     public int processingCount = 0; 
     private Coroutine processingCoroutine;
+    private bool isCurrentlyProcessing = false;
+    private ProductorRecipe currentProcessingRecipe = null;
 
     private List<ProcessRule> parsedRules = new List<ProcessRule>();
 
@@ -86,7 +88,16 @@ public class logic_Productor_Master : logic_CodingBase
 
     public void InitializeProductor(int count) {
         this.processingCount = count;
-        if (processingCoroutine != null) StopCoroutine(processingCoroutine);
+        if (processingCoroutine != null) {
+            StopCoroutine(processingCoroutine);
+            
+            // ✨ [추가 2] 애니메이션 도중에 코루틴이 끊겼다면 먹었던 자원 환불!
+            if (isCurrentlyProcessing && currentProcessingRecipe != null && Ingame_Manager_Resource.Instance != null) {
+                Ingame_Manager_Resource.Instance.AddResource(currentProcessingRecipe.resourceType, currentProcessingRecipe.consumeAmount);
+                isCurrentlyProcessing = false;
+                currentProcessingRecipe = null;
+            }
+        }
         if (processingCount != 0) processingCoroutine = StartCoroutine(MasterRoutine());
     }
 
@@ -210,14 +221,19 @@ public class logic_Productor_Master : logic_CodingBase
                 }
 
                 if (activeRule != null) {
-                    // ✨ [핵심 변경] 이제 티어(Common)와 타입(A, B)으로 레시피를 찾습니다!
                     ProductorRecipe recipe = multiRecipes.Find(r => r.targetTier.ToLower() == activeRule.actionTier && r.targetType.ToLower() == activeRule.actionType);
                     
                     if (recipe != null) {
-                        // 자원 소모량(consumeAmount)은 이제 인스펙터에 적힌 값을 기준으로 깎습니다.
                         if (resMgr.HasEnoughResource(recipe.resourceType, recipe.consumeAmount)) {
                             resMgr.ConsumeResource(recipe.resourceType, recipe.consumeAmount);
+                            
+                            isCurrentlyProcessing = true;
+                            currentProcessingRecipe = recipe;
+
                             yield return StartCoroutine(ProcessingAnimationRoutine());
+
+                            isCurrentlyProcessing = false;
+                            currentProcessingRecipe = null;
 
                             float roll = Random.Range(0f, 100f);
                             bool isJackpot = roll <= highQualityChance; 
@@ -268,6 +284,14 @@ public class logic_Productor_Master : logic_CodingBase
             if (isHighQuality) {
                 itemScript.SetHighQuality();
             }
+        }
+    }
+
+    void OnDisable() {
+        if (isCurrentlyProcessing && currentProcessingRecipe != null && Ingame_Manager_Resource.Instance != null) {
+            Ingame_Manager_Resource.Instance.AddResource(currentProcessingRecipe.resourceType, currentProcessingRecipe.consumeAmount);
+            isCurrentlyProcessing = false;
+            currentProcessingRecipe = null;
         }
     }
 }
