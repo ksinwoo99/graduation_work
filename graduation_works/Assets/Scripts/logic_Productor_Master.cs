@@ -121,7 +121,7 @@ public class logic_Productor_Master : logic_CodingBase
             } 
             // ✨ [핵심 파서 변경] producting(Common, A) 또는 따옴표가 있는 producting(Common, "A") 형태를 허용합니다!
             else if (line.StartsWith("producting(")) {
-                Match m = Regex.Match(line, @"producting\((common|advanced|hightech|superior),['""]?(a|b)['""]?\)");
+                Match m = Regex.Match(line, @"producting\((common|advanced|hightech|superior|rare|special|exotic),['""]?(a|b)['""]?\)");
                 if (m.Success) {
                     if (currentRule != null) {
                         currentRule.actionTier = m.Groups[1].Value;
@@ -267,7 +267,6 @@ public class logic_Productor_Master : logic_CodingBase
             itemScript.SetDropTarget(targetDropPos); 
             if (isHighQuality) {
                 itemScript.SetHighQuality();
-                if(buildMgr != null) buildMgr.ShowFloatingText("대박! 고품질!", transform.position + Vector3.up);
             }
         }
     }

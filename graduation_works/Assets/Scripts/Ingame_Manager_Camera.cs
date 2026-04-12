@@ -43,7 +43,7 @@ public class Ingame_Manager_Camera : MonoBehaviour
 
     void HandleZoom()
     {
-        // ✨ [핵심 추가] 컨트롤(Ctrl) 키를 누르고 있다면, 코딩창 확대/축소 중이므로 카메라 줌을 완벽히 차단합니다!
+        // 컨트롤(Ctrl) 키를 누르고 있다면, 코딩창 확대/축소 중이므로 카메라 줌을 완벽히 차단합니다!
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) return;
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -60,6 +60,14 @@ public class Ingame_Manager_Camera : MonoBehaviour
 
     void HandlePan()
     {
+        // ✨ [핵심 추가] 튜토리얼 중이고, 액션 모드가 아닐 때는 우클릭 카메라 이동을 막습니다!
+        if (Ingame_UI_Tutorial.Instance != null && 
+            Ingame_UI_Tutorial.Instance.isTutorialActive && 
+            !Ingame_UI_Tutorial.Instance.isActionMode)
+        {
+            return; 
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
             if (EventSystem.current.IsPointerOverGameObject()) return;

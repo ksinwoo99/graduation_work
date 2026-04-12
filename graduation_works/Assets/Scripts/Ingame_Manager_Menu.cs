@@ -1,18 +1,18 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; 
+using TMPro;
 
-// 원래대로 든든하게 유지!
 [DefaultExecutionOrder(-100)] 
 public class Ingame_Manager_Menu : MonoBehaviour {
     public static Ingame_Manager_Menu Instance;
+    
     [Header("UI 연결")]
     public GameObject PausePanel;
     public GameObject menu_SelectPanel; 
     public GameObject menu_ErrorPanel;  
 
-    // ✨ [추가된 부분] 관전 모드일 때만 띄울 텍스트!
-    [Header("관전 모드 전용 UI")]
-    public GameObject visitNoticeText; 
+    [Header("메뉴 상태 텍스트")]
+    public TextMeshProUGUI statusText; 
 
     private bool isPaused = false;
     public bool isSaved = false; 
@@ -55,9 +55,12 @@ public class Ingame_Manager_Menu : MonoBehaviour {
             PausePanel.SetActive(true);
             menu_SelectPanel.SetActive(true);
 
-            // ✨ [추가된 부분] ESC 메뉴가 열릴 때, 관전 모드면 글자를 켜고, 내 공장이면 끕니다!
-            if (visitNoticeText != null) {
-                visitNoticeText.SetActive(Shared_Manager_Session.IsVisiting);
+            if (statusText != null) {
+                if (Shared_Manager_Session.IsVisiting) {
+                    statusText.text = "다른 플레이어의 공장에\n놀러왔습니다!";
+                } else {
+                    statusText.text = "종료하기 전,\n저장은 필수!";
+                }
             }
 
         } else {

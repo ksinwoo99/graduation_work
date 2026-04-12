@@ -12,6 +12,12 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public Button btnVerify;
     public Image statusLight;
 
+    [Header("테마 설정 (다크/라이트 모드)")]
+    public Button btnThemeToggle; 
+    public InGameCodeEditor.CodeEditorTheme darkTheme;  
+    public InGameCodeEditor.CodeEditorTheme lightTheme; 
+    private bool isDarkMode = true; 
+
     [Header("폰트 줌(확대/축소) 설정")] 
     public float minFontSize = 10f;   
     public float maxFontSize = 60f;   
@@ -29,6 +35,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void Start() {
         if (codingPanel != null) codingPanel.SetActive(false);
         if (btnVerify != null) btnVerify.onClick.AddListener(OnClick_Verify);
+        if (btnThemeToggle != null) btnThemeToggle.onClick.AddListener(ToggleTheme);
     }
 
     void Update() {
@@ -70,7 +77,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (codingPanel.activeSelf && currentMachineId == machineId) { CloseWindow(); return; }
         if (codingPanel.activeSelf) SaveCurrentInput();
 
-        // 같은 기계인지 확인
         bool isMachineChanged = (currentMachineId != machineId);
 
         currentMachineId = machineId;
@@ -79,7 +85,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         codingPanel.SetActive(true);
         
-        // 기계가 바뀌었을 때 결과창 끄기
         if (isMachineChanged) {
             Ingame_Button_Debugging debugger = codingPanel.GetComponentInChildren<Ingame_Button_Debugging>(true);
             if (debugger != null) debugger.HideResult();
@@ -158,14 +163,28 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (hasName && !string.IsNullOrEmpty(newName)) {
             if (titleText != null) titleText.text = $"{newName}.py";
-            if (currentBuildButton != null && currentBuildButton.nameText != null) currentBuildButton.nameText.text = newName;
+            
+            if (currentBuildButton != null) {
+                if (currentBuildButton.nameText != null) currentBuildButton.nameText.text = newName;
+                
+                // ✨ [핵심 추가 1] Iteminfo_Base의 기본 이름도 코딩한 이름으로 덮어씌웁니다!
+                Iteminfo_Base info = currentBuildButton.GetComponent<Iteminfo_Base>();
+                if (info != null) {
+                    info.machineName = newName;
+                    
+                    // 만약 정보창(Info)이 이미 켜져 있다면, 즉시 바뀐 이름으로 새로고침합니다.
+                    if (buildManager != null && buildManager.machineInfoUI != null && buildManager.machineInfoUI.gameObject.activeSelf) {
+                        buildManager.machineInfoUI.ShowInfo(info);
+                    }
+                }
+            }
+
             if (Ingame_Manager_Quest.Instance != null) {
                 if (currentLogic.GetComponent<logic_Miner_Master>() != null) Ingame_Manager_Quest.Instance.isMinerNameChanged = true;
             }
 
             logic_CodingBase.CodeState state = currentLogic.ValidateCode(validationCode);
 
-            // ✨ [에러 원인 수정] 여기서 단 한 번만! allMachines를 선언해서 동기화 처리합니다.
             logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
             foreach(var m in allMachines) {
                 if (m.GetMachineName() == currentLogic.GetMachineName()) {
@@ -180,7 +199,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 string clean = code.Replace(" ", "").ToLower();
                 if (clean.Contains("for") || clean.Contains("while") || clean.Contains("loop:")) {
                     if (Ingame_Manager_Quest.Instance != null) {
-                        // ✨ [퀘스트 체크 로직] 기계 종류를 판별하여 각각의 퀘스트 진행도를 체크
                         if (currentLogic is logic_Miner_Master) 
                             Ingame_Manager_Quest.Instance.isMinerLoopUsed = true;
                         else if (currentLogic is logic_Productor_Master) 
@@ -203,5 +221,58 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void SetStatus(Color color, bool isAllowed) {
         if (statusLight != null) statusLight.color = color;
         if (buildManager != null) buildManager.SetPlacementPermission(isAllowed);
+
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+            bool isError = (color == Color.red);
+            Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
+        }
+    }
+
+    public void ToggleTheme() {
+        isDarkMode = !isDarkMode;
+        
+        var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+        if (codeEditor != null) {
+            codeEditor.EditorTheme = isDarkMode ? darkTheme : lightTheme;
+        }
+        
+        if (btnThemeToggle != null) {
+            TextMeshProUGUI btnText = btnThemeToggle.GetComponentInChildren<TextMeshProUGUI>();
+            if (btnText != null) {
+                btnText.text = isDarkMode ? "라이트 모드" : "다크 모드";
+            }
+        }
+    }
+
+    public void SyncAllButtonNames() {
+        Ingame_Button_Build[] allButtons = FindObjectsOfType<Ingame_Button_Build>(true);
+        foreach (var btn in allButtons) {
+            Iteminfo_Base info = btn.GetComponent<Iteminfo_Base>();
+            if (info != null && Ingame_System_Save.Instance != null) {
+                string engName = info.machinePrefab != null ? info.machinePrefab.name : info.machineName;
+                int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
+                string code = GetSavedCode(mId);
+
+                if (!string.IsNullOrEmpty(code)) {
+                    string newName = "";
+                    Match directMatch = Regex.Match(code, @"name\s*=\s*[""']([^""']+)[""']");
+                    if (directMatch.Success) newName = directMatch.Groups[1].Value;
+                    else {
+                        Match varMatch = Regex.Match(code, @"name\s*=\s*([a-zA-Z_][a-zA-Z0-9_]*)");
+                        if (varMatch.Success) {
+                            string targetVar = varMatch.Groups[1].Value; 
+                            Match valueMatch = Regex.Match(code, targetVar + @"\s*=\s*[""']([^""']+)[""']");
+                            if (valueMatch.Success) newName = valueMatch.Groups[1].Value;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(newName)) {
+                        if (btn.nameText != null) btn.nameText.text = newName;
+                        // ✨ [핵심 추가 2] 세이브를 불러왔을 때도 Info 창 이름이 정상 반영되도록 동기화!
+                        info.machineName = newName; 
+                    }
+                }
+            }
+        }
     }
 }
