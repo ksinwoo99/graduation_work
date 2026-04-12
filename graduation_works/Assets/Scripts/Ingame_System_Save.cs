@@ -111,7 +111,12 @@ public class Ingame_System_Save : MonoBehaviour {
         }
 
         if (Ingame_UI_Tutorial.Instance != null) {
-            data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : -1;
+            // ✨ [핵심 픽스] 스킵 팝업창이 떠있는 상태에서 저장했다면, 아직 결정을 안 한 것이므로 0으로 저장합니다!
+            if (Ingame_UI_Tutorial.Instance.skipPanel != null && Ingame_UI_Tutorial.Instance.skipPanel.activeSelf) {
+                data.tutorial_step = 0;
+            } else {
+                data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : -1;
+            }
         }
 
         if (Ingame_Manager_Build.Instance != null) {
@@ -243,7 +248,9 @@ public class Ingame_System_Save : MonoBehaviour {
 
         if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
             int savedStep = data.resources.tutorial_step;
-            if (savedStep == -1 || (savedStep == 0 && data.machines.Count > 0)) {
+            
+            // data.machines가 null이 아닐 때만 Count를 검사하도록 안전장치 추가!
+            if (savedStep == -1 || (savedStep == 0 && data.machines != null && data.machines.Count > 0)) {
                 Ingame_UI_Tutorial.Instance.EndTutorial();
             } else {
                 if (tutorialPanel != null) tutorialPanel.SetActive(true);
