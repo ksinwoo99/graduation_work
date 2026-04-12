@@ -410,9 +410,7 @@ def execute_python_code(req: CodeExecRequest):
         with redirect_stdout(f):
             new_machine = Machine(req.user_id, req.source_code, req.resCommon, req.resRare, req.resSpecial, req.resExotic)
         
-        init_output = f.getvalue().strip()
-        machines[req.user_id] = new_machine
-        
+        init_output = f.getvalue().strip()        
         tick_output = new_machine.tick()
         user_view_output = tick_output if tick_output else (init_output if init_output else "실행 완료")
         status = "success"
