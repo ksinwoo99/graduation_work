@@ -9,6 +9,7 @@ from contextlib import redirect_stdout
 import smtplib
 from email.mime.text import MIMEText
 import random
+import re
 
 app = FastAPI()
 
@@ -124,6 +125,10 @@ def find_id_by_email(req: EmailRequest):
 # ✨ 1. 회원가입용 인증번호 발송 API (통합 DB 저장)
 @app.post("/send_register_auth_code")
 def send_register_auth_code(req: RegisterCodeRequest):
+    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+    if not email_regex.match(req.email):
+        return {"status": "FAIL", "msg": "올바른 이메일 형식이 아닙니다."}
+
     conn = get_db_connection(); cursor = conn.cursor()
     try:
         cursor.execute("SELECT pk_id FROM users WHERE email = %s", (req.email,))
@@ -167,6 +172,10 @@ def register(req: UserAuth):
 # ✨ 3. 비밀번호 찾기용 인증번호 발송 API
 @app.post("/send_auth_code")
 def send_auth_code(req: AuthCodeRequest):
+    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+    if not email_regex.match(req.email):
+        return {"status": "FAIL", "msg": "올바른 이메일 형식이 아닙니다."}
+
     conn = get_db_connection(); cursor = conn.cursor()
     try:
         cursor.execute("SELECT pk_id FROM users WHERE id = %s AND email = %s", (req.user_id, req.email))
