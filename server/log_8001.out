@@ -1,0 +1,814 @@
+nohup: ignoring input
+INFO:     Started server process [76090]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-04-07 12:56:29 | trained_at=알 수 없음 | data_count=알 수 없음 | features=10 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+INFO:     39.127.110.134:7565 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:7567 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-07 13:03:28 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     39.127.110.134:5377 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:56826 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:5379 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:5381 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:56858 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:61719 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:61722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:63962 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:63964 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:52685 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:52709 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:52724 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:52724 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62038 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62066 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62066 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62074 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62082 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:5213 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55846 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55855 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55863 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55869 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55869 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55880 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55900 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55900 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55918 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55926 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55926 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55940 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55952 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55965 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:52730 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-07 13:48:25 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     39.127.110.132:52743 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:50928 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:50948 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:50965 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:59862 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:60669 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55294 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55301 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55305 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.132:55310 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55314 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:49704 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:65389 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.151.241.153:48506 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.151.241.153:45614 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.110.132:52944 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     27.0.238.68:49502 - "GET /api/model_reload HTTP/1.1" 405 Method Not Allowed
+[Model] 로드 완료  loaded_at=2026-04-07 14:44:27 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+INFO:     13.237.51.219:33428 - "POST /api/model_reload HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-07 14:53:19 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     39.127.110.132:62745 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     39.127.110.134:63428 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:57305 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:57314 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:54336 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62277 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62297 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     18.116.101.220:55716 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.245.217.157:37036 - "GET / HTTP/1.1" 404 Not Found
+INFO:     165.245.217.157:37044 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     18.116.101.220:43238 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.55.151.3:34289 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.237.141.29:40218 - "GET / HTTP/1.1" 404 Not Found
+INFO:     69.164.217.74:35201 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.79.5.11:43065 - "GET / HTTP/1.1" 404 Not Found
+INFO:     172.236.228.111:44100 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.79.181.251:24288 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.79.207.71:56886 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.143.162.210:60874 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.143.162.210:45586 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.228.202:10750 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.170.2:51054 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.170.2:20794 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.168.2:60396 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.168.2:35606 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.218.118.203:41388 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.218.118.203:37044 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:6666 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     45.55.210.125:33488 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.55.210.125:33504 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     119.194.36.167:9125 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-09 21:28:52 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:9131 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8262 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-09 21:50:28 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:8272 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8277 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8277 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3386 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     20.84.145.58:43696 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:8196 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     172.236.35.120:48430 - "GET / HTTP/1.0" 404 Not Found
+INFO:     172.236.35.120:48480 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+INFO:     172.236.35.120:46040 - "OPTIONS / HTTP/1.0" 404 Not Found
+INFO:     172.236.35.120:46048 - "OPTIONS / HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:46280 - "GET /devicedesc.xml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:52938 - "GET /health HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:52996 - "GET / HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:53014 - "GET /dashboard/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:53016 - "GET /webui/index.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:53034 - "GET /routes HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:52948 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     122.42.2.61:50569 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 11:52:46 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     122.42.2.61:56587 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56591 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     122.42.2.61:56805 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     122.42.2.61:56807 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     122.42.2.61:56814 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     122.42.2.61:56816 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     122.42.2.61:56818 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:54910 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:54912 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:54918 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9292 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10444 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 12:59:14 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:10452 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4732 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     8.209.85.27:25276 - "GET / HTTP/1.1" 404 Not Found
+INFO:     8.209.85.27:25292 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.55.151.3:47583 - "GET / HTTP/1.1" 404 Not Found
+INFO:     119.194.36.167:1791 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 16:38:22 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:1822 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13023 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13041 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     16.58.56.214:49440 - "GET / HTTP/1.1" 404 Not Found
+INFO:     16.58.56.214:52946 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:11163 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11167 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11174 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 17:10:13 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:11191 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3912 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3924 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11080 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11083 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11085 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11087 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11089 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11089 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11091 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11093 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11543 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7700 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3686 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2828 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4591 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4593 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:5261 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:9776 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5976 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5978 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10025 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10027 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2683 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 17:59:02 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:2686 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3683 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1737 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1739 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5432 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14038 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14056 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14073 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10784 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4234 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:4241 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4241 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1128 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 19:03:10 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:1143 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1210 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1220 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1265 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1265 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1273 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1273 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1278 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1278 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1333 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1339 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4720 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4720 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 20:00:39 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:4731 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4736 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10617 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-10 22:56:31 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:10626 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1489 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1496 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13033 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 00:42:51 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:6858 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6869 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6891 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6897 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1444 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11184 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 00:50:33 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:8792 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8802 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14672 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14682 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5565 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12960 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9495 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12735 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9150 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4122 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     103.203.58.4:50588 - "GET / HTTP/1.1" 404 Not Found
+INFO:     195.178.110.204:52498 - "GET / HTTP/1.0" 404 Not Found
+INFO:     125.250.81.167:10489 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:10491 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:10493 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 09:17:47 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:10496 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13017 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:6506 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8708 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11154 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4105 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4107 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9355 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9955 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14567 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8140 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8147 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8149 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8151 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14381 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 09:55:18 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:7132 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9146 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6424 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11915 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:9982 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9984 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12927 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10732 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10734 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10737 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14655 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12382 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4298 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5145 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3685 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3657 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3659 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 10:49:59 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:10942 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12857 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12859 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12861 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12863 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12868 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12873 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14389 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4267 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12494 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12499 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13518 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 11:52:15 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:13520 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13081 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9103 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3546 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3554 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3556 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10671 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2183 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6605 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6607 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 12:50:30 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:6422 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6424 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11291 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8583 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14628 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14636 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14648 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14652 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13474 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13480 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13480 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13480 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13480 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13487 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6525 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10736 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10741 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10751 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9625 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9625 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7696 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7708 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.250.81.167:6627 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.134.216.108:38160 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.134.216.108:60644 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-04-11 15:30:19 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:4009 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7523 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2647 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 17:28:21 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:11786 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13849 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1484 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:1501 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:1501 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1521 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:10704 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10704 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10030 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 17:58:27 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:10043 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10082 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10096 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10096 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6308 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9647 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9674 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8843 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 18:58:18 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:9319 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2730 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2754 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8983 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11505 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1176 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1191 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:8327 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:8333 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:8338 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:8979 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:8998 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9003 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9028 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7225 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-11 22:14:15 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:7230 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7270 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11308 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11341 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11351 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2392 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 00:20:13 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:2426 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3005 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11016 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11016 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7400 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7400 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11269 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11275 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11780 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11780 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11786 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3221 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 01:29:07 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:3241 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3267 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11888 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12249 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:10552 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10572 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10573 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10584 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     18.97.19.220:44252 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     18.97.19.220:49852 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [76090]
+nohup: ignoring input
+INFO:     Started server process [1691]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-04-12 09:46:34 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+INFO:     125.250.81.167:6777 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4066 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4066 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4078 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:4078 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:7636 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7636 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7636 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5518 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5520 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 09:54:23 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:5523 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:5525 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4170 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14264 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:14264 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14267 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1682 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1686 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 13:14:22 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14584 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14584 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5335 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5387 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5392 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5399 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5406 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2673 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 13:47:09 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:2681 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7670 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4112 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5580 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5586 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5591 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5595 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1691]
+nohup: ignoring input
+INFO:     Started server process [1084]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1084]
+nohup: ignoring input
+INFO:     Started server process [1120]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-04-12 14:21:06 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+INFO:     125.250.81.167:1800 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5388 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3514 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 15:15:39 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:7026 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54700 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54700 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54757 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54839 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54935 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:55100 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:55349 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:55677 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     221.164.188.30:61820 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61822 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61825 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61827 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56004 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56029 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:63355 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     118.42.190.135:56117 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:56858 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:50579 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56199 - "POST /api/submit_code HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Started server process [1102]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+[Model] 로드 완료  loaded_at=2026-04-12 15:51:47 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+nohup: ignoring input
+INFO:     Started server process [1148]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-04-12 16:03:36 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 로드 완료  loaded_at=2026-04-12 16:08:46 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:12728 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9009 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7856 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11173 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11580 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2253 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 17:03:57 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:12290 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13664 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:11056 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7839 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7841 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8685 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2632 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2634 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9991 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3172 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3790 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10903 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9788 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:14734 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     125.250.81.167:8419 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 18:04:43 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     125.250.81.167:6197 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6199 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6201 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6437 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5499 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50667 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 19:07:44 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     122.42.2.61:50669 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50671 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50673 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50675 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50675 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4543 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4583 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13410 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3745 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12168 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5523 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5539 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13000 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13046 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13053 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:13067 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     119.194.36.167:13067 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13072 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5554 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13148 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13153 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4498 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 20:28:14 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     119.194.36.167:4503 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11808 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7687 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7708 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7717 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7728 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     121.43.52.44:35076 - "GET / HTTP/1.0" 404 Not Found
+INFO:     121.43.52.44:35192 - "GET / HTTP/1.0" 404 Not Found
+INFO:     121.43.52.44:35198 - "POST /sdk HTTP/1.1" 404 Not Found
+INFO:     121.43.52.44:35194 - "GET /nmaplowercheck1775994883 HTTP/1.1" 404 Not Found
+INFO:     121.43.52.44:35202 - "GET /evox/about HTTP/1.1" 404 Not Found
+INFO:     121.43.52.44:35204 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     121.43.52.44:35378 - "GET / HTTP/1.0" 404 Not Found
+INFO:     121.43.52.44:35382 - "GET / HTTP/1.1" 404 Not Found
+INFO:     221.164.188.30:49753 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 21:41:32 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     221.164.188.30:49755 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53190 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:58312 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:58328 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61401 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:54217 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51569 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51571 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57038 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54105 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-12 22:12:01 | trained_at=알 수 없음 | data_count=알 수 없음 | features=14 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=없음
+INFO:     115.92.157.245:54134 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:35610 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61810 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61815 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61820 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61831 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     115.92.157.245:61836 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61841 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61848 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61848 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61848 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61848 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61848 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61863 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61863 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     115.92.157.245:56361 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:56369 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:56374 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     115.92.157.245:63135 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54484 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54495 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54500 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     115.92.157.245:54511 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     115.92.157.245:54517 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54534 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54544 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     115.92.157.245:49663 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1148]
+nohup: ignoring input
+INFO:     Started server process [3347]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-04-12 23:12:47 | trained_at=알 수 없음 | data_count=알 수 없음 | features=알 수 없음 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+INFO:     122.42.2.61:61446 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61448 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-13 00:07:45 | trained_at=2026-04-12 23:12:50 | data_count=383 | features=14 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=2026-04-12 23:12:50
+INFO:     122.42.2.61:61450 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61452 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61454 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61458 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61460 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-13 00:14:54 | trained_at=2026-04-13 00:12:51 | data_count=387 | features=14 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-04-12 23:12:50 → 새 학습=2026-04-13 00:12:51
+INFO:     122.42.2.61:61465 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65509 - "POST /api/submit_code HTTP/1.1" 200 OK
+특징 추출 실패 : 문법 오류가 있는 코드입니다.
+INFO:     122.42.2.61:65511 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65513 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65518 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65520 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65522 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65524 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65529 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.129.187.38:53982 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.129.187.38:38032 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.55.153.86:38899 - "GET / HTTP/1.1" 404 Not Found
+INFO:     40.74.208.138:58824 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     3.131.220.121:45050 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.131.220.121:51490 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:1860 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-04-13 17:18:11 | trained_at=2026-04-13 17:12:52 | data_count=393 | features=14 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-04-13 00:12:51 → 새 학습=2026-04-13 17:12:52
+INFO:     119.194.36.167:1882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11457 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2888 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2888 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13494 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:62658 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:62664 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58087 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58089 - "POST /api/submit_code HTTP/1.1" 200 OK

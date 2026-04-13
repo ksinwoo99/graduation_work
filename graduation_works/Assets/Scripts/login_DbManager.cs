@@ -7,7 +7,7 @@ using System.Text;
 public class login_DbManager : MonoBehaviour
 {
     public static login_DbManager Instance;
-    string baseUrl = "http://13.237.51.219:8000"; 
+    string baseUrl = "http://13.237.51.219:8002"; 
 
     void Awake()
     {
