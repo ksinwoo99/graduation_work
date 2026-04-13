@@ -11,7 +11,6 @@ public class Ingame_UI_MachineInfo : MonoBehaviour
 
     public void ShowInfo(Iteminfo_Base info)
     {
-        if (Shared_Manager_Session.IsVisiting) return;
         if (info == null) return;
         
         gameObject.SetActive(true); 
