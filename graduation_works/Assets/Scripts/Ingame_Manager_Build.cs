@@ -92,7 +92,13 @@ public class Ingame_Manager_Build : MonoBehaviour {
         } 
     }
     
-    void Awake() { if (Instance == null) Instance = this; }
+    void Awake() 
+    { 
+        if (Instance == null) Instance = this; 
+        
+        // 포커스 아웃(백그라운드) 상태에서도 멈추지 않게
+        Application.runInBackground = true;
+    }
 
     void Start() { 
         GenerateFloor();
