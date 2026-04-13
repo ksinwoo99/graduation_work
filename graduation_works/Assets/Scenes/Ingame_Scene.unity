@@ -8876,7 +8876,7 @@ MonoBehaviour:
   ItemPanel_Off: {fileID: 1812631116}
   slideDuration: 0.5
   slideEase: 12
-  extraDownDistance: 0
+  extraDownDistance: 30
 --- !u!1 &808674915
 GameObject:
   m_ObjectHideFlags: 0
