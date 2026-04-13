@@ -1,0 +1,1743 @@
+nohup: ignoring input
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [76785]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     39.127.110.134:63442 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     39.127.110.132:60668 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55291 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55299 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55304 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55308 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:55312 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:49703 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:65387 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:52942 - "POST /execute HTTP/1.1" 200 OK
+INFO:     3.143.162.210:57148 - "GET / HTTP/1.1" 200 OK
+INFO:     3.143.162.210:47334 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.110.132:53152 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.134:63295 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     39.127.110.134:63427 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:65125 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.110.132:57304 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:57313 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:54335 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.134:9444 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     39.127.110.134:9444 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62276 - "POST /execute HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62296 - "POST /execute HTTP/1.1" 200 OK
+INFO:     18.218.118.203:54330 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:33168 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     204.76.203.215:61968 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.168.2:34278 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:49440 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.116.101.220:40840 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:39944 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     219.139.231.106:45566 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     219.139.231.106:45665 - "GET /v1/models HTTP/1.1" 404 Not Found
+INFO:     219.139.231.106:45762 - "GET /health HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     135.237.126.225:34346 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     147.185.132.240:60384 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     18.218.118.203:41744 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:6665 - "POST /execute HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:9124 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9130 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8261 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8271 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8275 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8275 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3384 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5793 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8195 - "POST /execute HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     94.231.206.104:44853 - "GET / HTTP/1.1" 200 OK
+INFO:     94.231.206.34:60053 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49548 - "GET / HTTP/1.0" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:49562 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:49590 - "OPTIONS / HTTP/1.0" 405 Method Not Allowed
+INFO:     172.236.35.120:49600 - "OPTIONS / HTTP/1.0" 405 Method Not Allowed
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:49862 - "GET /devicedesc.xml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:54580 - "GET /cgi-mod/header_logo.cgi?size=big HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54590 - "GET /nmaplowercheck1775761517 HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:54644 - "GET /home.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54660 - "POST /sdk HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54664 - "GET /rest/applinks/1.0/manifest HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54578 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54612 - "GET / HTTP/1.1" 200 OK
+INFO:     172.236.35.120:54688 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:54716 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54668 - "GET /CFIDE/componentutils/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54676 - "GET /login.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54738 - "GET /base.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54740 - "GET /confluence/rest/applinks/1.0/manifest HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54704 - "GET / HTTP/1.1" 200 OK
+INFO:     172.236.35.120:54748 - "GET /api/v2/about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54750 - "GET /%2BCSCOE%2B/logon.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54756 - "GET /webui HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54772 - "GET /dniapi/userInfos HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54780 - "GET /human.aspx?arg12=infotech HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:54810 - "GET /home.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54838 - "GET /user HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54832 - "GET /webui HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54830 - "GET /dana-na/nc/nc_gina_ver.txt HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54814 - "GET /dana-cached/hc/HostCheckerInstaller.osx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54846 - "GET /nmaplowercheck1775761518 HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54852 - "GET /index.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54858 - "GET /evox/about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54870 - "GET /admin.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54888 - "GET /geoserver/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54896 - "GET /readme.txt HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54876 - "GET /geoserver/index.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54912 - "GET /geoserver/web/wicket/bookmarkable/org.geoserver.web.AboutGeoServerPage HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54928 - "GET /main.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54926 - "GET / HTTP/1.1" 200 OK
+INFO:     172.236.35.120:54942 - "GET /Account/Login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54956 - "GET /cgi-bin/info.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54964 - "GET /base.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54986 - "GET /xml/info.xml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54978 - "GET /api/v1/check-version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54988 - "GET /magento_version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54994 - "GET /start.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55006 - "GET /fog/management/index.php?node=client&sub=logininfo HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55016 - "GET /dashboard/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55024 - "GET /ise/img/rm-logo_small.png HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55056 - "GET /index.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55040 - "GET /helpdesk/WebObjects/Helpdesk.woa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55072 - "GET /cluster/list.query HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55080 - "GET /inicio.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55088 - "GET /apps/zxtm/login.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55086 - "GET /owa/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55102 - "GET /api/server/version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55114 - "GET /indice.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55130 - "GET /language/en-GB/en-GB.xml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55132 - "GET /administrator/manifests/files/joomla.xml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55140 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55150 - "GET /versa/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55152 - "GET /login.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55160 - "GET /webui/index.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55162 - "GET /images/logo.png HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55168 - "GET /base.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55186 - "GET /api/version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55170 - "GET /p/login/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55194 - "GET /portal/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55192 - "GET /base.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55210 - "GET /owa/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55216 - "GET /status HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55228 - "GET /main.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55252 - "GET /info.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55266 - "GET /lms/db HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55272 - "GET /cgi-bin/param.cgi?get_device_conf HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55284 - "GET /admin.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55298 - "GET /ext-js/app/common/zld_product_spec.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55328 - "GET /routes HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55314 - "GET /login/login.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55344 - "GET /allversions HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55354 - "GET /phoenix/favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55362 - "GET /menu.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55380 - "GET /admin.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55394 - "GET /r-seenet/index.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55396 - "GET /versions HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55410 - "GET /admin.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55438 - "GET /c/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55428 - "GET /WebApp/js/UI_String.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55420 - "GET /tos/index.php?user/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55434 - "GET /api/vip/i18n/api/v2/translation/products/vRNIUI/versions/1 HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55442 - "GET /admin.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55448 - "GET /login.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55462 - "GET /officescan/console/html/localization.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55464 - "GET /officescan/console/cgi/cgiChkMasterPwd.exe HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55468 - "GET /localstart.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55482 - "GET /assets/png/favicon-abe32304.png HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55492 - "GET /IPCamDesc.xml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55494 - "GET /home.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55504 - "GET /kylin/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55522 - "GET /admin.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55550 - "GET /cslu/v1/core/conf HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55538 - "GET /api/v1.0/environment HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55524 - "GET /config HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55552 - "GET /home.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55556 - "GET /admin/reports/updates HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55570 - "GET /CHANGELOG.txt HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55562 - "GET /admin/reports/status HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55604 - "GET /admin.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55594 - "GET /App_Themes/Default/Images/favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55598 - "GET /javascript/validation/OEM.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55616 - "GET /pom.xml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55614 - "GET /build.gradle HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55630 - "GET /indice.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55664 - "GET /workplace/home.action HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55656 - "GET /webportal.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55646 - "GET /css/eonweb.css HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55678 - "GET /admin.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:54648 - "GET / HTTP/1.1" 200 OK
+INFO:     172.236.35.120:55686 - "GET /centreon/api/latest/platform/versions HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55702 - "GET /pandora_console/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55698 - "GET /cgi-bin/authLogin.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55704 - "GET /images/logo.gif HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55708 - "GET /index.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55710 - "GET /css/elfinder.min.css HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55712 - "GET /index.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55716 - "GET /geoserver/web/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55720 - "GET /am_bin/amlogin HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55734 - "GET /api/v3/meta HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55746 - "GET /home.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55764 - "GET /i18n/component/JS HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55754 - "GET /api/v1/version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55774 - "GET /system/version/current HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55788 - "GET /hx/api/about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55794 - "GET /app/ui/login.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55804 - "GET /home.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55816 - "GET /assets/img/favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55828 - "GET /login/?next=/ HTTP/1.1" 307 Temporary Redirect
+INFO:     172.236.35.120:55838 - "GET /menu.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55860 - "GET /plugin/webs_model_cfg.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55848 - "GET /MagicInfo/config.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55870 - "GET /login?next=/ HTTP/1.1" 405 Method Not Allowed
+INFO:     172.236.35.120:55884 - "GET /start.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55914 - "GET /cgi-bin/luci HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55894 - "GET /photo/webapi/query.php?api=SYNO.API.Info&method=query&version=1 HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55900 - "GET /Main_Login.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55926 - "GET /rs/application-about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55928 - "GET /admin.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55932 - "GET /json/login_session HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55952 - "GET /themes/admin/default/build/assets/favicon-19fbef86.svg HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55964 - "GET /metrics HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55948 - "GET /nidp/app/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55978 - "GET /localstart.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:55990 - "GET /index.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56004 - "GET /about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56012 - "GET /localstart.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56022 - "GET /api/v2/hoverfly/version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56038 - "GET /ui/login.action HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56024 - "GET /main/main.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56054 - "GET /base.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56074 - "GET /login HTTP/1.1" 405 Method Not Allowed
+INFO:     172.236.35.120:56064 - "GET /core/auth/login/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56076 - "GET /dashboard/favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56080 - "GET /main.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56082 - "GET /admin/config.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56092 - "GET /api/v1/info HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56094 - "GET /index.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56096 - "GET /api/status HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56108 - "GET /config_dump HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56144 - "GET /~login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56120 - "GET /agc/vicidial.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56124 - "GET /mailinspector/login.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56134 - "GET /main.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56156 - "GET /agent/vicidial.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56148 - "GET /index.do HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56162 - "GET /kubepi/fav.png HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56170 - "GET /base.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56184 - "GET /AppsHome.do HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56214 - "GET /base.php HTTP/1.1" 404 Not Found
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+INFO:     172.236.35.120:56226 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.236.35.120:56198 - "GET /system/gwinfo HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56244 - "GET /jtcgi/wte.pyc HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56236 - "GET /decisioncenter-api/v1/about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56258 - "GET /nifi/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56260 - "GET /nifi-api/flow/about HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56270 - "GET /public/static/favicon.png HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56308 - "GET /index.lua HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56286 - "GET /info.htm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56292 - "GET /api-description HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:56318 - "GET /cgi-bin/meteobridge.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49620 - "GET /assets/favicon.png HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49624 - "GET /indice.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49664 - "GET /monitor/index.php/auth/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49690 - "GET /help/en_US/Content/utm/utmAdminGuide/WebAdmin.htm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49694 - "GET /sys/en/neoclassic/login/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49636 - "GET /v2 HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49650 - "GET /sap/bc/ui2/flp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49706 - "GET /api/v2.0/systeminfo HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49674 - "GET /browser/index.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49730 - "GET /wp-content/plugins/post-smtp/readme.txt HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49742 - "GET /ignite?cmd=version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49720 - "GET /management/v1/cluster/state HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:49764 - "GET /nmc/rss/server HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49762 - "GET /download/python/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49780 - "GET /webpages/login.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49786 - "GET /api/system/status HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49802 - "GET /sms_mp/.sms_aut?mplist HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49830 - "GET /cgi-bin/getagent.cgi?type=s HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49808 - "GET /api/v1/cluster/summary HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49834 - "GET /angular.js HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49850 - "GET /ScadaBR/login.htm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49814 - "GET /admin HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49858 - "GET /inicio.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49916 - "GET /rest/settings HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49950 - "GET /metasys/com/jci/metasys/MetasysProperties.properties HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49898 - "GET /rustfs/console/version HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49884 - "GET /remote/login HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49870 - "GET /idexpert/ HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49928 - "GET /UOF/Login.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49904 - "GET /scripts/languages/en-US.json HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49908 - "GET /base.inc HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49942 - "GET /_matrix/identity/v2 HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49966 - "GET /backend/banner HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49978 - "GET /start.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:49992 - "GET /indice.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50028 - "GET /main.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50042 - "GET /menu.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50058 - "GET /menu.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50068 - "GET /menu.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50078 - "GET /base.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50092 - "GET /menu.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50096 - "GET /menu.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50100 - "GET /main.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50112 - "GET /inicio.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50132 - "GET /menu.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50148 - "GET /home.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50166 - "GET /inicio.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50182 - "GET /main.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50198 - "GET /indice.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50206 - "GET /start.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50210 - "GET /inicio.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50214 - "GET /indice.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50220 - "GET /menu.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50224 - "GET /index.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50228 - "GET /index.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50244 - "GET /indice.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50248 - "GET /main.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50256 - "GET /menu.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50272 - "GET /start.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50286 - "GET /index.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50290 - "GET /indice.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50314 - "GET /start.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50324 - "GET /indice.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50336 - "GET /indice.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50346 - "GET /base.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50354 - "GET /start.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50364 - "GET /main.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50380 - "GET /localstart.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50396 - "GET /default.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50410 - "GET /start.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50434 - "GET /main.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50448 - "GET /default.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50464 - "GET /localstart.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50476 - "GET /inicio.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50482 - "GET /index.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50484 - "GET /base.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50486 - "GET /inicio.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50496 - "GET /default.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50506 - "GET /inicio.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50536 - "GET /default.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50548 - "GET /main.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50552 - "GET /inicio.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50564 - "GET /inicio.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50578 - "GET /default.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50582 - "GET /localstart.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50598 - "GET /home.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50606 - "GET /admin.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50618 - "GET /localstart.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50626 - "GET /default.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50642 - "GET /index.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50644 - "GET /home.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50652 - "GET /localstart.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50658 - "GET /menu.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50660 - "GET /admin.shtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50670 - "GET /default.jhtml HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50680 - "GET /home.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50690 - "GET /localstart.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50710 - "GET /localstart.asp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50716 - "GET /default.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50722 - "GET /start.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50738 - "GET /start.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50742 - "GET /base.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50750 - "GET /default.aspx HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50754 - "GET /start.jsp HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50758 - "GET /localstart.cfm HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50766 - "GET /home.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50772 - "GET /indice.jsa HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50786 - "GET /default.html HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50792 - "GET /inicio.php HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50804 - "GET /default.pl HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50810 - "GET /index.cgi HTTP/1.1" 404 Not Found
+INFO:     172.236.35.120:50820 - "GET / HTTP/1.0" 200 OK
+INFO:     172.236.35.120:50826 - "GET / HTTP/1.1" 200 OK
+INFO:     165.227.124.6:53836 - "GET / HTTP/1.1" 200 OK
+INFO:     165.227.124.6:53842 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     118.26.104.93:48686 - "GET / HTTP/1.1" 200 OK
+INFO:     118.26.104.93:48702 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     118.26.104.93:48704 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     118.26.104.93:32980 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     118.26.104.93:32996 - "GET /config.json HTTP/1.1" 404 Not Found
+INFO:     118.26.104.93:33008 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     118.26.104.93:33012 - "GET /mcp HTTP/1.1" 404 Not Found
+INFO:     118.26.104.93:33014 - "GET /mcp-sse HTTP/1.1" 404 Not Found
+INFO:     122.42.2.61:50552 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50568 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56586 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56590 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56804 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56806 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56813 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56815 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56817 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:54909 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:54911 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:54917 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9291 - "POST /execute HTTP/1.1" 200 OK
+INFO:     204.76.203.215:28190 - "GET /../../../../../../etc/passwd HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:7175 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7175 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7186 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7186 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10443 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10450 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9678 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8321 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8321 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7924 - "GET /check_save?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7924 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7396 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12228 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12228 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4731 - "POST /execute HTTP/1.1" 200 OK
+INFO:     3.143.162.210:35024 - "GET / HTTP/1.1" 200 OK
+INFO:     3.143.162.210:53548 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     16.58.56.214:58036 - "GET / HTTP/1.1" 200 OK
+INFO:     16.58.56.214:40110 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:1790 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1821 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13021 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13039 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11162 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11166 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11173 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11190 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5888 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5888 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11760 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11760 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:3910 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3923 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3096 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3096 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12271 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11079 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11082 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11084 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11086 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11088 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11088 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11090 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11092 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11542 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11545 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7699 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3685 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2827 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4590 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4592 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5260 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9775 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5975 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5977 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10024 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10026 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2681 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2682 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2685 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3682 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1736 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1738 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5428 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5429 - "GET /check_save?user_id=test04 HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5431 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14036 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14055 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14068 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10783 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4233 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4240 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4240 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1127 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1142 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1209 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1219 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1264 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1264 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1272 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1272 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1277 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1277 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1332 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1338 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4719 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4719 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4730 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4735 - "POST /execute HTTP/1.1" 200 OK
+INFO:     121.41.171.40:53856 - "GET / HTTP/1.0" 200 OK
+INFO:     121.41.171.40:54092 - "POST /sdk HTTP/1.1" 404 Not Found
+INFO:     121.41.171.40:54090 - "GET /nmaplowercheck1775823490 HTTP/1.1" 404 Not Found
+INFO:     121.41.171.40:54088 - "GET / HTTP/1.0" 200 OK
+INFO:     121.41.171.40:54118 - "GET /evox/about HTTP/1.1" 404 Not Found
+INFO:     121.41.171.40:54120 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     121.41.171.40:54676 - "GET / HTTP/1.0" 200 OK
+INFO:     121.41.171.40:54686 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     150.228.135.203:38637 - "GET /iams/api/v1 HTTP/1.1" 404 Not Found
+INFO:     119.194.36.167:10616 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10625 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1488 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1495 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13032 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6857 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6868 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6890 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6896 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12955 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1443 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11183 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8791 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8801 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14671 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14681 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5564 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12959 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9494 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12734 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9149 - "POST /execute HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:4121 - "POST /execute HTTP/1.1" 200 OK
+INFO:     199.45.155.75:57268 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     199.45.155.75:46748 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     199.45.155.75:46778 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     199.45.155.75:46800 - "GET /wiki HTTP/1.1" 404 Not Found
+INFO:     103.203.57.20:33530 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.5.69:38460 - "GET / HTTP/1.1" 200 OK
+INFO:     172.105.5.69:38462 - "GET /login HTTP/1.1" 405 Method Not Allowed
+INFO:     172.105.5.69:38474 - "GET /AGENTS.md HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:10488 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10490 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10492 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10495 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13016 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6505 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8707 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11153 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11161 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4104 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4106 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9354 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9954 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14566 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8139 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8146 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8148 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8150 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14380 - "POST /execute HTTP/1.1" 200 OK
+INFO:     211.231.103.105:53776 - "GET /execute HTTP/1.1" 405 Method Not Allowed
+INFO:     125.250.81.167:7131 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7775 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9139 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9144 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9145 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6423 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11914 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9981 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9983 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12926 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10731 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10733 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10736 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14654 - "POST /execute HTTP/1.1" 200 OK
+nohup: ignoring input
+/home/ubuntu/myproject/venv/lib/python3.12/site-packages/pydantic/_internal/_config.py:383: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [90835]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     125.250.81.167:12381 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4296 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4296 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4296 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4301 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2360 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2360 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2360 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2360 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10825 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10830 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10831 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Started server process [90905]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     125.250.81.167:2086 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5144 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3684 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3656 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3658 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14381 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10941 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12856 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12858 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12860 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12862 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12867 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12872 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14388 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10108 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7127 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7127 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7127 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     27.0.238.116:59738 - "GET /execute HTTP/1.1" 405 Method Not Allowed
+INFO:     125.250.81.167:4266 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9433 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9433 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9433 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12493 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12498 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8688 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8693 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8693 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8693 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9941 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9941 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9746 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12785 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12785 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2957 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2957 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2957 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2958 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2958 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2961 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2961 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2961 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11032 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11037 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10892 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10897 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10897 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10897 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11773 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11773 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11773 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Started server process [91119]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     125.250.81.167:14679 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14679 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14679 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13517 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13519 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13080 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10720 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9102 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3545 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3553 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3555 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13054 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13433 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13433 - "GET /check_save?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13433 - "GET /load/game?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10670 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2182 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1568 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3309 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3309 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3309 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6604 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6606 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6421 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6423 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11290 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8582 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14627 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14635 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14647 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14651 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13473 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13479 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13479 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13479 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13479 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13486 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6524 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10735 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10740 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10750 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9624 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9624 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7695 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7706 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1746 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1747 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1747 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13226 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13780 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4579 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4579 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4579 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7383 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7383 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7383 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6626 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14221 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14221 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14221 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3223 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6124 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12815 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12815 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2173 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2173 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2173 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14188 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14188 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14188 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3123 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4008 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11933 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11934 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7403 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7404 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7522 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2638 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2645 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11785 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13848 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1483 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1500 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1500 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1520 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10703 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10703 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10029 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10042 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10081 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10095 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10095 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6307 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9646 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9672 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8842 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9318 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2729 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2753 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8982 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11504 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1175 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1190 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8325 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8331 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8337 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8978 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:8997 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9002 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9027 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7217 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7224 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7229 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7269 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11306 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11340 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11349 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2391 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2425 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3004 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11015 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11015 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7399 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7399 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11268 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11274 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11779 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11779 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11785 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3220 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3240 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3266 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3271 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12248 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10550 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10568 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10571 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:10581 - "POST /execute HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Started server process [1636]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     125.250.81.167:6776 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4065 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4065 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4077 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4077 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7635 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7635 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7635 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5517 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5519 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5522 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5524 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5228 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5228 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4169 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14263 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14263 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14266 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1680 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1685 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1692 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14582 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14582 - "POST /execute HTTP/1.1" 200 OK
+INFO:     40.76.139.157:36356 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:5334 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5385 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5391 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5398 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5405 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2671 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2680 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7669 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4111 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5579 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5585 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5590 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5594 - "POST /execute HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1636]
+nohup: ignoring input
+INFO:     Started server process [1078]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1078]
+nohup: ignoring input
+INFO:     Started server process [1114]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     119.194.36.167:9562 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2102 - "GET /load/game?user_id=test04 HTTP/1.1" 200 OK
+INFO:     118.42.190.135:57684 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14945 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     118.42.190.135:58054 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     118.42.190.135:58054 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     118.42.190.135:58054 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14175 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14176 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     118.42.190.135:58054 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14176 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12960 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12960 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12960 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11229 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11229 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11229 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56693 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1799 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5387 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3513 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3515 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7899 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9012 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12489 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12489 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12489 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7606 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1312 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1312 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1312 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4837 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7024 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7025 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11041 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54506 - "POST /login HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61876 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1441 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4344 - "GET /check_save?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4344 - "GET /load/game?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61879 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61879 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2649 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2649 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2649 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2651 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2651 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54698 - "POST /execute HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54698 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53827 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2652 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54755 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2652 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54837 - "POST /execute HTTP/1.1" 200 OK
+INFO:     118.42.190.135:54934 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10594 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10594 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10594 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53828 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     118.42.190.135:55099 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:55175 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51613 - "POST /register HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51613 - "POST /register HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51615 - "POST /login HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51616 - "GET /check_save?user_id=sd HTTP/1.1" 200 OK
+INFO:     118.42.190.135:55348 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6767 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     118.42.190.135:55676 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52411 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52409 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52410 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61819 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61821 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61824 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:61826 - "POST /execute HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56003 - "POST /execute HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56028 - "POST /execute HTTP/1.1" 200 OK
+INFO:     133.206.160.4:25321 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     221.164.188.30:63354 - "POST /execute HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56116 - "POST /execute HTTP/1.1" 200 OK
+INFO:     133.206.160.4:49896 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     221.164.188.30:56857 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:50578 - "POST /execute HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56198 - "POST /execute HTTP/1.1" 200 OK
+INFO:     133.206.160.4:25326 - "POST /register HTTP/1.1" 200 OK
+INFO:     133.206.160.4:8929 - "POST /login HTTP/1.1" 200 OK
+INFO:     118.42.190.135:56390 - "POST /execute HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Started server process [1077]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57829 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57828 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57827 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57830 - "GET /check_save?user_id=dikay96 HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57830 - "GET /load/game?user_id=dikay96 HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "GET /check_save?user_id=dikay96 HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "GET /load/game?user_id=dikay96 HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57833 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57834 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57831 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57832 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53693 - "GET /check_save?user_id=dikay96 HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53693 - "GET /load/game?user_id=dikay96 HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53697 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53699 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53698 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53696 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53695 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3657 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3658 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3660 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2136 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6467 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6026 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6026 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6026 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12727 - "POST /execute HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [1216]
+INFO:     Started server process [1221]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1220]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1218]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1219]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+nohup: ignoring input
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [1428]
+INFO:     Started server process [1433]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1430]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1431]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     125.250.81.167:9008 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9841 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9841 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9841 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7855 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11172 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11579 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9793 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2252 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12289 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12289 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12292 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12292 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12293 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7995 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7999 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7999 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7999 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7634 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7634 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1949 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1949 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [1623]
+INFO:     Started server process [1625]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1626]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1628]
+INFO:     Waiting for application startup.
+INFO:     Started server process [1627]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+INFO:     125.250.81.167:5886 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5886 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7796 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7796 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7796 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [1653]
+INFO:     Started server process [1657]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1655]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1656]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [1658]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     125.250.81.167:11765 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13506 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13506 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13663 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13665 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7756 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7756 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13020 - "GET /check_save?user_id=123 HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11055 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7838 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7840 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8684 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2631 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2633 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9990 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3171 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3789 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10902 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9787 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14733 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8418 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6196 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6198 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6200 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9673 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6436 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5498 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3843 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10352 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     Received SIGHUP, restarting processes.
+INFO:     Waiting for child process [1655]
+/usr/lib/python3.12/multiprocessing/resource_tracker.py:123: UserWarning: resource_tracker: process died unexpectedly, relaunching.  Some resources might leak.
+  warnings.warn('resource_tracker: process died unexpectedly, '
+INFO:     Waiting for child process [1656]
+INFO:     Waiting for child process [1657]
+INFO:     Waiting for child process [1658]
+INFO:     Started server process [1808]
+INFO:     Waiting for application startup.
+INFO:     Started server process [1809]
+INFO:     Started server process [1810]
+INFO:     Waiting for application startup.
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+INFO:     Started server process [1807]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     119.194.36.167:5406 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "GET /check_save?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6232 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9795 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     119.194.36.167:9795 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50663 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50666 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50668 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50670 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50672 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50674 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50674 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4541 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4582 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13408 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:3744 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12167 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5522 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5538 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:12999 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13045 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13052 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13065 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13065 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13071 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:5553 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13147 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13152 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13157 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13157 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4497 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:4502 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11807 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7686 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7707 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7716 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:7727 - "POST /execute HTTP/1.1" 200 OK
+INFO:     103.203.57.20:52414 - "GET / HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53611 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53619 - "POST /login HTTP/1.1" 200 OK
+INFO:     221.164.188.30:49752 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:49754 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61793 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61793 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     221.164.188.30:53189 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:58311 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:58327 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61400 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:54216 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51568 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:51570 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:57037 - "POST /execute HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52381 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52381 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52382 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52381 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52381 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     221.164.188.30:52381 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7241 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7241 - "GET /check_save?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7241 - "GET /load/game?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     221.164.188.30:64693 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     115.92.157.245:51377 - "POST /login HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54088 - "GET /load/game?user_id=test04 HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54104 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54133 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61799 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61809 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61814 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61819 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61830 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61835 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61840 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61847 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61847 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61847 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61847 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61847 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61862 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:61862 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:56360 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:56368 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:56373 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:63134 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54483 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54494 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54498 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54509 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54516 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54532 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:54543 - "POST /execute HTTP/1.1" 200 OK
+INFO:     115.92.157.245:49661 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12180 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12181 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12180 - "GET /check_save?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12180 - "GET /load/game?user_id=QWWW HTTP/1.1" 200 OK
+INFO:     Received SIGTERM, exiting.
+INFO:     Terminated child process [1807]
+INFO:     Terminated child process [1808]
+INFO:     Terminated child process [1809]
+INFO:     Terminated child process [1810]
+INFO:     Waiting for child process [1807]
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1808]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1810]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1809]
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1807]
+INFO:     Waiting for child process [1808]
+INFO:     Waiting for child process [1809]
+INFO:     Waiting for child process [1810]
+INFO:     Stopping parent process [1653]
+nohup: ignoring input
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started parent process [3333]
+INFO:     Started server process [3336]
+INFO:     Waiting for application startup.
+INFO:     Started server process [3338]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Application startup complete.
+INFO:     Started server process [3335]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [3337]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     125.250.81.167:8178 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2935 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     18.144.174.231:39118 - "GET / HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13857 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3441 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3441 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12405 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     Received SIGHUP, restarting processes.
+INFO:     Waiting for child process [3335]
+/usr/lib/python3.12/multiprocessing/resource_tracker.py:123: UserWarning: resource_tracker: process died unexpectedly, relaunching.  Some resources might leak.
+  warnings.warn('resource_tracker: process died unexpectedly, '
+INFO:     Waiting for child process [3336]
+INFO:     Waiting for child process [3337]
+INFO:     Waiting for child process [3338]
+INFO:     Started server process [3416]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [3414]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [3415]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [3413]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     125.250.81.167:7707 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7708 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7708 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7792 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7792 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7794 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7794 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7798 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7799 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7800 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7801 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7801 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7801 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     3.131.220.121:38134 - "GET / HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7803 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     3.131.220.121:48996 - "GET / HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13129 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13130 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13131 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.250.81.167:5444 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5445 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     122.42.2.61:61440 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61445 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61447 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61449 - "POST /execute HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12253 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12254 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12254 - "GET /load/game?user_id=Guest HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61451 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61453 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61456 - "GET /check_save?user_id=test1234 HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61457 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61459 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:61464 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65508 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65510 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65512 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65515 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65517 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65519 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65521 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65523 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65528 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65530 - "POST /save/game HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65531 - "GET /check_save?user_id=test1234 HTTP/1.1" 200 OK
+INFO:     122.42.2.61:65531 - "GET /load/game?user_id=test1234 HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     62.4.14.71:45574 - "GET /HNAP1 HTTP/1.1" 404 Not Found
+INFO:     62.4.14.71:45596 - "POST /onvif/device_service HTTP/1.1" 404 Not Found
+INFO:     62.4.14.71:45598 - "GET /PSIA/index HTTP/1.1" 404 Not Found
+INFO:     219.153.113.100:10762 - "GET / HTTP/1.1" 200 OK
+INFO:     195.178.110.204:57884 - "GET / HTTP/1.0" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     94.231.206.207:33151 - "GET / HTTP/1.1" 200 OK
+INFO:     94.231.206.253:57481 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     3.134.216.108:51210 - "GET / HTTP/1.1" 200 OK
+INFO:     3.134.216.108:42136 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.250.81.167:3806 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6696 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6697 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3610 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3610 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6702 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:6702 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1848 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1849 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1859 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:1881 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11456 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11472 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11471 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11480 - "GET /check_save?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:11480 - "GET /load/game?user_id=qwww HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2887 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2887 - "POST /execute HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13493 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:64296 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:62657 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:62663 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58084 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58086 - "POST /execute HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58102 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58102 - "GET /check_save?user_id=test1234 HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58102 - "GET /load/game?user_id=test1234 HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14373 - "POST /login HTTP/1.1" 200 OK

@@ -14,9 +14,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
     [Header("테마 설정 (다크/라이트 모드)")]
     public Button btnThemeToggle; 
-    public InGameCodeEditor.CodeEditorTheme darkTheme;  
-    public InGameCodeEditor.CodeEditorTheme lightTheme; 
-    private bool isDarkMode = true; 
+    public InGameCodeEditor.CodeEditorTheme darkTheme;
+    public InGameCodeEditor.CodeEditorTheme lightTheme;
+    public bool isDarkMode = true;
 
     [Header("폰트 줌(확대/축소) 설정")] 
     public float minFontSize = 10f;   
@@ -26,7 +26,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     [Header("매니저 연결")]
     public Ingame_Manager_Build buildManager;
     
-    private Dictionary<int, string> globalCodes = new Dictionary<int, string>();
+    public Dictionary<int, string> globalCodes = new Dictionary<int, string>();
     public logic_CodingBase currentLogic;
     private int currentMachineId; 
 
@@ -67,6 +67,16 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                             TMP_Text placeholderText = inputField.placeholder.GetComponent<TMP_Text>();
                             if (placeholderText != null) placeholderText.fontSize = newSize;
                         }
+                    }
+
+                    Canvas.ForceUpdateCanvases(); // UI 레이아웃을 즉시 갱신
+                    if (inputField != null && inputField.verticalScrollbar != null) {
+                        inputField.verticalScrollbar.value = 1f; // 1은 맨 위, 0은 맨 아래
+                    }
+
+                    if (codeEditor != null) {
+                        ScrollRect sr = codeEditor.GetComponentInChildren<ScrollRect>();
+                        if (sr != null) sr.verticalNormalizedPosition = 1f;
                     }
                 }
             }

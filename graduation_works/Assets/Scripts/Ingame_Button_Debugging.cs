@@ -275,9 +275,21 @@ public class Ingame_Button_Debugging : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             MLResponse mlRes = JsonUtility.FromJson<MLResponse>(www.downloadHandler.text);
+            
             if (resultText != null)
             {
-                resultText.text += $"\n\n<color=#FFFF00>[AI 분석 결과]</color> (점수: {mlRes.score}점)\n{mlRes.hint}";
+                // ✨ 1. 현재 테마 모드 확인
+                bool isDark = true;
+                var buildMgr = Ingame_Manager_Build.Instance;
+                if (buildMgr != null && buildMgr.codingManager != null) {
+                    isDark = buildMgr.codingManager.isDarkMode;
+                }
+
+                // ✨ 2. 노란색의 보색 적용! 
+                // 다크모드: 밝은 노란색(#FFFF00) / 라이트모드: 보색인 보라색(#800080)으로 설정합니다.
+                string highlightColor = isDark ? "#FFFF00" : "#800080"; 
+
+                resultText.text += $"\n\n<color={highlightColor}>[AI 분석 결과]</color> (점수: {mlRes.score}점)\n{mlRes.hint}";
             }
         }
     }
@@ -314,15 +326,30 @@ public class Ingame_Button_Debugging : MonoBehaviour
                 displayMessage = lines[lines.Length - 1].Trim();
         }
 
+        // 1. 현재 다크/라이트 모드 상태 가져오기
+        bool isDark = true;
+        var buildMgr = Ingame_Manager_Build.Instance;
+        if (buildMgr != null && buildMgr.codingManager != null) {
+            isDark = buildMgr.codingManager.isDarkMode;
+        }
+
+        // 2. 배경창 켜기 및 투명도(Alpha) 조절
         if (resultBackground != null)
         {
             resultBackground.gameObject.SetActive(true);
-            resultBackground.color = new Color(tint.r, tint.g, tint.b, bgAlpha);
+            
+            // ✨ [핵심 수정] 라이트 모드일 때는 투명도를 0.5f(50%)로 올려서 배경색을 더 진하게 만듭니다.
+            // 다크 모드일 때는 기존에 인스펙터에 설정한 bgAlpha(기본 0.2f) 값을 씁니다.
+            float currentAlpha = isDark ? bgAlpha : 0.5f; 
+            
+            resultBackground.color = new Color(tint.r, tint.g, tint.b, currentAlpha);
         }
 
-        resultText.color = UnityEngine.Color.white;
+        // 3. 텍스트 색상 적용 (다크: 흰색 / 라이트: 완전 검은색)
+        resultText.color = isDark ? UnityEngine.Color.white : UnityEngine.Color.black;
         resultText.text  = displayMessage;
 
+        // 4. 상태 원 색상 적용
         if (ResultCircle != null)
             ResultCircle.color = tint;
     }
