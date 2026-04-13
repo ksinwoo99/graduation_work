@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Text;
+using System.Collections.Generic;
 using InGameCodeEditor.Lexer;
 using System.Reflection;
 
@@ -34,6 +35,15 @@ namespace InGameCodeEditor
         // 이 경우 앵커를 재계산해야 올바른 위치에 다음 음절 조합이 표시됩니다.
         private int _imeAnchorPos     = -1;
         private int _imeAnchorTextLen = -1;
+
+        // Undo / Redo ──────────────────────────────────────────────
+        private struct EditorState { public string text; public int cursorPos; }
+        private const int MaxUndoSteps = 200;
+        private readonly List<EditorState> _undoStack = new List<EditorState>();
+        private readonly List<EditorState> _redoStack = new List<EditorState>();
+        // 직전 프레임 말미의 텍스트·커서 — separator 키 직전 상태를 캡처하는 데 사용
+        private string _prevFrameText   = string.Empty;
+        private int    _prevFrameCursor = 0;
 
 #pragma warning disable 0649
         [Header("Elements")]
@@ -122,6 +132,8 @@ namespace InGameCodeEditor
                     inputHighlightText.text = string.Empty;
                     inputText.ForceMeshUpdate(false);
                 }
+
+                ResetUndoHistory(empty ? string.Empty : value);
             }
         }
 
@@ -187,6 +199,8 @@ namespace InGameCodeEditor
 
             ApplyTheme();
             ApplyLanguage();
+
+            ResetUndoHistory(inputField != null ? inputField.text : string.Empty);
 
             if (inputField != null)
             {
@@ -262,93 +276,102 @@ namespace InGameCodeEditor
 
             if (inputField.isFocused == true)
             {
-                // IME 조합 중인 글자(compositionString)를 올바른 커서 위치에 삽입해 렌더링합니다.
-                //
-                // [문제1] inputField.stringPosition 은 TMP LateUpdate 실행 후
-                //         조합 글자 길이만큼 이동할 수 있어 커서 중간에서는 신뢰할 수 없습니다.
-                // [문제2] 한글은 음절 단위로 확정(commit)되므로, 음절이 바뀔 때
-                //         compositionString 이 비어지는 프레임 없이 곧바로 다음 조합으로
-                //         전환됩니다. 이때 앵커를 갱신하지 않으면 새 음절이 앞에 붙습니다.
-                //
-                // [해결]  ① 조합이 시작될 때 stringPosition 을 _imeAnchorPos 에 저장합니다.
-                //         ② text 길이가 바뀌면(= 음절 확정) 앵커를 즉시 재계산합니다.
-                //         ③ 커서가 텍스트 끝에 있을 때는 stringPosition 대신
-                //            text.Length 를 사용해 TMP 내부 이동의 영향을 피합니다.
-                string _comp   = Input.compositionString;
-                int    _curLen = inputField.text.Length;
+                bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
-                if (!string.IsNullOrEmpty(_comp))
+                // ── Undo / Redo — TMP 자체 처리 결과를 덮어씁니다 ────────────
+                if (ctrl && Input.GetKeyDown(KeyCode.Z))
                 {
-                    // 앵커 갱신 조건: 첫 조합 프레임 OR 음절 확정으로 텍스트 길이 변경
-                    bool needsReset = _imeAnchorPos < 0 || _curLen != _imeAnchorTextLen;
-                    if (needsReset)
-                    {
-                        int sp = inputField.stringPosition;
-                        // 커서가 텍스트 끝이면 text.Length 를 직접 사용 (TMP 이동 영향 없음)
-                        // 커서가 중간이면 stringPosition 을 사용 (확정 직후라 신뢰 가능)
-                        _imeAnchorPos     = (sp >= _curLen) ? _curLen : sp;
-                        _imeAnchorTextLen = _curLen;
-                    }
-
-                    int insertAt = Mathf.Clamp(_imeAnchorPos, 0, _curLen);
-                    inputHighlightText.text = inputField.text.Substring(0, insertAt)
-                                           + _comp
-                                           + inputField.text.Substring(insertAt);
+                    PerformUndo();
+                    _prevFrameText   = inputField.text;
+                    _prevFrameCursor = inputField.stringPosition;
+                }
+                else if (ctrl && Input.GetKeyDown(KeyCode.Y))
+                {
+                    PerformRedo();
+                    _prevFrameText   = inputField.text;
+                    _prevFrameCursor = inputField.stringPosition;
                 }
                 else
                 {
-                    // 조합 완전 종료 — 모두 리셋
-                    _imeAnchorPos     = -1;
-                    _imeAnchorTextLen = -1;
-                    inputHighlightText.text = inputField.text;
-                }
-                inputField.textComponent.ForceMeshUpdate();
-                inputHighlightText.ForceMeshUpdate();
-                
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    int pos = inputField.stringPosition;
-                    inputField.text = inputField.text.Insert(pos, "    ");
-                    inputField.stringPosition = pos + 4;
-                    inputField.ActivateInputField(); 
-                    Refresh(true);
-                }
-
-                // ── Backspace 4칸 단위 들여쓰기 삭제 (블록 탈출) ─────────────
-                // TMP가 EventSystem.Update에서 Backspace 1칸을 이미 삭제한 뒤
-                // 우리 LateUpdate가 실행되므로, 남은 공백을 보상 삭제합니다.
-                //
-                // 동작 규칙:
-                //   줄 시작부터 커서까지 모두 공백이고(순수 들여쓰기 줄),
-                //   현재 공백 수가 4의 배수가 아니면(TMP가 1칸 지워 어긋난 상태)
-                //   이전 4칸 경계까지 나머지를 추가 삭제합니다.
-                //   → 결과적으로 Backspace 한 번에 정확히 4칸이 제거됩니다.
-                if (Input.GetKeyDown(KeyCode.Backspace) && string.IsNullOrEmpty(Input.compositionString))
-                {
-                    int bsPos  = inputField.stringPosition;
-                    string bsText = inputField.text;
-
-                    // 줄 시작 위치 탐색
-                    int bsLineStart = bsPos;
-                    while (bsLineStart > 0 && bsText[bsLineStart - 1] != '\n')
-                        bsLineStart--;
-
-                    // 줄 시작부터 커서까지 연속 공백 수 계산
-                    int spaces = 0;
-                    bool onlySpaces = true;
-                    for (int i = bsLineStart; i < bsPos; i++)
+                    // ── separator 키 입력 직전 상태를 undo 스택에 저장 ────────
+                    // _prevFrameText = 이전 프레임 말미 텍스트 = 이번 프레임 입력 처리 전 상태
+                    bool isComposing = !string.IsNullOrEmpty(Input.compositionString);
+                    if (!isComposing)
                     {
-                        if (bsText[i] == ' ') spaces++;
-                        else { onlySpaces = false; break; }
+                        bool isSeparator =
+                            Input.GetKeyDown(KeyCode.Space)           ||
+                            Input.GetKeyDown(KeyCode.Tab)             ||
+                            Input.GetKeyDown(KeyCode.Backspace)       ||
+                            Input.GetKeyDown(KeyCode.Delete)          ||
+                            Input.GetKeyDown(KeyCode.Return)          ||
+                            Input.GetKeyDown(KeyCode.KeypadEnter);
+                        bool isPaste = ctrl && Input.GetKeyDown(KeyCode.V);
+                        if (isSeparator || isPaste)
+                            PushUndoFromPrevFrame();
                     }
 
-                    // 순수 들여쓰기 줄이고 4의 배수가 아니면 나머지 보상 삭제
-                    if (onlySpaces && spaces > 0 && spaces % 4 != 0)
+                    // ── IME 조합 중인 글자(compositionString) 렌더링 ─────────
+                    string _comp   = Input.compositionString;
+                    int    _curLen = inputField.text.Length;
+
+                    if (!string.IsNullOrEmpty(_comp))
                     {
-                        int extra = spaces % 4;
-                        inputField.text = bsText.Remove(bsPos - extra, extra);
-                        inputField.stringPosition = bsPos - extra;
+                        bool needsReset = _imeAnchorPos < 0 || _curLen != _imeAnchorTextLen;
+                        if (needsReset)
+                        {
+                            int sp = inputField.stringPosition;
+                            _imeAnchorPos     = (sp >= _curLen) ? _curLen : sp;
+                            _imeAnchorTextLen = _curLen;
+                        }
+
+                        int insertAt = Mathf.Clamp(_imeAnchorPos, 0, _curLen);
+                        inputHighlightText.text = inputField.text.Substring(0, insertAt)
+                                               + _comp
+                                               + inputField.text.Substring(insertAt);
+                    }
+                    else
+                    {
+                        _imeAnchorPos     = -1;
+                        _imeAnchorTextLen = -1;
+                        inputHighlightText.text = inputField.text;
+                    }
+                    inputField.textComponent.ForceMeshUpdate();
+                    inputHighlightText.ForceMeshUpdate();
+
+                    if (Input.GetKeyDown(KeyCode.Tab))
+                    {
+                        int pos = inputField.stringPosition;
+                        inputField.text = inputField.text.Insert(pos, "    ");
+                        inputField.stringPosition = pos + 4;
+                        inputField.ActivateInputField();
                         Refresh(true);
+                    }
+
+                    // ── Backspace 4칸 단위 들여쓰기 보상 삭제 ────────────────
+                    if (Input.GetKeyDown(KeyCode.Backspace) && string.IsNullOrEmpty(Input.compositionString))
+                    {
+                        int bsPos     = inputField.stringPosition;
+                        string bsText = inputField.text;
+
+                        int bsLineStart = bsPos;
+                        while (bsLineStart > 0 && bsText[bsLineStart - 1] != '\n')
+                            bsLineStart--;
+
+                        int spaces = 0;
+                        bool onlySpaces = true;
+                        for (int i = bsLineStart; i < bsPos; i++)
+                        {
+                            if (bsText[i] == ' ') spaces++;
+                            else { onlySpaces = false; break; }
+                        }
+
+                        if (onlySpaces && spaces > 0 && spaces % 4 != 0)
+                        {
+                            int extra = spaces % 4;
+                            inputField.text = bsText.Remove(bsPos - extra, extra);
+                            inputField.stringPosition = bsPos - extra;
+                            Refresh(true);
+                        }
                     }
                 }
             }
@@ -381,6 +404,10 @@ namespace InGameCodeEditor
                 if (focusKeyPressed || Input.GetMouseButton(0))
                     UpdateCurrentLineHighlight();
             }
+
+            // 다음 프레임의 undo 스냅샷 기준점을 갱신합니다.
+            _prevFrameText   = inputField.text;
+            _prevFrameCursor = inputField.stringPosition;
         }
 
         public void Refresh(bool forceUpdate = false, bool updateLineOnly = true)
@@ -549,6 +576,62 @@ namespace InGameCodeEditor
 
             for (int i = 0; i < amount; i++) totalIndent += indentUnit;
             return totalIndent;
+        }
+
+        // ── Undo / Redo helpers ────────────────────────────────────
+
+        // 직전 프레임 말미 상태를 undo 스택에 저장 (separator 키 감지 시 호출)
+        private void PushUndoFromPrevFrame()
+        {
+            string snapshot = _prevFrameText ?? string.Empty;
+            // 스택 최상위와 동일하면 중복 저장 방지
+            if (_undoStack.Count > 0 && _undoStack[_undoStack.Count - 1].text == snapshot) return;
+            _undoStack.Add(new EditorState { text = snapshot, cursorPos = _prevFrameCursor });
+            if (_undoStack.Count > MaxUndoSteps) _undoStack.RemoveAt(0);
+            _redoStack.Clear();
+        }
+
+        private void PerformUndo()
+        {
+            if (_undoStack.Count == 0) return;
+            _redoStack.Add(new EditorState { text = inputField.text, cursorPos = inputField.stringPosition });
+            var state = _undoStack[_undoStack.Count - 1];
+            _undoStack.RemoveAt(_undoStack.Count - 1);
+            ApplyEditorState(state);
+        }
+
+        private void PerformRedo()
+        {
+            if (_redoStack.Count == 0) return;
+            var undo = new EditorState { text = inputField.text, cursorPos = inputField.stringPosition };
+            if (_undoStack.Count == 0 || _undoStack[_undoStack.Count - 1].text != undo.text)
+            {
+                _undoStack.Add(undo);
+                if (_undoStack.Count > MaxUndoSteps) _undoStack.RemoveAt(0);
+            }
+            var state = _redoStack[_redoStack.Count - 1];
+            _redoStack.RemoveAt(_redoStack.Count - 1);
+            ApplyEditorState(state);
+        }
+
+        private void ApplyEditorState(EditorState state)
+        {
+            inputField.text = state.text;
+            int pos = Mathf.Clamp(state.cursorPos, 0, state.text.Length);
+            inputField.stringPosition = pos;
+            inputField.ForceLabelUpdate();
+            lastText = null; // 강제 하이라이팅 재계산
+            Refresh(true);
+            delayedRefresh = true;
+        }
+
+        private void ResetUndoHistory(string initialText)
+        {
+            _undoStack.Clear();
+            _redoStack.Clear();
+            _prevFrameText   = initialText ?? string.Empty;
+            _prevFrameCursor = 0;
+            _undoStack.Add(new EditorState { text = _prevFrameText, cursorPos = 0 });
         }
 
         private void ApplyTheme()
