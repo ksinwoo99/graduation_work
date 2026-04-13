@@ -83,7 +83,7 @@ public class Ingame_UI_SystemControl : MonoBehaviour
                 if (txtConveyorNextSpeed != null) txtConveyorNextSpeed.text = "2 (Normal)";
                 if (txtConveyorCost != null) txtConveyorCost.text = $"{costConveyorNormal} G";
             } else {
-                if (panelConveyorUpgrade != null) panelConveyorUpgrade.SetActive(true);
+                if (panelConveyorUpgrade != null && !Shared_Manager_Session.IsVisiting) panelConveyorUpgrade.SetActive(true);
                 if (txtStatusConveyor != null) {
                     if (convLevel == 1) txtStatusConveyor.text = "1 (Slow)";
                     else if (convLevel == 2) txtStatusConveyor.text = "2 (Normal)";
