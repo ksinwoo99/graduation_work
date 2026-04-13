@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Miner_Advanced
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 713e2eeecc83cd44f8e63ea8f7ec57a1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e1717af599c51794cb549f3da4ec4113, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
