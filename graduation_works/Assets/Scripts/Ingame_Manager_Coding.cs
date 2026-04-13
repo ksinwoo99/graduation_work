@@ -68,16 +68,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                             if (placeholderText != null) placeholderText.fontSize = newSize;
                         }
                     }
-
-                    Canvas.ForceUpdateCanvases(); // UI 레이아웃을 즉시 갱신
-                    if (inputField != null && inputField.verticalScrollbar != null) {
-                        inputField.verticalScrollbar.value = 1f; // 1은 맨 위, 0은 맨 아래
-                    }
-
-                    if (codeEditor != null) {
-                        ScrollRect sr = codeEditor.GetComponentInChildren<ScrollRect>();
-                        if (sr != null) sr.verticalNormalizedPosition = 1f;
-                    }
                 }
             }
         }
