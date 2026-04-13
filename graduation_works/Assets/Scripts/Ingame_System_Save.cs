@@ -246,10 +246,9 @@ public class Ingame_System_Save : MonoBehaviour {
             Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
         }
 
-        if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
+        if (!Shared_Manager_Session.IsVisiting && Ingame_UI_Tutorial.Instance != null && data.resources != null) {
             int savedStep = data.resources.tutorial_step;
             
-            // data.machines가 null이 아닐 때만 Count를 검사하도록 안전장치 추가!
             if (savedStep == -1 || (savedStep == 0 && data.machines != null && data.machines.Count > 0)) {
                 Ingame_UI_Tutorial.Instance.EndTutorial();
             } else {
