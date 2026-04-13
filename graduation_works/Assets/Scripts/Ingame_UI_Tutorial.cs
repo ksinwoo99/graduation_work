@@ -227,6 +227,11 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     public void ShowSkipPrompt()
     {
+        isTutorialActive = false;
+        if (bubblePanel != null) bubblePanel.SetActive(false);
+        ClearHighlight();
+        StopButtonPulse();
+
         skipPanel.SetActive(true); dimBackground.SetActive(true); 
         btnSkipYes.onClick.RemoveAllListeners(); btnSkipYes.onClick.AddListener(EndTutorial);
         btnSkipNo.onClick.RemoveAllListeners(); btnSkipNo.onClick.AddListener(() => { skipPanel.SetActive(false); StartTutorial(); });
@@ -250,6 +255,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     public void PlayStep(int stepIndex)
     {
+        if (skipPanel != null) skipPanel.SetActive(false);
+
         bubblePanel.SetActive(true);
         ClearHighlight(); 
 

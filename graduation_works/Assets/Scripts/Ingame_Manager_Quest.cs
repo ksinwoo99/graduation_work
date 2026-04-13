@@ -57,8 +57,8 @@ public class Ingame_Manager_Quest : MonoBehaviour
     }
 
     public void RefreshButtonStates() {
-        loopUpgradeLevel = 0;
-        conveyorUpgradeLevel = 0;
+    loopUpgradeLevel = 0;
+    // 컨베이어 레벨은 퀘스트 보상이 아닌 골드로 구매하므로 삭제
 
         for (int i = 0; i < currentQuestId && i < questList.Count; i++) {
             QuestData q = questList[i];
@@ -68,7 +68,6 @@ public class Ingame_Manager_Quest : MonoBehaviour
             }
 
             loopUpgradeLevel += q.rewardLoopLevelUp;
-            conveyorUpgradeLevel += q.rewardConveyorLevelUp;
         }
 
         if (currentQuestId >= questList.Count) {

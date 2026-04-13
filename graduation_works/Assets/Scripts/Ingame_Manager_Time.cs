@@ -13,6 +13,7 @@ public class Ingame_Manager_Time : MonoBehaviour {
 
     void Awake() {
         if (Instance == null) Instance = this;
+        Application.runInBackground = true; // 게임이 백그라운드에서도 시간 흐르도록 설정
     }
 
     void Update() {

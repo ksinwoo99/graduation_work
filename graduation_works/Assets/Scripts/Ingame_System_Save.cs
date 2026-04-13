@@ -15,13 +15,14 @@ public class MachineData {
 
 [System.Serializable]
 public class LoadResources {
-    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step;
+    public int resource_1, resource_2, resource_3, resource_4, resource_5, total_play_time, expand_count, quest_id, tutorial_step, conveyor_level;
 }
 
 [System.Serializable]
 public class GameSaveRequest {
     public string user_id;
     public int res1, res2, res3, res4, res5, play_time, expand_count, quest_id, tutorial_step;
+    public int conveyor_level;
     public List<MachineData> machines = new List<MachineData>();
 }
 
@@ -39,7 +40,6 @@ public class Ingame_System_Save : MonoBehaviour {
 
     private string serverUrl = "http://13.237.51.219:8000";
 
-    // ✨ [신규 추가] 꺼져 있는 튜토리얼 패널을 켤 수 있도록 연결할 변수입니다.
     [Header("튜토리얼 UI 연결")]
     public GameObject tutorialPanel; 
 
@@ -48,24 +48,19 @@ public class Ingame_System_Save : MonoBehaviour {
     }
 
     void Start() {
-        // ✨ [핵심 로직] 게임 시작 시, 상태를 보고 튜토리얼 패널을 조작합니다.
         if (isLoadRequested) {
-            // 1. 불러오기로 들어왔다면 튜토리얼을 끈 상태로 유지합니다.
             isLoadRequested = false;
             if (tutorialPanel != null) tutorialPanel.SetActive(false);
             OnClick_Load();
         } 
         else if (Shared_Manager_Session.IsVisiting) {
-            // 2. 남의 공장에 놀러왔다면 튜토리얼을 끕니다.
             if (tutorialPanel != null) tutorialPanel.SetActive(false);
         } 
         else {
-            // 3. 둘 다 아니라면 새 게임(혹은 에디터 바로 실행)이므로 튜토리얼을 강제로 켭니다!
             if (tutorialPanel != null) tutorialPanel.SetActive(true);
         }
     }
 
-    // 인스펙터 리스트 순서와 일치하는 매핑 함수
     public int GetMachineTypeInt(string name) {
         if (name.Contains("Miner_Common")) return 1;
         if (name.Contains("Miner_Advanced")) return 2;
@@ -76,7 +71,6 @@ public class Ingame_System_Save : MonoBehaviour {
         if (name.Contains("Productor_Hightech")) return 7;
         if (name.Contains("Productor_Superior")) return 8;
         if (name.Contains("Conveyor")) return 9;
-        // 대형 추가 / 긴 이름(Large)을 무조건 먼저 검사해야 혼동하지 않습니다!
         if (name.Contains("Storage_Large") || name.Contains("대형 창고")) return 11;
         if (name.Contains("Storage")) return 10;
         if (name.Contains("Market_Large") || name.Contains("도매상")) return 13;
@@ -98,56 +92,87 @@ public class Ingame_System_Save : MonoBehaviour {
     private GameSaveRequest GatherAllData(string userId) {
         GameSaveRequest data = new GameSaveRequest { user_id = userId };
         
-        // 1. 자원 데이터
         if (Ingame_Manager_Resource.Instance != null) {
             var mgr = Ingame_Manager_Resource.Instance;
             data.res1 = mgr.resCommon; 
             data.res2 = mgr.resRare; 
             data.res3 = mgr.resSpecial;   
-            data.res5 = mgr.resExotic; 
             data.res4 = mgr.currentGold;  
+            data.res5 = mgr.resExotic; 
         }
 
-        // 2. 플레이 시간
         if (Ingame_Manager_Time.Instance != null) {
             data.play_time = (int)Ingame_Manager_Time.Instance.gameTime;
         }
 
         if (Ingame_Manager_Quest.Instance != null) {
             data.quest_id = Ingame_Manager_Quest.Instance.currentQuestId;
+            data.conveyor_level = Ingame_Manager_Quest.Instance.conveyorUpgradeLevel;
         }
 
         if (Ingame_UI_Tutorial.Instance != null) {
-            data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : -1;
+            // ✨ [핵심 픽스] 스킵 팝업창이 떠있는 상태에서 저장했다면, 아직 결정을 안 한 것이므로 0으로 저장합니다!
+            if (Ingame_UI_Tutorial.Instance.skipPanel != null && Ingame_UI_Tutorial.Instance.skipPanel.activeSelf) {
+                data.tutorial_step = 0;
+            } else {
+                data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : -1;
+            }
         }
 
-        // 3. 빌드 및 맵 확장 데이터
         if (Ingame_Manager_Build.Instance != null) {
             var buildMgr = Ingame_Manager_Build.Instance;
             data.expand_count = buildMgr.expandCount;
             var codingMgr = buildMgr.codingManager;
 
-            foreach (var kvp in buildMgr.GetInstalledObjects()) {
-                if (kvp.Value == null) continue;
-                
-                string engName = kvp.Value.name.Replace("(Clone)", "").Trim();
-                int mId = GetMachineTypeInt(engName);
+            HashSet<GameObject> savedMachines = new HashSet<GameObject>();
+            HashSet<int> savedMachineTypes = new HashSet<int>(); // ✨ 추가: 맵에 설치된 기계 타입 추적
 
-                // 방향(회전) 값 계산
-                float rotY = 0f;
-                if (buildMgr.installedDirections.ContainsKey(kvp.Key)) {
-                    rotY = -(int)buildMgr.installedDirections[kvp.Key] * 90f;
-                }
+            foreach (var kvp in buildMgr.installedDirections) {
+                Vector3Int originPos = kvp.Key;
+                BuildDirection dir = kvp.Value;
+
+                if (!buildMgr.GetInstalledObjects().ContainsKey(originPos)) continue;
+                GameObject machineObj = buildMgr.GetInstalledObjects()[originPos];
+                if (machineObj == null) continue;
+
+                if (savedMachines.Contains(machineObj)) continue;
+                savedMachines.Add(machineObj);
+
+                string engName = machineObj.name.Replace("(Clone)", "").Trim();
+                int mId = GetMachineTypeInt(engName);
+                
+                savedMachineTypes.Add(mId); // ✨ 맵에 설치되었음을 기록
 
                 MachineData mData = new MachineData {
                     machine_type = mId,
-                    pos_x = kvp.Key.x, 
-                    pos_y = kvp.Key.y, 
-                    pos_z = kvp.Key.z,
-                    rotation_y = rotY,
+                    pos_x = originPos.x, 
+                    pos_y = originPos.y, 
+                    pos_z = originPos.z,
+                    rotation_y = -(int)dir * 90f,
                     source_code = (codingMgr != null) ? codingMgr.GetSavedCode(mId) : ""
                 };
                 data.machines.Add(mData);
+            }
+
+            // ✨ [핵심 추가] 맵에 설치되진 않았지만, 코드는 작성해둔 기계들 '유령 데이터'로 저장
+            if (codingMgr != null && codingMgr.globalCodes != null) {
+                foreach (var kvp in codingMgr.globalCodes) {
+                    int mId = kvp.Key;
+                    string code = kvp.Value;
+
+                    // 이미 필드에 설치되어 저장된 기계거나, 코드가 빈칸이면 패스
+                    if (savedMachineTypes.Contains(mId) || string.IsNullOrEmpty(code)) continue;
+
+                    MachineData dummyData = new MachineData {
+                        machine_type = mId,
+                        pos_x = -9999f, // ✨ 가상 좌표 (불러올 때 설치 스킵용)
+                        pos_y = -9999f,
+                        pos_z = -9999f,
+                        rotation_y = 0f,
+                        source_code = code
+                    };
+                    data.machines.Add(dummyData);
+                }
             }
         }
         return data;
@@ -195,68 +220,101 @@ public class Ingame_System_Save : MonoBehaviour {
     }
     
     private void ApplyGameData(GameLoadResponse data) {
-    if (data == null) return;
+        if (data == null) return;
 
-    // 🔥 [추가] 건축 모드 강제 종료 (이게 없으면 기계가 멈춘 채로 로드됩니다)
-    if (Ingame_Manager_Build.Instance != null) {
-        Ingame_Manager_Build.Instance.CancelBuildMode(); 
-    }
-
-    // 1. 자원 및 시간 복구 (기존 로직 동일)
-    if (Ingame_Manager_Resource.Instance != null && data.resources != null) {
-        var mgr = Ingame_Manager_Resource.Instance;
-        mgr.resCommon = data.resources.resource_1; 
-        mgr.resRare = data.resources.resource_2;
-        mgr.resSpecial = data.resources.resource_3; 
-        mgr.currentGold = data.resources.resource_4;
-        mgr.resExotic = data.resources.resource_5;
-    }
-    
-    if (Ingame_Manager_Time.Instance != null && data.resources != null) {
-        Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
-    }
-
-    // 2. 퀘스트 및 레벨 데이터 선행 복구
-    // 🚀 [중요] 기계를 생성하기 전에 호출해야 기계들이 생성 즉시 반복문 권한을 확인합니다.
-    if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
-        Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
-        Ingame_Manager_Quest.Instance.RefreshButtonStates(); // 여기서 반복문 레벨 복구 완료!
-        Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
-    }
-
-    // 3. 튜토리얼 데이터 복구 (기존 로직 동일)
-    if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
-        int savedStep = data.resources.tutorial_step;
-        if (savedStep == -1 || (savedStep == 0 && data.machines.Count > 0)) {
-            Ingame_UI_Tutorial.Instance.EndTutorial();
-        } else {
-            Ingame_UI_Tutorial.Instance.isTutorialActive = true;
-            Ingame_UI_Tutorial.Instance.currentStep = savedStep;
-            Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
+        if (Ingame_Manager_Build.Instance != null) {
+            Ingame_Manager_Build.Instance.CancelBuildMode(); 
         }
-    }
 
-    // 4. 맵 확장 및 기계 복구 (엔진 가동)
-    if (Ingame_Manager_Build.Instance != null && data.resources != null) {
-        var buildMgr = Ingame_Manager_Build.Instance;
-        buildMgr.expandCount = data.resources.expand_count;
-        buildMgr.currentMapSize = 4 + (buildMgr.expandCount * 2);
-        buildMgr.GenerateFloor(); 
+        if (Ingame_Manager_Resource.Instance != null && data.resources != null) {
+            var mgr = Ingame_Manager_Resource.Instance;
+            mgr.resCommon = data.resources.resource_1; 
+            mgr.resRare = data.resources.resource_2;
+            mgr.resSpecial = data.resources.resource_3; 
+            mgr.currentGold = data.resources.resource_4;
+            mgr.resExotic = data.resources.resource_5;
+        }
+        
+        if (Ingame_Manager_Time.Instance != null && data.resources != null) {
+            Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
+        }
 
-        if (data.machines != null) {
-            buildMgr.ClearAllBuildingsForLoad();
-            foreach (var mData in data.machines) {
-                GameObject prefab = GetPrefabFromInt(mData.machine_type);
-                if (prefab != null) {
-                    // 이제 이 함수가 기계를 생성하고, 코드를 심고, Initialize까지 한 번에 처리합니다.
-                    buildMgr.LoadBuildingFromServer(mData, prefab);
+        if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
+            Ingame_Manager_Quest.Instance.currentQuestId = data.resources.quest_id;
+            Ingame_Manager_Quest.Instance.conveyorUpgradeLevel = data.resources.conveyor_level;
+            Ingame_Manager_Quest.Instance.RefreshButtonStates(); 
+            Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
+        }
+
+        if (Ingame_UI_Tutorial.Instance != null && data.resources != null) {
+            int savedStep = data.resources.tutorial_step;
+            
+            // data.machines가 null이 아닐 때만 Count를 검사하도록 안전장치 추가!
+            if (savedStep == -1 || (savedStep == 0 && data.machines != null && data.machines.Count > 0)) {
+                Ingame_UI_Tutorial.Instance.EndTutorial();
+            } else {
+                if (tutorialPanel != null) tutorialPanel.SetActive(true);
+                if (savedStep == 0) {
+                    Ingame_UI_Tutorial.Instance.ShowSkipPrompt();
+                } else {
+                    Ingame_UI_Tutorial.Instance.isTutorialActive = true;
+                    Ingame_UI_Tutorial.Instance.currentStep = savedStep;
+                    Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
                 }
             }
-            buildMgr.UpdateQuestMachineCounts(); 
-            if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
+        }
+
+        if (Ingame_Manager_Build.Instance != null && data.resources != null) {
+            var buildMgr = Ingame_Manager_Build.Instance;
+            buildMgr.expandCount = data.resources.expand_count;
+            buildMgr.currentMapSize = 4 + (buildMgr.expandCount * 2);
+            buildMgr.GenerateFloor(); 
+
+            if (data.machines != null) {
+                buildMgr.ClearAllBuildingsForLoad();
+                foreach (var mData in data.machines) {
+                    // ✨ [핵심 추가] 가상 좌표(-9999)로 저장된 "미설치 기계"인 경우, 코드만 살리고 맵 설치는 스킵!
+                    if (mData.pos_y <= -9000f) {
+                        if (buildMgr.codingManager != null && !string.IsNullOrEmpty(mData.source_code)) {
+                            buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
+                        }
+                        continue; // ⬅️ 건물을 짓지 않고 다음 데이터로 넘어감
+                    }
+
+                    Vector3Int checkPos = new Vector3Int(Mathf.RoundToInt(mData.pos_x), Mathf.RoundToInt(mData.pos_y), Mathf.RoundToInt(mData.pos_z));
+                    
+                    GameObject prefab = GetPrefabFromInt(mData.machine_type);
+                    if (prefab == null) continue;
+
+                    Vector2Int size = new Vector2Int(1, 1);
+                    string pName = prefab.name.ToLower();
+                    if (pName.Contains("대형") || pName.Contains("도매상") || pName.Contains("large") || pName.Contains("2x2")) {
+                        size = new Vector2Int(2, 2);
+                    }
+                    
+                    BuildDirection dir = (BuildDirection)(-(int)(mData.rotation_y / 90f));
+                    List<Vector3Int> needCells = buildMgr.GetBuildingCells(checkPos, size, dir);
+
+                    bool isOccupied = false;
+                    foreach (var cell in needCells) {
+                        if (buildMgr.GetInstalledObjects().ContainsKey(cell)) {
+                            isOccupied = true;
+                            break;
+                        }
+                    }
+                    if (isOccupied) continue; 
+
+                    buildMgr.LoadBuildingFromServer(mData, prefab);
+                }
+                buildMgr.UpdateQuestMachineCounts(); 
+                if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
+            }
+
+            if (Ingame_UI_SystemControl.Instance != null) {
+                Ingame_UI_SystemControl.Instance.UpdateAllUI();
+            }
         }
     }
-}
 
     private GameObject GetPrefabFromInt(int type) {
         var buildMgr = Ingame_Manager_Build.Instance;
