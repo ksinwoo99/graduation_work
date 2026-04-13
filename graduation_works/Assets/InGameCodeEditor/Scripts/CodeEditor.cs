@@ -26,7 +26,14 @@ namespace InGameCodeEditor
         private bool delayedRefresh = false;
         private float lastScrollValue = 0f;
         private bool lineHighlightLocked = false;
-        private bool suppressNextNewline = false;
+        // IME 조합 삽입 위치 추적 ─────────────────────────────
+        // _imeAnchorPos     : 현재 조합이 삽입될 문자열 위치
+        // _imeAnchorTextLen : 앵커를 기록한 시점의 inputField.text 길이
+        //
+        // text 길이가 변했다 = 이전 음절이 확정(commit)됐다는 신호입니다.
+        // 이 경우 앵커를 재계산해야 올바른 위치에 다음 음절 조합이 표시됩니다.
+        private int _imeAnchorPos     = -1;
+        private int _imeAnchorTextLen = -1;
 
 #pragma warning disable 0649
         [Header("Elements")]
@@ -185,11 +192,13 @@ namespace InGameCodeEditor
             {
                 inputField.onValidateInput += (string text, int charIndex, char addedChar) => {
                     if (addedChar == '\t') return '\0';
-                    if (addedChar == '\n' && suppressNextNewline)
-                    {
-                        suppressNextNewline = false;
+                    // Enter 키의 \n 은 TMP 내부가 아닌 우리 Update()가 직접 삽입합니다.
+                    // Input.GetKeyDown 으로 판별하면 TMP/EventSystem 실행 순서에 무관하게
+                    // 중복 삽입을 방지할 수 있습니다 (suppressNextNewline 플래그 방식의
+                    // 타이밍 취약점을 대체합니다).
+                    if (addedChar == '\n' &&
+                        (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
                         return '\0';
-                    }
                     return addedChar;
                 };
             }
@@ -199,11 +208,14 @@ namespace InGameCodeEditor
         {
             if (inputField == null || !inputField.isFocused) return;
 
-            // Return: \n + 들여쓰기를 직접 삽입하고, TMP의 \n 삽입은 onValidateInput으로 차단
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                suppressNextNewline = true;
+            // IME 조합 중(한글 자음·모음 결합 진행 중)에는 커스텀 키 처리를 건너뜁니다.
+            // Return/Backspace 핸들러가 조합 진행 중인 글자에 끼어드는 현상을 방지합니다.
+            if (!string.IsNullOrEmpty(Input.compositionString)) return;
 
+            // Return / KeypadEnter: \n + 들여쓰기를 직접 삽입합니다.
+            // TMP의 \n 삽입은 onValidateInput의 Input.GetKeyDown 검사로 차단됩니다.
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
                 int pos = inputField.stringPosition;
                 string text = inputField.text;
 
@@ -218,9 +230,10 @@ namespace InGameCodeEditor
                 while (spaceCount < currentLineText.Length && currentLineText[spaceCount] == ' ')
                     spaceCount++;
 
-                // :, (, [ 로 끝나면 4칸 추가 들여쓰기
+                // :, (, [, { 로 끝나면 4칸 추가 들여쓰기 (새 블록 진입)
                 string trimmed = currentLineText.TrimEnd();
-                if (trimmed.EndsWith(":") || trimmed.EndsWith("(") || trimmed.EndsWith("["))
+                if (trimmed.EndsWith(":") || trimmed.EndsWith("(") ||
+                    trimmed.EndsWith("[") || trimmed.EndsWith("{"))
                     spaceCount += 4;
 
                 string indent = new string(' ', spaceCount);
@@ -234,33 +247,9 @@ namespace InGameCodeEditor
                 delayedRefresh = true;
             }
 
-            // Backspace: 커서 앞 4칸이 모두 줄 시작 공백이면 4칸 선택 → TMP가 선택 영역 전체 삭제
-            if (Input.GetKeyDown(KeyCode.Backspace))
-            {
-                int pos = inputField.stringPosition;
-                string text = inputField.text;
-
-                if (pos >= 4 && text.Substring(pos - 4, 4) == "    ")
-                {
-                    // 줄 시작부터 커서까지 전부 공백인지 확인 (줄 중간 공백은 제외)
-                    int lineStart = pos - 1;
-                    while (lineStart > 0 && text[lineStart - 1] != '\n')
-                        lineStart--;
-
-                    bool allSpaces = true;
-                    for (int i = lineStart; i < pos; i++)
-                    {
-                        if (text[i] != ' ') { allSpaces = false; break; }
-                    }
-
-                    if (allSpaces)
-                    {
-                        // 4칸 선택 → TMP LateUpdate가 선택 영역(4칸)을 한 번에 삭제
-                        inputField.selectionAnchorPosition = pos - 4;
-                        inputField.selectionFocusPosition = pos;
-                    }
-                }
-            }
+            // Backspace 의 4칸 단위 들여쓰기 삭제는 LateUpdate()에서 처리합니다.
+            // (TMP가 EventSystem.Update 에서 Backspace를 먼저 처리한 뒤,
+            //  우리 LateUpdate에서 나머지를 보상 삭제하는 방식)
         }
 
         public void LateUpdate()
@@ -273,7 +262,46 @@ namespace InGameCodeEditor
 
             if (inputField.isFocused == true)
             {
-                inputHighlightText.text = inputField.text + Input.compositionString;
+                // IME 조합 중인 글자(compositionString)를 올바른 커서 위치에 삽입해 렌더링합니다.
+                //
+                // [문제1] inputField.stringPosition 은 TMP LateUpdate 실행 후
+                //         조합 글자 길이만큼 이동할 수 있어 커서 중간에서는 신뢰할 수 없습니다.
+                // [문제2] 한글은 음절 단위로 확정(commit)되므로, 음절이 바뀔 때
+                //         compositionString 이 비어지는 프레임 없이 곧바로 다음 조합으로
+                //         전환됩니다. 이때 앵커를 갱신하지 않으면 새 음절이 앞에 붙습니다.
+                //
+                // [해결]  ① 조합이 시작될 때 stringPosition 을 _imeAnchorPos 에 저장합니다.
+                //         ② text 길이가 바뀌면(= 음절 확정) 앵커를 즉시 재계산합니다.
+                //         ③ 커서가 텍스트 끝에 있을 때는 stringPosition 대신
+                //            text.Length 를 사용해 TMP 내부 이동의 영향을 피합니다.
+                string _comp   = Input.compositionString;
+                int    _curLen = inputField.text.Length;
+
+                if (!string.IsNullOrEmpty(_comp))
+                {
+                    // 앵커 갱신 조건: 첫 조합 프레임 OR 음절 확정으로 텍스트 길이 변경
+                    bool needsReset = _imeAnchorPos < 0 || _curLen != _imeAnchorTextLen;
+                    if (needsReset)
+                    {
+                        int sp = inputField.stringPosition;
+                        // 커서가 텍스트 끝이면 text.Length 를 직접 사용 (TMP 이동 영향 없음)
+                        // 커서가 중간이면 stringPosition 을 사용 (확정 직후라 신뢰 가능)
+                        _imeAnchorPos     = (sp >= _curLen) ? _curLen : sp;
+                        _imeAnchorTextLen = _curLen;
+                    }
+
+                    int insertAt = Mathf.Clamp(_imeAnchorPos, 0, _curLen);
+                    inputHighlightText.text = inputField.text.Substring(0, insertAt)
+                                           + _comp
+                                           + inputField.text.Substring(insertAt);
+                }
+                else
+                {
+                    // 조합 완전 종료 — 모두 리셋
+                    _imeAnchorPos     = -1;
+                    _imeAnchorTextLen = -1;
+                    inputHighlightText.text = inputField.text;
+                }
                 inputField.textComponent.ForceMeshUpdate();
                 inputHighlightText.ForceMeshUpdate();
                 
@@ -286,7 +314,43 @@ namespace InGameCodeEditor
                     Refresh(true);
                 }
 
-                // Backspace / Return 은 Update()에서 처리
+                // ── Backspace 4칸 단위 들여쓰기 삭제 (블록 탈출) ─────────────
+                // TMP가 EventSystem.Update에서 Backspace 1칸을 이미 삭제한 뒤
+                // 우리 LateUpdate가 실행되므로, 남은 공백을 보상 삭제합니다.
+                //
+                // 동작 규칙:
+                //   줄 시작부터 커서까지 모두 공백이고(순수 들여쓰기 줄),
+                //   현재 공백 수가 4의 배수가 아니면(TMP가 1칸 지워 어긋난 상태)
+                //   이전 4칸 경계까지 나머지를 추가 삭제합니다.
+                //   → 결과적으로 Backspace 한 번에 정확히 4칸이 제거됩니다.
+                if (Input.GetKeyDown(KeyCode.Backspace) && string.IsNullOrEmpty(Input.compositionString))
+                {
+                    int bsPos  = inputField.stringPosition;
+                    string bsText = inputField.text;
+
+                    // 줄 시작 위치 탐색
+                    int bsLineStart = bsPos;
+                    while (bsLineStart > 0 && bsText[bsLineStart - 1] != '\n')
+                        bsLineStart--;
+
+                    // 줄 시작부터 커서까지 연속 공백 수 계산
+                    int spaces = 0;
+                    bool onlySpaces = true;
+                    for (int i = bsLineStart; i < bsPos; i++)
+                    {
+                        if (bsText[i] == ' ') spaces++;
+                        else { onlySpaces = false; break; }
+                    }
+
+                    // 순수 들여쓰기 줄이고 4의 배수가 아니면 나머지 보상 삭제
+                    if (onlySpaces && spaces > 0 && spaces % 4 != 0)
+                    {
+                        int extra = spaces % 4;
+                        inputField.text = bsText.Remove(bsPos - extra, extra);
+                        inputField.stringPosition = bsPos - extra;
+                        Refresh(true);
+                    }
+                }
             }
 
             if (inputField.isFocused || delayedRefresh)
@@ -302,7 +366,11 @@ namespace InGameCodeEditor
                     delayedRefresh = true;
                 }
 
-                if (Input.anyKey) Refresh();
+                // IME 조합 중에는 Refresh를 건너뜁니다.
+                // 한글 한 글자를 입력할 때 자음·모음 각각의 키마다 Refresh가 호출되면
+                // 불필요한 신택스 하이라이팅 재계산이 반복되어 입력 지연이 생깁니다.
+                // 조합이 완료되어 글자가 확정(commit)된 시점에 한 번만 Refresh됩니다.
+                if (Input.anyKey && string.IsNullOrEmpty(Input.compositionString)) Refresh();
 
                 bool focusKeyPressed = false;
                 foreach (KeyCode key in focusKeys)
