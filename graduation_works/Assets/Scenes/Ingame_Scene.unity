@@ -4118,7 +4118,7 @@ MonoBehaviour:
   machineDescription: "\uACE0\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uD76C\uADC0 \uC790\uC6D0 80\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD76C\uADC0
     \uC790\uC6D0 40\uC744 \uC18C\uBAA8"
-  codeSyntax: "Producting(Rare, '\uC0C1\uD488 \uD0C0\uC785') \uD568\uC218 \uD544\uC694\n\u203B
+  codeSyntax: "Producting(Rare, '\uC0C1\uD488 \uD0C0\uC785')\n\uD568\uC218 \uD544\uC694\n\n\u203B
     \uC0C1\uD488 \uD0C0\uC785 = 'A' \uD639\uC740 'B'"
   buildingSize: {x: 1, y: 1}
   buildCost: 800
@@ -5331,7 +5331,7 @@ MonoBehaviour:
   machineDescription: "\uC800\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uAE30\uBCF8 \uC790\uC6D0 100\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uAE30\uBCF8
     \uC790\uC6D0 50\uC744 \uC18C\uBAA8"
-  codeSyntax: "Producting(Common, '\uC0C1\uD488 \uD0C0\uC785') \uD568\uC218 \uD544\uC694\n\u203B
+  codeSyntax: "Producting(Common, '\uC0C1\uD488 \uD0C0\uC785')\n\uD568\uC218 \uD544\uC694\n\n\u203B
     \uC0C1\uD488 \uD0C0\uC785 = 'A' \uD639\uC740 'B'"
   buildingSize: {x: 1, y: 1}
   buildCost: 200
@@ -8029,7 +8029,7 @@ MonoBehaviour:
   machineDescription: "\uC0AC\uCE58\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uACBD\uC774 \uC790\uC6D0 40\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uACBD\uC774
     \uC790\uC6D0 20\uC744 \uC18C\uBAA8"
-  codeSyntax: "Producting(Exotic, '\uC0C1\uD488 \uD0C0\uC785') \uD568\uC218 \uD544\uC694\n\u203B
+  codeSyntax: "Producting(Exotic, '\uC0C1\uD488 \uD0C0\uC785')\n\uD568\uC218 \uD544\uC694\n\n\u203B
     \uC0C1\uD488 \uD0C0\uC785 = 'A' \uD639\uC740 'B'"
   buildingSize: {x: 1, y: 1}
   buildCost: 3000
@@ -14115,7 +14115,7 @@ MonoBehaviour:
   machineDescription: "\uCD5C\uACE0\uD488\uC9C8\uC758 \uC0C1\uD488\uC744 \uC0DD\uC0B0\uD569\uB2C8\uB2E4.\nA\uD0C0\uC785:
     \uD2B9\uC218 \uC790\uC6D0 60\uC744 \uC18C\uBAA8\nB\uD0C0\uC785: \uD2B9\uC218
     \uC790\uC6D0 30\uC744 \uC18C\uBAA8"
-  codeSyntax: "Producting(Special, '\uC0C1\uD488 \uD0C0\uC785') \uD568\uC218 \uD544\uC694\n\u203B
+  codeSyntax: "Producting(Special, '\uC0C1\uD488 \uD0C0\uC785')\n\uD568\uC218 \uD544\uC694\n\n\u203B
     \uC0C1\uD488 \uD0C0\uC785 = 'A' \uD639\uC740 'B'"
   buildingSize: {x: 1, y: 1}
   buildCost: 1500
