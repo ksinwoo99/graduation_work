@@ -577,7 +577,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         {
         // 클립보드 복사
             GUIUtility.systemCopyBuffer = codeToCopy;
-            Ingame_Manager_Build.Instance.ShowFloatingText("클립보드에 복사됨! (Ctrl+V)", Camera.main.transform.position);
+            Ingame_Manager_Build.Instance.ShowFloatingText("", Camera.main.transform.position);
         }
         else
         {
@@ -597,7 +597,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 if (codeEditor != null) codeEditor.Text = codeToCopy;
                 else codingMgr.inputField.text = codeToCopy;
 
-                Ingame_Manager_Build.Instance.ShowFloatingText("코드가 즉시 주입되었습니다!", codingMgr.codingPanel.transform.position);
+                Ingame_Manager_Build.Instance.ShowFloatingText("", codingMgr.codingPanel.transform.position);
             }
         }
     }
