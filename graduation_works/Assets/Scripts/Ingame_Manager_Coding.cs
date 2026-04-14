@@ -28,6 +28,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     
     public Dictionary<int, string> globalCodes = new Dictionary<int, string>();
     public logic_CodingBase currentLogic;
+    public logic_CodingBase GetCurrentTargetLogic() {
+    return currentLogic;
+    }
     private int currentMachineId; 
 
     private Ingame_Button_Build currentBuildButton;
