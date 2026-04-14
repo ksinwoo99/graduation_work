@@ -17,6 +17,11 @@ public class TabNavigationManager : MonoBehaviour
             // 현재 포커스된 UI 오브젝트 인덱스 확인
             int currentIndex = tabSelectables.IndexOf(current);
 
+            if (current != null && currentIndex == -1)
+            {
+                return; 
+            }
+
             // 방향 설정 (Tab: +1 / Shift+Tab: -1)
             int direction = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -1 : 1;
 
