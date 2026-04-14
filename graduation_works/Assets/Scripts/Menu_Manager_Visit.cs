@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI; // ✨ Button 컴포넌트 사용을 위해 추가
+using UnityEngine.UI; // Button 컴포넌트 사용을 위해 추가
 using UnityEngine.Networking;
+using UnityEngine.EventSystems; // 포커스 제어를 위해 추가
 using System.Collections;
 
 public class Menu_Manager_Visit : MonoBehaviour {
@@ -9,12 +10,12 @@ public class Menu_Manager_Visit : MonoBehaviour {
     public Menu_Manager_UI uiManager;          
     public GameObject visitPanel;              
     public TMP_InputField targetIdInput;       
-    public Button btnGoVisit; // ✨ [신규] '방문하기' 버튼을 여기에 연결해주세요.
+    public Button btnGoVisit; // '방문하기' 버튼을 여기에 연결해주세요.
 
     private string serverUrl = "http://13.237.51.219:8000"; 
 
     void Start() {
-        // ✨ 입력창의 값이 바뀔 때마다 감지하도록 리스너 등록
+        // 입력창의 값이 바뀔 때마다 감지하도록 리스너 등록
         if (targetIdInput != null) {
             targetIdInput.onValueChanged.AddListener(OnInputFieldValueChanged);
         }
@@ -23,27 +24,54 @@ public class Menu_Manager_Visit : MonoBehaviour {
         UpdateButtonState("");
     }
 
+    void Update() {
+        // ✨ 패널이 켜져 있을 때만 키보드 입력 체크
+        if (visitPanel != null && visitPanel.activeSelf) {
+            
+            // 1. 엔터 키: 아이디가 입력된 상태라면 방문 시도
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
+                if (btnGoVisit != null && btnGoVisit.interactable) {
+                    OnClick_GoToVisit();
+                }
+            }
+
+            // 2. ✨ [신규] ESC 키: 패널 닫기 (돌아가기)
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                OnClick_CloseVisitPanel();
+            }
+        }
+    }
+
     public void OnClick_OpenVisitPanel() {
-        if (visitPanel != null) visitPanel.SetActive(true);
-        if (targetIdInput != null) {
-            targetIdInput.text = "";
-            UpdateButtonState(""); // 패널 열 때 버튼 상태 다시 체크
+        if (visitPanel != null) {
+            visitPanel.SetActive(true);
+            
+            // 패널이 열릴 때 포커스를 입력창으로 이동
+            if (targetIdInput != null) {
+                targetIdInput.text = "";
+                targetIdInput.ActivateInputField(); 
+                EventSystem.current.SetSelectedGameObject(targetIdInput.gameObject);
+            }
+            
+            UpdateButtonState(""); 
         }
     }
 
     public void OnClick_CloseVisitPanel() {
-        if (visitPanel != null) visitPanel.SetActive(false);
+        if (visitPanel != null) {
+            visitPanel.SetActive(false);
+            // 패널 닫을 때 포커스 해제하여 다른 버튼 오작동 방지
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
-    // ✨ [신규] 입력창 텍스트가 바뀔 때 실행될 함수
     private void OnInputFieldValueChanged(string value) {
         UpdateButtonState(value);
     }
 
-    // ✨ [신규] 텍스트 유무에 따라 버튼의 클릭 가능 여부를 결정하는 함수
     private void UpdateButtonState(string value) {
         if (btnGoVisit != null) {
-            // 텍스트를 앞뒤 공백 제거(Trim)했을 때 비어있지 않아야 버튼 활성화
+            // 텍스트 유무에 따라 버튼 활성화 제어
             btnGoVisit.interactable = !string.IsNullOrWhiteSpace(value);
         }
     }
@@ -51,7 +79,6 @@ public class Menu_Manager_Visit : MonoBehaviour {
     public void OnClick_GoToVisit() {
         string targetId = targetIdInput.text.Trim();
         
-        // 💡 이제 버튼 자체가 안 눌리므로 여기서 string.IsNullOrEmpty 체크와 에러창은 필요 없습니다.
         if (targetId == Shared_Manager_Session.CurrentUserId) {
             uiManager.ShowError("자신의 공장입니다.");
             return;
