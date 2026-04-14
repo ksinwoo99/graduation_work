@@ -573,32 +573,37 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
         if (string.IsNullOrEmpty(codeToCopy)) return;
 
-        if (isCopyOnly)
+    if (isCopyOnly)
+    {
+        GUIUtility.systemCopyBuffer = codeToCopy;
+        Ingame_Manager_Build.Instance.ShowFloatingText("", Camera.main.transform.position);
+    }
+    else
+    {
+        var codingMgr = Ingame_Manager_Build.Instance.codingManager;
+        if (codingMgr != null && codingMgr.codingPanel.activeSelf)
         {
-        // 클립보드 복사
-            GUIUtility.systemCopyBuffer = codeToCopy;
-            Ingame_Manager_Build.Instance.ShowFloatingText("", Camera.main.transform.position);
-        }
-        else
-        {
-            // 에디터 주입
-            var codingMgr = Ingame_Manager_Build.Instance.codingManager;
-            if (codingMgr != null && codingMgr.codingPanel.activeSelf)
+            var targetLogic = codingMgr.GetCurrentTargetLogic();
+            
+            if (targetLogic == null || targetLogic.GetComponent<logic_Productor_Master>() == null)
             {
-                var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
-                string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
-
-                // 기존 name 설정이 있다면 유지
-                if (currentText.Contains("name =")) {
-                    string[] lines = currentText.Split('\n');
-                    codeToCopy = lines[0] + "\n" + codeToCopy;
-                }
-
-                if (codeEditor != null) codeEditor.Text = codeToCopy;
-                else codingMgr.inputField.text = codeToCopy;
-
                 Ingame_Manager_Build.Instance.ShowFloatingText("", codingMgr.codingPanel.transform.position);
+                return;
             }
+
+            var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+            string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
+
+            if (currentText.Contains("name =")) {
+                string[] lines = currentText.Split('\n');
+                codeToCopy = lines[0] + "\n" + codeToCopy;
+            }
+
+            if (codeEditor != null) codeEditor.Text = codeToCopy;
+            else codingMgr.inputField.text = codeToCopy;
+
+            Ingame_Manager_Build.Instance.ShowFloatingText("", codingMgr.codingPanel.transform.position);
         }
     }
+}
 }
