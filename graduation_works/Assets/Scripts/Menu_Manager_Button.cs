@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking; 
 using System.Collections;     
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class CheckSaveResponse 
@@ -13,7 +14,11 @@ public class Menu_Manager_Button : MonoBehaviour {
 
     private string serverUrl = "http://13.237.51.219:8000"; 
 
-    // ✨ [신규] 게임 종료 버튼용 함수
+    public void OnClick_Logout() {
+        Shared_Manager_Session.CurrentUserId = "";
+        SceneManager.LoadScene("Login_Scene"); 
+    }
+
     public void OnClick_QuitGame()
     {
         #if UNITY_EDITOR
