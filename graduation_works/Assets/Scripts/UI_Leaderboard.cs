@@ -145,7 +145,7 @@ public class UI_Leaderboard : MonoBehaviour
 
     private IEnumerator AutoCloseTimer(float delay)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         OnClick_ClosePopup(); // 3초 뒤에 닫기 함수 실행!
     }
     public void OnClick_ClosePopup()
