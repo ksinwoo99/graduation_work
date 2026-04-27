@@ -5,8 +5,9 @@ using System.Collections.Generic;
 public class Ingame_Manager_Visit : MonoBehaviour {
     public static Ingame_Manager_Visit Instance;
 
-    [Header("놀러가기 전용 UI")]
-    public GameObject btnReturnHome; // 내 공장으로 돌아가기 버튼
+    [Header("추천 기능 UI")]
+    public GameObject recommendButton; 
+    public UI_Leaderboard leaderboardManager;
     
     [Header("관전 모드 시 숨길 UI 목록 (저장 버튼, 하단 메뉴 등)")]
     public List<GameObject> disableUIsWhenVisiting = new List<GameObject>();
@@ -16,29 +17,24 @@ public class Ingame_Manager_Visit : MonoBehaviour {
     }
 
     void Start() {
-        // 씬이 시작될 때 배낭(Session)을 열어보고 놀러온 상태인지 확인합니다.
         if (Shared_Manager_Session.IsVisiting) {
-            // 돌아가기 버튼 켜기 & 건설 관련 UI 모두 끄기
-            if (btnReturnHome != null) btnReturnHome.SetActive(true);
+            // [방문 모드] 건설 UI 등 숨기기
             foreach (var ui in disableUIsWhenVisiting) {
                 if (ui != null) ui.SetActive(false);
             }
             
+            // 추천 버튼 활성화
+            if (recommendButton != null && leaderboardManager != null) {
+                recommendButton.SetActive(true);
+                leaderboardManager.targetUserId = Shared_Manager_Session.VisitTargetId; 
+                StartCoroutine(leaderboardManager.GetRecommendCount(Shared_Manager_Session.VisitTargetId)); 
+            }
+
             if (Ingame_Manager_Build.Instance != null)
                 Ingame_Manager_Build.Instance.ShowFloatingText($"{Shared_Manager_Session.VisitTargetId}님의 공장에 놀러왔습니다!", Vector3.zero);
         } else {
-            // 내 공장이면 돌아가기 버튼 숨기기
-            if (btnReturnHome != null) btnReturnHome.SetActive(false);
+            // [내 공장] 추천 버튼 숨기기
+            if (recommendButton != null) recommendButton.SetActive(false);
         }
-    }
-
-    public void OnClick_ReturnHome() {
-        // 놀러가기 모드 해제
-        Shared_Manager_Session.IsVisiting = false;
-        Shared_Manager_Session.VisitTargetId = "";
-        Shared_Manager_Session.IsReadOnlyMode = false;
-
-        // 인게임 씬을 처음부터 다시 로드해서 내 공장을 깔끔하게 띄움!
-        SceneManager.LoadScene("InGame_Scene"); 
     }
 }
