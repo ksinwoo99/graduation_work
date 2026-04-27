@@ -38,6 +38,12 @@ public class UI_Leaderboard : MonoBehaviour
     public TMP_Text myRecommendCountText;
     public string targetUserId;
 
+    [Header("추천 결과 팝업 UI")]
+    public GameObject recommendPopupPanel;
+    public TMP_Text recommendPopupText;
+
+    private Coroutine autoCloseCoroutine;
+
     void Start()
     {
         if (!string.IsNullOrEmpty(targetUserId))
@@ -119,15 +125,39 @@ public class UI_Leaderboard : MonoBehaviour
             if (www.result == UnityWebRequest.Result.Success)
             {
                 RecommendResultResponse res = JsonUtility.FromJson<RecommendResultResponse>(www.downloadHandler.text);
-                if (Ingame_Manager_Build.Instance != null) {
-                    Ingame_Manager_Build.Instance.ShowFloatingText(res.msg, Vector3.zero);
+                
+                if (recommendPopupPanel != null && recommendPopupText != null) {
+                    recommendPopupText.text = res.msg;
+                    recommendPopupPanel.SetActive(true);
+
+                    if (autoCloseCoroutine != null) StopCoroutine(autoCloseCoroutine);
+                    autoCloseCoroutine = StartCoroutine(AutoCloseTimer(3f));
                 }
 
+                // ✨ 2. 성공했을 때만 숫자 새로고침
                 if (res.status == "SUCCESS")
                 {
                     StartCoroutine(GetRecommendCount(toUser));
                 }
             }
+        }
+    }
+
+    private IEnumerator AutoCloseTimer(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        OnClick_ClosePopup(); // 3초 뒤에 닫기 함수 실행!
+    }
+    public void OnClick_ClosePopup()
+    {
+        if (recommendPopupPanel != null) {
+            recommendPopupPanel.SetActive(false);
+        }
+        
+        // 유저가 직접 닫았는데 타이머가 계속 돌아가면 안 되니까 꺼줍니다.
+        if (autoCloseCoroutine != null) {
+            StopCoroutine(autoCloseCoroutine);
+            autoCloseCoroutine = null;
         }
     }
 }
