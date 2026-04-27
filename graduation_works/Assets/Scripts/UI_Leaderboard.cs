@@ -53,7 +53,6 @@ public class UI_Leaderboard : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("🏆 리더보드 서버 응답: " + www.downloadHandler.text);
             LeaderboardResponse res = JsonUtility.FromJson<LeaderboardResponse>(www.downloadHandler.text);
             
             if (res.status == "SUCCESS")
@@ -72,7 +71,6 @@ public class UI_Leaderboard : MonoBehaviour
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
-            else { Debug.LogError("❌ 리더보드 통신 에러: " + www.error); }
         }
     }
 
