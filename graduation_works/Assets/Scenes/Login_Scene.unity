@@ -5270,7 +5270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c27cd86b32284264a8377fecfb9c2969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clickSound: {fileID: 8300000, guid: cb89ae6b350f9466bbde7ed956451b19, type: 3}
+  clickSound: {fileID: 8300000, guid: 137fdb284f7d46e45803a2de41349033, type: 3}
 --- !u!114 &1874985634
 MonoBehaviour:
   m_ObjectHideFlags: 0

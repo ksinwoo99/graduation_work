@@ -9,6 +9,7 @@ from contextlib import redirect_stdout
 import smtplib
 from email.mime.text import MIMEText
 import random
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -58,6 +59,10 @@ class GameSaveRequest(BaseModel):
     tutorial_step: int = 0
     conveyor_level: int = 0
     machines: List[MachineData] = []
+
+class RecommendRequest(BaseModel):
+    from_user_id: str
+    to_user_id: str
 
 # =========================================================
 # 2. DB 연결 및 유틸리티
@@ -378,8 +383,72 @@ def load_game_data(user_id: str):
     except Exception as e:
         print(f"[불러오기 에러 발생] {str(e)}")
         return {"status": "ERROR", "msg": f"서버 내부 DB 오류: {str(e)}"}
-        
     finally: 
+        conn.close()
+
+# 1. 리더보드 정보 가져오기 API
+@app.get("/get_leaderboard")
+def get_leaderboard():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # 추천수 Top 5
+        cursor.execute("SELECT id, recommend_count FROM users ORDER BY recommend_count DESC LIMIT 5")
+        top_recommends = cursor.fetchall()
+        
+        # 골드 Top 5
+        cursor.execute("SELECT id, total_gold FROM users ORDER BY total_gold DESC LIMIT 5")
+        top_golds = cursor.fetchall()
+        
+        return {"status": "SUCCESS", "top_recommends": top_recommends, "top_golds": top_golds}
+    except Exception as e:
+        return {"status": "ERROR", "msg": str(e)}
+    finally:
+        conn.close()
+
+# 2. 유저 추천하기 API (놀러가기 화면용)
+@app.post("/recommend_user")
+def recommend_user(req: RecommendRequest):
+    if req.from_user_id == req.to_user_id:
+        return {"status": "FAIL", "msg": "자기 자신은 추천할 수 없습니다."}
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # 이미 추천했는지 확인
+        cursor.execute("SELECT id FROM user_recommends WHERE from_user_id = %s AND to_user_id = %s", (req.from_user_id, req.to_user_id))
+        if cursor.fetchone():
+            return {"status": "FAIL", "msg": "이미 추천한 유저입니다."}
+
+        # 추천 로그 기록
+        cursor.execute("INSERT INTO user_recommends (from_user_id, to_user_id) VALUES (%s, %s)", (req.from_user_id, req.to_user_id))
+        
+        # 타겟 유저의 추천수 + 1
+        cursor.execute("UPDATE users SET recommend_count = recommend_count + 1 WHERE id = %s", (req.to_user_id,))
+        conn.commit()
+
+        # 업데이트된 최신 추천수 반환
+        cursor.execute("SELECT recommend_count FROM users WHERE id = %s", (req.to_user_id,))
+        new_count = cursor.fetchone()[0]
+
+        return {"status": "SUCCESS", "msg": "추천 완료!", "new_count": new_count}
+    except Exception as e:
+        conn.rollback()
+        return {"status": "ERROR", "msg": str(e)}
+    finally:
+        conn.close()
+
+# 3. 특정 유저 추천수 조회 API (인게임 및 놀러가기 화면용)
+@app.get("/get_recommend_count")
+def get_recommend_count(user_id: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT recommend_count FROM users WHERE id = %s", (user_id,))
+        result = cursor.fetchone()
+        count = result[0] if result else 0
+        return {"status": "SUCCESS", "recommend_count": count}
+    finally:
         conn.close()
 
 if __name__ == "__main__":
