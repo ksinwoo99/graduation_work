@@ -11690,7 +11690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmClip: {fileID: 8300000, guid: e88d0df30dc0fc44a9d8f6973639c10e, type: 3}
-  defaultVolume: 0.4
+  defaultVolume: 0.3
   btnBgmToggle: {fileID: 1588912873}
   volumeSlider: {fileID: 1269763381}
   toggleBtnImage: {fileID: 2069943311}
