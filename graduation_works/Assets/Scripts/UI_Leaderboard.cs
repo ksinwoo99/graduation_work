@@ -19,6 +19,13 @@ public class LeaderboardResponse {
     public List<LeaderboardUserData> top_golds;
 }
 
+[System.Serializable]
+public class RecommendResultResponse {
+    public string status;
+    public string msg;
+    public int new_count;
+}
+
 public class UI_Leaderboard : MonoBehaviour
 {
     private string serverUrl = "http://13.237.51.219:8000";
@@ -87,7 +94,7 @@ public class UI_Leaderboard : MonoBehaviour
         {
             // 간단 파싱을 위해 임시 클래스 사용
             var res = JsonUtility.FromJson<LeaderboardUserData>(www.downloadHandler.text);
-            if (myRecommendCountText != null) myRecommendCountText.text = $"추천수: {res.recommend_count}";
+            if (myRecommendCountText != null) myRecommendCountText.text = $"추천 수: {res.recommend_count}";
         }
     }
 
@@ -111,9 +118,15 @@ public class UI_Leaderboard : MonoBehaviour
 
             if (www.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("추천 응답: " + www.downloadHandler.text);
-                // 추천 완료 후 텍스트 다시 불러와서 즉시 반영
-                StartCoroutine(GetRecommendCount(toUser));
+                RecommendResultResponse res = JsonUtility.FromJson<RecommendResultResponse>(www.downloadHandler.text);
+                if (Ingame_Manager_Build.Instance != null) {
+                    Ingame_Manager_Build.Instance.ShowFloatingText(res.msg, Vector3.zero);
+                }
+
+                if (res.status == "SUCCESS")
+                {
+                    StartCoroutine(GetRecommendCount(toUser));
+                }
             }
         }
     }
