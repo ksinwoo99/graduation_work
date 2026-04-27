@@ -28,6 +28,9 @@ public class Menu_Manager_UI : MonoBehaviour {
     [Header("전환용 암전 이미지")]
     public CanvasGroup fadeCanvasGroup;
 
+    [Header("리더보드 패널")]
+    public GameObject leaderboardPanel;
+
     private Vector2 originalSize = new Vector2(500, 380);
     private Vector2 expandedSize = new Vector2(500, 980);
 
@@ -62,6 +65,12 @@ public class Menu_Manager_UI : MonoBehaviour {
                 loginSuccessPanel.SetActive(false);
                 menuSelectPanel.SetActive(true);
                 menuSelectPanel_UserId.text = $"접속중: {Shared_Manager_Session.CurrentUserId}님";
+
+                if (leaderboardPanel != null) {
+                leaderboardPanel.SetActive(true);
+                // 여기에 리더보드 데이터 새로고침 함수 호출 (아래 스크립트 참고)
+                leaderboardPanel.GetComponent<UI_Leaderboard>().RefreshLeaderboard();
+                }
             });
     }
 

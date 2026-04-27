@@ -392,12 +392,19 @@ def get_leaderboard():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        # 추천수 Top 5
+        # 1. 추천수 Top 5 (기존 유지)
         cursor.execute("SELECT id, recommend_count FROM users ORDER BY recommend_count DESC LIMIT 5")
         top_recommends = cursor.fetchall()
         
-        # 골드 Top 5
-        cursor.execute("SELECT id, total_gold FROM users ORDER BY total_gold DESC LIMIT 5")
+        # 2. 골드 Top 5 (game_saves의 resource_4를 JOIN으로 가져오기)
+        # u(users)의 ID와 g(game_saves)의 resource_4를 매칭하여 정렬합니다.
+        cursor.execute("""
+            SELECT u.id, g.resource_4 as total_gold 
+            FROM game_saves g
+            JOIN users u ON g.user_pk = u.pk_id
+            ORDER BY g.resource_4 DESC 
+            LIMIT 5
+        """)
         top_golds = cursor.fetchall()
         
         return {"status": "SUCCESS", "top_recommends": top_recommends, "top_golds": top_golds}
