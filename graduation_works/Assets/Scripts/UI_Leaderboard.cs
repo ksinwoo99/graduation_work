@@ -26,6 +26,13 @@ public class RecommendResultResponse {
     public int new_count;
 }
 
+[System.Serializable]
+public class UserRankingResponse {
+    public string status;
+    public int recommend_rank;
+    public int gold_rank;
+}
+
 public class UI_Leaderboard : MonoBehaviour
 {
     private string serverUrl = "http://13.237.51.219:8000";
@@ -37,6 +44,10 @@ public class UI_Leaderboard : MonoBehaviour
     [Header("UI 연결 - 개별 추천 (Visit/InGame Scene)")]
     public TMP_Text myRecommendCountText;
     public string targetUserId;
+
+    [Header("UI 연결 - 순위 표시")]
+    public TMP_Text textRecommendRank;
+    public TMP_Text textGoldRank;
 
     [Header("추천 결과 팝업 UI")]
     public GameObject recommendPopupPanel;
@@ -84,6 +95,28 @@ public class UI_Leaderboard : MonoBehaviour
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
+        }
+    }
+
+    public IEnumerator GetUserRankings(string userId)
+    {
+        UnityWebRequest www = UnityWebRequest.Get($"{serverUrl}/get_user_rankings?user_id={userId}");
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"[순위 통신 결과] {www.downloadHandler.text}");
+            
+            var res = JsonUtility.FromJson<UserRankingResponse>(www.downloadHandler.text);
+            if (res.status == "SUCCESS")
+            {
+                if (textRecommendRank != null) textRecommendRank.text = $"추천 순위 : {res.recommend_rank}위";
+                if (textGoldRank != null) textGoldRank.text = $"골드 순위 : {res.gold_rank}위";
+            }
+        }
+        else 
+        {
+            Debug.LogError($"[순위 통신 에러] {www.error}");
         }
     }
 

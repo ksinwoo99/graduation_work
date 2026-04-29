@@ -458,6 +458,41 @@ def get_recommend_count(user_id: str):
     finally:
         conn.close()
 
+# 4. 특정 유저의 골드 및 추천 랭킹(순위) 조회 API
+@app.get("/get_user_rankings")
+def get_user_rankings(user_id: str):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        user_pk = get_user_pk(cursor, user_id)
+        if not user_pk:
+            return {"status": "ERROR", "msg": "유저 없음"}
+
+        # 1. 추천 순위 계산 (나보다 추천수가 많은 사람 수 + 1)
+        cursor.execute("""
+            SELECT COUNT(*) + 1 as rank
+            FROM users
+            WHERE recommend_count > (SELECT recommend_count FROM users WHERE id = %s)
+        """, (user_id,))
+        rec_rank = cursor.fetchone()['rank']
+
+        # 2. 골드 순위 계산 (나보다 골드가 많은 사람 수 + 1)
+        cursor.execute("""
+            SELECT COUNT(*) + 1 as rank
+            FROM game_saves
+            WHERE resource_4 > (
+                SELECT resource_4 FROM game_saves WHERE user_pk = %s
+            )
+        """, (user_pk,))
+        gold_rank_result = cursor.fetchone()
+        gold_rank = gold_rank_result['rank'] if gold_rank_result else 0
+
+        return {"status": "SUCCESS", "recommend_rank": rec_rank, "gold_rank": gold_rank}
+    except Exception as e:
+        return {"status": "ERROR", "msg": str(e)}
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
