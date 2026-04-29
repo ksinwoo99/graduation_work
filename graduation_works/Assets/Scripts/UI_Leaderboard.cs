@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 // ✨ [추가] 서버에서 보내주는 JSON 배열을 담을 그릇
 [System.Serializable]
@@ -71,6 +72,7 @@ public class UI_Leaderboard : MonoBehaviour
         StartCoroutine(GetUserRankings(Shared_Manager_Session.CurrentUserId)); // 내 순위 가져오기
     }
 
+    // 🏆 1. 리더보드 Top 5 목록 조립 (오타 수정 및 <pos> 적용)
     private IEnumerator GetLeaderboardData()
     {
         UnityWebRequest www = UnityWebRequest.Get($"{serverUrl}/get_leaderboard");
@@ -81,23 +83,24 @@ public class UI_Leaderboard : MonoBehaviour
             LeaderboardResponse res = JsonUtility.FromJson<LeaderboardResponse>(www.downloadHandler.text);
             if (res.status == "SUCCESS")
             {
-                // 추천 리스트 조립
-                string recText = "순위\t아이디\t추천\n──────────────\n";
+                // 추천 리스트 (<pos> 태그로 자로 잰 듯이 정렬)
+                string recText = "순위<pos=20%>아이디<pos=70%>추천\n────────────────\n";
                 for (int i = 0; i < res.top_recommends.Count; i++) {
-                    recText += $"{i + 1}위\t{res.top_recommends[i].id}\t{res.top_recommends[i].recommend_count}\n";
+                    recText += $"{i + 1}<pos=20%>{res.top_recommends[i].id}<pos=70%>{res.top_recommends[i].recommend_count}\n";
                 }
                 if (textTopRecommends != null) textTopRecommends.text = recText;
-                
-                // 골드 리스트 조립
-                string goldText = "순위\t아이디\t골드\n──────────────\n";
+
+                // 골드 리스트 (resTop 오타 수정됨!)
+                string goldText = "순위<pos=20%>아이디<pos=70%>골드\n────────────────\n";
                 for (int i = 0; i < res.top_golds.Count; i++) {
-                    goldText += $"{i + 1}위\t{res.top_golds[i].id}\t{res.top_golds[i].total_gold}\n";
+                    goldText += $"{i + 1}<pos=20%>{res.top_golds[i].id}<pos=70%>{res.top_golds[i].total_gold}\n";
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
         }
     }
 
+    // 🏆 2. 씬에 따라 랭킹 형식을 다르게 표시 (핵심!)
     public IEnumerator GetUserRankings(string userId)
     {
         UnityWebRequest www = UnityWebRequest.Get($"{serverUrl}/get_user_rankings?user_id={userId}");
@@ -108,12 +111,24 @@ public class UI_Leaderboard : MonoBehaviour
             var res = JsonUtility.FromJson<UserRankingResponse>(www.downloadHandler.text);
             if (res.status == "SUCCESS")
             {
-                // 원하는 형식: 순위 \t 내아이디 \t 점수
-                if (textRecommendRank != null) 
-                    textRecommendRank.text = $"{res.recommend_rank}위\t{userId}\t{res.my_recommend}";
-                
-                if (textGoldRank != null) 
-                    textGoldRank.text = $"{res.gold_rank}위\t{userId}\t{res.my_gold}";
+                string currentScene = SceneManager.GetActiveScene().name;
+
+                if (currentScene == "Ingame_Scene") 
+                {
+                    // ✨ [인게임/놀러가기] 심플한 형식
+                    if (textRecommendRank != null) 
+                        textRecommendRank.text = $"추천 랭킹 : {res.recommend_rank}위";
+                    if (textGoldRank != null) 
+                        textGoldRank.text = $"골드 랭킹 : {res.gold_rank}위";
+                } 
+                else 
+                {
+                    // ✨ [메뉴 씬 리더보드] 상세한 형식 (탭 정렬)
+                    if (textRecommendRank != null) 
+                        textRecommendRank.text = $"{res.recommend_rank}<pos=20%>{userId}<pos=70%>{res.my_recommend}";
+                    if (textGoldRank != null) 
+                        textGoldRank.text = $"{res.gold_rank}<pos=20%>{userId}<pos=70%>{res.my_gold}";
+                }
             }
         }
     }

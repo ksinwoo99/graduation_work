@@ -32,7 +32,7 @@ public class Ingame_Manager_Visit : MonoBehaviour {
             }
         } else {
             // 추천하기 버튼만 숨깁니다.
-            if (recommendButton != null) recommendButton.SetActive(false);
+            if (recommendButton != null) recommendButton.SetActive(true);
             
             // 내 아이디의 추천 수를 불러옵니다.
             if (leaderboardManager != null) {
