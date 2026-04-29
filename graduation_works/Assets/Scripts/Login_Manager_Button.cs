@@ -321,4 +321,11 @@ public class Login_Manager_Button : MonoBehaviour
             }
         }));
     }
+
+    public void OnGuestLoginButtonClicked()
+    {
+        Shared_Manager_Session.CurrentUserId = "guest";
+        SceneManager.LoadScene("Menu_Scene");
+    }
+    
 }
