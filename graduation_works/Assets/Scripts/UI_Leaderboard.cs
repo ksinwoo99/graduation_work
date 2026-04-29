@@ -31,6 +31,8 @@ public class UserRankingResponse {
     public string status;
     public int recommend_rank;
     public int gold_rank;
+    public int my_recommend;
+    public int my_gold;
 }
 
 public class UI_Leaderboard : MonoBehaviour
@@ -63,13 +65,12 @@ public class UI_Leaderboard : MonoBehaviour
         }
     }
 
-    // ✨ Menu_Manager_UI에서 팝업이 뜰 때 호출하는 함수
     public void RefreshLeaderboard()
     {
-        StartCoroutine(GetLeaderboardData());
+        StartCoroutine(GetLeaderboardData()); // Top 5 가져오기
+        StartCoroutine(GetUserRankings(Shared_Manager_Session.CurrentUserId)); // 내 순위 가져오기
     }
 
-    // ✨ 서버에서 Top 5 데이터를 가져와서 텍스트에 넣는 로직
     private IEnumerator GetLeaderboardData()
     {
         UnityWebRequest www = UnityWebRequest.Get($"{serverUrl}/get_leaderboard");
@@ -78,20 +79,19 @@ public class UI_Leaderboard : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             LeaderboardResponse res = JsonUtility.FromJson<LeaderboardResponse>(www.downloadHandler.text);
-            
             if (res.status == "SUCCESS")
             {
-                // 추천수 텍스트 조립 (예: 1. user123 (50회))
-                string recText = "";
+                // 추천 리스트 조립
+                string recText = "순위\t아이디\t추천\n──────────────\n";
                 for (int i = 0; i < res.top_recommends.Count; i++) {
-                    recText += $"{i + 1}. {res.top_recommends[i].id} ({res.top_recommends[i].recommend_count}회)\n";
+                    recText += $"{i + 1}위\t{res.top_recommends[i].id}\t{res.top_recommends[i].recommend_count}\n";
                 }
                 if (textTopRecommends != null) textTopRecommends.text = recText;
-
-                // 골드 텍스트 조립 (예: 1. user456 (1500G))
-                string goldText = "";
+                
+                // 골드 리스트 조립
+                string goldText = "순위\t아이디\t골드\n──────────────\n";
                 for (int i = 0; i < res.top_golds.Count; i++) {
-                    goldText += $"{i + 1}. {res.top_golds[i].id} ({res.top_golds[i].total_gold}G)\n";
+                    goldText += $"{i + 1}위\t{res.top_golds[i].id}\t{res.top_golds[i].total_gold}\n";
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
@@ -105,24 +105,22 @@ public class UI_Leaderboard : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log($"[순위 통신 결과] {www.downloadHandler.text}");
-            
             var res = JsonUtility.FromJson<UserRankingResponse>(www.downloadHandler.text);
             if (res.status == "SUCCESS")
             {
-                if (textRecommendRank != null) textRecommendRank.text = $"추천 순위 : {res.recommend_rank}위";
-                if (textGoldRank != null) textGoldRank.text = $"골드 순위 : {res.gold_rank}위";
+                // 원하는 형식: 순위 \t 내아이디 \t 점수
+                if (textRecommendRank != null) 
+                    textRecommendRank.text = $"{res.recommend_rank}위\t{userId}\t{res.my_recommend}";
+                
+                if (textGoldRank != null) 
+                    textGoldRank.text = $"{res.gold_rank}위\t{userId}\t{res.my_gold}";
             }
-        }
-        else 
-        {
-            Debug.LogError($"[순위 통신 에러] {www.error}");
         }
     }
 
-    // ----------------------------------------------------
+    // ──────────────────────────
     // 개별 유저 추천 로직
-    // ----------------------------------------------------
+    // ──────────────────────────
 
     public IEnumerator GetRecommendCount(string userId)
     {
