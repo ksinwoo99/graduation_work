@@ -57,7 +57,8 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
     [Header("롤백 UI 설정")]
     public GameObject confirmPanel; 
-    private bool isConfirming = false; 
+    private bool isConfirming = false;
+    private int ignoreClickFrame = -1;
 
     private List<Vector3Int> sessionBuilt = new List<Vector3Int>();
     private Dictionary<Vector3Int, DemolishedInfo> sessionDemolished = new Dictionary<Vector3Int, DemolishedInfo>();
@@ -163,6 +164,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
         UpdateCursor(cellPos);
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
+            if (Time.frameCount == ignoreClickFrame) return;
             
             if (Shared_Manager_Session.IsVisiting) return; 
 
@@ -321,6 +323,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
     }
 
     public void StartBuildMode(TileBase tile, Image buttonImage) {
+        ignoreClickFrame = Time.frameCount;
         if (selectedButton != null) selectedButton.color = normalColor;
         
         if (selectedInfo != null) {
