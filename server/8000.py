@@ -468,26 +468,26 @@ def get_user_rankings(user_id: str):
         if not user_pk:
             return {"status": "ERROR", "msg": "유저 없음"}
 
-        # 1. 추천 순위 계산
-        cursor.execute("""
-            SELECT COUNT(*) + 1 as my_rank
-            FROM users
-            WHERE recommend_count > (SELECT recommend_count FROM users WHERE id = %s)
-        """, (user_id,))
+        # 1. 내 추천수 및 순위 조회
+        cursor.execute("SELECT recommend_count FROM users WHERE id = %s", (user_id,))
+        my_rec = cursor.fetchone()['recommend_count']
+        cursor.execute("SELECT COUNT(*) + 1 as my_rank FROM users WHERE recommend_count > %s", (my_rec,))
         rec_rank = cursor.fetchone()['my_rank']
 
-        # 2. 골드 순위 계산
-        cursor.execute("""
-            SELECT COUNT(*) + 1 as my_rank
-            FROM game_saves
-            WHERE resource_4 > (
-                SELECT resource_4 FROM game_saves WHERE user_pk = %s
-            )
-        """, (user_pk,))
-        gold_rank_result = cursor.fetchone()
-        gold_rank = gold_rank_result['my_rank'] if gold_rank_result else 0
+        # 2. 내 골드 및 순위 조회
+        cursor.execute("SELECT resource_4 FROM game_saves WHERE user_pk = %s", (user_pk,))
+        gold_row = cursor.fetchone()
+        my_gold = gold_row['resource_4'] if gold_row else 0
+        cursor.execute("SELECT COUNT(*) + 1 as my_rank FROM game_saves WHERE resource_4 > %s", (my_gold,))
+        gold_rank = cursor.fetchone()['my_rank']
 
-        return {"status": "SUCCESS", "recommend_rank": rec_rank, "gold_rank": gold_rank}
+        return {
+            "status": "SUCCESS", 
+            "recommend_rank": rec_rank, 
+            "gold_rank": gold_rank,
+            "my_recommend": my_rec,
+            "my_gold": my_gold
+        }
     except Exception as e:
         return {"status": "ERROR", "msg": str(e)}
     finally:
