@@ -28,6 +28,7 @@ public class Ingame_Manager_Visit : MonoBehaviour {
             if (leaderboardManager != null) {
                 leaderboardManager.targetUserId = Shared_Manager_Session.VisitTargetId; 
                 StartCoroutine(leaderboardManager.GetRecommendCount(Shared_Manager_Session.VisitTargetId)); 
+                StartCoroutine(leaderboardManager.GetUserRankings(Shared_Manager_Session.VisitTargetId));
             }
         } else {
             // 추천하기 버튼만 숨깁니다.
@@ -38,6 +39,7 @@ public class Ingame_Manager_Visit : MonoBehaviour {
                 string myId = Shared_Manager_Session.CurrentUserId;
                 leaderboardManager.targetUserId = myId;
                 StartCoroutine(leaderboardManager.GetRecommendCount(myId));
+                StartCoroutine(leaderboardManager.GetUserRankings(myId));
             }
         }
     }
