@@ -468,24 +468,24 @@ def get_user_rankings(user_id: str):
         if not user_pk:
             return {"status": "ERROR", "msg": "유저 없음"}
 
-        # 1. 추천 순위 계산 (나보다 추천수가 많은 사람 수 + 1)
+        # 1. 추천 순위 계산
         cursor.execute("""
-            SELECT COUNT(*) + 1 as rank
+            SELECT COUNT(*) + 1 as my_rank
             FROM users
             WHERE recommend_count > (SELECT recommend_count FROM users WHERE id = %s)
         """, (user_id,))
-        rec_rank = cursor.fetchone()['rank']
+        rec_rank = cursor.fetchone()['my_rank']
 
-        # 2. 골드 순위 계산 (나보다 골드가 많은 사람 수 + 1)
+        # 2. 골드 순위 계산
         cursor.execute("""
-            SELECT COUNT(*) + 1 as rank
+            SELECT COUNT(*) + 1 as my_rank
             FROM game_saves
             WHERE resource_4 > (
                 SELECT resource_4 FROM game_saves WHERE user_pk = %s
             )
         """, (user_pk,))
         gold_rank_result = cursor.fetchone()
-        gold_rank = gold_rank_result['rank'] if gold_rank_result else 0
+        gold_rank = gold_rank_result['my_rank'] if gold_rank_result else 0
 
         return {"status": "SUCCESS", "recommend_rank": rec_rank, "gold_rank": gold_rank}
     except Exception as e:
