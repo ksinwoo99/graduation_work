@@ -85,7 +85,7 @@ public class UI_Leaderboard : MonoBehaviour
             {
                 string recText = "";
                 for (int i = 0; i < res.top_recommends.Count; i++) {
-                    recText += $"{res.top_recommends[i].id}({res.top_recommends[i].recommend_count})\n";
+                    recText += $"{res.top_recommends[i].id} ({res.top_recommends[i].recommend_count})\n";
                 }
                 if (textTopRecommends != null) textTopRecommends.text = recText;
 
