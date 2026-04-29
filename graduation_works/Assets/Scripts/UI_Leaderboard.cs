@@ -85,13 +85,13 @@ public class UI_Leaderboard : MonoBehaviour
             {
                 string recText = "";
                 for (int i = 0; i < res.top_recommends.Count; i++) {
-                    recText += $"{res.top_recommends[i].id} ({res.top_recommends[i].recommend_count})\n";
+                    recText += $"{res.top_recommends[i].id} ({res.top_recommends[i].recommend_count}회)\n";
                 }
                 if (textTopRecommends != null) textTopRecommends.text = recText;
 
                 string goldText = "";
                 for (int i = 0; i < res.top_golds.Count; i++) {
-                    goldText += $"{res.top_golds[i].id} ({res.top_golds[i].total_gold})\n";
+                    goldText += $"{res.top_golds[i].id} ({res.top_golds[i].total_gold}G)\n";
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
