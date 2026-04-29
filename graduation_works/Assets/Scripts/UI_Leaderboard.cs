@@ -91,7 +91,7 @@ public class UI_Leaderboard : MonoBehaviour
 
                 string goldText = "";
                 for (int i = 0; i < res.top_golds.Count; i++) {
-                    goldText += $"{res.top_golds[i].id}\n"; // ({res.top_golds[i].total_gold})
+                    goldText += $"{res.top_golds[i].id} ({res.top_golds[i].total_gold})\n";
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
