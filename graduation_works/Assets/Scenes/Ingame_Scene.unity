@@ -13559,7 +13559,7 @@ MonoBehaviour:
   activeColor: {r: 0, g: 1, b: 0, a: 1}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   floatingTextPrefab: {fileID: 6573054258843587349, guid: 58b910c3fb28f6c4599721c3aeb01886, type: 3}
-  cursorDemolish: {fileID: 0}
+  cursorDemolish: {fileID: 2800000, guid: 7624b26a9b97a5f4d82489d1485ca473, type: 3}
   cursorHotspot: {x: 0, y: 0}
   demolishBaseTile: {fileID: 11400000, guid: 27d0a3c8585c764418197915cab251c1, type: 2}
   previewArrowPrefab: {fileID: 8147989244432896949, guid: 7a390bc32b6d7034789bde2c849e9a8c, type: 3}
