@@ -83,17 +83,15 @@ public class UI_Leaderboard : MonoBehaviour
             LeaderboardResponse res = JsonUtility.FromJson<LeaderboardResponse>(www.downloadHandler.text);
             if (res.status == "SUCCESS")
             {
-                // 추천 리스트 (<pos> 태그로 자로 잰 듯이 정렬)
-                string recText = "순위<pos=20%>아이디<pos=70%>추천\n────────────────\n";
+                string recText = "";
                 for (int i = 0; i < res.top_recommends.Count; i++) {
-                    recText += $"{i + 1}<pos=20%>{res.top_recommends[i].id}<pos=70%>{res.top_recommends[i].recommend_count}\n";
+                    recText += $"{res.top_recommends[i].id}({res.top_recommends[i].recommend_count})\n";
                 }
                 if (textTopRecommends != null) textTopRecommends.text = recText;
 
-                // 골드 리스트 (resTop 오타 수정됨!)
-                string goldText = "순위<pos=20%>아이디<pos=70%>골드\n────────────────\n";
+                string goldText = "";
                 for (int i = 0; i < res.top_golds.Count; i++) {
-                    goldText += $"{i + 1}<pos=20%>{res.top_golds[i].id}<pos=70%>{res.top_golds[i].total_gold}\n";
+                    goldText += $"{res.top_golds[i].id}\n"; // ({res.top_golds[i].total_gold})
                 }
                 if (textTopGolds != null) textTopGolds.text = goldText;
             }
