@@ -1845,7 +1845,6 @@ RectTransform:
   - {fileID: 1934935464}
   - {fileID: 1581588007}
   - {fileID: 179034005}
-  - {fileID: 1054365299}
   m_Father: {fileID: 15993579}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6136,9 +6135,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2136745558}
   - {fileID: 1863930935}
   - {fileID: 1804691019}
+  - {fileID: 1054365299}
   m_Father: {fileID: 163327186}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -8980,7 +8979,7 @@ GameObject:
   - component: {fileID: 712529939}
   - component: {fileID: 712529938}
   m_Layer: 5
-  m_Name: Button_recommend
+  m_Name: Button_recommend_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12876,11 +12875,12 @@ RectTransform:
   - {fileID: 237185226}
   - {fileID: 320258231}
   - {fileID: 712529937}
-  m_Father: {fileID: 163327186}
+  - {fileID: 2136745558}
+  m_Father: {fileID: 498093884}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 45.940186, y: -465.5299}
+  m_AnchoredPosition: {x: 25.490234, y: -450.08}
   m_SizeDelta: {x: 523.02, y: 143.16}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1054365300
@@ -25730,7 +25730,7 @@ GameObject:
   - component: {fileID: 2136745560}
   - component: {fileID: 2136745559}
   m_Layer: 5
-  m_Name: Button_recommend
+  m_Name: Button_recommend_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25750,11 +25750,11 @@ RectTransform:
   m_Children:
   - {fileID: 591333898}
   - {fileID: 731312788}
-  m_Father: {fileID: 498093884}
+  m_Father: {fileID: 1054365299}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -361.1998, y: -429.5}
+  m_AnchoredPosition: {x: 0.34988403, y: -51}
   m_SizeDelta: {x: 122.32001, y: 54.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2136745559
