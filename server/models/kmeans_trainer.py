@@ -14,21 +14,25 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from config import DB_CONFIG, MODEL_PATH
 from utils import extract_features
 
-# 경고문 무시
 warnings.filterwarnings('ignore')
 
-# Pandas 터미널 출력 설정
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 1000)
+
+# ── 학습 하이퍼파라미터 ───────────────────────────────────
+_MIN_TRAINING_SAMPLES = 10   # 학습 최소 데이터 수 (미달 시 스킵)
+_N_CLUSTERS           = 3    # KMeans 군집 수
+_KMEANS_N_INIT        = 10   # KMeans 초기화 반복 횟수
+_KMEANS_RANDOM_STATE  = 42
 
 # ── 피처 가중치 ────────────────────────────────────────────
 # StandardScaler 정규화 이후에 곱해야 KMeans 거리 계산에 실제 반영됩니다.
 # (정규화 이전에 곱하면 스케일러가 다시 평탄화해 효과 없음)
 # predict_cluster_rank()에서도 동일 가중치를 반드시 적용해야 합니다.
 _LOOP_FEATURE_WEIGHTS: dict[str, float] = {
-    'has_loop':           3.0,   # 루프 유무를 클러스터 분리의 핵심 기준으로 강조
-    'loop_efficiency':    2.0,   # 루프 효율성도 중요하게 반영
-    'has_infinite_while': 2.0,   # while True 사용 여부 강조
+    'has_loop':           3.0,
+    'loop_efficiency':    2.0,
+    'has_infinite_while': 2.0,
 }
 
 # 군집 rank → 표시 레이블 (학습 로그 및 메타데이터용)
@@ -37,9 +41,9 @@ _RANK_LABELS = ["단순 코드형", "일반 학습자형", "효율 최적화형"
 
 def train():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"\n========================================")
-    print(f"🚀 ML 백그라운드 워커 구동 시작 ({now})")
-    print(f"========================================\n")
+    print(f"\n{'=' * 40}")
+    print(f"KMeans 학습 시작 ({now})")
+    print(f"{'=' * 40}\n")
     
     conn = pymysql.connect(**DB_CONFIG)
     try:
@@ -51,15 +55,17 @@ def train():
     finally:
         conn.close()
 
-    if len(df) < 10:
-        print(f"⚠️ 데이터 부족 (현재 {len(df)}개 / 최소 10개 필요) - 학습 스킵")
+    if len(df) < _MIN_TRAINING_SAMPLES:
+        print(f"데이터 부족 (현재 {len(df)}개 / 최소 {_MIN_TRAINING_SAMPLES}개 필요) - 학습 스킵")
         return
     
     print("특징(Feature) 추출 및 스케일링 진행 중...")
     extracted_list = df['source_code'].apply(extract_features)
     feature_df = pd.DataFrame(extracted_list.tolist())
     feature_df['execution_time'] = df['execution_time']
-    feature_df['score'] = df['score']
+    # score는 클러스터 의미 정렬(rank 0/1/2 결정)에만 사용하며 학습 피처에서 제외합니다.
+    # 순환 결합 방지: score 자체가 extract_features() 기반 규칙으로 계산되기 때문에
+    # 학습 피처에 포함하면 KMeans가 규칙을 그대로 암기하는 현상이 발생합니다.
 
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(feature_df)
@@ -76,7 +82,7 @@ def train():
 
     print("K-Means 모델 학습 중...")
     try:
-        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+        kmeans = KMeans(n_clusters=_N_CLUSTERS, random_state=_KMEANS_RANDOM_STATE, n_init=_KMEANS_N_INIT)
         df['cluster_id'] = kmeans.fit_predict(weighted_scaled)
 
         feature_df['cluster_id'] = df['cluster_id']
@@ -90,8 +96,9 @@ def train():
         # ── 군집 의미 자동 정렬 ──────────────────────────────────
         # score 평균이 낮은 군집 → rank 0 (단순), 중간 → rank 1 (성장), 높은 → rank 2 (효율)
         # KMeans는 매 학습마다 cluster ID 0/1/2 의 의미가 바뀔 수 있으므로
-        # 힌트 텍스트와의 매핑을 score 기준으로 고정
-        score_means      = feature_df.groupby('cluster_id')['score'].mean()
+        # 힌트 텍스트와의 매핑을 score 기준으로 고정.
+        # df['score'] 는 학습 피처에서는 제외했지만 정렬 기준으로는 여전히 활용합니다.
+        score_means      = df.groupby('cluster_id')['score'].mean()
         sorted_by_score  = score_means.sort_values().index.tolist()   # 점수 낮은 순
         cluster_rank_map = {int(old): new for new, old in enumerate(sorted_by_score)}
 
