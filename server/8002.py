@@ -1,40 +1,47 @@
-from fastapi import FastAPI, Query, HTTPException
-from pydantic import BaseModel, Field
-import mysql.connector
-from typing import List, Optional
-from datetime import datetime
-import ast, asyncio, time, io, traceback
-from contextlib import redirect_stdout
-
-import smtplib
-from email.mime.text import MIMEText
+import os
 import random
 import re
+import smtplib
+from email.mime.text import MIMEText
+from typing import Optional
+
+import mysql.connector
+from fastapi import FastAPI
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
 # =========================================================
 # [이메일 세팅]
 # =========================================================
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SENDER_EMAIL = "py.factory26@gmail.com" 
-SENDER_PASSWORD = "qxeyqsmrpxxbwzza" 
+SMTP_SERVER    = "smtp.gmail.com"
+SMTP_PORT      = 587
+SENDER_EMAIL   = os.getenv("SMTP_SENDER_EMAIL", "py.factory26@gmail.com")
+SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD", "")
 
-# 통합 인증번호
-auth_codes_db = {} 
+# 이메일 형식 검증 정규식 (send_register_auth_code, send_auth_code 공통 사용)
+_EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 
-def send_email(to_email, subject, content):
+# 인증번호 인메모리 저장소 (재시작 시 초기화됨)
+auth_codes_db: dict[str, str] = {}
+
+
+def send_email(to_email: str, subject: str, content: str) -> None:
     msg = MIMEText(content)
     msg['Subject'] = subject
-    msg['From'] = SENDER_EMAIL
-    msg['To'] = to_email
+    msg['From']    = SENDER_EMAIL
+    msg['To']      = to_email
 
     server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-    server.starttls()
-    server.login(SENDER_EMAIL, SENDER_PASSWORD)
-    server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
-    server.quit()
+    try:
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
+    finally:
+        server.quit()
 
 # =========================================================
 # 1. 데이터 모델 정의
@@ -67,19 +74,11 @@ class VerifyCodeRequest(BaseModel):
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="REDACTED_DB_PASSWORD", 
-        database="game_db"
+        host=os.getenv("DB_HOST", "127.0.0.1"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "game_db"),
     )
-
-def get_user_pk(cursor, user_id_str):
-    sql = "SELECT pk_id FROM users WHERE id = %s"
-    cursor.execute(sql, (user_id_str,))
-    result = cursor.fetchone()
-    if result:
-        return result['pk_id'] if isinstance(result, dict) else result[0]
-    return None
 
 @app.get("/")
 def read_root(): return {"message": "서버 작동 중"}
@@ -125,8 +124,7 @@ def find_id_by_email(req: EmailRequest):
 # ✨ 1. 회원가입용 인증번호 발송 API (통합 DB 저장)
 @app.post("/send_register_auth_code")
 def send_register_auth_code(req: RegisterCodeRequest):
-    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
-    if not email_regex.match(req.email):
+    if not _EMAIL_REGEX.match(req.email):
         return {"status": "FAIL", "msg": "올바른 이메일 형식이 아닙니다."}
 
     conn = get_db_connection(); cursor = conn.cursor()
@@ -150,7 +148,7 @@ def send_register_auth_code(req: RegisterCodeRequest):
 @app.post("/register")
 def register(req: UserAuth):
     if not req.email or not req.code:
-        return {"status": "FAIL", "msg": "이메일 인증을 해주세요.)"}
+        return {"status": "FAIL", "msg": "이메일 인증을 해주세요."}
 
     saved_code = auth_codes_db.get(req.email)
     if not saved_code or saved_code != req.code:
@@ -172,8 +170,7 @@ def register(req: UserAuth):
 # ✨ 3. 비밀번호 찾기용 인증번호 발송 API
 @app.post("/send_auth_code")
 def send_auth_code(req: AuthCodeRequest):
-    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
-    if not email_regex.match(req.email):
+    if not _EMAIL_REGEX.match(req.email):
         return {"status": "FAIL", "msg": "올바른 이메일 형식이 아닙니다."}
 
     conn = get_db_connection(); cursor = conn.cursor()
@@ -183,8 +180,8 @@ def send_auth_code(req: AuthCodeRequest):
             return {"status": "FAIL", "msg": "등록된 정보가 없습니다."}
         
         auth_code = str(random.randint(100000, 999999))
-        auth_codes_db[req.email] = auth_code #
-        
+        auth_codes_db[req.email] = auth_code
+
         content = f"안녕하세요, Py.Factory입니다.\n\n{req.user_id}님의 비밀번호 찾기 인증번호는 [{auth_code}] 입니다.\n\n게임 화면에 인증번호를 입력해 주세요."
         send_email(req.email, "[Py.Factory] 비밀번호 찾기 인증번호", content)
         

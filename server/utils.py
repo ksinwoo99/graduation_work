@@ -4,6 +4,9 @@ import ast
 # calculate_score 공식 기준: min(10, 값 × 5) → 2.0 이면 최대 효율 보너스(+10) 획득
 _INFINITE_WHILE_EFFICIENCY_PROXY = 2.0
 
+# _calculate_max_depth 에서 깊이 계산 대상이 되는 제어 흐름 노드 타입
+_CONTROL_NODES = (ast.For, ast.While, ast.If, ast.Try, ast.With)
+
 
 # ──────────────────────────────────────────────
 # 내부 헬퍼: 무한 루프 while 판별
@@ -25,10 +28,8 @@ def _calculate_max_depth(tree: ast.AST) -> int:
     For / While / If / Try / With 제어 흐름 구조의 최대 중첩 깊이를 반환합니다.
     예) for 안에 if, 안에 while → 깊이 3
     """
-    CONTROL_NODES = (ast.For, ast.While, ast.If, ast.Try, ast.With)
-
     def _depth(node: ast.AST, current: int = 0) -> int:
-        if isinstance(node, CONTROL_NODES):
+        if isinstance(node, _CONTROL_NODES):
             current += 1
         max_d = current
         for child in ast.iter_child_nodes(node):
@@ -109,7 +110,6 @@ def extract_features(source_code: str) -> dict:
     }
 
     if not source_code:
-        print("소스 코드가 비어있습니다.")
         return features
 
     features['line_count'] = len(source_code.strip().split('\n'))
@@ -171,6 +171,6 @@ def extract_features(source_code: str) -> dict:
             features['loop_efficiency'] = _INFINITE_WHILE_EFFICIENCY_PROXY
 
     except SyntaxError:
-        print("특징 추출 실패 : 문법 오류가 있는 코드입니다.")
+        pass  # 문법 오류 코드는 피처 기본값(0)으로 반환
 
     return features
