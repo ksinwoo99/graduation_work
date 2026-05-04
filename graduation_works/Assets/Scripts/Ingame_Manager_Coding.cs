@@ -165,17 +165,29 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         else globalCodes.Add(currentMachineId, code);
 
         if (hasName && !string.IsNullOrEmpty(newName)) {
+            Ingame_Button_Build[] allButtons = FindObjectsOfType<Ingame_Button_Build>(true);
+            foreach (var btn in allButtons) {
+                Iteminfo_Base info = btn.GetComponent<Iteminfo_Base>();
+                if (info != null && Ingame_System_Save.Instance != null) {
+                    string engName = info.machinePrefab != null ? info.machinePrefab.name : info.machineName;
+                    int mId = Ingame_System_Save.Instance.GetMachineTypeInt(engName);
+                    
+                    if (mId != currentMachineId && info.machineName == newName) {
+                        SetStatus(Color.red, false); 
+                        return -7;
+                    }
+                }
+            }
+
             if (titleText != null) titleText.text = $"{newName}.py";
             
             if (currentBuildButton != null) {
                 if (currentBuildButton.nameText != null) currentBuildButton.nameText.text = newName;
                 
-                // ✨ [핵심 추가 1] Iteminfo_Base의 기본 이름도 코딩한 이름으로 덮어씌웁니다!
                 Iteminfo_Base info = currentBuildButton.GetComponent<Iteminfo_Base>();
                 if (info != null) {
                     info.machineName = newName;
                     
-                    // 만약 정보창(Info)이 이미 켜져 있다면, 즉시 바뀐 이름으로 새로고침합니다.
                     if (buildManager != null && buildManager.machineInfoUI != null && buildManager.machineInfoUI.gameObject.activeSelf) {
                         buildManager.machineInfoUI.ShowInfo(info);
                     }
