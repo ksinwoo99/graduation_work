@@ -201,7 +201,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
             isMachValid = (applyResult == 2);
             isSuccess   = isMachValid;   // is_python_valid 는 이미 true
 
-            string timeMsg = $"\n(실행 시간: {response.execution_time:F3}초)";
+            string timeMsg = $"  (실행 시간: {response.execution_time:F3}초)";
 
             // applyResult 코드별 피드백 메시지
             // 값 정의는 Ingame_Manager_Coding.CheckCodeAndApply() 참고
@@ -215,6 +215,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
                 case -4: SetUI("기계의 이름(name 변수)을 필수로 지정해야 합니다!" + timeMsg, Color.red, true); break;
                 case -5: SetUI("시스템 권한 부족: 아직 컨베이어 벨트를 가동할 수 없습니다!" + timeMsg, Color.red, true); break;
                 case -6: SetUI("시스템 권한 부족: 아직 컨베이어 벨트 고속(fast) 모드를 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
+                case -7: SetUI("이미 다른 기계가 사용 중인 이름은 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
                 default: SetUI("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다." + timeMsg, Color.red, true); break;
             }
         }
