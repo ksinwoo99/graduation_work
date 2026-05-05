@@ -372,10 +372,11 @@ public class Ingame_System_Save : MonoBehaviour {
         // ✨ 맵 세팅이 완전히 끝나길 기다리기 위해 여유롭게 0.2초 대기
         yield return new WaitForSeconds(0.2f); 
 
-        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+        bool isTutorial = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive);
+
+        // 1. 튜토리얼 중일 때는 단계에 맞춰 하단 기계 버튼을 Invoke
+        if (isTutorial) {
             int step = Ingame_UI_Tutorial.Instance.currentStep;
-            
-            // ✨ 단계에 맞춰 알맞은 버튼을 정확하게 Invoke (클릭) 해줍니다!
             if (step <= 26 && Ingame_UI_Tutorial.Instance.btnTutorialMiner != null) {
                 Ingame_UI_Tutorial.Instance.btnTutorialMiner.onClick.Invoke();
             }
@@ -385,6 +386,25 @@ public class Ingame_System_Save : MonoBehaviour {
             else if (step >= 58 && Ingame_UI_Tutorial.Instance.btnTutorialConveyor != null) {
                 Ingame_UI_Tutorial.Instance.btnTutorialConveyor.onClick.Invoke();
             }
+        }
+        // 2. 일반 게임 중일 때는 기존처럼 저장된 좌표(savedPos) 근처의 기계를 찾아 클릭!
+        else if (Ingame_Manager_Build.Instance != null) {
+            GameObject targetMachine = null;
+            float minDistance = 100f;
+
+            foreach (var obj in Ingame_Manager_Build.Instance.GetInstalledObjects().Values) {
+                if (obj == null) continue;
+                float dist = Vector3.Distance(obj.transform.position, savedPos);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    targetMachine = obj;
+                }
+            }
+
+            // 기계를 찾았다면 마우스 클릭 신호 보내기
+            if (targetMachine != null && minDistance < 2f) {
+                targetMachine.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver);
+            } 
         }
     }
 
