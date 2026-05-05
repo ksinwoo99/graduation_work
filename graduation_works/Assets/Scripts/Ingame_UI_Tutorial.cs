@@ -43,6 +43,18 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public Button btnTutorialExpand;    
     public Button btnTutorialDemolish;  
 
+    [Header("6. 단계별 프리셋 불러오기 (자동완성)")]
+    public Button btnForceSkip;
+    public Button btnLoadPreset;
+    public TextAsset json_Step14;
+    public TextAsset json_Step31;
+    public TextAsset json_Step43;
+    public TextAsset json_Step45;
+    public TextAsset json_Step53;
+    public TextAsset json_Step59;
+    public GameObject message_Panel;
+    public TextMeshProUGUI txtMessagePop;
+
     public int currentStep = 0;
     
     public bool isTutorialActive = false;
@@ -101,6 +113,12 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             entry.eventID = EventTriggerType.EndDrag; 
             entry.callback.AddListener((data) => { OnResizeHandleDragged(); });
             trigger.triggers.Add(entry);
+        }
+
+        if (btnLoadPreset != null) {
+            btnLoadPreset.onClick.RemoveAllListeners();
+            btnLoadPreset.onClick.AddListener(OnClick_LoadPresetForCurrentStep);
+            btnLoadPreset.gameObject.SetActive(false); // 처음엔 숨겨둡니다
         }
 
         if (forceStartTutorial) StartTutorial(); 
@@ -376,6 +394,22 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 
             default: EndTutorial(); break;
         }
+
+        // 1. [자동 완성]
+        bool isPresetStep = (stepIndex == 13 || stepIndex == 31 || stepIndex == 43 || stepIndex == 53 || stepIndex == 59);
+        if (btnLoadPreset != null) btnLoadPreset.gameObject.SetActive(isPresetStep);
+
+        // ✨ 2. [스킵]
+        if (btnForceSkip != null) {
+            bool isMustBuildStep = (stepIndex == 15 || stepIndex == 25 || stepIndex == 33 || stepIndex == 60);
+            bool isYesStep = (stepIndex == 17 || stepIndex == 35 || stepIndex == 61 || stepIndex == 73);
+            bool isNextBtnVisible = btnNext.gameObject.activeSelf;
+
+            if (isPresetStep || isMustBuildStep || isYesStep || isNextBtnVisible) 
+                btnForceSkip.gameObject.SetActive(false);
+            else 
+                btnForceSkip.gameObject.SetActive(true);
+        }
     }
 
     private void OnMinerButtonClicked() {
@@ -556,9 +590,36 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         else if (currentStep == 59) CheckConveyorCodeAndProceed(); 
     }
 
-
-    public void HandleTutorialCodeAction(bool isCopyOnly)
+    // ✨ 현재 단계에 맞는 JSON 파일을 자동으로 찾아서 실행(로드)하는 함수
+    public void OnClick_LoadPresetForCurrentStep()
     {
+        if (Ingame_System_Save.Instance == null) return;
+
+        TextAsset targetJson = null;
+
+        // 현재 단계가 무엇인지 확인하고, 그에 맞는 JSON 파일을 골라냅니다.
+        switch (currentStep)
+        {
+            case 13: targetJson = json_Step14; break;
+            case 31: targetJson = json_Step31; break;
+            case 43: targetJson = json_Step43; break;
+            case 45: targetJson = json_Step45; break;
+            case 53: targetJson = json_Step53; break;
+            case 59: targetJson = json_Step59; break;
+        }
+
+        // 골라낸 파일이 있다면 실행(로드)합니다!
+        if (targetJson != null)
+        {
+            Ingame_System_Save.Instance.LoadLocalPreset(targetJson);
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ {currentStep}단계의 JSON 파일이 연결되지 않았습니다! (인스펙터를 확인해주세요)");
+        }
+    }
+    
+    public void HandleTutorialCodeAction(bool isCopyOnly) {
         if (!isTutorialActive) return;
         string codeToCopy = "";
         switch (currentStep)
@@ -569,41 +630,101 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 53: 
                 codeToCopy = "for i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')";
                 break;
-            }
+        }
 
         if (string.IsNullOrEmpty(codeToCopy)) return;
 
-    if (isCopyOnly)
-    {
-        GUIUtility.systemCopyBuffer = codeToCopy;
-        Ingame_Manager_Build.Instance.ShowFloatingText("", Camera.main.transform.position);
-    }
-    else
-    {
-        var codingMgr = Ingame_Manager_Build.Instance.codingManager;
-        if (codingMgr != null && codingMgr.codingPanel.activeSelf)
+        if (isCopyOnly)
         {
-            var targetLogic = codingMgr.GetCurrentTargetLogic();
-            
-            if (targetLogic == null || targetLogic.GetComponent<logic_Productor_Master>() == null)
+            GUIUtility.systemCopyBuffer = codeToCopy;
+            Ingame_Manager_Build.Instance.ShowFloatingText("", Camera.main.transform.position);
+        }
+        else
+        {
+            var codingMgr = Ingame_Manager_Build.Instance.codingManager;
+            if (codingMgr != null && codingMgr.codingPanel.activeSelf)
             {
+                var targetLogic = codingMgr.GetCurrentTargetLogic();
+                
+                if (targetLogic == null || targetLogic.GetComponent<logic_Productor_Master>() == null)
+                {
+                    Ingame_Manager_Build.Instance.ShowFloatingText("", codingMgr.codingPanel.transform.position);
+                    return;
+                }
+
+                var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+                string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
+
+                System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(currentText, @"name\s*=\s*['""][^'""]+['""]");
+                
+                if (match.Success) {
+                    codeToCopy = match.Value + "\n" + codeToCopy;
+                }
+
+                if (codeEditor != null) codeEditor.Text = codeToCopy;
+                else codingMgr.inputField.text = codeToCopy;
+
                 Ingame_Manager_Build.Instance.ShowFloatingText("", codingMgr.codingPanel.transform.position);
-                return;
             }
-
-            var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
-            string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
-
-            if (currentText.Contains("name =")) {
-                string[] lines = currentText.Split('\n');
-                codeToCopy = lines[0] + "\n" + codeToCopy;
-            }
-
-            if (codeEditor != null) codeEditor.Text = codeToCopy;
-            else codingMgr.inputField.text = codeToCopy;
-
-            Ingame_Manager_Build.Instance.ShowFloatingText("", codingMgr.codingPanel.transform.position);
         }
     }
-}
+
+    public void OnClick_ForceSkipToNextStep()
+    {
+        if (!isTutorialActive) return;
+
+        // --- [A] 모든 스킵은 가장 안전하고 완벽한 Invoke 방식으로 통일! (Show 방식 폐기) ---
+        if (currentStep == 6 && btnTutorialMiner != null) { btnTutorialMiner.onClick.Invoke(); return; }
+        if (currentStep == 29 && btnTutorialProductor != null) { btnTutorialProductor.onClick.Invoke(); return; }
+        if (currentStep == 42 && btnTutorialProductor != null) { btnTutorialProductor.onClick.Invoke(); return; }
+        if (currentStep == 58 && btnTutorialConveyor != null) { btnTutorialConveyor.onClick.Invoke(); return; }
+
+        // --- [B] 보상 해금이 필요한 특정 단계 스킵 처리 ---
+        if (currentStep == 53) { UnlockFeatureBySkip(5, "반복문 사용 가능!"); }
+        else if (currentStep == 71) { UnlockFeatureBySkip(12, "공장 확장 해금!"); }
+
+        // --- [C] JSON 로딩이 필요한 단계 처리 ---
+        if (currentStep == 43 || currentStep == 53 || currentStep == 59) {
+            OnClick_LoadPresetForCurrentStep(); 
+            currentStep++; PlayStep(currentStep);
+            return;
+        }
+
+        currentStep++;
+        PlayStep(currentStep);
+    }
+
+    // ✨ 기능을 강제로 열고 메시지를 띄우는 함수
+    private void UnlockFeatureBySkip(int targetQuestId, string msg) {
+        if (Ingame_Manager_Quest.Instance != null) {
+            // 퀘스트 ID를 강제로 올려서 버튼들을 활성화시킵니다.
+            Ingame_Manager_Quest.Instance.currentQuestId = targetQuestId;
+            Ingame_Manager_Quest.Instance.RefreshButtonStates(); 
+        }
+        ShowMessagePanel(msg);
+    }
+
+    // ✨ 메시지 패널을 3초간 띄우는 코루틴
+    public void ShowMessagePanel(string msg) {
+        if (message_Panel == null) return;
+        
+        txtMessagePop.text = msg;
+        message_Panel.SetActive(true);
+        
+        // 이미 돌아가고 있는 끄기 예약이 있다면 중지
+        StopCoroutine("CloseMessageAfterDelay");
+        StartCoroutine("CloseMessageAfterDelay");
+    }
+
+    IEnumerator CloseMessageAfterDelay() {
+        yield return new WaitForSeconds(3f);
+        if (message_Panel != null) message_Panel.SetActive(false);
+    }
+
+    // ✨ 팝업창을 클릭하면 즉시 닫히도록 하는 함수 (이벤트 트리거용)
+    public void OnClick_MessagePanel() {
+        StopCoroutine("CloseMessageAfterDelay");
+        if (message_Panel != null) message_Panel.SetActive(false);
+    }
+
 }

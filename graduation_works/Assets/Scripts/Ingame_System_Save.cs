@@ -315,6 +315,86 @@ public class Ingame_System_Save : MonoBehaviour {
         }
     }
 
+    public void OnClick_ExportPresetToJSON() 
+    {
+        if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null) {
+            Ingame_Manager_Build.Instance.codingManager.SaveCurrentInput();
+        }
+
+        GameSaveRequest data = GatherAllData("tutorial_preset");
+
+        string jsonText = JsonUtility.ToJson(data, true);
+
+        GUIUtility.systemCopyBuffer = jsonText;
+
+        Debug.Log("[프리셋 복사 완료]\n\n" + jsonText);
+        
+        if (Ingame_Manager_Build.Instance != null) {
+            Ingame_Manager_Build.Instance.ShowFloatingText("JSON 복사 완료!", Camera.main.transform.position);
+        }
+    }
+
+    public void LoadLocalPreset(TextAsset presetJsonFile) 
+    {
+        if (presetJsonFile == null) return;
+
+        Vector3? openCodingPos = null;
+        if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null) {
+            if (Ingame_Manager_Build.Instance.codingManager.codingPanel.activeSelf) {
+                var target = Ingame_Manager_Build.Instance.codingManager.GetCurrentTargetLogic();
+                if (target != null) {
+                    openCodingPos = target.transform.position;
+                }
+            }
+        }
+
+        GameSaveRequest savedData = JsonUtility.FromJson<GameSaveRequest>(presetJsonFile.text);
+
+        GameLoadResponse response = new GameLoadResponse();
+        response.status = "SUCCESS";
+        response.resources = new LoadResources {
+            resource_1 = savedData.res1, resource_2 = savedData.res2,
+            resource_3 = savedData.res3, resource_4 = savedData.res4,
+            resource_5 = savedData.res5, 
+            total_play_time = (Ingame_Manager_Time.Instance != null) ? (int)Ingame_Manager_Time.Instance.gameTime : savedData.play_time,
+            expand_count = savedData.expand_count, quest_id = savedData.quest_id,
+            tutorial_step = savedData.tutorial_step, conveyor_level = savedData.conveyor_level
+        };
+        response.machines = savedData.machines;
+
+        ApplyGameData(response);
+
+        if (openCodingPos.HasValue) {
+            StartCoroutine(RestoreCodingPanelCoroutine(openCodingPos.Value));
+        }
+    }
+    IEnumerator RestoreCodingPanelCoroutine(Vector3 savedPos) {
+        // ✨ 맵 세팅이 완전히 끝나길 기다리기 위해 여유롭게 0.2초 대기
+        yield return new WaitForSeconds(0.2f); 
+
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+            int step = Ingame_UI_Tutorial.Instance.currentStep;
+            
+            // ✨ 단계에 맞춰 알맞은 버튼을 정확하게 Invoke (클릭) 해줍니다!
+            if (step <= 26 && Ingame_UI_Tutorial.Instance.btnTutorialMiner != null) {
+                Ingame_UI_Tutorial.Instance.btnTutorialMiner.onClick.Invoke();
+            }
+            else if (step > 26 && step < 58 && Ingame_UI_Tutorial.Instance.btnTutorialProductor != null) {
+                Ingame_UI_Tutorial.Instance.btnTutorialProductor.onClick.Invoke(); 
+            }
+            else if (step >= 58 && Ingame_UI_Tutorial.Instance.btnTutorialConveyor != null) {
+                Ingame_UI_Tutorial.Instance.btnTutorialConveyor.onClick.Invoke();
+            }
+        }
+    }
+
+    IEnumerator WaitAndOpenCodingWindow(GameObject machine) {
+        yield return new WaitForSeconds(0.1f);
+        if (machine != null) {
+            machine.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver);
+        }
+    }
+    
     private GameObject GetPrefabFromInt(int type) {
         var buildMgr = Ingame_Manager_Build.Instance;
         if (buildMgr == null || buildMgr.loadablePrefabs == null) return null;
