@@ -1,0 +1,33 @@
+{
+    "user_id": "tutorial_preset",
+    "res1": 0,
+    "res2": 0,
+    "res3": 0,
+    "res4": 139,
+    "res5": 0,
+    "play_time": 30,
+    "expand_count": 0,
+    "quest_id": 2,
+    "tutorial_step": 44,
+    "conveyor_level": 0,
+    "machines": [
+        {
+            "machine_type": 1,
+            "tile_index": 0,
+            "pos_x": -2.0,
+            "pos_y": 1.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": "name = \"튜토1\"\nmining()"
+        },
+        {
+            "machine_type": 5,
+            "tile_index": 0,
+            "pos_x": -1.0,
+            "pos_y": 1.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": "name = '튜토2'\nif resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"
+        }
+    ]
+}

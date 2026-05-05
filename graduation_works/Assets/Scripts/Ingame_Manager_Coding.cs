@@ -259,6 +259,13 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
     }
 
+    public void OpenCodingPanelByType(int machineType)
+    {
+        if (codingPanel.activeSelf) codingPanel.SetActive(false);
+        
+        codingPanel.SetActive(true);
+    }
+
     public void SyncAllButtonNames() {
         Ingame_Button_Build[] allButtons = FindObjectsOfType<Ingame_Button_Build>(true);
         foreach (var btn in allButtons) {

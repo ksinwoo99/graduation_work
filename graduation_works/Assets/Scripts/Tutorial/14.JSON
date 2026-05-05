@@ -1,0 +1,24 @@
+{
+    "user_id": "tutorial_preset",
+    "res1": 0,
+    "res2": 0,
+    "res3": 0,
+    "res4": 100,
+    "res5": 0,
+    "play_time": 5,
+    "expand_count": 0,
+    "quest_id": 1,
+    "tutorial_step": 15,
+    "conveyor_level": 0,
+    "machines": [
+        {
+            "machine_type": 1,
+            "tile_index": 0,
+            "pos_x": -9999.0,
+            "pos_y": -9999.0,
+            "pos_z": -9999.0,
+            "rotation_y": 0.0,
+            "source_code": "name = \"튜토1\"\nmining()"
+        }
+    ]
+}
