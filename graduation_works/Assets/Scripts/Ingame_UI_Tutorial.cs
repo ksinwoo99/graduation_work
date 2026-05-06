@@ -669,6 +669,12 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         }
     }
 
+    IEnumerator WaitAndShowCodingDirectly(int machineType) {
+        yield return new WaitForSeconds(0.2f); 
+        if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null) {
+            Ingame_Manager_Build.Instance.codingManager.OpenCodingPanelByType(machineType); 
+        }
+    }
     public void OnClick_ForceSkipToNextStep()
     {
         if (!isTutorialActive) return;
@@ -676,7 +682,13 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         // --- [A] 모든 스킵은 가장 안전하고 완벽한 Invoke 방식으로 통일! (Show 방식 폐기) ---
         if (currentStep == 6 && btnTutorialMiner != null) { btnTutorialMiner.onClick.Invoke(); return; }
         if (currentStep == 29 && btnTutorialProductor != null) { btnTutorialProductor.onClick.Invoke(); return; }
-        if (currentStep == 42 && btnTutorialProductor != null) { btnTutorialProductor.onClick.Invoke(); return; }
+        // ✨ 42단계 스킵 시 Show 방식 사용
+        if (currentStep == 42) { 
+            StartCoroutine(WaitAndShowCodingDirectly(5)); 
+            currentStep++; 
+            PlayStep(currentStep); 
+            return; 
+        }
         if (currentStep == 58 && btnTutorialConveyor != null) { btnTutorialConveyor.onClick.Invoke(); return; }
 
         // --- [B] 보상 해금이 필요한 특정 단계 스킵 처리 ---
