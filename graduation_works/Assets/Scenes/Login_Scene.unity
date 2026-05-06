@@ -555,6 +555,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 621571286}
     m_Modifications:
+    - target: {fileID: 3101634790175231379, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
+      propertyPath: m_ContentType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3101634790175231379, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
+      propertyPath: m_KeyboardType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3101634790175231379, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6675106934705624625, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5847,6 +5859,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 686276999}
     m_Modifications:
+    - target: {fileID: 3101634790175231379, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
+      propertyPath: m_ContentType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3101634790175231379, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
+      propertyPath: m_KeyboardType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3101634790175231379, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6675106934705624625, guid: 1bf02ee2f5494264c8905a5d7e2e5197, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
