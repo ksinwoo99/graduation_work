@@ -153,7 +153,10 @@ public class logic_Miner_Master : logic_CodingBase {
 
             SpawnResource();
             if (miningCount != -1) currentCount++;
-
+            if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null && Ingame_System_Save.Instance != null) {
+                int myMachineId = Ingame_System_Save.Instance.GetMachineTypeInt(this.GetMachineName());
+                Ingame_Manager_Build.Instance.codingManager.ReportMachineWork(myMachineId);
+            }
             if (isStopping) break; 
         }
         
