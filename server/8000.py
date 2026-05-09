@@ -1,15 +1,18 @@
-from fastapi import FastAPI, Query, HTTPException
-from pydantic import BaseModel, Field
-import mysql.connector
-from typing import List, Optional
-from datetime import datetime
-import ast, asyncio, time, io, traceback
+import os
+import ast
+import asyncio
+import time
+import io
 from contextlib import redirect_stdout
+from datetime import datetime
+from typing import List, Optional
 
-import smtplib
-from email.mime.text import MIMEText
-import random
+import mysql.connector
+from fastapi import FastAPI
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -26,13 +29,6 @@ class CodeExecRequest(BaseModel):
     resSpecial: int = 0
     resExotic: int = 0
 
-class CodeLogRequest(BaseModel):
-    user_id: str
-    source_code: str
-    is_success: bool
-    output_log: str
-    execution_time: float = 0.0
-
 class MachineData(BaseModel):
     machine_type: int
     tile_index: int = 0
@@ -41,10 +37,6 @@ class MachineData(BaseModel):
     pos_x: float = 0.0
     pos_y: float = 0.0
     pos_z: float = 0.0
-    
-class Config:
-    populate_by_name = True                
-    allow_population_by_field_name = True  
 
 class GameSaveRequest(BaseModel):
     user_id: str
@@ -70,10 +62,10 @@ class RecommendRequest(BaseModel):
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="REDACTED_DB_PASSWORD", 
-        database="game_db"
+        host=os.getenv("DB_HOST", "127.0.0.1"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "game_db"),
     )
 
 def get_user_pk(cursor, user_id_str):

@@ -18,6 +18,8 @@ import os
 import datetime
 import re
 import difflib
+import random
+import numpy as np
 import pandas as pd
 
 from config import DB_CONFIG
@@ -38,6 +40,19 @@ MODEL_PATH = os.path.join(_BASE_DIR, 'code_cluster_model.pkl')
 #      0 = 단순 코드형  (루프 미사용, score 최하위)
 #      1 = 성장형       (루프 일부 사용, score 중간)
 #      2 = 효율 최적화형 (루프 적극 활용, score 최상위)
+#
+# 힌트 효과성 밴딧 기능을 사용하려면 아래 SQL도 실행하세요.
+#
+#   ALTER TABLE code_logs ADD COLUMN hint_type VARCHAR(64) DEFAULT NULL;
+#
+#   CREATE TABLE IF NOT EXISTS hint_stats (
+#       hint_type     VARCHAR(64) NOT NULL PRIMARY KEY,
+#       shown_count   INT         NOT NULL DEFAULT 0,
+#       success_count INT         NOT NULL DEFAULT 0,
+#       updated_at    DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+#   );
+#
+#   두 컬럼/테이블이 없어도 메인 기능(힌트 반환, 점수 저장)은 정상 동작합니다.
 # ────────────────────────────────────────────────────────────
 
 
@@ -53,7 +68,7 @@ scaler             = None
 #   rank 2 = 효율 최적화형 (score 평균 최상위)
 # kmeans_trainer.py 가 학습 후 score 기준으로 정렬해 저장하므로
 # 재학습 후 cluster ID 가 뒤바뀌어도 힌트 의미가 유지됩니다.
-cluster_rank_map: dict = {}
+cluster_rank_map: dict[int, int] = {}
 
 # 마지막으로 로드한 pkl 파일의 수정 시각 (hot-reload 기준)
 _model_loaded_mtime: float = 0.0
@@ -66,6 +81,77 @@ _model_meta: dict = {}
 # predict_cluster_rank() 에서 동일하게 곱해야 학습·추론 피처 공간이 일치합니다.
 _feature_weights: list = []
 _feature_names:   list = []
+
+# ── 힌트 효과성 밴딧(ε-greedy) 상태 ──────────────────────────────
+# 성공 힌트(rank 0/1)에 복수 변형을 두고, 어떤 변형이 사용자 개선을
+# 실제로 이끌어냈는지 자동으로 학습합니다.
+# 탐색률 ε=0.2: 20%는 랜덤 탐색, 80%는 누적 성공률 최고 변형 선택.
+_BANDIT_EPSILON = 0.2
+_hint_stats: dict[str, dict] = {}   # hint_type → {"shown": N, "success": M}
+
+# 밴딧이 선택할 힌트 변형 풀 — (hint_text, hint_type_id) 쌍의 리스트.
+# 각 상황(group_key)에 2개의 변형을 두어 어떤 표현이 더 효과적인지 학습합니다.
+_HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
+    "succ_r0_simple": [
+        (
+            "[ 단순 코드형 ] "
+            "명령을 하나씩 순서대로 실행하는 코드예요. "
+            "반복문(for)을 사용하면 같은 명령을 여러 번 한 번에 실행할 수 있어요! "
+            "예시: for i in range(5): mining()",
+            "succ_r0_simple_A",
+        ),
+        (
+            "[ 단순 코드형 ] "
+            "mining()을 한 줄씩 쓰는 대신 for i in range(5): mining() 으로 묶어보세요! "
+            "숫자가 클수록 기계가 더 많이 일해요.",
+            "succ_r0_simple_B",
+        ),
+    ],
+    "succ_r0_has_if": [
+        (
+            "[ 단순 코드형 ] "
+            "조건문(if)을 활용하고 있어요! "
+            "여기에 반복문(for)까지 더하면 훨씬 강력해집니다. "
+            "예시: for i in range(5): mining()",
+            "succ_r0_has_if_A",
+        ),
+        (
+            "[ 단순 코드형 ] "
+            "if 판단을 잘 쓰고 있어요! "
+            "while True: 로 기계를 계속 돌리면서 if 로 상황을 판단하면 더 강력해요.",
+            "succ_r0_has_if_B",
+        ),
+    ],
+    "succ_r1_for": [
+        (
+            "[ 일반 학습자형 ] "
+            "for 반복문을 활용하고 있어요! "
+            "range() 안의 숫자를 더 크게 늘려보거나, "
+            "while True 무한 반복에도 도전해보세요.",
+            "succ_r1_for_A",
+        ),
+        (
+            "[ 일반 학습자형 ] "
+            "for 루프로 좋은 구조를 만들었어요! "
+            "while True: 를 사용하면 기계가 멈추지 않고 계속 일해요. 한번 바꿔보세요!",
+            "succ_r1_for_B",
+        ),
+    ],
+    "succ_r1_while": [
+        (
+            "[ 일반 학습자형 ] "
+            "while 반복문을 사용하고 있어요! "
+            "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요.",
+            "succ_r1_while_A",
+        ),
+        (
+            "[ 일반 학습자형 ] "
+            "while 루프를 쓰고 있군요! "
+            "while True: 와 break 조합으로 무한 자동화를 구현해보세요.",
+            "succ_r1_while_B",
+        ),
+    ],
+}
 
 
 def _load_model() -> None:
@@ -134,9 +220,74 @@ _load_model()
 
 
 # ──────────────────────────────────────────────────────────
+# 힌트 효과성 밴딧 — DB 로드 / 변형 선택
+# ──────────────────────────────────────────────────────────
+
+def _load_hint_stats_from_db() -> None:
+    """서버 구동 시 hint_stats 테이블에서 밴딧 누적 통계를 메모리에 로드합니다."""
+    global _hint_stats
+    try:
+        conn   = pymysql.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT hint_type, shown_count, success_count FROM hint_stats")
+            for row in cursor.fetchall():
+                _hint_stats[row['hint_type']] = {
+                    "shown":   row['shown_count'],
+                    "success": row['success_count'],
+                }
+            print(f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료")
+        except Exception as e:
+            if "hint_stats" in str(e).lower() or "doesn't exist" in str(e).lower():
+                print("[HintBandit] hint_stats 테이블 없음 — 빈 통계로 시작 (마이그레이션 SQL 참고)")
+            else:
+                print(f"[HintBandit] 통계 로드 실패: {e}")
+        finally:
+            conn.close()
+    except Exception as e:
+        print(f"[HintBandit] DB 연결 실패: {e}")
+
+
+def _bandit_select(group_key: str) -> tuple[str, str]:
+    """
+    ε-greedy 밴딧으로 힌트 변형을 선택합니다.
+
+    탐색(explore, 확률 ε=0.2) : 변형 중 랜덤 선택 — 탐색 부족 변형에 기회 부여
+    활용(exploit, 확률 1-ε)   : 누적 성공률 최고 변형 선택
+    아직 노출 데이터 없는 변형에는 낙관적 초기값 1.0 부여 (미탐색 우선 시도)
+
+    반환: (hint_text, hint_type_id)
+    """
+    variants = _HINT_VARIANTS.get(group_key, [])
+    if not variants:
+        return "코드가 정상 적용되었습니다.", f"succ_unknown_{group_key}"
+    if len(variants) == 1:
+        return variants[0]
+
+    if random.random() < _BANDIT_EPSILON:
+        return random.choice(variants)
+
+    best_variant = variants[0]
+    best_rate    = -1.0
+    for variant in variants:
+        _, hint_type = variant
+        stats = _hint_stats.get(hint_type, {"shown": 0, "success": 0})
+        shown = stats["shown"]
+        rate  = 1.0 if shown == 0 else stats["success"] / shown
+        if rate > best_rate:
+            best_rate    = rate
+            best_variant = variant
+
+    return best_variant
+
+
+_load_hint_stats_from_db()
+
+
+# ──────────────────────────────────────────────────────────
 # 군집 예측 헬퍼 — 모델 핫리로드 포함
 # ──────────────────────────────────────────────────────────
-def predict_cluster_rank(features: dict, execution_time: float, score: float) -> int:
+def predict_cluster_rank(features: dict, execution_time: float) -> int:
     """
     현재 모델로 코드의 군집 semantic rank(0/1/2)를 예측합니다.
 
@@ -145,9 +296,9 @@ def predict_cluster_rank(features: dict, execution_time: float, score: float) ->
 
     반환값:
         -1 : 모델 없음 또는 예측 오류
-         0 : 단순 코드형  (루프 미사용, 낮은 점수)
-         1 : 성장형       (루프 일부 사용)
-         2 : 효율 최적화형 (루프 적극 활용, 높은 점수)
+         0 : 단순 코드형  (루프 미사용)
+         1 : 일반 학습자형 (루프 일부 사용)
+         2 : 효율 최적화형 (루프 적극 활용)
     """
     _maybe_reload_model()
 
@@ -155,14 +306,14 @@ def predict_cluster_rank(features: dict, execution_time: float, score: float) ->
         return -1
 
     try:
-        feat_with_meta = {**features, 'execution_time': execution_time, 'score': score}
+        # score는 학습 피처에서 제외(순환 결합 방지) — kmeans_trainer.py 와 동일하게 맞춤
+        feat_with_meta = {**features, 'execution_time': execution_time}
         user_df        = pd.DataFrame([feat_with_meta])
         scaled         = scaler.transform(user_df)
 
         # 학습 시 적용한 피처 가중치를 추론에도 동일하게 적용 (공간 일치)
         if _feature_weights and len(_feature_weights) == scaled.shape[1]:
-            import numpy as _np
-            scaled = scaled * _np.array(_feature_weights, dtype=float)
+            scaled = scaled * np.array(_feature_weights, dtype=float)
 
         raw_cluster = int(code_cluster_model.predict(scaled)[0])
         return cluster_rank_map.get(raw_cluster, raw_cluster)
@@ -455,7 +606,8 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
 
     1단계 (is_python_valid == False) : 파이썬 에러 유형별 세분화 힌트
     2단계 (is_machine_valid == False): 기계 조건 미충족 힌트
-    3단계 (성공)                      : ML 군집 기반 맞춤 힌트
+    3단계 (성공)                      : _generate_hint_typed() 의 ε-greedy 밴딧이 담당
+                                        (이 함수는 1·2단계만 처리)
 
     주의: 8000.py 의 format_error_user() 는 IndentationError / TabError 포함
           모든 SyntaxError 계열을 "SyntaxError: {msg}" 로 포맷합니다.
@@ -721,63 +873,166 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
 
         return "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
 
-    # ══════════════════════════════════════════════════════
-    # 3단계: 성공 — ML 군집 기반 맞춤 힌트
-    # features 를 활용해 같은 rank 안에서도 코드 특성별로 세분화합니다.
-    # 성장/정체/하락 문구는 _get_progression_note() 가 담당하므로
-    # 여기서는 "현재 코드의 특성"과 "다음 단계 방향" 만 안내합니다.
-    # ══════════════════════════════════════════════════════
-    if cluster_rank == 0:
-        # 단순 코드형: 반복문 없음
-        if features.get('if_count', 0) > 0:
-            # 조건문(if/elif)은 쓰지만 반복문 없음
-            return (
-                "[ 단순 코드형 ] "
-                "조건문(if)을 활용하고 있어요! "
-                "여기에 반복문(for)까지 더하면 훨씬 강력해집니다. "
-                "예시: for i in range(5): mining()"
-            )
-        # 완전 단순 — 명령어 나열만
-        return (
-            "[ 단순 코드형 ] "
-            "명령을 하나씩 순서대로 실행하는 코드예요. "
-            "반복문(for)을 사용하면 같은 명령을 여러 번 한 번에 실행할 수 있어요! "
-            "예시: for i in range(5): mining()"
-        )
+    # 성공 힌트(3단계)는 _generate_hint_typed() 의 ε-greedy 밴딧이 처리합니다.
+    # 이 함수는 is_python_valid=False 또는 is_machine_valid=False 일 때만 호출됩니다.
 
-    if cluster_rank == 1:
-        # 일반 학습자형: 반복문 있음, 효율 중간
-        if features.get('while_count', 0) > 0 and not features.get('has_infinite_while', 0):
-            # 일반 while(조건식)을 쓰는 경우 — while True 로의 발전 유도
-            return (
-                "[ 일반 학습자형 ] "
-                "while 반복문을 사용하고 있어요! "
-                "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요."
-            )
-        # for range 사용 중 — 숫자를 늘리거나 while True 도전 유도
-        return (
-            "[ 일반 학습자형 ] "
-            "for 반복문을 활용하고 있어요! "
-            "range() 안의 숫자를 더 크게 늘려보거나, "
-            "while True 무한 반복에도 도전해보세요."
-        )
 
-    if cluster_rank == 2:
-        # 효율 최적화형: 루프 효율 높음
-        if features.get('has_infinite_while', 0):
+# ──────────────────────────────────────────────────────────
+# 힌트 타입 추론 — 에러/기계 힌트 분류 (밴딧 통계 태깅용)
+# ──────────────────────────────────────────────────────────
+
+def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: int) -> str | None:
+    """
+    generate_hint() 의 분기 로직과 동일한 기준으로 hint_type 문자열을 결정합니다.
+    성공 케이스(rank 0/1/2)는 _generate_hint_typed() 내 밴딧이 처리하므로 None 반환.
+    """
+    if not request.is_python_valid:
+        log = request.output_log.lower()
+        if "syntaxerror" in log:
+            if "expected an indented block"       in log: return "err_syntax_indent_expected"
+            if "unexpected indent"                in log: return "err_syntax_unexpected_indent"
+            if "inconsistent use of tabs"         in log \
+                    or "taberror"                 in log: return "err_syntax_tab"
+            if "unexpected eof"                   in log \
+                    or "never closed"             in log: return "err_syntax_unclosed_paren"
+            if "unterminated string"              in log \
+                    or "eol while scanning"       in log: return "err_syntax_unclosed_string"
+            if "return outside function"          in log: return "err_syntax_return_outside"
+            if "break outside loop"               in log: return "err_syntax_break_outside"
+            if "continue outside loop"            in log: return "err_syntax_continue_outside"
+            if "cannot assign to"                 in log \
+                    or "maybe you meant '=='"     in log: return "err_syntax_assign_compare"
+            if "invalid character"                in log: return "err_syntax_invalid_char"
+            if "f-string"                         in log: return "err_syntax_fstring"
+            return "err_syntax_generic"
+        if "nameerror"        in log: return "err_name"
+        if "typeerror"        in log: return "err_type"
+        if "attributeerror"   in log: return "err_attr"
+        if "valueerror"       in log: return "err_value"
+        if "zerodivisionerror" in log: return "err_zerodiv"
+        if "indexerror"       in log: return "err_index"
+        if "keyerror"         in log: return "err_key"
+        if "recursionerror"   in log: return "err_recursion"
+        if "timeouterror"     in log: return "err_timeout"
+        return "err_unknown"
+
+    if not request.is_machine_valid:
+        clean = request.source_code.replace(" ", "")
+        if "name=" not in clean:
+            return "machine_no_name"
+        for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
+            if fn.replace(" ", "") not in clean:
+                return "machine_missing_fn"
+        return "machine_generic"
+
+    # 성공 케이스 — _generate_hint_typed() 내 밴딧이 처리
+    return None
+
+
+def _generate_hint_typed(
+    request: CodeSubmitRequest, score: float,
+    features: dict, cluster_rank: int,
+) -> tuple[str, str]:
+    """
+    힌트 텍스트와 hint_type ID를 함께 반환합니다.
+
+    성공 힌트(rank 0/1) : ε-greedy 밴딧으로 변형 선택 → 효과적인 표현 자동 학습
+    성공 힌트(rank 2)   : 단일 최상위 메시지 반환
+    에러 / 기계 힌트    : 기존 generate_hint() 로직 유지 + 타입 태그 부여
+    """
+    if request.is_python_valid and request.is_machine_valid:
+        if cluster_rank == 0:
+            group = "succ_r0_has_if" if features.get('if_count', 0) > 0 else "succ_r0_simple"
+            return _bandit_select(group)
+        if cluster_rank == 1:
+            group = (
+                "succ_r1_while"
+                if (features.get('while_count', 0) > 0
+                    and not features.get('has_infinite_while', 0))
+                else "succ_r1_for"
+            )
+            return _bandit_select(group)
+        if cluster_rank == 2:
+            if features.get('has_infinite_while', 0):
+                return (
+                    "[ 효율 최적화형 ] "
+                    "while True 로 기계를 완전 자동화했어요! "
+                    "최고 등급의 코드입니다.",
+                    "succ_r2_infinite",
+                )
             return (
                 "[ 효율 최적화형 ] "
-                "while True 로 기계를 완전 자동화했어요! "
-                "최고 등급의 코드입니다."
+                "효율적인 반복문 구조로 잘 최적화된 코드예요! "
+                "훌륭한 코드입니다.",
+                "succ_r2_for",
             )
+        # cluster_rank == -1 (모델 미로드)
         return (
-            "[ 효율 최적화형 ] "
-            "효율적인 반복문 구조로 잘 최적화된 코드예요! "
-            "훌륭한 코드입니다."
+            "코드가 정상 적용되었습니다. 반복문을 활용하면 더 높은 점수를 받을 수 있어요!",
+            "succ_unknown",
         )
 
-    # cluster_rank == -1: 모델 미로드 또는 예측 실패 시 기본 힌트
-    return "코드가 정상 적용되었습니다. 반복문을 활용하면 더 높은 점수를 받을 수 있어요!"
+    # 에러 / 기계 힌트 — 기존 로직 재사용
+    hint_text = generate_hint(request, score, features, cluster_rank)
+    hint_type = _infer_hint_type(request, features, cluster_rank) or "hint_unknown"
+    return hint_text, hint_type
+
+
+def _update_prev_hint_effectiveness(
+    cursor, user_pk: int, current_rank: int, is_success: bool,
+) -> None:
+    """
+    사용자 직전 제출에 표시된 힌트가 효과적이었는지 평가하여 hint_stats 를 갱신합니다.
+
+    효과 판정 기준:
+        직전 실패 → 현재 성공         : 에러 힌트가 문제 해결을 도운 것으로 간주
+        직전 rank X → 현재 rank Y > X : 성장 힌트가 개선을 이끈 것으로 간주
+
+    이 함수는 현재 제출의 INSERT 전에 호출되므로
+    조회하는 rows 는 순수하게 이전 제출 기록만 포함합니다.
+    """
+    try:
+        cursor.execute(
+            """
+            SELECT hint_type, cluster_rank, is_success
+            FROM   code_logs
+            WHERE  user_pk = %s AND hint_type IS NOT NULL
+            ORDER  BY created_at DESC
+            LIMIT  1
+            """,
+            (user_pk,)
+        )
+        prev = cursor.fetchone()
+        if not prev or not prev['hint_type']:
+            return
+
+        prev_hint_type = prev['hint_type']
+        prev_rank      = prev.get('cluster_rank', -1)
+        prev_success   = bool(prev.get('is_success', False))
+
+        is_effective = (
+            (not prev_success and is_success)
+            or (is_success and prev_rank >= 0 and current_rank > prev_rank)
+        )
+
+        if not is_effective:
+            return
+
+        # in-memory 갱신
+        stats = _hint_stats.setdefault(prev_hint_type, {"shown": 0, "success": 0})
+        stats["success"] += 1
+
+        # DB 갱신 — hint_stats 테이블이 없으면 조용히 건너뜀
+        cursor.execute(
+            """
+            INSERT INTO hint_stats (hint_type, shown_count, success_count)
+            VALUES (%s, 0, 1)
+            ON DUPLICATE KEY UPDATE success_count = success_count + 1
+            """,
+            (prev_hint_type,)
+        )
+    except Exception as e:
+        print(f"[HintBandit] 효과성 업데이트 실패: {e}")
 
 
 # ──────────────────────────────────────────────────────────
@@ -789,20 +1044,15 @@ async def submit_code(request: CodeSubmitRequest):
     Unity 클라이언트가 코드 실행 후 호출합니다.
     성공/실패 여부에 관계없이 항상 code_logs 에 기록하고,
     AI 힌트와 점수를 응답합니다.
-
-    [변경 사항]
-    - extract_features() 를 1회만 호출 후 score 계산·힌트 생성에 공유
-      (기존: generate_hint 내부에서 성공 시 별도 추출 → ast.parse 중복 호출)
-    - calculate_score() 분리 → 교육 목표 기반 공식 적용
     """
     conn   = pymysql.connect(**DB_CONFIG)
     cursor = conn.cursor()
     try:
-        # 특징을 먼저 추출하여 score 계산·군집 예측·힌트 생성에 재사용 (ast.parse 1회)
+        # ast.parse 1회 호출로 score 계산·군집 예측·힌트 생성에 재사용
         features     = extract_features(request.source_code)
         score        = calculate_score(request, features)
         # 성공한 제출만 군집 예측 (실패 시 -1 저장)
-        cluster_rank = predict_cluster_rank(features, request.execution_time, score) \
+        cluster_rank = predict_cluster_rank(features, request.execution_time) \
                        if request.is_success else -1
 
         # ── 보정 규칙: 반복문 전무 코드는 무조건 rank 0 ──────────
@@ -810,8 +1060,6 @@ async def submit_code(request: CodeSubmitRequest):
         # 루프 없는 코드를 '일반 학습자형'으로 오분류하는 현상을 방지합니다.
         if cluster_rank > 0 and features.get('has_loop', 0) == 0:
             cluster_rank = 0
-
-        ai_hint = generate_hint(request, score, features, cluster_rank)
 
         # ast_complexity 는 별도 지표 (사이클로매틱 복잡도 + 최대 중첩 깊이)
         ast_complexity = calculate_ast_complexity(request.source_code)
@@ -822,10 +1070,16 @@ async def submit_code(request: CodeSubmitRequest):
         cursor.execute("SELECT pk_id FROM users WHERE id = %s", (search_id,))
         user_record = cursor.fetchone()
         if not user_record:
-            raise Exception(f"DB에 '{search_id}' 라는 유저가 없습니다!")
+            raise HTTPException(status_code=404, detail=f"'{search_id}' 유저를 찾을 수 없습니다.")
+
+        # ── 힌트 효과성 갱신: 직전 힌트가 이번 제출 결과로 효과적이었는지 평가 ──
+        # 현재 제출은 아직 INSERT 전이므로 이전 기록만 조회됩니다.
+        _update_prev_hint_effectiveness(cursor, user_record['pk_id'], cluster_rank, request.is_success)
+
+        # ── 밴딧으로 힌트 선택 + hint_type ID 획득 ──────────────
+        ai_hint, hint_type = _generate_hint_typed(request, score, features, cluster_rank)
 
         # 성공 + 유효한 군집 예측인 경우에만 이동 이력 문구를 힌트에 추가
-        # 현재 제출은 아직 INSERT 전이므로 이전 기록만 비교합니다.
         if cluster_rank >= 0:
             progression_note = _get_progression_note(cursor, user_record['pk_id'], cluster_rank)
             if progression_note:
@@ -865,6 +1119,26 @@ async def submit_code(request: CodeSubmitRequest):
             except Exception:
                 pass
 
+        # hint_type 저장 + 밴딧 노출 횟수 갱신 (in-memory 및 DB)
+        # 마이그레이션 전이어도 메인 로직에는 영향 없습니다.
+        _hint_stats.setdefault(hint_type, {"shown": 0, "success": 0})["shown"] += 1
+        try:
+            cursor.execute(
+                "UPDATE code_logs SET hint_type = %s WHERE log_id = %s",
+                (hint_type, inserted_id)
+            )
+            cursor.execute(
+                """
+                INSERT INTO hint_stats (hint_type, shown_count, success_count)
+                VALUES (%s, 1, 0)
+                ON DUPLICATE KEY UPDATE shown_count = shown_count + 1
+                """,
+                (hint_type,)
+            )
+            conn.commit()
+        except Exception:
+            pass
+
         return {
             "status":       "success",
             "score":        score,
@@ -883,7 +1157,7 @@ async def submit_code(request: CodeSubmitRequest):
 # 엔드포인트 2: 유저 군집 이동 이력 조회
 # ──────────────────────────────────────────────────────────
 
-_RANK_LABELS = {0: "단순 코드형", 1: "성장형", 2: "효율 최적화형"}
+_RANK_LABELS = {0: "단순 코드형", 1: "일반 학습자형", 2: "효율 최적화형"}
 
 
 @app.get("/api/user_cluster_history/{user_id}")
@@ -1150,6 +1424,36 @@ async def get_model_status():
     }
 
 
+@app.get("/api/hint_stats")
+async def get_hint_stats():
+    """
+    힌트 효과성 밴딧의 누적 통계를 반환합니다.
+
+    반환 필드 (hint_type 별):
+        shown_count   — 해당 힌트가 사용자에게 표시된 횟수
+        success_count — 해당 힌트 이후 사용자가 개선된 횟수 (rank 상승 또는 에러 해결)
+        success_rate  — success_count / shown_count (노출 없으면 null)
+
+    활용:
+        어떤 힌트 표현이 실제로 사용자 행동 변화를 이끌어내는지 확인할 수 있습니다.
+        성공률이 낮은 변형은 자동으로 노출 빈도가 줄어듭니다 (ε-greedy exploit 단계).
+    """
+    result = {}
+    for hint_type, stats in sorted(_hint_stats.items()):
+        shown   = stats.get("shown",   0)
+        success = stats.get("success", 0)
+        result[hint_type] = {
+            "shown_count":   shown,
+            "success_count": success,
+            "success_rate":  round(success / shown, 3) if shown > 0 else None,
+        }
+    return {
+        "status":     "success",
+        "hint_count": len(result),
+        "stats":      result,
+    }
+
+
 @app.post("/api/model_reload")
 async def force_model_reload():
     """
@@ -1183,7 +1487,7 @@ async def force_model_reload():
 # # 로컬 테스트용
 # if __name__ == "__main__":
 #     import uvicorn
-#     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+#     uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
 
 # AWS 배포용
 if __name__ == "__main__":
