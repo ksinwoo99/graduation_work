@@ -548,6 +548,9 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         isActionMode = false; ClearHighlight(); isTutorialActive = false;
         skipPanel.SetActive(false); bubblePanel.SetActive(false); dimBackground.SetActive(false);
         StopButtonPulse(); 
+        if (Ingame_Manager_Coding.Instance != null && Ingame_Manager_Coding.Instance.btnTestBreakdown != null) {
+        Ingame_Manager_Coding.Instance.btnTestBreakdown.gameObject.SetActive(true);
+        }
     }
 
     // =========================================================

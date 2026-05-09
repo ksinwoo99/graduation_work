@@ -241,6 +241,10 @@ public class logic_Productor_Master : logic_CodingBase
                             SpawnProduct(recipe.resultPrefab, isJackpot);
                             
                             if (processingCount != -1) currentCount++;
+                            if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null && Ingame_System_Save.Instance != null) {
+                                int myMachineId = Ingame_System_Save.Instance.GetMachineTypeInt(this.GetMachineName());
+                                Ingame_Manager_Build.Instance.codingManager.ReportMachineWork(myMachineId);
+                            }
                         } else { yield return new WaitForSeconds(checkInterval); }
                     } else { yield return new WaitForSeconds(checkInterval); }
                 } else { yield return new WaitForSeconds(checkInterval); }

@@ -216,6 +216,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
                 case -5: SetUI("시스템 권한 부족: 아직 컨베이어 벨트를 가동할 수 없습니다!" + timeMsg, Color.red, true); break;
                 case -6: SetUI("시스템 권한 부족: 아직 컨베이어 벨트 고속(fast) 모드를 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
                 case -7: SetUI("이미 다른 기계가 사용 중인 이름은 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
+                case -8: SetUI("과열로 인해 해당 문법을 사용할 수 없습니다. 우회 코드를 사용하세요." + timeMsg, Color.red, true); break;
                 default: SetUI("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다." + timeMsg, Color.red, true); break;
             }
         }
