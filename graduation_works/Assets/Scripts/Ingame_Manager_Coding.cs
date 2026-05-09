@@ -244,6 +244,11 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 if (currentLogic.GetComponent<logic_Miner_Master>() != null) Ingame_Manager_Quest.Instance.isMinerNameChanged = true;
             }
 
+            if (code.Contains("# [ERROR]") || code.Contains("X_ERROR_X")) {
+                SetStatus(Color.red, false); 
+                return -8;
+            }
+
             if (forbiddenKeywords.ContainsKey(currentMachineId) && !string.IsNullOrEmpty(forbiddenKeywords[currentMachineId])) {
                 string banned = forbiddenKeywords[currentMachineId];
                 string clean = code.Replace(" ", "").ToLower();
