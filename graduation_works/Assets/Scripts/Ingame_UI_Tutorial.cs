@@ -695,8 +695,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         if (currentStep == 58 && btnTutorialConveyor != null) { btnTutorialConveyor.onClick.Invoke(); return; }
 
         // --- [B] 보상 해금이 필요한 특정 단계 스킵 처리 ---
-        if (currentStep == 53) { UnlockFeatureBySkip(5, "반복문 사용 가능!"); }
-        else if (currentStep == 71) { UnlockFeatureBySkip(12, "공장 확장 해금!"); }
+        if (currentStep == 48) { UnlockFeatureBySkip(5, "반복문 사용 가능!"); }
+        else if (currentStep == 70) { UnlockFeatureBySkip(12, "공장 확장 해금!"); }
 
         // --- [C] JSON 로딩이 필요한 단계 처리 ---
         if (currentStep == 43 || currentStep == 53 || currentStep == 59) {
@@ -716,7 +716,6 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             Ingame_Manager_Quest.Instance.currentQuestId = targetQuestId;
             Ingame_Manager_Quest.Instance.RefreshButtonStates(); 
         }
-        ShowMessagePanel(msg);
     }
 
     // ✨ 메시지 패널을 3초간 띄우는 코루틴
