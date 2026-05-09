@@ -96,7 +96,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
     // ──────────────────────────────────────────────────────
 
     // 로컬 테스트용
-    // private const string ML_SERVER_URL = "http://127.0.0.1:8000/api/submit_code";
+    // private const string ML_SERVER_URL = "http://127.0.0.1:8001/api/submit_code";
 
     // AWS 배포용
     private const string ML_SERVER_URL = "http://13.237.51.219:8001/api/submit_code";
