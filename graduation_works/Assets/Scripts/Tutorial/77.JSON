@@ -1,0 +1,69 @@
+{
+    "user_id": "tutorial_preset",
+    "res1": 0,
+    "res2": 0,
+    "res3": 0,
+    "res4": 91,
+    "res5": 0,
+    "play_time": 25,
+    "expand_count": 1,
+    "quest_id": 12,
+    "tutorial_step": -1,
+    "conveyor_level": 1,
+    "machines": [
+        {
+            "machine_type": 1,
+            "tile_index": 0,
+            "pos_x": -2.0,
+            "pos_y": 1.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining()"
+        },
+        {
+            "machine_type": 5,
+            "tile_index": 0,
+            "pos_x": -1.0,
+            "pos_y": 1.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": "name = '튜토2'\nfor i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')"
+        },
+        {
+            "machine_type": 9,
+            "tile_index": 0,
+            "pos_x": -1.0,
+            "pos_y": 0.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": "name = 'belt'\nmove()"
+        },
+        {
+            "machine_type": 9,
+            "tile_index": 0,
+            "pos_x": -2.0,
+            "pos_y": 0.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": "name = 'belt'\nmove()"
+        },
+        {
+            "machine_type": 10,
+            "tile_index": 0,
+            "pos_x": -2.0,
+            "pos_y": -1.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": ""
+        },
+        {
+            "machine_type": 12,
+            "tile_index": 0,
+            "pos_x": -1.0,
+            "pos_y": -1.0,
+            "pos_z": 0.0,
+            "rotation_y": 0.0,
+            "source_code": ""
+        }
+    ]
+}

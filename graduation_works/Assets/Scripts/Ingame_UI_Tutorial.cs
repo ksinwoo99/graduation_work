@@ -52,6 +52,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public TextAsset json_Step45;
     public TextAsset json_Step53;
     public TextAsset json_Step59;
+    public TextAsset json_END;
     public GameObject message_Panel;
     public TextMeshProUGUI txtMessagePop;
 
@@ -251,7 +252,11 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         StopButtonPulse();
 
         skipPanel.SetActive(true); dimBackground.SetActive(true); 
-        btnSkipYes.onClick.RemoveAllListeners(); btnSkipYes.onClick.AddListener(EndTutorial);
+        btnSkipYes.onClick.RemoveAllListeners(); 
+
+        /* 자동지급 하려면 
+        btnSkipYes.onClick.AddListener(() => { EndTutorial(); OnClick_GiveTestData(); }); */
+        btnSkipYes.onClick.AddListener(EndTutorial); 
         btnSkipNo.onClick.RemoveAllListeners(); btnSkipNo.onClick.AddListener(() => { skipPanel.SetActive(false); StartTutorial(); });
     }
 
@@ -401,7 +406,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
         // ✨ 2. [스킵]
         if (btnForceSkip != null) {
-            bool isMustBuildStep = (stepIndex == 15 || stepIndex == 25 || stepIndex == 33 || stepIndex == 60);
+            bool isMustBuildStep = (stepIndex == 15 || stepIndex == 25 || stepIndex == 33 || stepIndex == 60 || stepIndex == 72);
             bool isYesStep = (stepIndex == 17 || stepIndex == 35 || stepIndex == 61 || stepIndex == 73);
             bool isNextBtnVisible = btnNext.gameObject.activeSelf;
 
@@ -544,18 +549,32 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         StopButtonPulse(); 
     }
 
+    public GameObject btnTestDataObj;
+
     public void EndTutorial() {
-        isActionMode = false; ClearHighlight(); isTutorialActive = false;
-        skipPanel.SetActive(false); bubblePanel.SetActive(false); dimBackground.SetActive(false);
+        isActionMode = false; 
+        ClearHighlight(); 
+        isTutorialActive = false;
+        skipPanel.SetActive(false); 
+        bubblePanel.SetActive(false); 
+        dimBackground.SetActive(false);
         StopButtonPulse(); 
+        
         if (Ingame_Manager_Coding.Instance != null && Ingame_Manager_Coding.Instance.btnTestBreakdown != null) {
-        Ingame_Manager_Coding.Instance.btnTestBreakdown.gameObject.SetActive(true);
+            Ingame_Manager_Coding.Instance.btnTestBreakdown.gameObject.SetActive(true);
+        }
+
+        if (btnTestDataObj != null) {
+            btnTestDataObj.SetActive(true);
+            StopCoroutine("HideTestDataButtonAfterDelay"); // 중복 실행 방지
+            StartCoroutine(HideTestDataButtonAfterDelay(5f));
         }
     }
 
-    // =========================================================
-    // ✨ 외부 연동 트리거
-    // =========================================================
+    IEnumerator HideTestDataButtonAfterDelay(float delay) {
+        yield return new WaitForSecondsRealtime(delay);
+        if (btnTestDataObj != null) btnTestDataObj.SetActive(false);
+    }
     
     public bool CanExitBuildMode() {
         if (!isTutorialActive) return true;
@@ -735,10 +754,17 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         if (message_Panel != null) message_Panel.SetActive(false);
     }
 
-    // ✨ 팝업창을 클릭하면 즉시 닫히도록 하는 함수 (이벤트 트리거용)
     public void OnClick_MessagePanel() {
         StopCoroutine("CloseMessageAfterDelay");
         if (message_Panel != null) message_Panel.SetActive(false);
     }
 
+    public void OnClick_GiveTestData() {
+        if (Ingame_System_Save.Instance != null && json_END != null) {
+            Ingame_System_Save.Instance.LoadLocalPreset(json_END);
+            
+            StopCoroutine("HideTestDataButtonAfterDelay");
+            if (btnTestDataObj != null) btnTestDataObj.SetActive(false);
+        }
+    }
 }
