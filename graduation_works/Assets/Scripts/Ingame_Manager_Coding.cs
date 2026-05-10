@@ -183,7 +183,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void OnClick_Verify() {
         var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
         string codeToVerify = (codeEditor != null) ? codeEditor.Text : inputField.text;
-        CheckCodeAndApply(codeToVerify, true);
+        CheckCodeAndApply(codeToVerify, false);
     }
 
     public int CheckCodeAndApply(string code, bool isManualClick = false) {
@@ -450,7 +450,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 string banTarget = brokenCode.Contains("for") ? "for" : (brokenCode.Contains("while") ? "while" : "loop");
                 if (banTarget != "loop") {
                     forbiddenKeywords[targetId] = banTarget;
-                    brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode.Replace(banTarget, "X_ERROR_X");
+                    brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode;
                 } else {
                     brokenCode = brokenCode.Replace("(", ""); 
                 }
