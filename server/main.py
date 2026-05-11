@@ -1,13 +1,26 @@
 """
 server/main.py
-ML 서버 (Server B) — 코드 로그 저장 / AI 힌트 생성 / 루프 균형 분석
+ML 서버 (Server B) — 코드 로그 저장 / AI 힌트 생성 / 루프 균형 분석 / Scoring 2.0
 
 엔드포인트:
     POST /api/submit_code                       — 코드 제출 결과 저장 및 AI 힌트 반환
     GET  /api/user_cluster_history/{user_id}    — 유저 군집 이동 이력 조회
     GET  /api/user_loop_balance/{user_id}       — 유저 루프 사용 균형 분석
+    GET  /api/score_breakdown/{log_id}          — 다차원 점수 분해(Scoring 2.0)
+    GET  /api/hint_stats                        — 힌트 밴딧 통계(α/β + expected_reward)
     GET  /api/model_status                      — ML 모델 상태 확인 (디버깅용)
-    POST /api/model_reload                      — ML 모델 강제 재로드 (디버깅용)
+    POST /api/model_reload                      — ML 모델 + 정책 강제 재로드 (디버깅용)
+
+Scoring 2.0 / Contextual Bandit 모듈:
+    scoring/aggregator      — final_score = base*0.5 + personal*0.2 + adoption*0.15 - antipattern*0.15
+    scoring/personal_score  — 최근 10개 성공 점수 대비 z-score (개인 성장)
+    scoring/hint_adoption   — 직전 힌트 방향과 AST 변화의 일치도
+    scoring/antipattern     — 7종 안티패턴 결정론 감지 + 에러 재발 페널티
+    ml/bandit_thompson      — Beta(α,β) Thompson Sampling
+    ml/contextual_policy    — RandomForest 정책 + Thompson 폴백
+    ml/context_encoder      — 유저 상태 8차원 벡터 인코딩
+    ml/reward               — 5단계 연속형 보상 산출
+    ml/policy_trainer       — 주기 RF 재학습 (ml_worker 가 호출)
 """
 
 from fastapi import FastAPI, HTTPException
@@ -15,6 +28,7 @@ from pydantic import BaseModel
 import pymysql
 import joblib
 import os
+import ast
 import datetime
 import re
 import difflib
@@ -25,35 +39,35 @@ import pandas as pd
 from config import DB_CONFIG
 from utils import extract_features, calculate_ast_complexity
 
+# ── Scoring 2.0 (Layer 1) ───────────────────────────────────────
+from scoring.aggregator     import final_score, score_breakdown, SCORE_WEIGHTS
+from scoring.personal_score import personal_delta_score
+from scoring.hint_adoption  import compute_adoption
+from scoring.antipattern    import antipattern_penalty, error_recurrence_penalty
+
+# ── ML / Contextual Bandit (Layer 3) ────────────────────────────
+from ml.bandit_thompson   import ThompsonBandit
+from ml.contextual_policy import ContextualBandit
+from ml.context_encoder   import encode_user_context
+from ml.reward            import compute_reward
+
 app = FastAPI()
 
-_BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(_BASE_DIR, 'code_cluster_model.pkl')
+_BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH   = os.path.join(_BASE_DIR, 'code_cluster_model.pkl')
+POLICY_PATH  = os.path.join(_BASE_DIR, 'code_policy_model.pkl')
 
-# ── DB 마이그레이션 안내 ─────────────────────────────────────
-# 군집 이동 이력 추적 기능을 사용하려면 아래 SQL을 한 번 실행하세요.
+# ──────────────────────────────────────────────────────────
+# DB 스키마 (마이그레이션 적용 완료 가정)
+# ──────────────────────────────────────────────────────────
+# code_logs : cluster_rank, hint_type, base_score, personal_score,
+#             adoption_score, antipattern_pen, antipattern_tags,
+#             reward, error_type
+# hint_stats: shown_count, success_count, alpha, beta
 #
-#   ALTER TABLE code_logs ADD COLUMN cluster_rank INT DEFAULT -1;
-#
-#   cluster_rank 값:
-#     -1 = 모델 미로드 또는 예측 실패
-#      0 = 단순 코드형  (루프 미사용, score 최하위)
-#      1 = 성장형       (루프 일부 사용, score 중간)
-#      2 = 효율 최적화형 (루프 적극 활용, score 최상위)
-#
-# 힌트 효과성 밴딧 기능을 사용하려면 아래 SQL도 실행하세요.
-#
-#   ALTER TABLE code_logs ADD COLUMN hint_type VARCHAR(64) DEFAULT NULL;
-#
-#   CREATE TABLE IF NOT EXISTS hint_stats (
-#       hint_type     VARCHAR(64) NOT NULL PRIMARY KEY,
-#       shown_count   INT         NOT NULL DEFAULT 0,
-#       success_count INT         NOT NULL DEFAULT 0,
-#       updated_at    DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-#   );
-#
-#   두 컬럼/테이블이 없어도 메인 기능(힌트 반환, 점수 저장)은 정상 동작합니다.
-# ────────────────────────────────────────────────────────────
+# 신규 컬럼 접근은 모두 try/except 로 감싸 마이그레이션 전 환경에서도
+# 메인 기능(힌트 반환·기본 score 저장)은 정상 동작합니다.
+# ──────────────────────────────────────────────────────────
 
 
 # ──────────────────────────────────────────────────────────
@@ -82,12 +96,12 @@ _model_meta: dict = {}
 _feature_weights: list = []
 _feature_names:   list = []
 
-# ── 힌트 효과성 밴딧(ε-greedy) 상태 ──────────────────────────────
+# ── 힌트 효과성 밴딧 상태 ────────────────────────────────────────
 # 성공 힌트(rank 0/1)에 복수 변형을 두고, 어떤 변형이 사용자 개선을
 # 실제로 이끌어냈는지 자동으로 학습합니다.
-# 탐색률 ε=0.2: 20%는 랜덤 탐색, 80%는 누적 성공률 최고 변형 선택.
-_BANDIT_EPSILON = 0.2
-_hint_stats: dict[str, dict] = {}   # hint_type → {"shown": N, "success": M}
+# 선택 정책: ContextualBandit(RF) → ThompsonBandit(Beta α/β) 폴백.
+# (구버전의 ε-greedy 는 Thompson Sampling 으로 완전 교체됨)
+_hint_stats: dict[str, dict] = {}   # hint_type → {"shown": N, "success": M} (legacy 통계)
 
 # 밴딧이 선택할 힌트 변형 풀 — (hint_text, hint_type_id) 쌍의 리스트.
 # 각 상황(group_key)에 2개의 변형을 두어 어떤 표현이 더 효과적인지 학습합니다.
@@ -152,6 +166,18 @@ _HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
         ),
     ],
 }
+
+# hint_type ID → hint_text 역방향 조회 맵 — 밴딧 선택 결과를 텍스트로 변환할 때 사용
+_HINT_VARIANTS_MAP: dict[str, str] = {
+    hint_type: text
+    for variants in _HINT_VARIANTS.values()
+    for (text, hint_type) in variants
+}
+
+# ── Thompson Sampling + Contextual Bandit 인스턴스 ──────────────
+# Thompson 은 항상 활성화(폴백 포함). Contextual 은 pkl 이 있을 때만 활성.
+_thompson_bandit   = ThompsonBandit()
+_contextual_bandit = ContextualBandit(POLICY_PATH, fallback=_thompson_bandit, epsilon=0.1)
 
 
 def _load_model() -> None:
@@ -224,37 +250,76 @@ _load_model()
 # ──────────────────────────────────────────────────────────
 
 def _load_hint_stats_from_db() -> None:
-    """서버 구동 시 hint_stats 테이블에서 밴딧 누적 통계를 메모리에 로드합니다."""
+    """
+    서버 구동 시 hint_stats 테이블에서 밴딧 누적 통계를 메모리에 로드합니다.
+    alpha/beta 컬럼이 있으면 Thompson Sampling 파라미터로도 동기화합니다.
+    """
     global _hint_stats
     try:
         conn   = pymysql.connect(**DB_CONFIG)
         cursor = conn.cursor()
+        # 우선 신규 스키마(alpha/beta 포함) 로 시도, 실패 시 구 스키마로 폴백
         try:
-            cursor.execute("SELECT hint_type, shown_count, success_count FROM hint_stats")
-            for row in cursor.fetchall():
+            cursor.execute(
+                "SELECT hint_type, shown_count, success_count, alpha, beta FROM hint_stats"
+            )
+            rows = cursor.fetchall() or []
+            thompson_params: dict[str, tuple[float, float]] = {}
+            for row in rows:
                 _hint_stats[row['hint_type']] = {
                     "shown":   row['shown_count'],
                     "success": row['success_count'],
                 }
-            print(f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료")
-        except Exception as e:
-            if "hint_stats" in str(e).lower() or "doesn't exist" in str(e).lower():
-                print("[HintBandit] hint_stats 테이블 없음 — 빈 통계로 시작 (마이그레이션 SQL 참고)")
-            else:
-                print(f"[HintBandit] 통계 로드 실패: {e}")
+                thompson_params[row['hint_type']] = (
+                    float(row.get('alpha', 1.0) or 1.0),
+                    float(row.get('beta',  1.0) or 1.0),
+                )
+            _thompson_bandit.load(thompson_params)
+            print(
+                f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료 "
+                f"(Thompson 파라미터 {len(thompson_params)}개 동기화)"
+            )
+        except Exception as e_new:
+            # alpha/beta 컬럼이 없는 구 스키마
+            try:
+                cursor.execute(
+                    "SELECT hint_type, shown_count, success_count FROM hint_stats"
+                )
+                for row in cursor.fetchall() or []:
+                    _hint_stats[row['hint_type']] = {
+                        "shown":   row['shown_count'],
+                        "success": row['success_count'],
+                    }
+                print(
+                    f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료 "
+                    f"(legacy 스키마 — Thompson 컬럼 없음, 균등 사전분포로 시작)"
+                )
+            except Exception as e_old:
+                msg = str(e_old).lower()
+                if "hint_stats" in msg or "doesn't exist" in msg:
+                    print(
+                        "[HintBandit] hint_stats 테이블 없음 — 빈 통계로 시작 "
+                        "(server/migrations/scoring_v2.sql 참고)"
+                    )
+                else:
+                    print(f"[HintBandit] 통계 로드 실패(new={e_new} / old={e_old})")
         finally:
             conn.close()
     except Exception as e:
         print(f"[HintBandit] DB 연결 실패: {e}")
 
 
-def _bandit_select(group_key: str) -> tuple[str, str]:
+def _bandit_select(group_key: str, context: list[float] | None = None) -> tuple[str, str]:
     """
-    ε-greedy 밴딧으로 힌트 변형을 선택합니다.
+    Contextual Bandit + Thompson Sampling 으로 힌트 변형을 선택합니다.
 
-    탐색(explore, 확률 ε=0.2) : 변형 중 랜덤 선택 — 탐색 부족 변형에 기회 부여
-    활용(exploit, 확률 1-ε)   : 누적 성공률 최고 변형 선택
-    아직 노출 데이터 없는 변형에는 낙관적 초기값 1.0 부여 (미탐색 우선 시도)
+    선택 흐름:
+        ContextualBandit.select(context, candidates)
+            → RF 정책 모델이 로드돼 있으면 컨텍스트 기반 예측 보상 최대 변형
+            → 모델이 없거나 ε(=0.1) 탐색 발동 시 ThompsonBandit 으로 폴백
+        ThompsonBandit.select(candidates)
+            → Beta(α,β) 분포에서 1회 샘플링한 값이 가장 큰 변형 선택
+            → 표본이 적은 변형은 분산이 커서 자연스럽게 탐색 빈도 증가 (cold-start 강건)
 
     반환: (hint_text, hint_type_id)
     """
@@ -264,24 +329,107 @@ def _bandit_select(group_key: str) -> tuple[str, str]:
     if len(variants) == 1:
         return variants[0]
 
-    if random.random() < _BANDIT_EPSILON:
+    candidates = [hint_type for (_, hint_type) in variants]
+    ctx        = context if context is not None else []
+
+    selected = _contextual_bandit.select(ctx, candidates)
+    if not selected:
         return random.choice(variants)
 
-    best_variant = variants[0]
-    best_rate    = -1.0
-    for variant in variants:
-        _, hint_type = variant
-        stats = _hint_stats.get(hint_type, {"shown": 0, "success": 0})
-        shown = stats["shown"]
-        rate  = 1.0 if shown == 0 else stats["success"] / shown
-        if rate > best_rate:
-            best_rate    = rate
-            best_variant = variant
-
-    return best_variant
+    text = _HINT_VARIANTS_MAP.get(selected)
+    if text is None:
+        return random.choice(variants)
+    return text, selected
 
 
 _load_hint_stats_from_db()
+
+
+# ──────────────────────────────────────────────────────────
+# Scoring 2.0 헬퍼 — 에러 타입 추출 / 직전 제출 조회 / Thompson DB 동기화
+# ──────────────────────────────────────────────────────────
+
+# 감지 가능한 에러 타입 키워드 — 작은 케이스로 통일
+_ERROR_TYPE_KEYWORDS: tuple[str, ...] = (
+    "syntaxerror", "indentationerror", "taberror",
+    "nameerror", "typeerror", "attributeerror",
+    "valueerror", "zerodivisionerror", "indexerror", "keyerror",
+    "recursionerror", "timeouterror",
+)
+
+
+def _extract_error_type(output_log: str | None) -> str | None:
+    """
+    output_log 에서 에러 타입 키워드를 소문자로 추출합니다.
+    감지 실패 / 빈 로그 → None.
+    """
+    if not output_log:
+        return None
+    log = output_log.lower()
+    for keyword in _ERROR_TYPE_KEYWORDS:
+        if keyword in log:
+            return keyword
+    return None
+
+
+def _fetch_prev_submission(cursor, user_pk: int) -> dict | None:
+    """
+    유저의 직전 제출 1건(가장 최근) 을 반환합니다.
+    reward / adoption 계산에 필요한 최소 컬럼만 SELECT.
+    오류(컬럼 누락 등) 시 None 반환.
+    """
+    try:
+        cursor.execute(
+            """
+            SELECT log_id, source_code, output_log, is_success,
+                   cluster_rank, hint_type
+            FROM   code_logs
+            WHERE  user_pk = %s
+            ORDER  BY created_at DESC
+            LIMIT  1
+            """,
+            (user_pk,)
+        )
+        row = cursor.fetchone()
+        return row
+    except Exception:
+        return None
+
+
+def _persist_thompson_update(cursor, hint_type: str, reward: float) -> None:
+    """
+    Thompson 파라미터 (α, β) 를 hint_stats DB 에 영속화합니다.
+    legacy 컬럼(success_count) 도 보상이 0.6 이상이면 함께 +1 → A/B 비교 데이터 유지.
+    실패 시 조용히 무시 (마이그레이션 전 환경 보호).
+    """
+    try:
+        a, b = _thompson_bandit.get(hint_type)
+        # alpha/beta 갱신 — 이미 update() 가 메모리에 반영했으므로 그대로 영속화
+        cursor.execute(
+            """
+            INSERT INTO hint_stats (hint_type, shown_count, success_count, alpha, beta)
+            VALUES (%s, 0, 0, %s, %s)
+            ON DUPLICATE KEY UPDATE alpha = VALUES(alpha), beta = VALUES(beta)
+            """,
+            (hint_type, a, b),
+        )
+    except Exception:
+        # alpha/beta 컬럼이 없는 경우 — legacy success_count 만 갱신 시도
+        try:
+            if reward >= 0.6:
+                cursor.execute(
+                    """
+                    INSERT INTO hint_stats (hint_type, shown_count, success_count)
+                    VALUES (%s, 0, 1)
+                    ON DUPLICATE KEY UPDATE success_count = success_count + 1
+                    """,
+                    (hint_type,),
+                )
+                # in-memory 도 호환 갱신
+                stats = _hint_stats.setdefault(hint_type, {"shown": 0, "success": 0})
+                stats["success"] += 1
+        except Exception:
+            pass
 
 
 # ──────────────────────────────────────────────────────────
@@ -589,6 +737,127 @@ def _extract_fn_from_typeerror(output_log: str) -> str:
 
 
 # ──────────────────────────────────────────────────────────
+# move() 함수 — 컨테이너 타일 설치 전용 (Layer 0)
+# ──────────────────────────────────────────────────────────
+# move() 는 게임 내 컨테이너 타일 설치에만 사용되는 단독 호출 명령어로,
+# 반복문(for/while) 안에 넣을 수 없습니다.
+#   - 정상 호출 시  → score = 100 만점 부여 (submit_code 에서 처리)
+#   - 오타 / 미완성 / 루프 내 사용 시 → Layer 0 힌트로 안내
+#
+# 감지 패턴:
+#   ① 알파벳 변형  : mov / mvoe / moev / moove / movee / moveing 등
+#   ② 대소문자 변형: MOVE / Move / MOve / MoVe 등 (move 자체는 제외)
+#   ③ 미완성 호출 : "move(" 만 쓰고 ")" 를 빠뜨린 경우
+#   ④ 루프 내 사용: for/while 블록 안에 move() 호출이 위치한 경우
+# ──────────────────────────────────────────────────────────
+
+# 오타 후보 토큰 — 함수 호출 시도(뒤에 '(' 동반)만 감지하여 문자열/주석 내 단어 오탐 방지
+# 정확한 'move(' 는 제외 (단어 경계 + 알파벳 변형 / 대소문자 변형만 매칭)
+_MOVE_TYPO_VARIANT_RE = re.compile(
+    r'(?<![A-Za-z0-9_])'
+    r'(?P<token>'
+    r'mov|mvoe|moev|moove|moeve|movee|moveing|moveee'   # 철자 변형 (move 자체는 제외)
+    r'|MOVE|Move|MOve|MOVe|MoVe|moVe|movE|mOVE'         # 대소문자 변형 (move 자체는 제외)
+    r')'
+    r'\s*\('                                            # 반드시 '(' 가 뒤따라야 함
+)
+
+
+def _has_unclosed_move_call(source_code: str) -> bool:
+    """
+    'move(' 가 있지만 같은 라인 안에서 ')' 로 닫히지 않은 패턴을 감지합니다.
+    예) move(            ← 닫는 괄호 누락
+        move("fast"      ← 닫는 괄호 누락
+    """
+    for raw_line in source_code.split('\n'):
+        line = re.sub(r'#.*', '', raw_line)        # 라인 주석 제거
+        m = re.search(r'\bmove\s*\(', line)
+        if not m:
+            continue
+        depth = 1
+        for ch in line[m.end():]:
+            if ch == '(':
+                depth += 1
+            elif ch == ')':
+                depth -= 1
+                if depth == 0:
+                    break
+        if depth > 0:
+            return True
+    return False
+
+
+def _detect_move_typo(source_code: str) -> str | None:
+    """
+    move() 함수의 흔한 오타 / 미완성 패턴을 감지하고 안내 메시지를 반환합니다.
+    감지 실패 시 None.
+    """
+    if not source_code:
+        return None
+
+    if _has_unclosed_move_call(source_code):
+        return (
+            "'move(' 의 닫는 괄호 ')' 가 빠진 것 같아요!\n"
+            "컨테이너 타일은 'move()' 처럼 빈 괄호로 정확히 입력해야 해요."
+        )
+
+    m = _MOVE_TYPO_VARIANT_RE.search(source_code)
+    if m:
+        token = m.group('token')
+        return (
+            f"'{token}' 은(는) 'move()' 의 오타로 보여요!\n"
+            "컨테이너 타일을 설치하려면 정확히 'move()' 라고 입력해주세요."
+        )
+
+    return None
+
+
+def _ast_contains_move_call(source_code: str) -> bool:
+    """AST 파싱 후 move(...) 호출이 한 번이라도 나타나는지 검사합니다."""
+    if not source_code or 'move' not in source_code:
+        return False
+    try:
+        tree = ast.parse(source_code)
+    except SyntaxError:
+        return False
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Name)
+                and node.func.id == 'move'):
+            return True
+    return False
+
+
+def _move_in_loop(source_code: str) -> bool:
+    """move() 호출이 for / while 블록 내부에 위치하는지 검사합니다."""
+    if not source_code or 'move' not in source_code:
+        return False
+    try:
+        tree = ast.parse(source_code)
+    except SyntaxError:
+        return False
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.For, ast.While)):
+            continue
+        for child in ast.walk(node):
+            if (isinstance(child, ast.Call)
+                    and isinstance(child.func, ast.Name)
+                    and child.func.id == 'move'):
+                return True
+    return False
+
+
+def _is_move_standalone(source_code: str, features: dict) -> bool:
+    """
+    move() 가 반복문 없이 단독으로 호출되었는지 검사합니다.
+    True 면 submit_code 에서 score = 100 만점을 부여합니다.
+    """
+    if features.get('has_loop', 0):
+        return False
+    return _ast_contains_move_call(source_code)
+
+
+# ──────────────────────────────────────────────────────────
 # AI 힌트 생성 (3단계 폭포수 구조)
 # ──────────────────────────────────────────────────────────
 
@@ -604,16 +873,35 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
     """
     제출 결과에 따라 단계별로 힌트를 생성합니다.
 
+    0단계 (move() 전용)               : 컨테이너 타일 설치용 move() 의 오타 / 미완성 /
+                                        반복문 내 사용을 가장 먼저 감지 (Layer 0)
     1단계 (is_python_valid == False) : 파이썬 에러 유형별 세분화 힌트
     2단계 (is_machine_valid == False): 기계 조건 미충족 힌트
-    3단계 (성공)                      : _generate_hint_typed() 의 ε-greedy 밴딧이 담당
-                                        (이 함수는 1·2단계만 처리)
+    3단계 (성공)                      : _generate_hint_typed() 의 Contextual+Thompson 밴딧이 담당
+                                        (이 함수는 0·1·2단계만 처리)
 
     주의: 8000.py 의 format_error_user() 는 IndentationError / TabError 포함
           모든 SyntaxError 계열을 "SyntaxError: {msg}" 로 포맷합니다.
           따라서 error_log 에서 "indentationerror" 문자열은 등장하지 않으며,
           들여쓰기 오류는 SyntaxError 메시지 내용(unexpected indent 등)으로 판별합니다.
     """
+
+    # ══════════════════════════════════════════════════════
+    # 0단계: move() 함수 전용 검사 (컨테이너 타일 설치)
+    #   - 오타 (mov, MOVE, moove …)
+    #   - 미완성 호출 (move( 만 입력)
+    #   - 반복문 안에서 호출
+    # 일반 NameError / SyntaxError 안내보다 우선 표시되어 더 구체적인 안내를 제공합니다.
+    # ══════════════════════════════════════════════════════
+    move_typo_msg = _detect_move_typo(request.source_code)
+    if move_typo_msg:
+        return move_typo_msg
+
+    if _move_in_loop(request.source_code):
+        return (
+            "move() 는 컨테이너 타일을 설치하는 단독 명령어예요!\n"
+            "for / while 반복문 안에서는 사용할 수 없어요."
+        )
 
     # ══════════════════════════════════════════════════════
     # 1단계: 파이썬 문법 / 런타임 에러
@@ -873,7 +1161,7 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
 
         return "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
 
-    # 성공 힌트(3단계)는 _generate_hint_typed() 의 ε-greedy 밴딧이 처리합니다.
+    # 성공 힌트(3단계)는 _generate_hint_typed() 의 Contextual+Thompson 밴딧이 처리합니다.
     # 이 함수는 is_python_valid=False 또는 is_machine_valid=False 일 때만 호출됩니다.
 
 
@@ -886,6 +1174,12 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
     generate_hint() 의 분기 로직과 동일한 기준으로 hint_type 문자열을 결정합니다.
     성공 케이스(rank 0/1/2)는 _generate_hint_typed() 내 밴딧이 처리하므로 None 반환.
     """
+    # ── Layer 0: move() 전용 분류 ───────────────────────────
+    if _detect_move_typo(request.source_code) is not None:
+        return "move_typo"
+    if _move_in_loop(request.source_code):
+        return "move_in_loop"
+
     if not request.is_python_valid:
         log = request.output_log.lower()
         if "syntaxerror" in log:
@@ -932,18 +1226,47 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
 def _generate_hint_typed(
     request: CodeSubmitRequest, score: float,
     features: dict, cluster_rank: int,
+    context: list[float] | None = None,
 ) -> tuple[str, str]:
     """
     힌트 텍스트와 hint_type ID를 함께 반환합니다.
 
-    성공 힌트(rank 0/1) : ε-greedy 밴딧으로 변형 선택 → 효과적인 표현 자동 학습
+    Layer 0 (move 전용)  : 오타 / 미완성 / 루프 내 사용 감지 — 성공/실패 무관 최우선
+    성공 힌트(move 단독): "succ_move" — 컨테이너 타일 설치 만점 케이스
+    성공 힌트(rank 0/1) : Contextual Bandit + Thompson Sampling 으로 변형 선택
+                          (context 인자가 있으면 RF 정책 사용, 없으면 Thompson 단독)
     성공 힌트(rank 2)   : 단일 최상위 메시지 반환
     에러 / 기계 힌트    : 기존 generate_hint() 로직 유지 + 타입 태그 부여
     """
+    # ══════════════════════════════════════════════════════
+    # Layer 0: move() 전용 — 성공/실패 모든 경로에서 최우선 평가
+    # (오타 / 미완성 / 루프 내 사용은 일반 힌트 / 밴딧을 우회)
+    # ══════════════════════════════════════════════════════
+    move_typo_msg = _detect_move_typo(request.source_code)
+    if move_typo_msg:
+        return move_typo_msg, "move_typo"
+
+    if _move_in_loop(request.source_code):
+        return (
+            "move() 는 컨테이너 타일을 설치하는 단독 명령어예요!\n"
+            "for / while 반복문 안에서는 사용할 수 없어요.",
+            "move_in_loop",
+        )
+
     if request.is_python_valid and request.is_machine_valid:
+        # ── Layer 0-success: move() 단독 호출 — 컨테이너 타일 설치 만점 ────
+        # 반복문 없이 move() 만 호출된 경우 클러스터/밴딧을 거치지 않고 고정 메시지를 반환합니다.
+        if _is_move_standalone(request.source_code, features):
+            return (
+                "[ 컨테이너 타일 ] "
+                "move() 명령으로 컨테이너 타일을 설치했어요! "
+                "단독 호출 전용 명령이라 만점(100점) 처리됩니다.",
+                "succ_move",
+            )
+
         if cluster_rank == 0:
             group = "succ_r0_has_if" if features.get('if_count', 0) > 0 else "succ_r0_simple"
-            return _bandit_select(group)
+            return _bandit_select(group, context)
         if cluster_rank == 1:
             group = (
                 "succ_r1_while"
@@ -951,7 +1274,7 @@ def _generate_hint_typed(
                     and not features.get('has_infinite_while', 0))
                 else "succ_r1_for"
             )
-            return _bandit_select(group)
+            return _bandit_select(group, context)
         if cluster_rank == 2:
             if features.get('has_infinite_while', 0):
                 return (
@@ -978,63 +1301,6 @@ def _generate_hint_typed(
     return hint_text, hint_type
 
 
-def _update_prev_hint_effectiveness(
-    cursor, user_pk: int, current_rank: int, is_success: bool,
-) -> None:
-    """
-    사용자 직전 제출에 표시된 힌트가 효과적이었는지 평가하여 hint_stats 를 갱신합니다.
-
-    효과 판정 기준:
-        직전 실패 → 현재 성공         : 에러 힌트가 문제 해결을 도운 것으로 간주
-        직전 rank X → 현재 rank Y > X : 성장 힌트가 개선을 이끈 것으로 간주
-
-    이 함수는 현재 제출의 INSERT 전에 호출되므로
-    조회하는 rows 는 순수하게 이전 제출 기록만 포함합니다.
-    """
-    try:
-        cursor.execute(
-            """
-            SELECT hint_type, cluster_rank, is_success
-            FROM   code_logs
-            WHERE  user_pk = %s AND hint_type IS NOT NULL
-            ORDER  BY created_at DESC
-            LIMIT  1
-            """,
-            (user_pk,)
-        )
-        prev = cursor.fetchone()
-        if not prev or not prev['hint_type']:
-            return
-
-        prev_hint_type = prev['hint_type']
-        prev_rank      = prev.get('cluster_rank', -1)
-        prev_success   = bool(prev.get('is_success', False))
-
-        is_effective = (
-            (not prev_success and is_success)
-            or (is_success and prev_rank >= 0 and current_rank > prev_rank)
-        )
-
-        if not is_effective:
-            return
-
-        # in-memory 갱신
-        stats = _hint_stats.setdefault(prev_hint_type, {"shown": 0, "success": 0})
-        stats["success"] += 1
-
-        # DB 갱신 — hint_stats 테이블이 없으면 조용히 건너뜀
-        cursor.execute(
-            """
-            INSERT INTO hint_stats (hint_type, shown_count, success_count)
-            VALUES (%s, 0, 1)
-            ON DUPLICATE KEY UPDATE success_count = success_count + 1
-            """,
-            (prev_hint_type,)
-        )
-    except Exception as e:
-        print(f"[HintBandit] 효과성 업데이트 실패: {e}")
-
-
 # ──────────────────────────────────────────────────────────
 # 엔드포인트 1: 코드 제출 결과 저장 및 AI 힌트 반환
 # ──────────────────────────────────────────────────────────
@@ -1044,47 +1310,128 @@ async def submit_code(request: CodeSubmitRequest):
     Unity 클라이언트가 코드 실행 후 호출합니다.
     성공/실패 여부에 관계없이 항상 code_logs 에 기록하고,
     AI 힌트와 점수를 응답합니다.
+
+    파이프라인 (Scoring 2.0):
+        ① extract_features + calculate_score → base_score
+        ② predict_cluster_rank → cluster_rank
+        ③ Layer 1: personal_delta + antipattern_pen 산출
+        ④ 직전 제출 조회 → adoption_score & reward 계산 → Thompson 업데이트
+        ⑤ aggregator.final_score → 가중합으로 최종 score
+        ⑥ Contextual Bandit 으로 힌트 변형 선택
+        ⑦ INSERT + 신규 컬럼 graceful UPDATE
     """
     conn   = pymysql.connect(**DB_CONFIG)
     cursor = conn.cursor()
     try:
-        # ast.parse 1회 호출로 score 계산·군집 예측·힌트 생성에 재사용
-        features     = extract_features(request.source_code)
-        score        = calculate_score(request, features)
-        # 성공한 제출만 군집 예측 (실패 시 -1 저장)
+        # ─── ① 피처 / base 점수 / 군집 예측 ─────────────────────
+        features   = extract_features(request.source_code)
+        base_score = calculate_score(request, features)
+
         cluster_rank = predict_cluster_rank(features, request.execution_time) \
                        if request.is_success else -1
-
-        # ── 보정 규칙: 반복문 전무 코드는 무조건 rank 0 ──────────
-        # KMeans가 if/elif, 다중 함수 호출 등의 복잡도로 인해
-        # 루프 없는 코드를 '일반 학습자형'으로 오분류하는 현상을 방지합니다.
+        # KMeans 가 if/elif·다중 함수 호출 복잡도 때문에 루프 없는 코드를
+        # '일반 학습자형'으로 오분류하는 현상을 방지하는 보정 규칙.
         if cluster_rank > 0 and features.get('has_loop', 0) == 0:
             cluster_rank = 0
 
-        # ast_complexity 는 별도 지표 (사이클로매틱 복잡도 + 최대 중첩 깊이)
         ast_complexity = calculate_ast_complexity(request.source_code)
+        cur_error_type = (
+            _extract_error_type(request.output_log)
+            if not request.is_python_valid else None
+        )
 
-        # guest 계정은 소문자 정규화
+        # ─── 유저 조회 ───────────────────────────────────────────
         search_id = "guest" if request.user_id.lower() == "guest" else request.user_id
-
         cursor.execute("SELECT pk_id FROM users WHERE id = %s", (search_id,))
         user_record = cursor.fetchone()
         if not user_record:
             raise HTTPException(status_code=404, detail=f"'{search_id}' 유저를 찾을 수 없습니다.")
+        user_pk = user_record['pk_id']
 
-        # ── 힌트 효과성 갱신: 직전 힌트가 이번 제출 결과로 효과적이었는지 평가 ──
-        # 현재 제출은 아직 INSERT 전이므로 이전 기록만 조회됩니다.
-        _update_prev_hint_effectiveness(cursor, user_record['pk_id'], cluster_rank, request.is_success)
+        # ─── ③ Layer 1: 개인 성장 + 안티패턴 ──────────────────────
+        personal_score = personal_delta_score(cursor, user_pk, base_score)
+        antipattern_pen, antipattern_tags = antipattern_penalty(request.source_code)
 
-        # ── 밴딧으로 힌트 선택 + hint_type ID 획득 ──────────────
-        ai_hint, hint_type = _generate_hint_typed(request, score, features, cluster_rank)
+        # ─── ④ 직전 제출 기반 adoption + reward 계산 ─────────────
+        adoption_score = 50.0   # 신규 유저 / 직전 정보 없음 → 중립
+        prev_reward: float | None = None
+        prev = _fetch_prev_submission(cursor, user_pk)
 
-        # 성공 + 유효한 군집 예측인 경우에만 이동 이력 문구를 힌트에 추가
+        if prev and prev.get('hint_type'):
+            try:
+                prev_features = extract_features(prev.get('source_code') or "")
+            except Exception:
+                prev_features = {}
+
+            try:
+                adoption_score = compute_adoption(
+                    prev_features, features, prev.get('hint_type')
+                )
+            except Exception:
+                adoption_score = 50.0
+
+            prev_was_error  = not bool(prev.get('is_success'))
+            prev_error_type = (
+                _extract_error_type(prev.get('output_log'))
+                if prev_was_error else None
+            )
+
+            try:
+                prev_reward = compute_reward(
+                    prev_features, features, prev.get('hint_type'),
+                    int(prev.get('cluster_rank', -1) or -1),
+                    int(cluster_rank),
+                    prev_was_error, request.is_success,
+                    cur_error_type, prev_error_type,
+                )
+            except Exception as e:
+                print(f"[Reward] 계산 실패: {e}")
+                prev_reward = None
+
+            # 같은 종류 에러 재발 → antipattern_pen 에 +20 (force tag)
+            rec_pen = error_recurrence_penalty(cur_error_type, prev_error_type)
+            if rec_pen > 0:
+                antipattern_pen += rec_pen
+                antipattern_tags.append("error_recurrence")
+
+            # Thompson 업데이트 + DB 영속화
+            if prev_reward is not None:
+                _contextual_bandit.update(prev.get('hint_type'), prev_reward)
+                _persist_thompson_update(cursor, prev.get('hint_type'), prev_reward)
+                try:
+                    conn.commit()
+                except Exception:
+                    pass
+
+        # ─── ⑤ Aggregator: 최종 점수 가중합 ──────────────────────
+        score = final_score(base_score, personal_score, adoption_score, antipattern_pen)
+
+        # ─── ⑤-bis: move() 단독 호출 — 컨테이너 타일 만점 오버라이드 ──
+        # move() 는 반복문 불가 + 단독 사용 함수라 정상 호출 자체로 만점 부여.
+        # base_score 도 함께 100 으로 맞춰 응답 / score_breakdown 일관성을 보장합니다.
+        is_move_standalone_call = (
+            request.is_success
+            and _is_move_standalone(request.source_code, features)
+        )
+        if is_move_standalone_call:
+            base_score = 100.0
+            score      = 100.0
+
+        # ─── ⑥ Contextual Bandit 으로 힌트 선택 ───────────────────
+        try:
+            user_context = encode_user_context(cursor, user_pk)
+        except Exception:
+            user_context = None
+        ai_hint, hint_type = _generate_hint_typed(
+            request, score, features, cluster_rank, context=user_context,
+        )
+
         if cluster_rank >= 0:
-            progression_note = _get_progression_note(cursor, user_record['pk_id'], cluster_rank)
+            progression_note = _get_progression_note(cursor, user_pk, cluster_rank)
             if progression_note:
                 ai_hint += progression_note
 
+        # ─── ⑦ INSERT 기본 컬럼 ───────────────────────────────────
         cursor.execute(
             """
             INSERT INTO code_logs
@@ -1094,7 +1441,7 @@ async def submit_code(request: CodeSubmitRequest):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
             """,
             (
-                user_record['pk_id'],
+                user_pk,
                 request.machine_type, request.source_code,
                 request.is_success, request.output_log,
                 request.execution_time, score, ast_complexity,
@@ -1102,13 +1449,11 @@ async def submit_code(request: CodeSubmitRequest):
                 request.res_special, request.res_exotic, request.gold,
             )
         )
-        # lastrowid 는 commit 이전에 저장해야 합니다.
-        # pymysql 일부 버전에서 commit 후 cursor.lastrowid 가 리셋될 수 있습니다.
+        # commit 전에 lastrowid 저장 (pymysql 일부 버전 안전성)
         inserted_id = cursor.lastrowid
         conn.commit()
 
-        # cluster_rank 저장 — ALTER TABLE 마이그레이션이 완료된 경우에만 실행됩니다.
-        # 컬럼이 없어도 메인 로직(힌트 반환, 점수 저장)은 정상 동작합니다.
+        # cluster_rank 저장 (마이그레이션 완료 시)
         if cluster_rank >= 0:
             try:
                 cursor.execute(
@@ -1119,8 +1464,7 @@ async def submit_code(request: CodeSubmitRequest):
             except Exception:
                 pass
 
-        # hint_type 저장 + 밴딧 노출 횟수 갱신 (in-memory 및 DB)
-        # 마이그레이션 전이어도 메인 로직에는 영향 없습니다.
+        # hint_type 저장 + 밴딧 노출 카운트 갱신
         _hint_stats.setdefault(hint_type, {"shown": 0, "success": 0})["shown"] += 1
         try:
             cursor.execute(
@@ -1139,11 +1483,42 @@ async def submit_code(request: CodeSubmitRequest):
         except Exception:
             pass
 
+        # Scoring 2.0 신규 컬럼 — additive, 마이그레이션 전이면 조용히 스킵
+        try:
+            cursor.execute(
+                """
+                UPDATE code_logs
+                   SET base_score       = %s,
+                       personal_score   = %s,
+                       adoption_score   = %s,
+                       antipattern_pen  = %s,
+                       antipattern_tags = %s,
+                       reward           = %s,
+                       error_type       = %s
+                 WHERE log_id = %s
+                """,
+                (
+                    base_score, personal_score, adoption_score,
+                    antipattern_pen, ",".join(antipattern_tags) if antipattern_tags else None,
+                    prev_reward, cur_error_type, inserted_id,
+                )
+            )
+            conn.commit()
+        except Exception:
+            pass
+
         return {
-            "status":       "success",
-            "score":        score,
-            "hint":         ai_hint,
-            "cluster_rank": cluster_rank,
+            "status":           "success",
+            "score":            score,
+            "hint":             ai_hint,
+            "cluster_rank":     cluster_rank,
+            # Scoring 2.0 — 응답에도 분해된 정보 노출 (Unity 디버깅 / 프런트 시각화용)
+            "base_score":       base_score,
+            "personal_score":   personal_score,
+            "adoption_score":   adoption_score,
+            "antipattern_pen":  antipattern_pen,
+            "antipattern_tags": antipattern_tags,
+            "hint_type":        hint_type,
         }
 
     except Exception as e:
@@ -1430,28 +1805,114 @@ async def get_hint_stats():
     힌트 효과성 밴딧의 누적 통계를 반환합니다.
 
     반환 필드 (hint_type 별):
-        shown_count   — 해당 힌트가 사용자에게 표시된 횟수
-        success_count — 해당 힌트 이후 사용자가 개선된 횟수 (rank 상승 또는 에러 해결)
-        success_rate  — success_count / shown_count (노출 없으면 null)
+        shown_count     — 해당 힌트가 사용자에게 표시된 횟수
+        success_count   — 레거시 이진 평가 누적값 (참고용)
+        success_rate    — success_count / shown_count (노출 없으면 null)
+        alpha, beta     — Thompson Sampling Beta 분포 파라미터
+        expected_reward — α / (α+β), 현재 힌트 변형의 예측 보상 기댓값
+
+    상위 정보:
+        policy_loaded   — Contextual Policy(RandomForest) 모델 로드 여부
+                          False 면 Thompson Sampling 단독으로 선택 중
 
     활용:
-        어떤 힌트 표현이 실제로 사용자 행동 변화를 이끌어내는지 확인할 수 있습니다.
-        성공률이 낮은 변형은 자동으로 노출 빈도가 줄어듭니다 (ε-greedy exploit 단계).
+        성공률이 낮은 변형은 Beta 분포의 평균이 낮아져 선택 빈도가 자연 감소.
+        표본이 적은 변형은 분산이 커서 탐색 빈도가 자연 상승 (cold-start 강건).
     """
     result = {}
-    for hint_type, stats in sorted(_hint_stats.items()):
+    # in-memory _hint_stats 와 Thompson 파라미터를 합집합으로 노출
+    all_keys = set(_hint_stats.keys()) | set(_thompson_bandit.params.keys())
+    for hint_type in sorted(all_keys):
+        stats   = _hint_stats.get(hint_type, {"shown": 0, "success": 0})
         shown   = stats.get("shown",   0)
         success = stats.get("success", 0)
+        alpha, beta = _thompson_bandit.get(hint_type)
         result[hint_type] = {
-            "shown_count":   shown,
-            "success_count": success,
-            "success_rate":  round(success / shown, 3) if shown > 0 else None,
+            "shown_count":      shown,
+            "success_count":    success,
+            "success_rate":     round(success / shown, 3) if shown > 0 else None,
+            # Thompson Sampling 파라미터
+            "alpha":            round(alpha, 3),
+            "beta":             round(beta,  3),
+            "expected_reward":  round(_thompson_bandit.expected_value(hint_type), 3),
         }
     return {
         "status":     "success",
         "hint_count": len(result),
+        "policy_loaded": _contextual_bandit.is_ready(),
         "stats":      result,
     }
+
+
+@app.get("/api/score_breakdown/{log_id}")
+async def get_score_breakdown(log_id: int):
+    """
+    특정 제출(log_id)의 다차원 점수 분해를 반환합니다.
+
+    응답 구조:
+        {
+          weights:       {base, personal, adoption, antipattern},
+          subscores:     {base, personal_delta, adoption, antipattern_pen},
+          contributions: {base, personal, adoption, antipattern},
+          raw, final, antipattern_tags, error_type, hint_type, reward,
+          cluster_rank, is_success, created_at
+        }
+
+    사전 조건:
+        server/migrations/scoring_v2.sql 적용 (base_score, personal_score 등 컬럼).
+        컬럼이 없을 경우 503 응답으로 마이그레이션 안내.
+    """
+    conn   = pymysql.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    try:
+        try:
+            cursor.execute(
+                """
+                SELECT log_id, user_pk, score, base_score, personal_score,
+                       adoption_score, antipattern_pen, antipattern_tags,
+                       reward, error_type, hint_type, cluster_rank,
+                       is_success, created_at
+                FROM   code_logs
+                WHERE  log_id = %s
+                """,
+                (log_id,)
+            )
+            row = cursor.fetchone()
+        except Exception as e:
+            msg = str(e).lower()
+            if "unknown column" in msg or "base_score" in msg:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Scoring 2.0 컬럼 없음. "
+                           "server/migrations/scoring_v2.sql 을 적용하세요."
+                )
+            raise
+
+        if not row:
+            raise HTTPException(status_code=404, detail=f"log_id={log_id} 를 찾을 수 없습니다.")
+
+        # 누락 값 폴백 (마이그레이션 후 누적 전 데이터)
+        base   = float(row.get("base_score")      or 0.0)
+        person = float(row.get("personal_score")  or 50.0)
+        adopt  = float(row.get("adoption_score")  or 50.0)
+        anti   = float(row.get("antipattern_pen") or 0.0)
+
+        breakdown = score_breakdown(base, person, adopt, anti)
+        breakdown.update({
+            "log_id":          row["log_id"],
+            "user_pk":         row.get("user_pk"),
+            "score_in_db":     float(row["score"]) if row.get("score") is not None else None,
+            "antipattern_tags": (row.get("antipattern_tags") or "").split(",") if row.get("antipattern_tags") else [],
+            "error_type":      row.get("error_type"),
+            "hint_type":       row.get("hint_type"),
+            "reward":          float(row["reward"]) if row.get("reward") is not None else None,
+            "cluster_rank":    row.get("cluster_rank"),
+            "is_success":      bool(row.get("is_success", 0)),
+            "created_at":      str(row.get("created_at")),
+        })
+        return breakdown
+    finally:
+        conn.close()
 
 
 @app.post("/api/model_reload")
@@ -1469,13 +1930,21 @@ async def force_model_reload():
     _load_model()
     after_trained  = _model_meta.get('trained_at', '없음')
 
+    # Contextual policy 도 함께 핫리로드 시도
+    policy_before = _contextual_bandit.is_ready()
+    _contextual_bandit.maybe_reload()
+    policy_after  = _contextual_bandit.is_ready()
+
     return {
         "status":         "reloaded",
         "model_loaded":   code_cluster_model is not None,
-        "before": {"trained_at": before_trained, "loaded_at": before_loaded},
+        "policy_loaded":  policy_after,
+        "before": {"trained_at": before_trained, "loaded_at": before_loaded,
+                   "policy_loaded": policy_before},
         "after":  {"trained_at": after_trained,
                    "loaded_at": datetime.datetime.fromtimestamp(_model_loaded_mtime)
-                                .strftime("%Y-%m-%d %H:%M:%S") if _model_loaded_mtime else '없음'},
+                                .strftime("%Y-%m-%d %H:%M:%S") if _model_loaded_mtime else '없음',
+                   "policy_loaded": policy_after},
     }
 
 
