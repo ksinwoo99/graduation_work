@@ -1724,3 +1724,57 @@ INFO:     27.0.238.117:41982 - "GET /api/model_reload HTTP/1.1" 405 Method Not A
 INFO:     27.0.238.187:36946 - "GET /api/model_reload HTTP/1.1" 405 Method Not Allowed
 INFO:     109.236.63.126:63904 - "GET / HTTP/1.1" 404 Not Found
 INFO:     202.65.208.252:36526 - "GET / HTTP/1.0" 404 Not Found
+<<<<<<< Updated upstream
+=======
+WARNING:  Invalid HTTP request received.
+INFO:     122.42.2.61:35613 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-10 16:26:15 | trained_at=2026-05-10 16:10:30 | data_count=510 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=2026-05-10 16:10:30
+INFO:     122.42.2.61:39071 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6487 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6491 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6493 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6495 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6498 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6500 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6505 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6507 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6510 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6512 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6514 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     139.59.188.25:33026 - "GET / HTTP/1.1" 404 Not Found
+INFO:     139.59.188.25:33036 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+[Model] 로드 완료  loaded_at=2026-05-10 23:14:13 | trained_at=2026-05-10 23:10:31 | data_count=518 | features=13 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-10 16:10:30 → 새 학습=2026-05-10 23:10:31
+INFO:     160.238.37.30:13083 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:14790 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:47500 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:47500 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:17028 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:50309 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:14887 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     160.238.37.30:54391 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.100.125:16506 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.84.100.125:16520 - "GET / HTTP/1.1" 404 Not Found
+INFO:     176.65.139.156:59342 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.82.78.106:60192 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.131.155.110:47788 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     3.131.220.121:55632 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.131.220.121:49500 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.96.75:50050 - "GET /config.json HTTP/1.1" 404 Not Found
+INFO:     172.105.96.75:55040 - "GET /.bash_history HTTP/1.1" 404 Not Found
+INFO:     172.105.96.75:55038 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     172.105.96.75:55032 - "GET /config.js HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     20.106.196.31:40588 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-05-12 13:02:44 | trained_at=2026-05-12 12:10:33 | data_count=520 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-10 23:10:31 → 새 학습=2026-05-12 12:10:33
+INFO:     39.127.112.104:50829 - "POST /api/submit_code HTTP/1.1" 200 OK
+>>>>>>> Stashed changes
