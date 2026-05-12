@@ -21381,7 +21381,7 @@ MonoBehaviour:
   enableDynamicDifficulty: 1
   breakdownCheckInterval: 180
   breakdownProbability: 0.25
-  btnGiveUp: {fileID: 0}
+  btnGiveUp: {fileID: 98666383}
   autoFixTime: 90
   breakdownStatusPanel: {fileID: 984613808}
   txtBreakdownList: {fileID: 979768721}
