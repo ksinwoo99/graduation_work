@@ -561,7 +561,11 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         StopButtonPulse(); 
         
         if (Ingame_Manager_Coding.Instance != null && Ingame_Manager_Coding.Instance.btnTestBreakdown != null) {
-            Ingame_Manager_Coding.Instance.btnTestBreakdown.gameObject.SetActive(true);
+            if (!Shared_Manager_Session.IsVisiting) {
+                Ingame_Manager_Coding.Instance.btnTestBreakdown.gameObject.SetActive(true);
+            } else {
+                Ingame_Manager_Coding.Instance.btnTestBreakdown.gameObject.SetActive(false);
+            }
         }
 
         if (btnTestDataObj != null) {
