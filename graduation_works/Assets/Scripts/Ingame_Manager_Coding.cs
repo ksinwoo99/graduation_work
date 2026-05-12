@@ -444,7 +444,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         switch (errorType) {
             case 0: brokenCode = brokenCode.Replace(":", ""); break;
             case 1: brokenCode = brokenCode.Replace("()", "("); break;
-            case 2: brokenCode = brokenCode.Replace("mining", "minin").Replace("producting", "productig").Replace("move", "mov"); break;
+            case 2: brokenCode = brokenCode.Replace("mining", "minin").Replace("producting", "productig"); break;
             case 3: brokenCode = brokenCode.Replace("name=", "name=="); break;
             case 4: 
                 string banTarget = brokenCode.Contains("for") ? "for" : (brokenCode.Contains("while") ? "while" : "loop");
