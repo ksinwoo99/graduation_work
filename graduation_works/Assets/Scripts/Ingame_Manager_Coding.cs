@@ -298,10 +298,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
                 if (Ingame_Manager_Resource.Instance != null) {
                     var resMgr = Ingame_Manager_Resource.Instance;
-                    resMgr.resCommon = Mathf.Min(resMgr.resCommon + (resMgr.maxResCommon / 2), resMgr.maxResCommon);
-                    resMgr.resRare = Mathf.Min(resMgr.resRare + (resMgr.maxResRare / 2), resMgr.maxResRare);
-                    resMgr.resSpecial = Mathf.Min(resMgr.resSpecial + (resMgr.maxResSpecial / 2), resMgr.maxResSpecial);
-                    resMgr.resExotic = Mathf.Min(resMgr.resExotic + (resMgr.maxResExotic / 2), resMgr.maxResExotic);
+                    resMgr.AddResource(ResourceType.Common, resMgr.maxResCommon / 2);
+                    resMgr.AddResource(ResourceType.Rare, resMgr.maxResRare / 2);
+                    resMgr.AddResource(ResourceType.Special, resMgr.maxResSpecial / 2);
+                    resMgr.AddResource(ResourceType.Exotic, resMgr.maxResExotic / 2);
                     
                     if (buildManager != null) {
                         buildManager.ShowFloatingText("과열 해결 완료! (최대 자원의 50% 지급)", codingPanel.transform.position);
@@ -587,7 +587,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 if (buildManager != null) buildManager.ShowFloatingText("부품 균형 회복! 기계가 복구되었습니다.", codingPanel.transform.position);
             } else if (isManualGiveUp) {
                 int penaltyAmount = Mathf.FloorToInt(Ingame_Manager_Resource.Instance.currentGold * 0.25f);
-                Ingame_Manager_Resource.Instance.currentGold -= penaltyAmount; 
+                Ingame_Manager_Resource.Instance.SpendGold(penaltyAmount); 
                 
                 if (buildManager != null) {
                     buildManager.ShowFloatingText($"수리 포기 (보유 골드의 25%G): -{penaltyAmount}G", codingPanel.transform.position);
