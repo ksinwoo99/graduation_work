@@ -322,23 +322,23 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 22: SetDialogMode("처음으로 얻은 자원이네요, 축하합니다!\n\n지금은 기본자원만 얻었지만,\n채굴기마다 채취할 수 있는 자원이\n다양하게 있습니다."); break;
             case 23: SetDialogMode("그런데 자원을 획득하고 나니\n채굴기가 멈춰버렸네요?"); break;
             case 24: SetDialogMode("이 채굴기는 반복문이 없는\n'단순 코드형'이라서\n1회 채굴 후 정지되었기 때문입니다!"); break;
-            case 25: HighlightPanel(panelSideGroup); SetActionMode("<color=red>우측 패널의 '전체 (재)가동'</color>을 눌러\n다시 작동시킬 수 있습니다.\n\n자원을 한 번 더 획득해 보세요!"); break;
+            case 25: HighlightPanel(panelSideGroup); SetActionMode("채굴기를 직접 클릭하거나,\n우측 패널의 '전체 (재)가동'을 눌러\n다시 작동시킬 수 있습니다.\n\n자원을 한 번 더 획득해 보세요!"); break;
             case 26: SetDialogMode("좋습니다, 잘 따라오고 계시네요!\n\n다만 지금같은 방법은 너무 불편하죠?\n진행하다 보면, 기계가 자동 반복하도록\n코딩하는 방법을 알려드리겠습니다!"); break;
             
             case 27: SetDialogMode("지금은 우선 획득한 자원을 바탕으로,\n더 복잡한 로직이 필요한\n'가공기'를 알려드릴게요."); break; 
             case 28: SetDialogMode("가공기는 자원을 소모하여\n판매 가능한 상품을 만들어냅니다.\n\n모든 가공기는 A타입과 B타입,\n두 가지 상품을 만들 수 있어요."); break;
-            case 29: HighlightPanel(panelInstallation); SetPilotMode("<color=red>아래쪽 패널에서 '가공기'</color>를\n한번 클릭해 보시겠어요?");
+            case 29: HighlightPanel(panelInstallation); SetPilotMode("아래쪽 패널에서 '가공기'를\n한번 클릭해 보시겠어요?");
                 if (btnTutorialProductor != null) btnTutorialProductor.onClick.AddListener(OnProductorButtonClicked); break;
             case 30: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("가공기는 꼭 복잡하게 짤 필요 없이,\n단순히 producting(Common, 'A')\n한 줄만 적어도 A상품을 만들어냅니다.\n\n(물론 이름 설정은 필수에요!)"); break;
             case 31: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetActionMode("그럼 코딩 창에 producting(Common, 'A') 를\n추가로 입력하고 디버깅(F5)을 해보세요!"); break;
             case 32: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("완벽합니다!\n이제 이 가공기의 설치가\n가능해졌습니다."); break;
             case 33: SetActionMode("채굴기 때처럼 맵에 가공기를\n클릭하여 설치해볼까요?\n(R키로 상품 생성위치 조절 가능)"); break;
             case 34: SetDialogMode("훌륭합니다!\n가공기가 성공적으로\n배치되었습니다."); break;
-            case 35: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
+            case 35: SetActionMode("이제 우클릭을 누르거나 취소 버튼을 눌러\n설치 모드에서 나가보세요."); break;
             case 36: SetDialogMode("설치 상태가 정상적으로 저장되고\n설치 모드에서 빠져나왔습니다!"); break;
             case 37: SetActionMode("가공기가 자원을 가져가서 코딩된 대로\n상품을 만들어낼 때까지 기다려 볼까요?"); break;
             case 38: SetDialogMode("가공기에서 판매 가능한\n첫 상품을 만들어냈습니다!"); break;
-            case 39: SetActionMode("<color=red>생성된 상품을 마우스로 직접 클릭</color>해서\n판매해 보세요."); break;
+            case 39: SetActionMode("생성된 상품을 마우스로 직접 클릭해서\n판매해 보세요."); break;
             case 40: SetDialogMode("첫 수익입니다, 축하드려요!\n이렇게 단일 품목만 만들 수도 있지만,\n자원 상태에 따라 나눌 수도 있습니다."); break;
             
             case 41: SetDialogMode("if와 elif 문을 사용하면,\n현재 자원 상태에 따라 똑똑하게\n만들 상품을 나눌 수 있습니다!"); break;
@@ -350,45 +350,45 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 46: SetDialogMode("조건에 맞는 상품이 생성되었습니다!"); break;
             case 47: SetActionMode("생성된 상품을 마우스로 클릭해서\n판매해 보세요."); break;
 
-            case 48: SetDialogMode("완벽합니다!\n이제 <color=red>'반복문(Loop)'</color>을\n배워볼 시간입니다."); break;
+            case 48: SetDialogMode("완벽합니다!\n이제 '반복문(Loop)'을\n배워볼 시간입니다."); break;
             case 49: SetDialogMode("매번 기계를 켜주는 건 번거롭죠.\nfor문이나 while문을 사용하면\n알아서 반복 작동합니다!"); break;
             case 50: SetDialogMode("다만!!!\n\n현재 공장 시스템의 과부하를 막기 위해\n반복문은 최대 10회까지만 허용됩니다."); break;
             case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining()"); break;
             case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n          (단, 10회 제한으로 인해\n        10번 이하 조건만 실행 가능)\n\n      예시:\n      while resCommon < 100:\n          mining()"); break;
             case 53: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
-                SetActionMode("채굴기와 가공기 각각의 코드에\n<color=red>반복문을 추가</color>하여\n퀘스트를 완료해 보세요!\n(예: for i in range(10):)"); break;
+                SetActionMode("채굴기와 가공기 각각의 코드에\n반복문을 추가하여\n퀘스트를 완료해 보세요!\n(예: for i in range(10):)"); break;
             case 54: SetDialogMode("정말 대단합니다! 이제 기계들이\n스스로 10번씩 척척 일할 겁니다."); break;
-            
+
             case 55: SetDialogMode("그런데요, 이렇게 자동 반복하면\n계속 생산되는 자원을\n저희가 직접 눌러줘야 하겠네요..."); break;
-            case 56: SetDialogMode("아무래도, 진짜 공장다운\n<color=red>'자동화'</color> 구축이 필요해보입니다!"); break;
+            case 56: SetDialogMode("아무래도, 진짜 공장다운\n'자동화' 구축이 필요해보입니다!"); break;
             case 57: SetDialogMode("'컨베이어'를 이용하면 생산된 아이템을\n원하는 방향으로 운송이 가능해요."); break;
-            case 58: HighlightPanel(panelInstallation); SetPilotMode("<color=red>아래쪽 패널에서 '--'</color>를\n한번 클릭해 보시겠어요?");
+            case 58: HighlightPanel(panelInstallation); SetPilotMode("아래쪽 패널에서 '--'를\n한번 클릭해 보시겠어요?");
                 if (btnTutorialConveyor != null) btnTutorialConveyor.onClick.AddListener(OnConveyorButtonClicked); break;
             case 59: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
-                SetActionMode("컨베이어의 코딩은 아주 단순합니다.\n<color=red>코딩 창에 move() 라고 적고\n디버깅(F5)</color> 해보세요!"); break;
-            case 60: SetActionMode("완벽합니다!\n이제 채굴기나 가공기 배출구 앞에\n<color=red>컨베이어를 설치</color>해볼까요?\n(R키로 운송 방향 조절 가능)"); break;
-            case 61: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
+                SetActionMode("컨베이어의 코딩은 아주 단순합니다.\n코딩 창에 move() 라고 적고\n디버깅(F5) 해보세요!"); break;
+            case 60: SetActionMode("완벽합니다!\n이제 채굴기나 가공기 배출구 앞에\n컨베이어를 설치해볼까요?\n(R키로 운송 방향 조절 가능)"); break;
+            case 61: SetActionMode("이제 우클릭을 누르거나 취소 버튼을 눌러\n설치 모드에서 나가보세요."); break;
             case 62: SetDialogMode("설치 상태가 정상적으로 저장되고\n설치 모드에서 빠져나왔습니다!"); break;
             case 63: SetDialogMode("이제 생산된 아이템이\n컨베이어를 타고 이동할 겁니다."); break;
             
             case 64: SetDialogMode("본격적인 자동화 전에,\n잘못 설치한 건물 부수는법을\n먼저 알려드릴게요."); break;
-            case 65: HighlightPanel(panelInstallation); SetPilotMode("<color=red>하단의 설치물</color> 패널 끝에 있는\n<color=red>'철거'</color> 버튼을 클릭해 보세요!"); 
+            case 65: HighlightPanel(panelInstallation); SetPilotMode("하단의 설치물 패널 끝에 있는\n'철거' 버튼을 클릭해 보세요!"); 
                 if (btnTutorialDemolish != null) btnTutorialDemolish.onClick.AddListener(OnDemolishButtonClicked); break;
-            case 66: HighlightPanel(panelInstallation); SetDialogMode("철거 버튼이 눌려있는 상태로\n<color=red>설치된 기계를 클릭</color>하면,\n기계를 부수고 자원을 돌려받습니다!\n\n필요할 때 사용하시면 됩니다."); break;
+            case 66: HighlightPanel(panelInstallation); SetDialogMode("철거 버튼이 눌려있는 상태로\n설치된 기계를 클릭하면,\n기계를 부수고 자원을 돌려받습니다!\n\n필요할 때 사용하시면 됩니다."); break;
 
-            case 67: HighlightPanel(panelInstallation); SetDialogMode("자 이제 다시 자동화로 넘어옵시다.\n운송된 아이템을 <color=red>자동으로 수집</color>하려면\n'창고'와 '판매소'가 필요합니다."); break;
-            case 68: HighlightPanel(panelInstallation); SetDialogMode("주의점!\n<color=red>'창고'는 기본 자원만</color> 보관하고,\n<color=red>'판매소'는 상품만</color> 골드로 판매합니다.\n\n(이 둘은 코딩 창이 따로 없습니다!)"); break;
+            case 67: HighlightPanel(panelInstallation); SetDialogMode("자 이제 다시 자동화로 넘어옵시다.\n운송된 아이템을 자동으로 수집하려면\n'창고'와 '판매소'가 필요합니다."); break;
+            case 68: HighlightPanel(panelInstallation); SetDialogMode("주의점!\n'창고'는 기본 자원만 보관하고,\n'판매소'는 상품만 골드로 판매합니다.\n\n(이 둘은 코딩 창이 따로 없습니다!)"); break;
 
             case 69: 
                 if (Ingame_Manager_Quest.Instance != null) startQuestIdForStorage = Ingame_Manager_Quest.Instance.currentQuestId;
                 HighlightPanel(panelInstallation); 
-                SetActionMode("<color=red>창고와 판매소를 건설</color>하여\n자원과 상품을 각각 2번씩 획득하는\n<color=red>퀘스트를 완료</color>해 보세요!\n\n(필요하다면 철거 버튼을 이용해\n철거 후 재배치 하세요!)"); 
+                SetActionMode("창고와 판매소를 건설하여\n자원과 상품을 각각 2번씩 획득하는\n퀘스트를 완료해 보세요!\n\n(필요하다면 철거 버튼을 이용해\n철거 후 재배치 하세요!)"); 
                 break;
             
             case 70: SetDialogMode("훌륭합니다!\n창고와 판매소 덕분에\n물류가 훨씬 원활해졌습니다."); break;
 
-            case 71: SetDialogMode("좀 좁은 느낌이 드네요.\n아무래도 크기를 늘려야겠습니다."); break;
-            case 72: HighlightPanel(panelSideGroup); SetPilotMode("<color=red>우측의 '공장 확장'</color> 버튼을 눌러\n부지를 넓힐 수 있습니다!\n\n첫 확장은 무료이니,\n직접 '확장' 버튼을 클릭해 볼까요?");
+            case 71: SetDialogMode("좀 좁은 느낌이 드네요.\n아무래도 크기를 늘려야겠습니다.\n\n우측의 '공장 확장' 버튼을 눌러\n부지를 넓힐 수 있습니다!"); break;
+            case 72: HighlightPanel(panelSideGroup); SetPilotMode("첫 확장은 무료이니,\n직접 '확장' 버튼을 클릭해 볼까요?");
                 if (btnTutorialExpand != null) btnTutorialExpand.onClick.AddListener(OnExpandButtonClicked); break;
             case 73: SetActionMode("가운데 팝업창에서 '예' 버튼을 눌러\n공장 확장을 완료해 주세요!"); break;
             
