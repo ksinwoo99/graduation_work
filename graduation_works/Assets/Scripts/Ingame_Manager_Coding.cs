@@ -309,8 +309,13 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
             }
 
-                string clean = code.Replace(" ", "").ToLower();
-                if (clean.Contains("for") || clean.Contains("while") || clean.Contains("loop:")) {
+                // 주석/문자열 내 'for'/'while' 오탐 방지 + itertools.count 무한 루프도 감지.
+                string clean = StripCommentsAndStringLiterals(code).ToLower();
+                bool usedLoop =
+                    Regex.IsMatch(clean, @"\bfor\b")
+                    || Regex.IsMatch(clean, @"\bwhile\b")
+                    || Regex.IsMatch(clean, @"\bcount\s*\(");
+                if (usedLoop) {
                     if (Ingame_Manager_Quest.Instance != null) {
                         if (currentLogic is logic_Miner_Master) 
                             Ingame_Manager_Quest.Instance.isMinerLoopUsed = true;

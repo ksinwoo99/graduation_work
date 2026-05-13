@@ -97,6 +97,34 @@ public class Ingame_Button_Debugging : MonoBehaviour
     public float bgAlpha = 0.2f;
 
     // ──────────────────────────────────────────────────────
+    // 클라이언트 기계 검증 결과 코드 → (메시지, 표시 색상, 에러 여부) 매핑.
+    // 값 정의 / 추가 시 Ingame_Manager_Coding.CheckCodeAndApply() 와 동기화하세요.
+    // 새로운 케이스 추가는 본 딕셔너리에 한 줄 추가만으로 끝납니다.
+    // ──────────────────────────────────────────────────────
+    private struct ApplyFeedback {
+        public string Message; public Color Tint; public bool IsError;
+        public ApplyFeedback(string m, Color t, bool e) { Message = m; Tint = t; IsError = e; }
+    }
+
+    private static readonly Dictionary<int, ApplyFeedback> ApplyResultTable
+        = new Dictionary<int, ApplyFeedback> {
+            {  2, new ApplyFeedback("정상 작동 및 적용 완료!",                                                         Color.green,  false) },
+            {  1, new ApplyFeedback("이름은 저장되었으나, 기계 작동을 위한 필수 함수가 없습니다!",                       Color.yellow, true) },
+            { -1, new ApplyFeedback("아직 반복문(for / while) 시스템 권한이 잠겨 있어요!",                              Color.red,    true) },
+            { -2, new ApplyFeedback("현재 시스템에서는 반복문을 최대 10회까지만 사용할 수 있어요!",                       Color.red,    true) },
+            { -3, new ApplyFeedback("아직 무한 루프(while True / for i in count()) 권한이 잠겨 있어요!",                Color.red,    true) },
+            { -4, new ApplyFeedback("기계의 이름(name 변수)을 필수로 지정해야 합니다!",                                  Color.red,    true) },
+            { -5, new ApplyFeedback("시스템 권한 부족: 아직 컨베이어 벨트를 가동할 수 없습니다!",                         Color.red,    true) },
+            { -6, new ApplyFeedback("시스템 권한 부족: 아직 컨베이어 벨트 고속(fast) 모드를 사용할 수 없습니다!",          Color.red,    true) },
+            { -7, new ApplyFeedback("이미 다른 기계가 사용 중인 이름은 사용할 수 없습니다!",                              Color.red,    true) },
+            { -8, new ApplyFeedback("과열로 인해 해당 문법을 사용할 수 없습니다. 우회 코드를 사용하세요.",                Color.red,    true) },
+            { -9, new ApplyFeedback("[부품 부족] 사용 가능한 부품이 소진되었습니다. 반대 부품으로 균형을 맞춰 보충하세요!", Color.red,    true) },
+        };
+
+    private static readonly ApplyFeedback ApplyResultFallback
+        = new ApplyFeedback("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다.", Color.red, true);
+
+    // ──────────────────────────────────────────────────────
     // 서버 B 주소 설정
     // 로컬 테스트와 AWS 배포 중 사용할 줄의 주석을 해제하세요.
     // ──────────────────────────────────────────────────────
@@ -209,23 +237,14 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
             string timeMsg = $"  (실행 시간: {response.execution_time:F3}초)";
 
-            // applyResult 코드별 피드백 메시지
-            // 값 정의는 Ingame_Manager_Coding.CheckCodeAndApply() 참고
-            switch (applyResult)
-            {
-                case  2: SetUI("정상 작동 및 적용 완료!\n" + response.output + timeMsg, Color.green,  false); break;
-                case  1: SetUI("이름은 저장되었으나, 기계 작동을 위한 필수 함수가 없습니다!" + timeMsg, Color.yellow, true); break;
-                case -1: SetUI("아직 반복문(for)을 사용할 수 있는 시스템 권한이 없습니다!" + timeMsg, Color.red, true); break;
-                case -2: SetUI("현재 시스템에서는 반복문을 최대 10회까지만 사용할 수 있습니다!" + timeMsg, Color.red, true); break;
-                case -3: SetUI("아직 무한 루프(while)를 사용할 수 있는 시스템 권한이 없습니다!" + timeMsg, Color.red, true); break;
-                case -4: SetUI("기계의 이름(name 변수)을 필수로 지정해야 합니다!" + timeMsg, Color.red, true); break;
-                case -5: SetUI("시스템 권한 부족: 아직 컨베이어 벨트를 가동할 수 없습니다!" + timeMsg, Color.red, true); break;
-                case -6: SetUI("시스템 권한 부족: 아직 컨베이어 벨트 고속(fast) 모드를 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
-                case -7: SetUI("이미 다른 기계가 사용 중인 이름은 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
-                case -8: SetUI("과열로 인해 해당 문법을 사용할 수 없습니다. 우회 코드를 사용하세요." + timeMsg, Color.red, true); break;
-                case -9: SetUI("[부품 부족] 사용 가능한 부품이 소진되었습니다. 반대 부품으로 균형을 맞춰 보충하세요!" + timeMsg, Color.red, true); break;
-                default: SetUI("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다." + timeMsg, Color.red, true); break;
-            }
+            ApplyFeedback fb = ApplyResultTable.TryGetValue(applyResult, out var found)
+                ? found
+                : ApplyResultFallback;
+
+            string body = (applyResult == 2)
+                ? fb.Message + "\n" + response.output + timeMsg
+                : fb.Message + timeMsg;
+            SetUI(body, fb.Tint, fb.IsError);
         }
         else
         {
