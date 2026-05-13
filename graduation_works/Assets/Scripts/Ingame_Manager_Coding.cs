@@ -570,7 +570,14 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         forbiddenKeywords[targetId] = ""; 
         if (autoFixTimers.ContainsKey(targetId)) autoFixTimers.Remove(targetId);
 
-        if (backupCodes.ContainsKey(targetId)) {
+        if (wasImbalance) {
+            // 임밸런스 회복: 백업으로 덮어쓰지 않고 현재 코드에서 헤더 블록만 제거
+            // → 잠금 중 작성한 반대 부품 솔루션이 그대로 보존됩니다.
+            if (globalCodes.ContainsKey(targetId)) {
+                globalCodes[targetId] = StripImbalanceHeader(globalCodes[targetId]);
+            }
+        } else if (backupCodes.ContainsKey(targetId)) {
+            // 랜덤 고장(코드 깨짐) 복구: 백업으로 통째 복원
             globalCodes[targetId] = backupCodes[targetId];
         }
 
@@ -714,6 +721,28 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
     }
 
+    // 임밸런스 고장 시 상단에 주입되는 안내 블록의 시작/끝 마커.
+    // 복구 시 이 블록만 정확히 제거하기 위해 unique 한 식별 문자열을 사용합니다.
+    private const string ImbalanceHeaderStart = "# <<< BALANCE_LOCK_START >>>";
+    private const string ImbalanceHeaderEnd   = "# <<< BALANCE_LOCK_END >>>";
+
+    // 주어진 코드에서 임밸런스 헤더 블록(시작 마커 ~ 끝 마커, 두 마커 포함)을 제거합니다.
+    // 마커가 없으면 원본을 그대로 반환합니다.
+    private static string StripImbalanceHeader(string code) {
+        if (string.IsNullOrEmpty(code)) return code;
+        int startIdx = code.IndexOf(ImbalanceHeaderStart);
+        if (startIdx < 0) return code;
+        int endIdx = code.IndexOf(ImbalanceHeaderEnd, startIdx);
+        if (endIdx < 0) return code;
+
+        // 끝 마커가 포함된 줄 전체를 제거 (개행 포함)
+        int endLineEnd = code.IndexOf('\n', endIdx);
+        if (endLineEnd < 0) endLineEnd = code.Length;
+        else endLineEnd += 1;
+
+        return code.Substring(0, startIdx) + code.Substring(endLineEnd);
+    }
+
     // 주석(#) 과 문자열 리터럴(' " 둘 다) 내부를 공백으로 치환해 반환합니다.
     // 금지 키워드 검사(`forbiddenKeywords`) 가 안내 주석/문자열 내부의
     // 'for'/'while' 단어를 오탐하지 않도록 하기 위한 전처리.
@@ -801,18 +830,24 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         string srcCode = globalCodes[targetId];
         if (string.IsNullOrEmpty(srcCode)) return;
 
+        // 혹시 이전에 남아 있을 수 있는 헤더 블록 제거 (중첩 방지)
+        srcCode = StripImbalanceHeader(srcCode);
+
         brokenMachines[targetId]      = true;
-        backupCodes[targetId]         = srcCode;
+        backupCodes[targetId]         = srcCode;     // 헤더 제거 후 백업 (랜덤 고장 호환용)
         forbiddenKeywords[targetId]   = consumedPart;
         imbalanceBrokenMachines.Add(targetId);
 
-        // 사용 중이던 over-used 키워드를 placeholder 로 치환하여 즉시 실행 불가 상태로 만듦
+        // 안내 블록을 시작/끝 마커로 감싸 prepend. X_ERROR_X 치환은 하지 않습니다 —
+        // 키워드 차단은 CheckCodeAndApply 의 `\b{banned}\b` 검사가 이미 담당하고,
+        // 코드를 깨뜨리지 않아야 회복 시 사용자가 작성한 솔루션을 그대로 보존할 수 있습니다.
         string opposite   = consumedPart == "for" ? "while" : "for";
         string brokenCode =
-            $"# [부품 부족]\n"
-            + $"# '{consumedPart}' 부품이 모두 소진되었습니다!\n"
-            + $"# '{opposite}' 부품을 사용하는 코드로 디버깅해 균형을 맞춰주세요. (목표: 6.5:3.5 이하)\n"
-            + srcCode.Replace(consumedPart, "X_ERROR_X");
+            $"{ImbalanceHeaderStart}\n"
+            + $"# [부품 부족] '{consumedPart}' 을 너무 자주 사용하여 부품이 소진되었습니다!\n"
+            + $"# '{opposite}' 부품을 사용하는 코드로 디버깅해 균형을 맞춰주세요.\n"
+            + $"{ImbalanceHeaderEnd}\n"
+            + srcCode;
 
         globalCodes[targetId] = brokenCode;
 
