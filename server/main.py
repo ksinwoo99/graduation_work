@@ -141,13 +141,13 @@ _HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
             "[ 일반 학습자형 ] "
             "for 반복문을 활용하고 있어요! "
             "range() 안의 숫자를 더 크게 늘려보거나, "
-            "while True 무한 반복에도 도전해보세요.",
+            "for i in count(): 으로 무한 반복문을 사용해보세요.",
             "succ_r1_for_A",
         ),
         (
             "[ 일반 학습자형 ] "
             "for 루프로 좋은 구조를 만들었어요! "
-            "while True: 를 사용하면 기계가 멈추지 않고 계속 일해요. 한번 바꿔보세요!",
+            "for i in count():를 사용하면 기계가 멈추지 않고 계속 일해요. 한번 바꿔보세요!",
             "succ_r1_for_B",
         ),
     ],
@@ -155,7 +155,7 @@ _HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
         (
             "[ 일반 학습자형 ] "
             "while 반복문을 사용하고 있어요! "
-            "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요.",
+            "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요. 한번 바꿔보세요!",
             "succ_r1_while_A",
         ),
         (
@@ -1510,8 +1510,12 @@ async def submit_code(request: CodeSubmitRequest):
         # ─── ⑧ 루프 균형 분석 → 임밸런스 고장 / 복구 신호 ──────────
         # 현재 제출 INSERT 이후에 호출되어 최신 통계를 반영합니다.
         # is_success=1 만 집계하므로 실패 제출에는 자연스럽게 무영향.
+        #
+        # sample_size=10 — 회복 후 재트리거가 16+ 제출이나 걸리는 문제를 막기 위해
+        # 실시간 트리거용 윈도우는 짧게 둡니다.
+        # /api/user_loop_balance 는 통계 조회용으로 기본 20 유지.
         try:
-            balance = _compute_loop_balance(cursor, user_pk)
+            balance = _compute_loop_balance(cursor, user_pk, sample_size=10)
         except Exception as e:
             print(f"[LoopBalance] 분석 실패: {e}")
             balance = {
