@@ -189,7 +189,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void OnClick_Verify() {
         var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
         string codeToVerify = (codeEditor != null) ? codeEditor.Text : inputField.text;
-        CheckCodeAndApply(codeToVerify, true);
+        CheckCodeAndApply(codeToVerify, false);
     }
 
     public int CheckCodeAndApply(string code, bool isManualClick = false) {
@@ -459,19 +459,34 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         brokenMachines[targetId] = true; 
         backupCodes[targetId] = brokenCode; // 복구용 원본 백업
 
-        int errorType = Random.Range(0, 5); 
+        int errorType = Random.Range(0, 4); 
         switch (errorType) {
-            case 0: brokenCode = brokenCode.Replace(":", ""); break;
-            case 1: brokenCode = brokenCode.Replace("()", "("); break;
-            case 2: brokenCode = brokenCode.Replace("mining", "minin").Replace("producting", "productig").Replace("move", "mov"); break;
-            case 3: brokenCode = brokenCode.Replace("name=", "name=="); break;
-            case 4: 
+            case 0: brokenCode = brokenCode.Replace("mining", "").Replace("producting", ""); break;
+            case 1: brokenCode = brokenCode.Replace("name=", ""); break;
+            case 2: 
                 string banTarget = brokenCode.Contains("for") ? "for" : (brokenCode.Contains("while") ? "while" : "loop");
                 if (banTarget != "loop") {
                     forbiddenKeywords[targetId] = banTarget;
-                    brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode.Replace(banTarget, "X_ERROR_X");
+                    brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode;
                 } else {
                     brokenCode = brokenCode.Replace("(", ""); 
+                }
+                break;
+            case 3: 
+                string[] lines = brokenCode.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Length > 1) {
+                    // 기계 식별을 위한 name 변수(보통 첫 줄)가 날아가는 것을 방지하기 위해 1번째 줄부터 타겟으로 삼습니다.
+                    int lineToRemove = Random.Range(1, lines.Length);
+                    List<string> lineList = new List<string>(lines);
+                    lineList.RemoveAt(lineToRemove);
+                    
+                    // 삭제된 자리에 소실되었음을 알리는 주석을 남깁니다.
+                    lineList.Insert(lineToRemove, "    # [DATA LOST] 시스템 과부하로 코드가 소실되었습니다.");
+                    
+                    brokenCode = string.Join("\n", lineList);
+                } else {
+                    // 코드가 한 줄밖에 없었다면 그냥 통째로 날려버립니다.
+                    brokenCode = "# [FATAL ERROR] 데이터 완전 소실"; 
                 }
                 break;
         }
