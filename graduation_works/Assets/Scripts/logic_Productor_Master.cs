@@ -154,7 +154,10 @@ public class logic_Productor_Master : logic_CodingBase
         int loopLevel = 0;
         if (Ingame_Manager_Quest.Instance != null) loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
 
-        if (cleanCodeAll.Contains("whiletrue:") || cleanCodeAll.Contains("while(true)") || cleanCodeAll.Contains("loop:")) {
+        // 무한 반복 (while true / for i in count(...)) 검사
+        //    - itertools.count 방식: `for i in count(...)` -> 공백 제거 시 `incount(` 패턴 등장
+        if (cleanCodeAll.Contains("whiletrue:") || cleanCodeAll.Contains("while(true)") || cleanCodeAll.Contains("loop:")
+            || cleanCodeAll.Contains("incount(")) {
             if (loopLevel < 2) { processingCount = 0; return CodeState.Error_InfiniteLocked; }
             processingCount = -1; return CodeState.Valid;
         }

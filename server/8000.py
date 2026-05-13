@@ -3,6 +3,7 @@ import ast
 import asyncio
 import time
 import io
+import itertools
 from contextlib import redirect_stdout
 from datetime import datetime
 from typing import List, Optional
@@ -96,17 +97,87 @@ def format_error_user(e, source_code):
 
 FORBIDDEN_FUNCTIONS = {"eval", "exec", "open", "__import__", "compile", "globals", "locals"}
 
+# 화이트리스트: { module_name: {허용 심볼들} }
+# 다른 모든 import 는 SecurityVisitor 에서 차단됩니다.
+ALLOWED_IMPORT_FROMS: dict[str, set[str]] = {
+    "itertools": {"count"},
+}
+
+
+def _safe_import(name, globals=None, locals=None, fromlist=(), level=0):
+    """
+    Machine sandbox 의 __builtins__['__import__'] 로 주입되는 제한 import.
+    화이트리스트(ALLOWED_IMPORT_FROMS)에 등재된 모듈만 통과시킵니다.
+
+    유저가 `__import__('os')` 같이 직접 호출하는 경로는 SecurityVisitor 의
+    FORBIDDEN_FUNCTIONS 체크에서 이미 차단되므로, 본 함수는 `from X import Y`
+    같은 import 문이 내부적으로 호출하는 경로만 처리합니다.
+    """
+    if level == 0 and name in ALLOWED_IMPORT_FROMS:
+        if name == "itertools":
+            return itertools
+    raise Exception(f"보안: 외부 모듈 사용 금지 ({name})")
+
+
 class SecurityVisitor(ast.NodeVisitor):
-    def visit_Import(self, node): raise Exception("보안: 외부 모듈 사용 금지")
-    def visit_ImportFrom(self, node): raise Exception("보안: 외부 모듈 사용 금지")
+    def visit_Import(self, node):
+        # `import X` 형태는 전부 차단 — 화이트리스트는 `from X import Y` 만 허용
+        raise Exception("보안: 외부 모듈 사용 금지")
+
+    def visit_ImportFrom(self, node):
+        # 화이트리스트된 모듈 + 심볼 조합만 통과
+        allowed = ALLOWED_IMPORT_FROMS.get(node.module, set())
+        bad = [a.name for a in node.names if a.name not in allowed]
+        if bad:
+            raise Exception(
+                f"보안: 외부 모듈 사용 금지 ({node.module}.{bad[0]})"
+            )
+        # 통과 — generic_visit 불필요 (ImportFrom 하위에는 검사할 노드 없음)
+
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name) and node.func.id in FORBIDDEN_FUNCTIONS:
             raise Exception(f"금지 함수 사용: {node.func.id}")
         self.generic_visit(node)
 
+
+def _is_count_call(call_node: ast.AST) -> bool:
+    """
+    `for ... in count(...)` 또는 `for ... in itertools.count(...)` 의
+    iter 부분이 itertools.count 호출인지 판별합니다.
+    """
+    if not isinstance(call_node, ast.Call):
+        return False
+    f = call_node.func
+    if isinstance(f, ast.Name) and f.id == "count":
+        return True
+    if (isinstance(f, ast.Attribute)
+            and isinstance(f.value, ast.Name)
+            and f.value.id == "itertools"
+            and f.attr == "count"):
+        return True
+    return False
+
+
 class LoopTransformer(ast.NodeTransformer):
     def visit_While(self, node):
         if isinstance(node.test, ast.Constant) and node.test.value is True:
+            has_break = any(isinstance(child, ast.Break) for child in ast.walk(node))
+            if not has_break:
+                print_node = ast.Expr(
+                    value=ast.Call(
+                        func=ast.Name(id='print', ctx=ast.Load()),
+                        args=[ast.Constant(value="반복합니다.")],
+                        keywords=[]
+                    )
+                )
+                node.body.insert(0, print_node)
+            node.body.append(ast.Expr(value=ast.Yield(value=None)))
+        return node
+
+    def visit_For(self, node):
+        # `for i in count(...)` / `for i in itertools.count(...)` 무한 for 처리.
+        # while True 와 동일하게 매 반복 끝에 yield 를 삽입해 generator 화 합니다.
+        if _is_count_call(node.iter):
             has_break = any(isinstance(child, ast.Break) for child in ast.walk(node))
             if not has_break:
                 print_node = ast.Expr(
@@ -150,7 +221,13 @@ class Machine:
                 print("[ACTION] MOVE")
 
         self.env = {
-            "__builtins__": {"print":print,"range":range,"len":len,"int":int,"float":float,"str":str,"bool":bool},
+            # 화이트리스트된 모듈(itertools.count 등)을 import 문으로 가져올 수 있도록
+            # __import__ 만 _safe_import 로 교체합니다. 그 외 동작은 동일.
+            "__builtins__": {
+                "print": print, "range": range, "len": len,
+                "int": int, "float": float, "str": str, "bool": bool,
+                "__import__": _safe_import,
+            },
             "mining": _mining,
             "producting": _producting,
             "processing": lambda: print("[ACTION] PROCESSING"),
