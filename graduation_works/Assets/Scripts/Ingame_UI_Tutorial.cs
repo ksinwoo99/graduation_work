@@ -293,32 +293,32 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         {
             case 0: SetDialogMode("안녕하세요, 당신의 py.Factory\n발전을 도와줄 어시스트입니다!"); break;
             case 1: SetDialogMode("기본 목표는,\n'설치물의 코딩과 공장의 자동화'\n입니다!"); break;
-            case 2: SetActionMode("우클릭을 누른 후 드래그 하면,\n공장 부지를 옮겨 볼 수 있습니다."); break;
-            case 3: hasScrolledUp = false; hasScrolledDown = false; SetActionMode("또한 스크롤을 통하여 공장의\n줌 인/아웃도 가능합니다!"); break;
+            case 2: SetActionMode("<color=red>우클릭을 누른 후 드래그</color>하면,\n공장 부지를 옮겨 볼 수 있습니다."); break;
+            case 3: hasScrolledUp = false; hasScrolledDown = false; SetActionMode("또한 <color=red>스크롤</color>을 통하여 공장의\n줌 인/아웃도 가능합니다!"); break;
             
             // ✨ [수정] 4, 5, 6단계에만 붉은 네모 박스(true) 활성화!
             case 4: HighlightPanel(panelResource, true); SetDialogMode("왼쪽 위에는 현재 보유한 자원,\n그리고 퀘스트 라인을 볼 수 있어요."); break;
             case 5: HighlightPanel(panelSideGroup, true); SetDialogMode("오른쪽 패널들에선 현재 공장의 상태,\n업그레이드 등을 할 수 있습니다!"); break;
-            case 6: HighlightPanel(panelInstallation, true); SetPilotMode("아래쪽 패널에서는 맵에 지을 수 있는\n다양한 설치물들을 선택할 수 있어요.\n\n한번 채굴기를 클릭해보시겠어요?");
+            case 6: HighlightPanel(panelInstallation, true); SetPilotMode("아래쪽 패널에서는 맵에 지을 수 있는\n다양한 설치물들을 선택할 수 있어요.\n\n한번 <color=red>채굴기</color>를 클릭해보시겠어요?");
                 if (btnTutorialMiner != null) btnTutorialMiner.onClick.AddListener(OnMinerButtonClicked); break;
             
             case 7: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("이렇게, 코딩을 위한 개발환경과\n해당 설치물에 대한 설명이 뜹니다!"); break;
-            case 8: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("코딩 창의 위를 누르고 드래그하여\n위치를 바꿀 수도 있어요.\n\n코딩 창의 글씨가 너무 작거나 크다면,\n'Ctrl + 마우스 휠'을 이용해 글자 크기를 조절해 보세요!"); break;
-            case 9: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("패널 우측 하단의 손잡이를 드래그해서\n창의 크기도 마음대로 조절할 수 있습니다!"); break;
-            case 10: SetActionMode("자, 이제 첫 번째 퀘스트를\n진행해 볼까요?\n\n코딩 창에 name = \"이름\" 을 입력 후\n저장 및 디버깅(F5)을 하여,\n채굴기의 이름을 지어주세요!"); break;
+            case 8: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("<color=red>코딩 창의 위를 누르고 드래그</color>하여\n위치를 바꿀 수도 있어요.\n\n코딩 창의 글씨가 너무 작거나 크다면,\n<color=red>'Ctrl + 마우스 휠'</color>을 이용해 글자 크기를 조절해 보세요!"); break;
+            case 9: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("<color=red>코딩 창 우측 하단의 손잡이를 드래그</color>해서\n창의 크기도 마음대로 조절할 수 있습니다!"); break;
+            case 10: SetActionMode("자, 이제 첫 번째 퀘스트를\n진행해 볼까요?\n\n<color=red>코딩 창에 name = \"이름\" 을 입력 후\n저장 및 디버깅(F5)</color>을 하여,\n채굴기의 이름을 지어주세요!"); break;
             case 11: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("설치물 버튼의 이름을 보시면,\nname 변수에 저장한 내용으로\n변경되었습니다."); break;
             case 12: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetDialogMode("이렇게 python에서는\n'변수명 = 데이터' 형식으로\n값을 저장하는 공간을\n만들 수 있습니다.\n\nname 변수에 저장된 이름은\n공장 내에서 이 기계의\n고유한 이름표가 됩니다."); break;
-            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\nmining() 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
-            case 14: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
+            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining()</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
+            case 14: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo);
                 SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가\n가능해졌습니다.\n\n중요한 점은, 이 버튼을 통해 설치되는\n'모든' 채굴기는 방금 작성한 코드를\n모두가 따라 작동한다는 것입니다!"); break;
-            case 15: SetActionMode("채굴기같은 설치물 선택 중 R키를 누르면\n'생성될 요소의 위치 조절'이 가능해요.\n한번 맵에 클릭하여 설치해볼까요?"); break;
+            case 15: SetActionMode("채굴기같은 <color=red>설치물 선택 중 R키</color>를 누르면\n'생성될 요소의 위치 조절'이 가능해요.\n한번 맵에 클릭하여 설치해볼까요?"); break;
             case 16: SetDialogMode("훌륭합니다!\n맵에 채굴기가\n성공적으로 배치되었습니다."); break;
-            case 17: SetActionMode("이제 우클릭을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
+            case 17: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
             case 18: SetDialogMode("성공적으로 상태가 저장되고,\n설치 모드에서 빠져나왔습니다!"); break;
             case 19: SetActionMode("코딩대로 자원이 잘 채굴되는지\n조금만 기다려 볼까요?"); break;
             case 20: SetDialogMode("채굴기가 첫 자원 채집을\n성공하였습니다!"); break;
-            case 21: SetActionMode("생성된 자원을 마우스로 직접 클릭해서\n획득해 보세요!"); break;
+            case 21: SetActionMode("생성된 자원을 <color=red>마우스로 직접 클릭</color>해서\n획득해 보세요!"); break;
             case 22: SetDialogMode("처음으로 얻은 자원이네요, 축하합니다!\n\n지금은 기본자원만 얻었지만,\n채굴기마다 채취할 수 있는 자원이\n다양하게 있습니다."); break;
             case 23: SetDialogMode("그런데 자원을 획득하고 나니\n채굴기가 멈춰버렸네요?"); break;
             case 24: SetDialogMode("이 채굴기는 반복문이 없는\n'단순 코드형'이라서\n1회 채굴 후 정지되었기 때문입니다!"); break;
