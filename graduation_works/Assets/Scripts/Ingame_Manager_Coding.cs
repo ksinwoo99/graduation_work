@@ -56,6 +56,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public Dictionary<int, bool> brokenMachines = new Dictionary<int, bool>(); // 현재 고장 상태인지 확인
     public Dictionary<int, string> forbiddenKeywords = new Dictionary<int, string>(); // 금지된 문법 (for, while)
 
+    // 루프 빈도 불균형으로 인한 고장 (시간으로 풀리지 않음. 균형 회복 시에만 복구)
+    // 기존 random 고장 시스템과 분리하기 위한 마커 집합.
+    private HashSet<int> imbalanceBrokenMachines = new HashSet<int>();
+
     [Header("복구 및 포기 시스템")]
     public Button btnGiveUp; 
     public float autoFixTime = 90f; 
@@ -149,7 +153,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (btnGiveUp != null) {
             bool isCurrentBroken = brokenMachines.ContainsKey(currentMachineId) && brokenMachines[currentMachineId];
-            btnGiveUp.gameObject.SetActive(isCurrentBroken);
+            // 임밸런스 고장은 포기로 풀 수 없음
+            bool canGiveUp = isCurrentBroken && !imbalanceBrokenMachines.Contains(currentMachineId);
+            btnGiveUp.gameObject.SetActive(canGiveUp);
         }
     }
 
@@ -251,11 +257,24 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
             if (forbiddenKeywords.ContainsKey(currentMachineId) && !string.IsNullOrEmpty(forbiddenKeywords[currentMachineId])) {
                 string banned = forbiddenKeywords[currentMachineId];
-                string clean = code.Replace(" ", "").ToLower();
-                if (clean.Contains(banned)) {
-                    if (buildManager != null) buildManager.ShowFloatingText($"# 에러: '{banned}' 문법은 현재 사용할 수 없습니다!", codingPanel.transform.position);
-                    SetStatus(Color.red, false); 
-                    return -8;
+
+                // 주석(#)·문자열 리터럴 안의 'for'/'while' 은 키워드 사용이 아니므로 제외.
+                // (고장 시 주입한 안내 주석의 'for'/'while' 이 오탐되는 문제 방지)
+                string sanitized = StripCommentsAndStringLiterals(code);
+                bool isBannedUsed = Regex.IsMatch(
+                    sanitized, $@"\b{Regex.Escape(banned)}\b",
+                    RegexOptions.IgnoreCase);
+
+                if (isBannedUsed) {
+                    // 임밸런스 고장이면 "부품 부족" 힌트를 우선 표시 (-9), 그 외 과열 고장은 기존 -8
+                    bool isImbalance = imbalanceBrokenMachines.Contains(currentMachineId);
+                    string opposite = banned == "for" ? "while" : "for";
+                    string msg = isImbalance
+                        ? $"# [부품 부족] '{banned}' 부품이 모두 소진되었습니다! '{opposite}' 부품을 사용해 균형을 맞춰주세요."
+                        : $"# 에러: '{banned}' 문법은 현재 사용할 수 없습니다!";
+                    if (buildManager != null) buildManager.ShowFloatingText(msg, codingPanel.transform.position);
+                    SetStatus(Color.red, false);
+                    return isImbalance ? -9 : -8;
                 }
             }
 
@@ -488,17 +507,21 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public void OnClick_GiveUp() {
         int targetId = 0;
         foreach (var kvp in brokenMachines) {
-            if (kvp.Value == true) { 
+            // 임밸런스 고장은 골드로 포기 불가 — 균형 회복으로만 풀림
+            if (kvp.Value == true && !imbalanceBrokenMachines.Contains(kvp.Key)) {
                 targetId = kvp.Key;
-                break; 
+                break;
             }
         }
 
         if (targetId != 0) {
             RestoreMachine(targetId, true); 
         } else {
-            // 혹시 모르니 예외 처리 (고장이 아닌데 버튼이 눌린 경우)
-            if (buildManager != null) buildManager.ShowFloatingText("고장난 기계가 없습니다.", transform.position);
+            // 일반 고장이 없으면 임밸런스 고장 안내 / 아무것도 없으면 기본 메시지
+            string msg = imbalanceBrokenMachines.Count > 0
+                ? "부품 부족 고장은 반대 부품을 사용해서 균형을 맞춰야 풀립니다."
+                : "고장난 기계가 없습니다.";
+            if (buildManager != null) buildManager.ShowFloatingText(msg, transform.position);
         }
     }
 
@@ -525,6 +548,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     private void RestoreMachine(int targetId, bool isManualGiveUp) {
         if (!brokenMachines.ContainsKey(targetId) || !brokenMachines[targetId]) return;
 
+        bool wasImbalance = imbalanceBrokenMachines.Contains(targetId);
+        if (wasImbalance) imbalanceBrokenMachines.Remove(targetId);
+
         brokenMachines[targetId] = false;
         forbiddenKeywords[targetId] = ""; 
         if (autoFixTimers.ContainsKey(targetId)) autoFixTimers.Remove(targetId);
@@ -534,7 +560,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
 
         if (Ingame_Manager_Resource.Instance != null) {
-            if (isManualGiveUp) {
+            if (wasImbalance) {
+                // 임밸런스 고장은 균형 회복으로만 풀린다 — 골드 페널티 없음
+                if (buildManager != null) buildManager.ShowFloatingText("부품 균형 회복! 기계가 복구되었습니다.", codingPanel.transform.position);
+            } else if (isManualGiveUp) {
                 int penaltyAmount = Mathf.FloorToInt(Ingame_Manager_Resource.Instance.currentGold * 0.25f);
                 Ingame_Manager_Resource.Instance.currentGold -= penaltyAmount; 
                 
@@ -571,23 +600,34 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         bool hasAnyBreakdown = false;
+        bool hasTimedBreakdown = false; // 시간연장 버튼 표시 여부 (임밸런스는 시간 무관)
 
         foreach (var kvp in brokenMachines) {
             int mId = kvp.Key;
             bool isBroken = kvp.Value;
+            if (!isBroken) continue;
 
-            if (isBroken && autoFixTimers.ContainsKey(mId)) {
-            hasAnyBreakdown = true;
             string machineName = GetMachineCustomName(mId);
-            int timeLeft = Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId]));
-            sb.AppendLine($"{machineName}: {timeLeft}초 후 복구");
+
+            if (imbalanceBrokenMachines.Contains(mId)) {
+                // 임밸런스 고장 — 시간으로 안 풀리므로 균형 회복 안내
+                hasAnyBreakdown = true;
+                string banned = forbiddenKeywords.ContainsKey(mId) ? forbiddenKeywords[mId] : "?";
+                string opposite = banned == "for" ? "while" : (banned == "while" ? "for" : "다른");
+                sb.AppendLine($"{machineName}: 부품 부족 ('{banned}' 소진) — '{opposite}' 사용으로 균형 회복 필요");
+            }
+            else if (autoFixTimers.ContainsKey(mId)) {
+                hasAnyBreakdown = true;
+                hasTimedBreakdown = true;
+                int timeLeft = Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId]));
+                sb.AppendLine($"{machineName}: {timeLeft}초 후 복구");
             }
         }
 
         if (hasAnyBreakdown) {
             isShowingCompleteStatus = false; // 고장이 새로 발견되면 완료 상태 해제
             if (!breakdownStatusPanel.activeSelf) breakdownStatusPanel.SetActive(true);
-            if (btnExtendTime != null) btnExtendTime.gameObject.SetActive(true);
+            if (btnExtendTime != null) btnExtendTime.gameObject.SetActive(hasTimedBreakdown);
             txtBreakdownList.text = sb.ToString();
         } else {
             // 고장난 기계가 없는데 패널이 켜져 있다면 (방금 수리됨)
@@ -636,9 +676,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public void OnClick_ExtendTime() {
         int targetId = 0;
 
-        // 현재 고장난 기계 찾기
+        // 현재 고장난 기계 찾기 (임밸런스 고장은 타이머가 없으므로 제외)
         foreach (var kvp in brokenMachines) {
-            if (kvp.Value) {
+            if (kvp.Value && !imbalanceBrokenMachines.Contains(kvp.Key)) {
                 targetId = kvp.Key;
                 break;
             }
@@ -657,6 +697,136 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 if (buildManager != null) buildManager.ShowFloatingText("골드가 부족합니다!", transform.position);
             }
         }
+    }
+
+    // 주석(#) 과 문자열 리터럴(' " 둘 다) 내부를 공백으로 치환해 반환합니다.
+    // 금지 키워드 검사(`forbiddenKeywords`) 가 안내 주석/문자열 내부의
+    // 'for'/'while' 단어를 오탐하지 않도록 하기 위한 전처리.
+    //
+    // 단순 라인 단위 파서 — Python 의 삼중따옴표 / 이스케이프는 처리하지 않지만,
+    // 본 게임의 짧은 한 줄짜리 코드 스타일에는 충분합니다.
+    private static string StripCommentsAndStringLiterals(string code) {
+        if (string.IsNullOrEmpty(code)) return string.Empty;
+
+        var sb = new System.Text.StringBuilder(code.Length);
+        foreach (string line in code.Split('\n')) {
+            bool inSingle = false;
+            bool inDouble = false;
+            for (int i = 0; i < line.Length; i++) {
+                char c = line[i];
+
+                if (!inSingle && !inDouble && c == '#') break; // 라인 나머지는 주석
+
+                if (!inDouble && c == '\'') { inSingle = !inSingle; sb.Append(' '); continue; }
+                if (!inSingle && c == '"')  { inDouble = !inDouble; sb.Append(' '); continue; }
+
+                sb.Append((inSingle || inDouble) ? ' ' : c);
+            }
+            sb.Append('\n');
+        }
+        return sb.ToString();
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // 루프 임밸런스 고장 — 서버 /api/submit_code 응답으로 트리거/복구
+    //
+    // 동작 흐름:
+    //   - shouldBreak  → 현재 디버그 중인 기계를 'consumedPart'(for|while) 사용 불가 상태로 고장
+    //   - isFixed      → 모든 임밸런스 고장 기계를 일괄 복구
+    //   - 중간 영역(0.3 < imbalance < 0.6) → 둘 다 false, 기존 상태 유지
+    //
+    // 기존 random 고장 시스템과 분리: imbalanceBrokenMachines 마커로 구분.
+    // ──────────────────────────────────────────────────────────
+    public void HandleLoopImbalance(bool shouldBreak, bool isFixed,
+                                    string consumedPart, float imbalanceScore) {
+        bool isSafeMode = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive)
+                          || Shared_Manager_Session.IsVisiting;
+        if (!enableDynamicDifficulty || isSafeMode) return;
+
+        // 1) 균형 회복 신호 → 임밸런스 고장 모두 해제
+        if (isFixed && imbalanceBrokenMachines.Count > 0) {
+            // 순회 중 수정 방지를 위해 사본
+            int[] ids = new int[imbalanceBrokenMachines.Count];
+            imbalanceBrokenMachines.CopyTo(ids);
+            foreach (int id in ids) RestoreMachine(id, false);
+            return;
+        }
+
+        // 2) 편향 신호 → 현재 디버그 중인 기계를 임밸런스 고장으로 전환
+        if (shouldBreak) {
+            // 부품 종류 검증 (예상 외 값이면 무시)
+            if (consumedPart != "for" && consumedPart != "while") return;
+
+            // 이미 임밸런스 고장이 활성화 중이면 중복 트리거 방지
+            if (imbalanceBrokenMachines.Count > 0) return;
+
+            int targetId = currentMachineId;
+            // 현재 열린 기계가 없거나 비활성이면 활성 기계 중 하나 선택
+            if (targetId < 1 || targetId > 8 || !globalCodes.ContainsKey(targetId)
+                || string.IsNullOrEmpty(globalCodes[targetId])) {
+                foreach (var kvp in globalCodes) {
+                    if (kvp.Key >= 1 && kvp.Key <= 8
+                        && !string.IsNullOrEmpty(kvp.Value) && kvp.Value.Length > 5) {
+                        targetId = kvp.Key;
+                        break;
+                    }
+                }
+            }
+            if (targetId < 1 || targetId > 8) return;
+
+            // 일반 고장과 중복되면 우선권은 일반 고장 (이미 코드가 깨져 있음)
+            if (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId]) return;
+
+            TriggerImbalanceBreakdownOn(targetId, consumedPart);
+        }
+    }
+
+    private void TriggerImbalanceBreakdownOn(int targetId, string consumedPart) {
+        if (!globalCodes.ContainsKey(targetId)) return;
+        string srcCode = globalCodes[targetId];
+        if (string.IsNullOrEmpty(srcCode)) return;
+
+        brokenMachines[targetId]      = true;
+        backupCodes[targetId]         = srcCode;
+        forbiddenKeywords[targetId]   = consumedPart;
+        imbalanceBrokenMachines.Add(targetId);
+
+        // 사용 중이던 over-used 키워드를 placeholder 로 치환하여 즉시 실행 불가 상태로 만듦
+        string opposite   = consumedPart == "for" ? "while" : "for";
+        string brokenCode =
+            $"# [부품 부족]\n"
+            + $"# '{consumedPart}' 부품이 모두 소진되었습니다!\n"
+            + $"# '{opposite}' 부품을 사용하는 코드로 디버깅해 균형을 맞춰주세요. (목표: 6.5:3.5 이하)\n"
+            + srcCode.Replace(consumedPart, "X_ERROR_X");
+
+        globalCodes[targetId] = brokenCode;
+
+        logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
+        foreach (var m in allMachines) {
+            Iteminfo_Base info = m.GetComponent<Iteminfo_Base>();
+            if (info == null || Ingame_System_Save.Instance == null) continue;
+            int mId = Ingame_System_Save.Instance.GetMachineTypeInt(
+                info.machinePrefab != null ? info.machinePrefab.name : info.machineName);
+            if (mId == targetId) {
+                m.ValidateCode(brokenCode);
+                if (buildManager != null) {
+                    string customName = GetMachineCustomName(targetId);
+                    buildManager.ShowFloatingText(
+                        $"{customName} 부품 부족! '{consumedPart}' 소진 — '{opposite}' 로 균형 회복 필요",
+                        m.transform.position);
+                }
+            }
+        }
+
+        // 현재 패널이 해당 기계를 보고 있으면 에디터에도 반영
+        if (codingPanel.activeSelf && currentMachineId == targetId) {
+            var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+            if (codeEditor != null) codeEditor.Text = brokenCode;
+            else inputField.text = brokenCode;
+            if (statusLight != null) statusLight.color = Color.red;
+            if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(false); // 임밸런스는 포기 불가
+        }
+        // ※ AutoFixRoutine 은 시작하지 않습니다 — 균형 회복으로만 풀림
     }
 
     public Button btnTestBreakdown;

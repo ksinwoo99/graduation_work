@@ -1507,6 +1507,20 @@ async def submit_code(request: CodeSubmitRequest):
         except Exception:
             pass
 
+        # ─── ⑧ 루프 균형 분석 → 임밸런스 고장 / 복구 신호 ──────────
+        # 현재 제출 INSERT 이후에 호출되어 최신 통계를 반영합니다.
+        # is_success=1 만 집계하므로 실패 제출에는 자연스럽게 무영향.
+        try:
+            balance = _compute_loop_balance(cursor, user_pk)
+        except Exception as e:
+            print(f"[LoopBalance] 분석 실패: {e}")
+            balance = {
+                "should_break_machine": False,
+                "is_balance_fixed":     True,
+                "consumed_part_type":   "for",
+                "imbalance_score":      0.0,
+            }
+
         return {
             "status":           "success",
             "score":            score,
@@ -1519,6 +1533,11 @@ async def submit_code(request: CodeSubmitRequest):
             "antipattern_pen":  antipattern_pen,
             "antipattern_tags": antipattern_tags,
             "hint_type":        hint_type,
+            # 루프 균형 — 클라이언트의 임밸런스 고장 시스템 트리거용
+            "should_break_machine": balance.get("should_break_machine", False),
+            "is_balance_fixed":     balance.get("is_balance_fixed", True),
+            "consumed_part_type":   balance.get("consumed_part_type", "for"),
+            "imbalance_score":      balance.get("imbalance_score", 0.0),
         }
 
     except Exception as e:
@@ -1648,25 +1667,47 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
 # ──────────────────────────────────────────────────────────
 # 엔드포인트 3: 유저 루프 사용 균형 분석
 # ──────────────────────────────────────────────────────────
-@app.get("/api/user_loop_balance/{user_id}")
-async def get_user_loop_balance(user_id: str, sample_size: int = 20):
-    """
-    유저의 최근 성공 제출(최대 sample_size개)에서
-    for / while 사용 비율을 분석하여 균형 지표를 반환합니다.
+# imbalance_score 가 이 값 이상이면 한쪽 루프에 과하게 치우친 것으로 간주하여
+# 기계를 고장내는 신호(should_break_machine=True) 를 보냅니다.
+# 0.6 = 8:2 편향 (for:while 또는 while:for 가 8:2 이상)
+#       |0.8 - 0.5| × 2 = 0.6  (또는 for_ratio=0.2 일 때 동일)
+_IMBALANCE_BREAK_THRESHOLD: float = 0.6
 
-    Unity 클라이언트 활용 가이드:
-        obstacle_intensity    (int,  0~100) : 높을수록 강한 제약 장애물 부여
-        recommended_loop_type (str, "for"|"while") : 부족한 루프 유형
-        imbalance_score       (float, 0.0~1.0) : 0 에 가까울수록 균형 잡힌 코딩 스타일
+# imbalance_score 가 이 값 이하면 다시 균형을 회복한 것으로 간주하여
+# 클라이언트가 임밸런스 고장을 해제하도록 신호(is_balance_fixed=True) 를 보냅니다.
+# 0.3 = 6.5:3.5 비율 (|0.65 - 0.5| × 2 = 0.3)
+_IMBALANCE_FIX_THRESHOLD: float = 0.3
+
+
+def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
     """
-    conn   = pymysql.connect(**DB_CONFIG)
-    cursor = conn.cursor()
+    유저의 최근 성공 제출(최대 sample_size 개)에서
+    for / while 누적 사용량을 분석한 균형 지표 dict 를 반환합니다.
+
+    /api/user_loop_balance/{user_id} 와 /api/submit_code 모두에서 공통 사용.
+
+    반환 키:
+        status               : "success" | "no_data" | "no_loops"
+        sample_count, total_for_count, total_while_count
+        for_ratio, while_ratio (0.0~1.0)
+        imbalance_score      (0.0~1.0)  — 0 에 가까울수록 균형
+        should_break_machine (bool)     — imbalance_score >= 0.6
+        is_balance_fixed     (bool)     — imbalance_score <= 0.3 (6.5:3.5 이하)
+        consumed_part_type   ("for"|"while") — 더 많이 사용된 부품 종류
+    """
+    _no_data_base = {
+        "sample_count":         0,
+        "total_for_count":      0,
+        "total_while_count":    0,
+        "for_ratio":            0.0,
+        "while_ratio":          0.0,
+        "imbalance_score":      0.0,
+        "should_break_machine": False,
+        "is_balance_fixed":     True,
+        "consumed_part_type":   "for",
+    }
+
     try:
-        cursor.execute("SELECT pk_id FROM users WHERE id = %s", (user_id,))
-        user_record = cursor.fetchone()
-        if not user_record:
-            raise HTTPException(status_code=404, detail=f"'{user_id}' 유저를 찾을 수 없습니다.")
-
         cursor.execute(
             """
             SELECT source_code FROM code_logs
@@ -1674,25 +1715,16 @@ async def get_user_loop_balance(user_id: str, sample_size: int = 20):
             ORDER  BY created_at DESC
             LIMIT  %s
             """,
-            (user_record['pk_id'], sample_size)
+            (user_pk, sample_size)
         )
-        rows = cursor.fetchall()
-    finally:
-        conn.close()
-
-    _no_data_base = {
-        "sample_count":          0,
-        "total_for_count":       0,
-        "total_while_count":     0,
-        "for_ratio":             0.0,
-        "while_ratio":           0.0,
-        "imbalance_score":       0.0,
-        "recommended_loop_type": "for",
-        "obstacle_intensity":    0,
-    }
+        rows = cursor.fetchall() or []
+    except Exception:
+        return {**_no_data_base, "status": "no_data",
+                "message": "성공한 제출 기록 조회에 실패했습니다."}
 
     if not rows:
-        return {**_no_data_base, "status": "no_data", "message": "성공한 제출 기록이 없습니다."}
+        return {**_no_data_base, "status": "no_data",
+                "message": "성공한 제출 기록이 없습니다."}
 
     total_for = total_while = 0
     for row in rows:
@@ -1716,23 +1748,52 @@ async def get_user_loop_balance(user_id: str, sample_size: int = 20):
     # 0.0 = 완전 균형(for 50% : while 50%) / 1.0 = 한쪽만 사용
     imbalance_score = round(abs(for_ratio - 0.5) * 2, 3)
 
-    # 부족한 쪽 루프를 권장
-    recommended = "while" if for_ratio > 0.5 else "for"
+    # 8:2 이상 치우치면 고장 트리거, 6.5:3.5 이하로 회복하면 해제 신호
+    should_break_machine = imbalance_score >= _IMBALANCE_BREAK_THRESHOLD
+    is_balance_fixed     = imbalance_score <= _IMBALANCE_FIX_THRESHOLD
 
-    # obstacle_intensity: 0~100 정수
-    obstacle_intensity = int(min(imbalance_score * 100, 100))
+    # consumed_part_type: 더 많이 사용된 루프 유형 — 고장 시 소모될 부품 종류
+    consumed_part_type = "for" if for_ratio > 0.5 else "while"
 
     return {
-        "status":                "success",
-        "sample_count":          len(rows),
-        "total_for_count":       total_for,
-        "total_while_count":     total_while,
-        "for_ratio":             round(for_ratio, 3),
-        "while_ratio":           round(while_ratio, 3),
-        "imbalance_score":       imbalance_score,
-        "recommended_loop_type": recommended,
-        "obstacle_intensity":    obstacle_intensity,
+        "status":               "success",
+        "sample_count":         len(rows),
+        "total_for_count":      total_for,
+        "total_while_count":    total_while,
+        "for_ratio":            round(for_ratio, 3),
+        "while_ratio":          round(while_ratio, 3),
+        "imbalance_score":      imbalance_score,
+        "should_break_machine": should_break_machine,
+        "is_balance_fixed":     is_balance_fixed,
+        "consumed_part_type":   consumed_part_type,
     }
+
+
+@app.get("/api/user_loop_balance/{user_id}")
+async def get_user_loop_balance(user_id: str, sample_size: int = 20):
+    """
+    유저의 최근 성공 제출(최대 sample_size개)에서
+    for / while 사용 비율을 분석하여 균형 지표를 반환합니다.
+
+    Unity 클라이언트 활용 가이드:
+        should_break_machine (bool)            : True 면 기계 고장 이벤트 발생
+                                                 (imbalance_score >= _IMBALANCE_BREAK_THRESHOLD)
+        is_balance_fixed     (bool)            : True 면 임밸런스 고장 해제 트리거
+                                                 (imbalance_score <= _IMBALANCE_FIX_THRESHOLD)
+        consumed_part_type   (str, "for"|"while") : 고장 시 소모될 부품 종류
+                                                    (= 더 많이 사용된 루프 유형)
+        imbalance_score      (float, 0.0~1.0)  : 0 에 가까울수록 균형 잡힌 코딩 스타일
+    """
+    conn   = pymysql.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT pk_id FROM users WHERE id = %s", (user_id,))
+        user_record = cursor.fetchone()
+        if not user_record:
+            raise HTTPException(status_code=404, detail=f"'{user_id}' 유저를 찾을 수 없습니다.")
+        return _compute_loop_balance(cursor, user_record['pk_id'], sample_size)
+    finally:
+        conn.close()
 
 
 # ──────────────────────────────────────────────────────────
