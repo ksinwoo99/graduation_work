@@ -25,17 +25,21 @@ HINT_TARGET_VECTORS: dict[str, dict[str, int]] = {
     "succ_r0_simple_A":  {"has_loop": +1, "loop_efficiency": +1},
     "succ_r0_simple_B":  {"has_loop": +1, "loop_efficiency": +1},
     "succ_r0_has_if_A":  {"has_loop": +1},
-    "succ_r0_has_if_B":  {"has_infinite_while": +1},
+    "succ_r0_has_if_B":  {"has_infinite_loop": +1},
 
-    # ── rank 1: 일반 학습자형 → while True / 효율 강화 유도 ──
-    "succ_r1_for_A":     {"loop_efficiency": +1, "has_infinite_while": +1},
-    "succ_r1_for_B":     {"has_infinite_while": +1},
+    # ── rank 1: 일반 학습자형 → 무한 루프(while True / for in count) 유도 ──
+    "succ_r1_for_A":     {"loop_efficiency": +1, "has_infinite_loop": +1},
+    "succ_r1_for_B":     {"has_infinite_for": +1, "uses_itertools": +1},
     "succ_r1_while_A":   {"has_infinite_while": +1},
     "succ_r1_while_B":   {"has_infinite_while": +1},
 
     # ── rank 2: 효율 최적화형 → 유지가 곧 성공 (방향 유지)
-    "succ_r2_for":       {"has_loop": +1, "loop_efficiency": +1},
-    "succ_r2_infinite":  {"has_infinite_while": +1, "loop_efficiency": +1},
+    "succ_r2_for_range_A":          {"has_loop": +1, "loop_efficiency": +1},
+    "succ_r2_for_range_B":          {"has_infinite_loop": +1},
+    "succ_r2_infinite_while_A":     {"has_infinite_while": +1, "loop_efficiency": +1},
+    "succ_r2_infinite_while_B":     {"has_infinite_while": +1, "loop_efficiency": +1},
+    "succ_r2_infinite_for_count_A": {"has_infinite_for": +1, "uses_itertools": +1},
+    "succ_r2_infinite_for_count_B": {"has_infinite_for": +1, "uses_itertools": +1},
 
     # err_* / machine_* 힌트류는 별도 시그널(에러 해결 여부)로 평가하므로
     # 여기서는 빈 매핑(중립). reward shaping 에서 prev_was_error → cur_is_success

@@ -101,11 +101,17 @@ _feature_names:   list = []
 # 실제로 이끌어냈는지 자동으로 학습합니다.
 # 선택 정책: ContextualBandit(RF) → ThompsonBandit(Beta α/β) 폴백.
 # (구버전의 ε-greedy 는 Thompson Sampling 으로 완전 교체됨)
-_hint_stats: dict[str, dict] = {}   # hint_type → {"shown": N, "success": M} (legacy 통계)
+_hint_stats: dict[str, dict] = {}   # hint_type → {"shown": N, "success": M} (in-memory 노출 카운트)
 
 # 밴딧이 선택할 힌트 변형 풀 — (hint_text, hint_type_id) 쌍의 리스트.
 # 각 상황(group_key)에 2개의 변형을 두어 어떤 표현이 더 효과적인지 학습합니다.
+#
+# 그룹 키 명명 규칙:
+#   succ_r{rank}_{서브케이스}
+#       rank      0 단순 / 1 학습자 / 2 효율 최적화
+#       서브케이스 코드의 구조적 특징 (simple / has_if / for / while / for_count / infinite_while ...)
 _HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
+    # ────────────── rank 0: 루프 미사용 ──────────────
     "succ_r0_simple": [
         (
             "[ 단순 코드형 ] "
@@ -136,18 +142,19 @@ _HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
             "succ_r0_has_if_B",
         ),
     ],
+
+    # ────────────── rank 1: 일반 학습자 (단일 루프) ──────────────
     "succ_r1_for": [
         (
             "[ 일반 학습자형 ] "
-            "for 반복문을 활용하고 있어요! "
-            "range() 안의 숫자를 더 크게 늘려보거나, "
-            "for i in count(): 으로 무한 반복문을 사용해보세요.",
+            "for 반복문을 잘 쓰고 있어요! "
+            "range() 의 숫자를 더 키우거나, while True: + break 조건으로 자동화에 도전해보세요.",
             "succ_r1_for_A",
         ),
         (
             "[ 일반 학습자형 ] "
             "for 루프로 좋은 구조를 만들었어요! "
-            "for i in count():를 사용하면 기계가 멈추지 않고 계속 일해요. 한번 바꿔보세요!",
+            "from itertools import count 후 for i in count(): 으로 무한 반복도 도전해보세요.",
             "succ_r1_for_B",
         ),
     ],
@@ -155,14 +162,61 @@ _HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
         (
             "[ 일반 학습자형 ] "
             "while 반복문을 사용하고 있어요! "
-            "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요. 한번 바꿔보세요!",
+            "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요.",
             "succ_r1_while_A",
         ),
         (
             "[ 일반 학습자형 ] "
             "while 루프를 쓰고 있군요! "
-            "while True: 와 break 조합으로 무한 자동화를 구현해보세요.",
+            "조건문 대신 while True: + 내부 break 로 더 명확한 종료 흐름을 만들 수 있어요.",
             "succ_r1_while_B",
+        ),
+    ],
+
+    # ────────────── rank 2: 효율 최적화 (무한 / 고효율 루프) ──────────────
+    # while True: — "고전적" 무한 자동화
+    "succ_r2_infinite_while": [
+        (
+            "[ 효율 최적화형 ] "
+            "while True: 로 기계를 완전 자동화했어요! "
+            "내부에 if + break 종료 조건이 있으면 더 안전한 코드가 됩니다.",
+            "succ_r2_infinite_while_A",
+        ),
+        (
+            "[ 효율 최적화형 ] "
+            "무한 루프로 완벽한 자동화 코드예요! "
+            "자원량을 확인해서 멈추는 종료 조건을 추가하면 한층 견고해집니다.",
+            "succ_r2_infinite_while_B",
+        ),
+    ],
+    # for i in count(...) — itertools 활용한 "파이써닉" 무한 자동화
+    "succ_r2_infinite_for_count": [
+        (
+            "[ 효율 최적화형 ] "
+            "from itertools import count 와 for i in count(): 로 파이써닉한 무한 반복을 구현했네요! "
+            "i 값을 활용해 단계별 동작을 분기하면 표현력이 훨씬 풍부해져요.",
+            "succ_r2_infinite_for_count_A",
+        ),
+        (
+            "[ 효율 최적화형 ] "
+            "for i in count(start=, step=): 가 들어간 깔끔한 무한 자동화예요! "
+            "while True 보다 의도가 분명한 좋은 선택입니다. break 조건만 챙겨주세요.",
+            "succ_r2_infinite_for_count_B",
+        ),
+    ],
+    # for range — 큰 N 의 고효율 유한 루프
+    "succ_r2_for_range": [
+        (
+            "[ 효율 최적화형 ] "
+            "큰 횟수의 for range 로 고효율 작업 코드를 만들었어요! "
+            "더 나아가 while True: 나 for i in count(): 으로 완전 자동화도 가능합니다.",
+            "succ_r2_for_range_A",
+        ),
+        (
+            "[ 효율 최적화형 ] "
+            "효율적인 for range 루프예요! "
+            "기계를 멈추지 않게 하려면 for i in count(): 처럼 끝이 정해지지 않는 루프를 시도해보세요.",
+            "succ_r2_for_range_B",
         ),
     ],
 }
@@ -524,9 +578,9 @@ def calculate_score(request: CodeSubmitRequest, features: dict) -> float:
         # 예: 4줄에서 range(10) → 10/4=2.5 → +min(10, 2.5*5)=+10
         loop_bonus += min(10.0, features['loop_efficiency'] * 5.0)
 
-    # while True / while 1 (무한루프) 사용 시에만 보너스
+    # while True / for i in count() (무한루프) 사용 시에만 보너스
     # 일반 while 조건문(while i < 5 등)은 for 와 동급 취급 — 빈도 균형은 loop_balance API 담당
-    while_bonus = 10.0 if features['has_infinite_while'] else 0.0
+    while_bonus = 10.0 if features.get('has_infinite_loop', features.get('has_infinite_while', 0)) else 0.0
 
     # 5초 이상은 동일 페널티로 묶어 지나친 감점 방지
     time_penalty = min(25.0, request.execution_time * 5.0)
@@ -649,6 +703,8 @@ _PYTHON_BUILTINS = [
     "dict", "input", "type", "abs", "sum", "max", "min",
     "round", "sorted", "enumerate", "zip", "map", "filter",
     "True", "False", "None",
+    # itertools (화이트리스트로 허용된 심볼) — `from itertools import X` 안내에 활용
+    "count",
 ]
 
 # for / while / if / def … 뒤에 : 가 오는 블록 시작 줄 패턴
@@ -911,6 +967,30 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
         error_log = log.lower()                  # 소문자 검색용
         source    = request.source_code
 
+        # ── Sandbox 보안 차단 ───────────────────────────
+        # server/8000.py 의 SecurityVisitor 가 "보안: 외부 모듈 사용 금지 (X.Y)"
+        # 형식으로 던지는 메시지를 캐치. 화이트리스트(itertools.count) 외엔 모두 차단됨.
+        if "보안: 외부 모듈 사용 금지" in log or "외부 모듈 사용 금지" in log:
+            m = re.search(r"외부 모듈 사용 금지\s*\(([^)]+)\)", log)
+            target = m.group(1) if m else None
+            if target:
+                return (
+                    f"'{target}' 모듈은 사용할 수 없어요.\n"
+                    "이 게임에서 허용된 외부 모듈은 itertools.count 뿐이에요. "
+                    "예) from itertools import count"
+                )
+            return (
+                "외부 모듈 import 는 사용할 수 없어요!\n"
+                "허용된 항목: from itertools import count"
+            )
+        if "금지 함수 사용" in log:
+            m = re.search(r"금지 함수 사용:\s*(\S+)", log)
+            target = m.group(1) if m else "해당 함수"
+            return (
+                f"'{target}' 는 보안상 사용할 수 없는 함수예요.\n"
+                "다른 방법으로 동일한 동작을 만들어보세요."
+            )
+
         # ── SyntaxError 계열 ─────────────────────────────
         # (IndentationError / TabError 도 8000.py 에서 SyntaxError: 로 포맷됨)
         if "syntaxerror" in error_log:
@@ -994,6 +1074,16 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
             undef = _extract_name_from_nameerror(log)
 
             if undef:
+                # 0순위: itertools import 없이 count() 호출
+                if undef == "count" and not re.search(
+                    r'from\s+itertools\s+import\s+[^#\n]*\bcount\b', source
+                ):
+                    return (
+                        "'count' 를 사용하려면 먼저 import 해야 해요!\n"
+                        "코드 맨 윗줄에 다음을 추가해보세요:\n"
+                        "from itertools import count"
+                    )
+
                 # 1순위: 기계 이름 필드에 따옴표를 빠뜨린 경우
                 if re.search(r'\bname\s*=\s*' + re.escape(undef), source):
                     return (
@@ -1140,11 +1230,28 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
         )
 
     # ══════════════════════════════════════════════════════
-    # 2단계: 기계별 조건 미충족
+    # 2단계: 기계별 조건 미충족 (Unity client/-1..-9 매핑과 결을 맞춤)
     # ══════════════════════════════════════════════════════
     if not request.is_machine_valid:
         clean = request.source_code.replace(" ", "")
 
+        # 게임 기믹: 무한 루프 미해금 상태에서 while True / for in count() 시도
+        # (클라이언트가 -3 으로 차단하지만, 서버 hint 도 같은 사유로 응답)
+        if features.get('has_infinite_loop', 0) or features.get('has_infinite_while', 0):
+            return (
+                "아직 '무한 루프' 시스템 권한이 잠겨 있어요!\n"
+                "while True / for i in count(): 는 게임을 더 진행해 해금 후 사용 가능해요. "
+                "지금은 for i in range(N): 으로 횟수 반복을 사용해보세요."
+            )
+
+        # 게임 기믹: 일반 루프(level 1) 미해금 상태에서 for/while 시도
+        if features.get('has_loop', 0):
+            return (
+                "아직 '반복문' 시스템 권한이 잠겨 있어요!\n"
+                "퀘스트를 더 진행해 for / while 권한을 해금한 뒤 사용해보세요."
+            )
+
+        # 기계 이름 누락
         if "name=" not in clean:
             return (
                 "기계를 작동시키려면 먼저 이름을 지어줘야 해요!\n"
@@ -1182,6 +1289,8 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
 
     if not request.is_python_valid:
         log = request.output_log.lower()
+        if "외부 모듈 사용 금지" in log: return "err_sandbox_import"
+        if "금지 함수 사용"      in log: return "err_sandbox_fn"
         if "syntaxerror" in log:
             if "expected an indented block"       in log: return "err_syntax_indent_expected"
             if "unexpected indent"                in log: return "err_syntax_unexpected_indent"
@@ -1212,6 +1321,10 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
 
     if not request.is_machine_valid:
         clean = request.source_code.replace(" ", "")
+        if features.get('has_infinite_loop', 0) or features.get('has_infinite_while', 0):
+            return "machine_locked_infinite"
+        if features.get('has_loop', 0):
+            return "machine_locked_loop"
         if "name=" not in clean:
             return "machine_no_name"
         for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
@@ -1276,19 +1389,15 @@ def _generate_hint_typed(
             )
             return _bandit_select(group, context)
         if cluster_rank == 2:
+            # rank 2 는 "무한 자동화" 형태에 따라 3가지 풀로 라우팅:
+            #   while True:           → succ_r2_infinite_while  (대표적 무한 자동화)
+            #   for i in count(...):  → succ_r2_infinite_for_count (itertools 활용 파이써닉)
+            #   for range 만 사용      → succ_r2_for_range (큰 N 고효율 유한 루프)
+            if features.get('has_infinite_for', 0):
+                return _bandit_select("succ_r2_infinite_for_count", context)
             if features.get('has_infinite_while', 0):
-                return (
-                    "[ 효율 최적화형 ] "
-                    "while True 로 기계를 완전 자동화했어요! "
-                    "최고 등급의 코드입니다.",
-                    "succ_r2_infinite",
-                )
-            return (
-                "[ 효율 최적화형 ] "
-                "효율적인 반복문 구조로 잘 최적화된 코드예요! "
-                "훌륭한 코드입니다.",
-                "succ_r2_for",
-            )
+                return _bandit_select("succ_r2_infinite_while", context)
+            return _bandit_select("succ_r2_for_range", context)
         # cluster_rank == -1 (모델 미로드)
         return (
             "코드가 정상 적용되었습니다. 반복문을 활용하면 더 높은 점수를 받을 수 있어요!",

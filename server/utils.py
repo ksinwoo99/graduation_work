@@ -20,6 +20,29 @@ def _is_infinite_while(node: ast.While) -> bool:
     return isinstance(test, ast.Constant) and test.value in (True, 1)
 
 
+def _is_count_call(call_node: ast.AST) -> bool:
+    """
+    `count(...)` 또는 `itertools.count(...)` 호출인지 판별합니다.
+    `from itertools import count` 후 `for i in count(...)` 같은 무한 루프 감지용.
+    """
+    if not isinstance(call_node, ast.Call):
+        return False
+    f = call_node.func
+    if isinstance(f, ast.Name) and f.id == "count":
+        return True
+    if (isinstance(f, ast.Attribute)
+            and isinstance(f.value, ast.Name)
+            and f.value.id == "itertools"
+            and f.attr == "count"):
+        return True
+    return False
+
+
+def _is_infinite_for(node: ast.For) -> bool:
+    """`for ... in count(...)` 또는 `for ... in itertools.count(...)` 무한 for 판별."""
+    return _is_count_call(node.iter)
+
+
 # ──────────────────────────────────────────────
 # 내부 헬퍼: 제어 흐름 최대 중첩 깊이 계산
 # ──────────────────────────────────────────────
@@ -89,9 +112,12 @@ def extract_features(source_code: str) -> dict:
         신규: max_nesting_depth    - 제어 흐름 최대 중첩 깊이
               has_loop             - 루프 존재 여부 (0 or 1)
               loop_efficiency      - for range(N) 합계 / 전체 라인 수
-                                     while True/1 감지 시 _INFINITE_WHILE_EFFICIENCY_PROXY 로 대체
+                                     while True/1, for in count() 감지 시 PROXY 값으로 대체
               has_infinite_while   - while True / while 1 패턴 존재 여부 (0 or 1)
-                                     게임 최종 목표(무한루프 자동화) 달성 여부를 피처로 분리
+              has_infinite_for     - for ... in count(...) / itertools.count(...) 패턴 여부 (0 or 1)
+              has_infinite_loop    - has_infinite_while OR has_infinite_for (0 or 1)
+                                     게임 최종 목표(무한루프 자동화) 달성 여부 종합 피처
+              uses_itertools       - itertools 의 count 를 사용하는지 (0 or 1) — 힌트 분기용
     """
     features = {
         'for_count': 0,
@@ -107,6 +133,9 @@ def extract_features(source_code: str) -> dict:
         'has_loop': 0,
         'loop_efficiency': 0.0,
         'has_infinite_while': 0,
+        'has_infinite_for':   0,
+        'has_infinite_loop':  0,
+        'uses_itertools':     0,
     }
 
     if not source_code:
@@ -123,8 +152,11 @@ def extract_features(source_code: str) -> dict:
         for node in ast.walk(tree):
             if isinstance(node, ast.For):
                 features['for_count'] += 1
+                # `for ... in count(...)` / `for ... in itertools.count(...)` → 무한 for
+                if _is_infinite_for(node):
+                    features['has_infinite_for'] = 1
                 # range(N) 단일 인수 형태만 파싱 (range(5), range(10) 등)
-                if (
+                elif (
                     isinstance(node.iter, ast.Call)
                     and isinstance(node.iter.func, ast.Name)
                     and node.iter.func.id == 'range'
@@ -141,6 +173,10 @@ def extract_features(source_code: str) -> dict:
                 features['while_count'] += 1
                 if _is_infinite_while(node):
                     features['has_infinite_while'] = 1
+            elif isinstance(node, ast.ImportFrom):
+                if node.module == 'itertools':
+                    if any(a.name == 'count' for a in node.names):
+                        features['uses_itertools'] = 1
             elif isinstance(node, ast.If):
                 features['if_count'] += 1
             elif isinstance(node, ast.IfExp):
@@ -164,10 +200,15 @@ def extract_features(source_code: str) -> dict:
                 for_range_total / features['line_count'], 4
             )
 
-        # while True / while 1 감지 시 loop_efficiency 를 프록시 값으로 설정
+        # 종합 무한 루프 플래그 — calculate_score 의 while_bonus / 클러스터링에 둘 다 영향
+        features['has_infinite_loop'] = (
+            1 if (features['has_infinite_while'] or features['has_infinite_for']) else 0
+        )
+
+        # while True / for in count() 감지 시 loop_efficiency 를 프록시 값으로 설정
         # for range(N) 으로는 표현할 수 없는 "무한 반복" 효율을 피처에 반영합니다.
         # 기존 for 효율보다 낮을 때만 덮어씁니다 (for + while 혼용 시 더 높은 쪽 유지).
-        if features['has_infinite_while'] and features['loop_efficiency'] < _INFINITE_WHILE_EFFICIENCY_PROXY:
+        if features['has_infinite_loop'] and features['loop_efficiency'] < _INFINITE_WHILE_EFFICIENCY_PROXY:
             features['loop_efficiency'] = _INFINITE_WHILE_EFFICIENCY_PROXY
 
     except SyntaxError:
