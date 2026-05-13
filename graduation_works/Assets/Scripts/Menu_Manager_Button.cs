@@ -28,16 +28,66 @@ public class Menu_Manager_Button : MonoBehaviour {
         #endif
     }
 
+    private bool isPendingNewGame = false; // 새로하기 보류 상태 마커
+
     public void OnClick_NewGame() {
+        StartCoroutine(CheckSaveAndNewGame());
+    }
+    
+    IEnumerator CheckSaveAndNewGame() {
         string userId = Shared_Manager_Session.CurrentUserId;
         
-        if (Shared_Manager_Session.HasSaveData(userId)) {
-            uiManager.ShowError("기존 데이터가 있습니다.");
-        } else {
-            Ingame_System_Save.isLoadRequested = false;
-            Shared_Manager_Session.IsReadOnlyMode = false;
-            uiManager.StartGameTransition();
+        // 게스트면 즉시 새 게임 실행
+        if (string.IsNullOrEmpty(userId) || userId == "guest") {
+            ExecuteNewGame();
+            yield break; 
         }
+
+        uiManager.ShowError("데이터 확인 중..."); 
+
+        // 서버에 저장 데이터 존재 여부 요청
+        string url = $"{serverUrl}/check_save?user_id={userId}";
+        UnityWebRequest www = UnityWebRequest.Get(url);
+        yield return www.SendWebRequest();
+
+        // 데이터 확인이 끝났으므로 "데이터 확인 중..." 알림창은 닫아줍니다.
+        if (uiManager.errorPanel != null) uiManager.errorPanel.SetActive(false);
+
+        if (www.result == UnityWebRequest.Result.Success) {
+            CheckSaveResponse res = JsonUtility.FromJson<CheckSaveResponse>(www.downloadHandler.text);
+            
+            // 🔄 서버 응답이 EXIST(데이터 있음) 일 때만 예/아니요 팝업창을 띄웁니다.
+            if (res.status == "EXIST") {
+                isPendingNewGame = true;
+                uiManager.ShowConfirm("저장 데이터가 있습니다.\n새로 시작하시겠습니까?");
+            } else {
+                // 데이터가 없다면 팝업 없이 즉시 시작
+                ExecuteNewGame();
+            }
+        } else {
+            // 서버 통신 장애 시 안전하게 팝업 없이 진행하거나 에러를 처리합니다.
+            Debug.LogError("서버 연결 실패" + www.error);
+            ExecuteNewGame();
+        }
+    }
+
+    private void ExecuteNewGame() {
+        Ingame_System_Save.isLoadRequested = false;
+        Shared_Manager_Session.IsReadOnlyMode = false;
+        uiManager.StartGameTransition();
+    }
+
+    public void OnClick_ConfirmYes() {
+        if (isPendingNewGame) {
+            isPendingNewGame = false;
+            uiManager.HideConfirm();
+            ExecuteNewGame(); 
+        }
+    }
+
+    public void OnClick_ConfirmNo() {
+        isPendingNewGame = false;
+        uiManager.HideConfirm();
     }
 
     public void OnClick_Continue() {

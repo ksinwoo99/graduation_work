@@ -31,6 +31,10 @@ public class Menu_Manager_UI : MonoBehaviour {
     [Header("리더보드 패널")]
     public GameObject leaderboardPanel;
 
+    [Header("확인 패널 (Yes/No)")]
+    public GameObject confirmPanel;
+    public TMP_Text confirmText;
+
     private Vector2 originalSize = new Vector2(500, 380);
     private Vector2 expandedSize = new Vector2(500, 980);
 
@@ -108,5 +112,14 @@ public class Menu_Manager_UI : MonoBehaviour {
         yield return new WaitForSeconds(seconds);
         if (panel != null) panel.SetActive(false);
         hideRoutines[panel] = null;
+    }
+
+    public void ShowConfirm(string message) {
+        if (confirmText != null) confirmText.text = message;
+        if (confirmPanel != null) confirmPanel.SetActive(true);
+    }
+
+    public void HideConfirm() {
+        if (confirmPanel != null) confirmPanel.SetActive(false);
     }
 }
