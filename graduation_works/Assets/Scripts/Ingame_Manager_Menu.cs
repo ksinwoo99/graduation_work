@@ -9,9 +9,9 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     
     [Header("UI 연결")]
     public GameObject PausePanel;
-    public GameObject menu_SelectPanel; 
+    public GameObject menu_SelectPanel;
     public GameObject menu_ErrorPanel;
-
+    public GameObject errorBox; 
     public TextMeshProUGUI errorText;
     public GameObject infoWindow;
     public TextMeshProUGUI infoText;
@@ -60,9 +60,12 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     public void ShowInfoWindow(string msg, bool autoHide = true) {
         if (infoWindow == null || infoText == null) return;
         infoText.text = msg;
+        
+        // 🔄 부모 패널을 켜고, 예/아니오 박스는 끄고, 안내창만 활성화합니다.
+        if (menu_ErrorPanel != null) menu_ErrorPanel.SetActive(true);
+        if (errorBox != null) errorBox.SetActive(false);
         infoWindow.SetActive(true);
         
-        // 해당 패널로 이미 실행 중인 소멸 코루틴이 있다면 완벽히 추적하여 중지
         if (hideRoutines.TryGetValue(infoWindow, out var running) && running != null) {
             StopCoroutine(running);
         }
@@ -76,20 +79,28 @@ public class Ingame_Manager_Menu : MonoBehaviour {
 
     IEnumerator AutoHideInfo(GameObject panel, float seconds) {
         float timer = 0f;
-        yield return null; // 버튼을 누른 동일 프레임 클릭 감지로 바로 꺼지는 현상 방지
+        yield return null; 
 
         while (timer < seconds) {
-            timer += Time.unscaledDeltaTime; // Time.timeScale = 0f 상태에서도 정상 타이머 흐름 유지
+            timer += Time.unscaledDeltaTime; 
 
-            // 3초가 지나기 전이라도 마우스 클릭이나 아무 키나 입력되면 즉시 소멸
-            if (Input.GetMouseButtonDown(0) || Input.anyKeyDown) {
+            if (Input.GetMouseButtonDown(0) || 
+                Input.GetKeyDown(KeyCode.Return) || 
+                Input.GetKeyDown(KeyCode.KeypadEnter) || 
+                Input.GetKeyDown(KeyCode.Escape)) {
                 break; 
             }
             yield return null;
         }
 
         if (panel != null) panel.SetActive(false);
-        hideRoutines[panel] = null; // 초기화
+        
+        // 🔄 안내창이 자동으로 꺼질 때, 예/아니오 박스도 꺼져있다면 부모 반투명 패널도 같이 꺼줍니다.
+        if (menu_ErrorPanel != null && (errorBox == null || !errorBox.activeSelf)) {
+            menu_ErrorPanel.SetActive(false);
+        }
+
+        hideRoutines[panel] = null; 
     }
 
     IEnumerator Co_HideInfo(float seconds) {
@@ -148,10 +159,10 @@ public class Ingame_Manager_Menu : MonoBehaviour {
             string msg = "";
 
             if (status == 1) {
-                msg = "설치물 또는 코드가 저장되지 않았습니다.\n그래도 불러오시겠습니까?";
+                msg = "설치물 또는 코드가 \n저장되지 않았습니다.\n그래도 불러오시겠습니까?";
             } else if (status == 2) {
                 int seconds = (int)Ingame_System_Save.Instance.GetSecondsSinceLastSave();
-                msg = $"{seconds}초의 자원이 저장되지 않았습니다.\n그래도 불러오시겠습니까?";
+                msg = $"{seconds}초의 자원이 \n저장되지 않았습니다.\n그래도 불러오시겠습니까?";
             }
             OpenConfirm(msg);
         } else {
@@ -185,6 +196,8 @@ public class Ingame_Manager_Menu : MonoBehaviour {
     private void OpenConfirm(string msg) {
         if (errorText != null) errorText.text = msg;
         if (menu_ErrorPanel != null) menu_ErrorPanel.SetActive(true);
+        if (errorBox != null) errorBox.SetActive(true);
+        if (infoWindow != null) infoWindow.SetActive(false);
     }
 
     public void OnClick_ConfirmYes() {
