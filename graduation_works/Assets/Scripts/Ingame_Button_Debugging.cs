@@ -68,6 +68,12 @@ public class MLResponse
     public string status;  // "success" | "error"
     public float  score;   // 서버 계산 점수 (0~100)
     public string hint;    // AI 생성 힌트 메시지
+
+    // ── 루프 균형 신호 (서버 _compute_loop_balance 결과) ──
+    public bool   should_break_machine;  // true → 임밸런스 고장 트리거 (8:2 초과)
+    public bool   is_balance_fixed;      // true → 임밸런스 고장 해제 트리거 (6.5:3.5 이하)
+    public string consumed_part_type;    // "for" | "while" — 소모된 부품 종류
+    public float  imbalance_score;       // 0.0(균형) ~ 1.0(완전 편향)
 }
 
 /// <summary>
@@ -95,7 +101,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
     // 로컬 테스트와 AWS 배포 중 사용할 줄의 주석을 해제하세요.
     // ──────────────────────────────────────────────────────
 
-    // 로컬 테스트용
+    // // 로컬 테스트용
     // private const string ML_SERVER_URL = "http://127.0.0.1:8001/api/submit_code";
 
     // AWS 배포용
@@ -217,6 +223,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
                 case -6: SetUI("시스템 권한 부족: 아직 컨베이어 벨트 고속(fast) 모드를 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
                 case -7: SetUI("이미 다른 기계가 사용 중인 이름은 사용할 수 없습니다!" + timeMsg, Color.red, true); break;
                 case -8: SetUI("과열로 인해 해당 문법을 사용할 수 없습니다. 우회 코드를 사용하세요." + timeMsg, Color.red, true); break;
+                case -9: SetUI("[부품 부족] 사용 가능한 부품이 소진되었습니다. 반대 부품으로 균형을 맞춰 보충하세요!" + timeMsg, Color.red, true); break;
                 default: SetUI("문법은 맞았지만, 이 기계가 수행할 수 없는 명령어입니다." + timeMsg, Color.red, true); break;
             }
         }
@@ -277,7 +284,19 @@ public class Ingame_Button_Debugging : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             MLResponse mlRes = JsonUtility.FromJson<MLResponse>(www.downloadHandler.text);
-            
+
+            // ── 임밸런스 고장 / 복구 신호 처리 (AI 힌트보다 먼저 적용) ──
+            var buildMgrForBalance = Ingame_Manager_Build.Instance;
+            if (buildMgrForBalance != null && buildMgrForBalance.codingManager != null)
+            {
+                buildMgrForBalance.codingManager.HandleLoopImbalance(
+                    mlRes.should_break_machine,
+                    mlRes.is_balance_fixed,
+                    mlRes.consumed_part_type,
+                    mlRes.imbalance_score
+                );
+            }
+
             if (resultText != null)
             {
                 // ✨ 1. 현재 테마 모드 확인
