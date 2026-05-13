@@ -1,0 +1,629 @@
+INFO:     Started server process [5885]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     119.194.36.167:1235 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14577 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:14578 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8119 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:2141 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51092 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:57180 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:49481 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:57543 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50602 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13109 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:58311 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:50052 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:62501 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:49829 - "POST /login HTTP/1.1" 200 OK
+INFO:     211.217.235.93:57484 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     211.217.235.93:57484 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     211.217.235.93:60255 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     211.217.235.93:54226 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     211.217.235.93:54227 - "POST /register HTTP/1.1" 200 OK
+INFO:     211.217.235.93:54228 - "POST /login HTTP/1.1" 200 OK
+INFO:     211.217.235.93:64996 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51683 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51686 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51686 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51687 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51687 - "POST /find_id_by_email HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51692 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     122.42.2.61:51693 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:59835 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:59842 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     122.42.2.61:55765 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:55777 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12307 - "POST /check_duplicate HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13413 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:56429 - "POST /login HTTP/1.1" 200 OK
+nohup: ignoring input
+INFO:     Started server process [6497]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     125.250.81.167:7011 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14991 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14992 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14993 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14994 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8426 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8427 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:55998 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:55997 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56043 - "POST /login HTTP/1.1" 200 OK
+INFO:     106.101.10.107:5595 - "POST /login HTTP/1.1" 200 OK
+INFO:     106.101.10.107:10922 - "POST /login HTTP/1.1" 200 OK
+INFO:     106.101.10.107:10927 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     106.101.10.107:10929 - "POST /send_register_auth_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:59307 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:62527 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:62528 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:55785 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:55814 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:63760 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:63796 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52013 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52049 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:49818 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:49817 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51547 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51548 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51549 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51550 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51551 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51553 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51555 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56639 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56638 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56640 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56637 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56641 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56577 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56642 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56643 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56578 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56644 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56645 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56646 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56579 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56647 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56648 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56580 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56649 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56581 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56650 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56582 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56651 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56652 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56653 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56583 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56654 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56584 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56655 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56585 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56586 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56587 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56588 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56656 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56589 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56590 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56591 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56592 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56593 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56657 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56594 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56595 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56596 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56597 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56598 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56599 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56600 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56601 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56602 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56603 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56604 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56605 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56606 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56607 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56608 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56609 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56610 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56611 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56612 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56613 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56614 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56615 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56616 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56617 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56618 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56619 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56620 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56621 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56622 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56623 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56624 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56625 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56626 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56628 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56629 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56630 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56631 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56632 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56633 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56634 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56635 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56636 - "POST /login HTTP/1.1" 200 OK
+INFO:     39.127.112.104:56783 - "POST /login HTTP/1.1" 200 OK
+INFO:     3.131.220.121:46234 - "GET / HTTP/1.1" 200 OK
+INFO:     3.131.220.121:59976 - "GET / HTTP/1.1" 200 OK
+INFO:     3.134.216.108:55248 - "GET / HTTP/1.1" 200 OK
+INFO:     3.134.216.108:37686 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.168.2:48520 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:54984 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     216.137.8.74:42769 - "GET / HTTP/1.1" 200 OK
+INFO:     186.67.230.122:56833 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     8.216.8.223:52606 - "GET / HTTP/1.1" 200 OK
+INFO:     8.216.8.223:52618 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:33206 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:49176 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     16.58.56.214:49202 - "GET / HTTP/1.1" 200 OK
+INFO:     16.58.56.214:36392 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.253.192:16728 - "GET / HTTP/1.1" 200 OK
+INFO:     47.251.253.192:16730 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.218.118.203:48276 - "GET / HTTP/1.1" 200 OK
+INFO:     3.132.26.232:57036 - "GET / HTTP/1.1" 200 OK
+INFO:     3.132.26.232:57028 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.168.2:41252 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:39868 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.116.101.220:46056 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:52564 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:51448 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:51252 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.218.118.203:47370 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:38618 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.129.187.38:59458 - "GET / HTTP/1.1" 200 OK
+INFO:     3.129.187.38:44736 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.218.118.203:60776 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:57584 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.168.2:37180 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:36294 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.245.10.150:17730 - "GET / HTTP/1.1" 200 OK
+INFO:     47.245.10.150:17742 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:44122 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:33198 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.116.101.220:55190 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:40302 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.102.221:47300 - "GET / HTTP/1.1" 200 OK
+INFO:     47.84.102.221:47310 - "GET / HTTP/1.1" 200 OK
+INFO:     172.236.35.120:41748 - "GET / HTTP/1.0" 200 OK
+INFO:     172.236.35.120:48438 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+INFO:     172.236.35.120:48512 - "OPTIONS / HTTP/1.0" 405 Method Not Allowed
+INFO:     172.236.35.120:48524 - "OPTIONS / HTTP/1.0" 405 Method Not Allowed
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:34062 - "GET /devicedesc.xml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.236.35.120:34116 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.77.217.201:36346 - "GET / HTTP/1.1" 200 OK
+INFO:     47.77.217.201:36356 - "GET / HTTP/1.1" 200 OK
+INFO:     16.58.56.214:57928 - "GET / HTTP/1.1" 200 OK
+INFO:     16.58.56.214:53734 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.168.2:53596 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6497]
+INFO:     Started server process [59445]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [59445]
+INFO:     Started server process [59537]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.206.194:10842 - "GET / HTTP/1.1" 200 OK
+INFO:     47.84.206.194:10848 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:55084 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:51816 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.91.7:53990 - "GET / HTTP/1.1" 200 OK
+INFO:     47.251.91.7:53998 - "GET / HTTP/1.1" 200 OK
+INFO:     71.6.238.74:36394 - "GET / HTTP/1.0" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.131.220.121:39644 - "GET / HTTP/1.1" 200 OK
+INFO:     3.131.220.121:49170 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:7463 - "POST /login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+_mysql_connector.MySQLInterfaceError: Authentication plugin 'mysql_native_password' cannot be loaded: it is already loaded
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/fastapi/routing.py", line 245, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/starlette/concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/8002.py", line 91, in login
+    conn = get_db_connection(); cursor = conn.cursor()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/8002.py", line 69, in get_db_connection
+    return mysql.connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/mysql/connector/pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/mysql/connector/abstracts.py", line 1604, in connect
+    self._open_connection()
+  File "/home/ubuntu/myproject/venv/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 360, in _open_connection
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 2059 (HY000): Authentication plugin 'mysql_native_password' cannot be loaded: it is already loaded
+INFO:     119.194.36.167:7464 - "POST /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [59537]
+INFO:     Started server process [66142]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     125.250.81.167:7313 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2946 - "POST /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [66142]
+INFO:     Started server process [66277]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     125.250.81.167:9670 - "POST /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [66277]
+INFO:     Started server process [66403]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.250.162.200:48562 - "GET / HTTP/1.1" 200 OK
+INFO:     47.250.162.200:17732 - "GET / HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2457 - "POST /login HTTP/1.1" 200 OK
+INFO:     3.134.216.108:40968 - "GET / HTTP/1.1" 200 OK
+INFO:     3.134.216.108:57242 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     119.194.36.167:13489 - "POST /login HTTP/1.1" 200 OK
+INFO:     119.194.36.167:13490 - "POST /login HTTP/1.1" 200 OK
+INFO:     16.58.56.214:54156 - "GET / HTTP/1.1" 200 OK
+INFO:     16.58.56.214:46318 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     170.64.129.254:53078 - "GET / HTTP/1.1" 200 OK
+INFO:     170.64.129.254:53092 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     170.64.129.254:53100 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     170.64.129.254:53096 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     170.64.129.254:53110 - "GET /favicon HTTP/1.1" 404 Not Found
+INFO:     170.64.129.254:53128 - "GET /security.txt HTTP/1.1" 404 Not Found
+INFO:     170.64.129.254:53120 - "GET /.well-known/robots.txt HTTP/1.1" 404 Not Found
+INFO:     134.199.146.72:47690 - "GET /client/get-version/ HTTP/1.1" 404 Not Found
+INFO:     122.42.2.61:8267 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6762 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:63253 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:45989 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:21853 - "POST /login HTTP/1.1" 200 OK
+INFO:     122.42.2.61:9578 - "POST /login HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     3.131.220.121:47528 - "GET / HTTP/1.1" 200 OK
+INFO:     3.131.220.121:57716 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     91.196.152.154:54063 - "GET / HTTP/1.1" 200 OK
+INFO:     91.196.152.166:49321 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     8.211.9.174:22820 - "GET / HTTP/1.1" 200 OK
+INFO:     8.211.9.174:40744 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     8.216.5.140:32510 - "GET / HTTP/1.1" 200 OK
+INFO:     8.216.5.140:32526 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:57384 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:39970 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.131.220.121:59186 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     16.58.56.214:52002 - "GET / HTTP/1.1" 200 OK
+INFO:     16.58.56.214:42970 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.241.66:22922 - "GET / HTTP/1.1" 200 OK
+INFO:     47.251.241.66:22924 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     91.196.152.35:56559 - "GET / HTTP/1.1" 200 OK
+INFO:     3.131.220.121:59876 - "GET / HTTP/1.1" 200 OK
+INFO:     3.131.220.121:52006 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.143.191:19178 - "GET / HTTP/1.1" 200 OK
+INFO:     47.84.143.191:24644 - "GET / HTTP/1.1" 200 OK
+INFO:     3.129.187.38:54494 - "GET / HTTP/1.1" 200 OK
+INFO:     3.129.187.38:50148 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     8.216.12.234:53264 - "GET / HTTP/1.1" 200 OK
+INFO:     8.216.12.234:34030 - "GET / HTTP/1.1" 200 OK
+INFO:     3.132.26.232:58588 - "GET / HTTP/1.1" 200 OK
+INFO:     3.132.26.232:52716 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.250.36.167:40488 - "GET / HTTP/1.1" 200 OK
+INFO:     47.250.36.167:24016 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.254.71:51268 - "GET / HTTP/1.1" 200 OK
+INFO:     47.251.254.71:51282 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:49208 - "GET / HTTP/1.1" 200 OK
+INFO:     3.130.168.2:48054 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.177.106:55678 - "GET / HTTP/1.0" 200 OK
+INFO:     172.105.177.106:53596 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+INFO:     172.105.177.106:53664 - "OPTIONS / HTTP/1.0" 405 Method Not Allowed
+INFO:     172.105.177.106:53680 - "OPTIONS / HTTP/1.0" 405 Method Not Allowed
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.177.106:37168 - "GET /devicedesc.xml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.177.106:50774 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     87.236.176.66:57585 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:53322 - "GET / HTTP/1.1" 200 OK
+INFO:     18.116.101.220:55448 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.250.55.210:26644 - "GET / HTTP/1.1" 200 OK
+INFO:     47.250.55.210:26652 - "GET / HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7983 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14872 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6083 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14901 - "POST /login HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1398 - "POST /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [66403]
+INFO:     Started server process [110103]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     220.78.208.5:51285 - "POST /login HTTP/1.1" 200 OK
+INFO:     18.218.118.203:35952 - "GET / HTTP/1.1" 200 OK
+INFO:     18.218.118.203:59458 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     3.143.162.210:54824 - "GET / HTTP/1.1" 200 OK
+INFO:     3.143.162.210:54038 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [110103]
+INFO:     Started server process [112122]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.249.214:34412 - "GET / HTTP/1.1" 200 OK
+INFO:     47.251.249.214:52652 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.137.43:44148 - "GET / HTTP/1.1" 200 OK
+INFO:     47.84.137.43:44152 - "GET / HTTP/1.1" 200 OK

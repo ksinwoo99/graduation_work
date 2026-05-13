@@ -307,7 +307,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
         {
             logic_CodingBase targetMachine = buildMgr.codingManager.currentLogic;
             if (targetMachine != null)
-                return buildMgr.codingManager.CheckCodeAndApply(code);
+                return buildMgr.codingManager.CheckCodeAndApply(code, true); 
         }
         return 0;
     }
