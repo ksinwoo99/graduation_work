@@ -43,11 +43,15 @@ public class Ingame_System_Save : MonoBehaviour {
     [Header("튜토리얼 UI 연결")]
     public GameObject tutorialPanel; 
 
+    private string lastSavedSnapshot = ""; 
+    private float lastSaveTime = 0f;
+
     void Awake() { 
         if (Instance == null) Instance = this; 
     }
 
     void Start() {
+        lastSaveTime = Time.time;
         if (isLoadRequested) {
             isLoadRequested = false;
             if (tutorialPanel != null) tutorialPanel.SetActive(false);
@@ -59,6 +63,30 @@ public class Ingame_System_Save : MonoBehaviour {
         else {
             if (tutorialPanel != null) tutorialPanel.SetActive(true);
         }
+    }
+
+    private string GetMapCodeSnapshot(GameSaveRequest data) {
+        GameSaveRequest temp = data;
+        temp.res1 = 0; temp.res2 = 0; temp.res3 = 0; temp.res4 = 0; temp.res5 = 0; temp.play_time = 0;
+        return JsonUtility.ToJson(temp);
+    }
+
+    public int GetDirtyStatus() {
+        string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
+        if (string.IsNullOrEmpty(currentId)) currentId = "guest";
+
+        GameSaveRequest currentData = GatherAllData(currentId);
+        
+        string currentSnapshot = GetMapCodeSnapshot(currentData);
+        if (lastSavedSnapshot != currentSnapshot) return 1;
+
+        if (Time.time - lastSaveTime >= 5f) return 2;
+
+        return 0;
+    }
+
+    public float GetSecondsSinceLastSave() {
+        return Time.time - lastSaveTime;
     }
 
     public int GetMachineTypeInt(string name) {
@@ -111,7 +139,6 @@ public class Ingame_System_Save : MonoBehaviour {
         }
 
         if (Ingame_UI_Tutorial.Instance != null) {
-            // ✨ [핵심 픽스] 스킵 팝업창이 떠있는 상태에서 저장했다면, 아직 결정을 안 한 것이므로 0으로 저장합니다!
             if (Ingame_UI_Tutorial.Instance.skipPanel != null && Ingame_UI_Tutorial.Instance.skipPanel.activeSelf) {
                 data.tutorial_step = 0;
             } else {
@@ -125,7 +152,7 @@ public class Ingame_System_Save : MonoBehaviour {
             var codingMgr = buildMgr.codingManager;
 
             HashSet<GameObject> savedMachines = new HashSet<GameObject>();
-            HashSet<int> savedMachineTypes = new HashSet<int>(); // ✨ 추가: 맵에 설치된 기계 타입 추적
+            HashSet<int> savedMachineTypes = new HashSet<int>(); 
 
             foreach (var kvp in buildMgr.installedDirections) {
                 Vector3Int originPos = kvp.Key;
@@ -141,7 +168,7 @@ public class Ingame_System_Save : MonoBehaviour {
                 string engName = machineObj.name.Replace("(Clone)", "").Trim();
                 int mId = GetMachineTypeInt(engName);
                 
-                savedMachineTypes.Add(mId); // ✨ 맵에 설치되었음을 기록
+                savedMachineTypes.Add(mId); 
 
                 MachineData mData = new MachineData {
                     machine_type = mId,
@@ -154,18 +181,16 @@ public class Ingame_System_Save : MonoBehaviour {
                 data.machines.Add(mData);
             }
 
-            // ✨ [핵심 추가] 맵에 설치되진 않았지만, 코드는 작성해둔 기계들 '유령 데이터'로 저장
             if (codingMgr != null && codingMgr.globalCodes != null) {
                 foreach (var kvp in codingMgr.globalCodes) {
                     int mId = kvp.Key;
                     string code = kvp.Value;
 
-                    // 이미 필드에 설치되어 저장된 기계거나, 코드가 빈칸이면 패스
                     if (savedMachineTypes.Contains(mId) || string.IsNullOrEmpty(code)) continue;
 
                     MachineData dummyData = new MachineData {
                         machine_type = mId,
-                        pos_x = -9999f, // ✨ 가상 좌표 (불러올 때 설치 스킵용)
+                        pos_x = -9999f, 
                         pos_y = -9999f,
                         pos_z = -9999f,
                         rotation_y = 0f,
@@ -179,6 +204,10 @@ public class Ingame_System_Save : MonoBehaviour {
     }
 
     IEnumerator SaveToServerCoroutine(GameSaveRequest requestData) {
+        if (Ingame_Manager_Menu.Instance != null) {
+            Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 중...", false);
+        }
+
         string json = JsonUtility.ToJson(requestData);
         UnityWebRequest www = new UnityWebRequest($"{serverUrl}/save/game", "POST");
         www.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
@@ -188,16 +217,22 @@ public class Ingame_System_Save : MonoBehaviour {
         yield return www.SendWebRequest();
         
         if (www.result == UnityWebRequest.Result.Success) {
-            Debug.Log("저장 성공!");
+            lastSavedSnapshot = GetMapCodeSnapshot(requestData);
+            lastSaveTime = Time.time;
+            
+            if (Ingame_Manager_Menu.Instance != null) {
+                Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 완료!", true);
+                Ingame_Manager_Menu.Instance.isSaved = true;
+            }
 
             if (Ingame_Manager_Build.Instance != null) {
                 Ingame_Manager_Build.Instance.ClearSessionLists();
             }
-            if (Ingame_Manager_Menu.Instance != null) {
-                Ingame_Manager_Menu.Instance.isSaved = true;
-            }
         } else {
             Debug.LogError("저장 실패: " + www.error);
+            if (Ingame_Manager_Menu.Instance != null) {
+                Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 실패\n다시 시도해주세요.", true);
+            }
         }
     }
 
@@ -213,7 +248,14 @@ public class Ingame_System_Save : MonoBehaviour {
         
         if (www.result == UnityWebRequest.Result.Success) {
             GameLoadResponse response = JsonUtility.FromJson<GameLoadResponse>(www.downloadHandler.text);
-            if (response.status == "SUCCESS") ApplyGameData(response);
+            if (response.status == "SUCCESS") {
+                ApplyGameData(response);
+
+                string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
+                if (string.IsNullOrEmpty(currentId)) currentId = "guest";
+                lastSavedSnapshot = GetMapCodeSnapshot(GatherAllData(currentId));
+                lastSaveTime = Time.time;
+            }
         } else {
             Debug.LogError("로드 실패: " + www.error);
         }
@@ -272,12 +314,11 @@ public class Ingame_System_Save : MonoBehaviour {
             if (data.machines != null) {
                 buildMgr.ClearAllBuildingsForLoad();
                 foreach (var mData in data.machines) {
-                    // ✨ [핵심 추가] 가상 좌표(-9999)로 저장된 "미설치 기계"인 경우, 코드만 살리고 맵 설치는 스킵!
                     if (mData.pos_y <= -9000f) {
                         if (buildMgr.codingManager != null && !string.IsNullOrEmpty(mData.source_code)) {
                             buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
                         }
-                        continue; // ⬅️ 건물을 짓지 않고 다음 데이터로 넘어감
+                        continue; 
                     }
 
                     Vector3Int checkPos = new Vector3Int(Mathf.RoundToInt(mData.pos_x), Mathf.RoundToInt(mData.pos_y), Mathf.RoundToInt(mData.pos_z));
@@ -322,11 +363,8 @@ public class Ingame_System_Save : MonoBehaviour {
         }
 
         GameSaveRequest data = GatherAllData("tutorial_preset");
-
         string jsonText = JsonUtility.ToJson(data, true);
-
         GUIUtility.systemCopyBuffer = jsonText;
-
         Debug.Log("[프리셋 복사 완료]\n\n" + jsonText);
         
         if (Ingame_Manager_Build.Instance != null) {
@@ -368,13 +406,12 @@ public class Ingame_System_Save : MonoBehaviour {
             StartCoroutine(RestoreCodingPanelCoroutine(openCodingPos.Value));
         }
     }
+
     IEnumerator RestoreCodingPanelCoroutine(Vector3 savedPos) {
-        // ✨ 맵 세팅이 완전히 끝나길 기다리기 위해 여유롭게 0.2초 대기
         yield return new WaitForSeconds(0.2f); 
 
         bool isTutorial = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive);
 
-        // 1. 튜토리얼 중일 때는 단계에 맞춰 하단 기계 버튼을 Invoke
         if (isTutorial) {
             int step = Ingame_UI_Tutorial.Instance.currentStep;
             if (step <= 26 && Ingame_UI_Tutorial.Instance.btnTutorialMiner != null) {
@@ -387,7 +424,6 @@ public class Ingame_System_Save : MonoBehaviour {
                 Ingame_UI_Tutorial.Instance.btnTutorialConveyor.onClick.Invoke();
             }
         }
-        // 2. 일반 게임 중일 때는 기존처럼 저장된 좌표(savedPos) 근처의 기계를 찾아 클릭!
         else if (Ingame_Manager_Build.Instance != null) {
             GameObject targetMachine = null;
             float minDistance = 100f;
@@ -401,7 +437,6 @@ public class Ingame_System_Save : MonoBehaviour {
                 }
             }
 
-            // 기계를 찾았다면 마우스 클릭 신호 보내기
             if (targetMachine != null && minDistance < 2f) {
                 targetMachine.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver);
             } 

@@ -2391,7 +2391,7 @@ MonoBehaviour:
   registerPwCheckField: {fileID: 841589862}
   registerEmailField: {fileID: 681655000}
   registerAuthCodeField: {fileID: 989988202}
-  registerButton: {fileID: 0}
+  registerButton: {fileID: 1935423062}
 --- !u!1 &667570790
 GameObject:
   m_ObjectHideFlags: 0
@@ -5759,6 +5759,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5186eee6f00d1ec40b49b9b854727deb, type: 3}
+--- !u!114 &1935423062 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2313156241563506644, guid: 5186eee6f00d1ec40b49b9b854727deb, type: 3}
+  m_PrefabInstance: {fileID: 1935423061}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1326081031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1977567754
 GameObject:
   m_ObjectHideFlags: 0
