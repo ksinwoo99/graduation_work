@@ -562,6 +562,27 @@ def get_user_rankings(user_id: str):
     finally:
         conn.close()
 
+@app.delete("/delete/game")
+async def delete_game_data(user_id: str):
+    conn = get_db_connection() #
+    cursor = conn.cursor() #
+    try:
+        user_pk = get_user_pk(cursor, user_id) #
+        if not user_pk: 
+            return {"status": "FAIL", "msg": "User not found"}
+        
+        cursor.execute("DELETE FROM game_saves WHERE user_pk = %s", (user_pk,))
+        cursor.execute("DELETE FROM installed_machines WHERE user_pk = %s", (user_pk,))
+        cursor.execute("DELETE FROM code_logs WHERE user_pk = %s", (user_pk,))
+        
+        conn.commit()
+        return {"status": "SUCCESS"}
+    except Exception as e:
+        conn.rollback()
+        return {"status": "ERROR", "msg": str(e)}
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
