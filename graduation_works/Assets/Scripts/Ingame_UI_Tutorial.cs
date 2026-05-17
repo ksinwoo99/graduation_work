@@ -279,6 +279,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public void PlayStep(int stepIndex)
     {
         if (skipPanel != null) skipPanel.SetActive(false);
+        
+        if (Ingame_UI_Help.Instance != null) Ingame_UI_Help.Instance.RefreshHelpList();
 
         bubblePanel.SetActive(true);
         ClearHighlight(); 
