@@ -7,30 +7,36 @@ using System.Collections.Generic;
 public class Ingame_UI_Help : MonoBehaviour
 {
     [Header("패널 슬라이드 설정")]
-    public RectTransform helpPanelRect; // HelpPanel 자기 자신
+    public RectTransform helpPanelRect; 
     public float slideDuration = 0.5f;
     public Ease slideEase = Ease.OutQuart;
-    public GameObject buttonOn;         // 열기 버튼
-    public GameObject buttonOff;        // 닫기 버튼
+    public GameObject buttonOn;         
+    public GameObject buttonOff;        
 
     private float showPosX;
     private float hidePosX;
-    private bool isPanelShown = false;  // 기본은 화면 밖에 숨겨진 상태
+    private bool isPanelShown = false;  
 
     [Header("뷰 전환")]
     public GameObject listView;
     public GameObject detailView;
 
     [Header("리스트 뷰 설정")]
-    public Transform contentParent;      // List_View 안의 ScrollView -> Content
-    public GameObject helpButtonPrefab;  // 아까 만든 버튼 프리팹
+    public Transform contentParent;      
+    public GameObject helpButtonPrefab;  
 
     [Header("디테일 뷰 설정")]
     public TextMeshProUGUI txtDetailTitle;
     public TextMeshProUGUI txtDetailContent;
 
     [Header("도움말 데이터 목록")]
-    public List<HelpData> allHelpItems; // 인스펙터에서 등록할 모든 도움말 데이터
+    public List<HelpData> allHelpItems; 
+    
+    [Header("알림(New) 설정")]
+    // ✨ [추가] 메인 도움말 버튼에 띄울 빨간점이나 New 아이콘 오브젝트
+    public GameObject redDotIcon; 
+    // ✨ [추가] 유저가 패널을 열어서 마지막으로 확인한 해금 항목 개수
+    private int viewedUnlockedCount = 0; 
     
     private List<GameObject> spawnedButtons = new List<GameObject>();
 
@@ -42,21 +48,17 @@ public class Ingame_UI_Help : MonoBehaviour
 
     void Start()
     {
-        // 1. 위치 초기화 (현재 에디터에 배치된 위치를 '보이는 위치'로 간주)
         showPosX = helpPanelRect.anchoredPosition.x;
-        // 패널 너비만큼 오른쪽(+)으로 밀어서 숨깁니다.
+        // ✨ 불필요한 여백 연산 제거 완료
         hidePosX = showPosX + helpPanelRect.rect.width;
 
-        // 2. 시작할 땐 숨겨두기
         helpPanelRect.anchoredPosition = new Vector2(hidePosX, helpPanelRect.anchoredPosition.y);
         UpdateButtonState(false);
         
-        // 3. 뷰 초기화
         ShowListView();
         RefreshHelpList();
     }
 
-    // --- 패널 열고 닫기 (Button_On, Button_Off 에 연결하세요!) ---
     public void OnClick_ShowPanel()
     {
         if (isPanelShown) return;
@@ -64,8 +66,13 @@ public class Ingame_UI_Help : MonoBehaviour
         isPanelShown = true;
         UpdateButtonState(true);
         
-        ShowListView();     // 열 때마다 무조건 목록부터 보이게
-        RefreshHelpList();  // 열 때마다 새로 해금된게 있는지 목록 갱신!
+        ShowListView();     
+        
+        // ✨ [추가] 패널을 열었으므로 알림을 끄고, '확인한 개수'를 갱신합니다.
+        if (redDotIcon != null) redDotIcon.SetActive(false);
+        UpdateViewedCount();
+        
+        RefreshHelpList();  
     }
 
     public void OnClick_HidePanel()
@@ -82,14 +89,13 @@ public class Ingame_UI_Help : MonoBehaviour
         if(buttonOn != null) buttonOn.SetActive(!isShown);
     }
 
-    // --- 리스트 / 디테일 뷰 전환 ---
     public void ShowListView()
     {
         listView.SetActive(true);
         detailView.SetActive(false);
     }
 
-    // 뒤로가기 버튼에 연결하세요!
+    // 뒤로가기 버튼 연동용 (유니티 인스펙터에서 버튼의 OnClick에 연결하세요!)
     public void OnClick_BackToList() 
     {
         ShowListView();
@@ -103,39 +109,63 @@ public class Ingame_UI_Help : MonoBehaviour
         txtDetailTitle.text = data.title;
         txtDetailContent.text = data.content;
     }
+    
+    // ✨ [추가] 현재 해금된 항목이 몇 개인지 세어서 '확인한 개수'로 저장하는 함수
+    private void UpdateViewedCount() 
+    {
+        int currentTutorialStep = 0;
+        if (Ingame_UI_Tutorial.Instance != null) currentTutorialStep = Ingame_UI_Tutorial.Instance.currentStep;
 
-    // --- 목록 자동 생성 로직 ---
+        viewedUnlockedCount = 0;
+        foreach(var item in allHelpItems) {
+            if (currentTutorialStep >= item.unlockTutorialStep) viewedUnlockedCount++;
+        }
+    }
+
     public void RefreshHelpList()
     {
-        // 1. 기존에 생성된 버튼 싹 지우기 (초기화)
         foreach(var btn in spawnedButtons) Destroy(btn);
         spawnedButtons.Clear();
 
-        // 2. 현재 튜토리얼 진행도 가져오기
         int currentTutorialStep = 0;
         if (Ingame_UI_Tutorial.Instance != null) {
             currentTutorialStep = Ingame_UI_Tutorial.Instance.currentStep;
         }
 
-        // 3. 조건에 맞는 도움말만 버튼으로 생성
+        int currentUnlockedCount = 0; // ✨ [추가] 이번 턴에 해금되어 있는 총 개수
+
         foreach(var item in allHelpItems)
         {
-            // 이 도움말의 요구 단계보다 현재 튜토리얼 단계가 같거나 높다면 해금!
+            GameObject newBtnObj = Instantiate(helpButtonPrefab, contentParent);
+            spawnedButtons.Add(newBtnObj);
+
+            TextMeshProUGUI btnText = newBtnObj.GetComponentInChildren<TextMeshProUGUI>();
+            Button btn = newBtnObj.GetComponent<Button>();
+
+            // ✨ [수정] 조건 분기 처리 (해금 완료 vs 미해금 ??? 처리)
             if (currentTutorialStep >= item.unlockTutorialStep)
             {
-                GameObject newBtnObj = Instantiate(helpButtonPrefab, contentParent);
-                spawnedButtons.Add(newBtnObj);
-
-                // 버튼 텍스트 변경
-                TextMeshProUGUI btnText = newBtnObj.GetComponentInChildren<TextMeshProUGUI>();
+                // 해금됨
+                currentUnlockedCount++;
                 if (btnText != null) btnText.text = item.title;
-
-                // 클릭 시 해당 데이터의 디테일 뷰를 열도록 이벤트 추가
-                Button btn = newBtnObj.GetComponent<Button>();
                 if (btn != null) {
+                    btn.interactable = true; 
                     btn.onClick.AddListener(() => ShowDetailView(item));
                 }
             }
+            else
+            {
+                // 미해금
+                if (btnText != null) btnText.text = "???";
+                if (btn != null) {
+                    btn.interactable = false; 
+                }
+            }
+        }
+
+        // ✨ [추가] 새 도움말 알림(Red Dot) 켜기 로직
+        if (!isPanelShown && currentUnlockedCount > viewedUnlockedCount) {
+            if (redDotIcon != null) redDotIcon.SetActive(true);
         }
     }
 }
