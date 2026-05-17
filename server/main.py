@@ -40,7 +40,7 @@ from config import DB_CONFIG
 from utils import extract_features, calculate_ast_complexity
 
 # ── Scoring 2.0 (Layer 1) ───────────────────────────────────────
-from scoring.aggregator     import final_score, score_breakdown, SCORE_WEIGHTS
+from scoring.aggregator     import final_score, score_breakdown
 from scoring.personal_score import personal_delta_score
 from scoring.hint_adoption  import compute_adoption
 from scoring.antipattern    import antipattern_penalty, error_recurrence_penalty
@@ -57,17 +57,9 @@ _BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH   = os.path.join(_BASE_DIR, 'code_cluster_model.pkl')
 POLICY_PATH  = os.path.join(_BASE_DIR, 'code_policy_model.pkl')
 
-# ──────────────────────────────────────────────────────────
-# DB 스키마 (마이그레이션 적용 완료 가정)
-# ──────────────────────────────────────────────────────────
-# code_logs : cluster_rank, hint_type, base_score, personal_score,
-#             adoption_score, antipattern_pen, antipattern_tags,
-#             reward, error_type
-# hint_stats: shown_count, success_count, alpha, beta
-#
-# 신규 컬럼 접근은 모두 try/except 로 감싸 마이그레이션 전 환경에서도
-# 메인 기능(힌트 반환·기본 score 저장)은 정상 동작합니다.
-# ──────────────────────────────────────────────────────────
+# DB 스키마는 server/migrations/scoring_v2.sql 로 적용된 상태를 가정합니다.
+# 신규 컬럼/테이블에 접근하는 코드는 모두 try/except 로 감싸 마이그레이션 전
+# 환경에서도 메인 기능(힌트 반환·기본 score 저장)이 동작하도록 폴백합니다.
 
 
 # ──────────────────────────────────────────────────────────
@@ -77,22 +69,20 @@ code_cluster_model = None
 scaler             = None
 
 # cluster_rank_map: {raw cluster ID → semantic rank}
-#   rank 0 = 단순 코드형  (score 평균 최하위)
-#   rank 1 = 성장형       (score 평균 중간)
-#   rank 2 = 효율 최적화형 (score 평균 최상위)
-# kmeans_trainer.py 가 학습 후 score 기준으로 정렬해 저장하므로
-# 재학습 후 cluster ID 가 뒤바뀌어도 힌트 의미가 유지됩니다.
+#   0=단순 코드형 / 1=성장형 / 2=효율 최적화형
+# kmeans_trainer.py 가 학습 후 score 평균 기준으로 정렬해 저장하므로
+# 재학습으로 cluster ID 가 뒤바뀌어도 힌트 의미가 그대로 유지됩니다.
 cluster_rank_map: dict[int, int] = {}
 
-# 마지막으로 로드한 pkl 파일의 수정 시각 (hot-reload 기준)
+# pkl 파일 mtime — ml_worker 가 갱신하면 핫리로드 트리거
 _model_loaded_mtime: float = 0.0
 
-# kmeans_trainer.py 가 pkl 에 저장한 학습 메타데이터
-# /api/model_status 에서 사용합니다.
+# kmeans_trainer.py 가 pkl 에 함께 저장한 학습 메타데이터
+# /api/model_status 응답 및 디버깅에 사용합니다.
 _model_meta: dict = {}
 
-# 학습 시 StandardScaler 이후에 적용한 피처 가중치 배열 (numpy 호환 list)
-# predict_cluster_rank() 에서 동일하게 곱해야 학습·추론 피처 공간이 일치합니다.
+# StandardScaler 이후 적용한 피처 가중치 — predict_cluster_rank() 에서
+# 동일하게 곱해야 학습·추론 피처 공간이 일치합니다.
 _feature_weights: list = []
 _feature_names:   list = []
 
@@ -303,64 +293,83 @@ _load_model()
 # 힌트 효과성 밴딧 — DB 로드 / 변형 선택
 # ──────────────────────────────────────────────────────────
 
+def _load_hint_stats_rows(cursor) -> tuple[list[dict], bool] | None:
+    """
+    hint_stats 테이블에서 누적 통계 행을 읽어옵니다.
+
+    반환:
+        (rows, has_thompson)
+            has_thompson=True  → alpha/beta 컬럼이 있는 신규 스키마
+            has_thompson=False → 구 스키마 (success_count 만 존재)
+        테이블 자체가 없으면 None.
+    """
+    try:
+        cursor.execute(
+            "SELECT hint_type, shown_count, success_count, alpha, beta FROM hint_stats"
+        )
+        return (cursor.fetchall() or []), True
+    except Exception as e_new:
+        try:
+            cursor.execute(
+                "SELECT hint_type, shown_count, success_count FROM hint_stats"
+            )
+            return (cursor.fetchall() or []), False
+        except Exception as e_old:
+            msg = str(e_old).lower()
+            if "hint_stats" in msg or "doesn't exist" in msg:
+                return None
+            print(f"[HintBandit] 통계 로드 실패(new={e_new} / old={e_old})")
+            return None
+
+
 def _load_hint_stats_from_db() -> None:
     """
     서버 구동 시 hint_stats 테이블에서 밴딧 누적 통계를 메모리에 로드합니다.
     alpha/beta 컬럼이 있으면 Thompson Sampling 파라미터로도 동기화합니다.
     """
-    global _hint_stats
     try:
-        conn   = pymysql.connect(**DB_CONFIG)
-        cursor = conn.cursor()
-        # 우선 신규 스키마(alpha/beta 포함) 로 시도, 실패 시 구 스키마로 폴백
-        try:
-            cursor.execute(
-                "SELECT hint_type, shown_count, success_count, alpha, beta FROM hint_stats"
-            )
-            rows = cursor.fetchall() or []
-            thompson_params: dict[str, tuple[float, float]] = {}
-            for row in rows:
-                _hint_stats[row['hint_type']] = {
-                    "shown":   row['shown_count'],
-                    "success": row['success_count'],
-                }
-                thompson_params[row['hint_type']] = (
-                    float(row.get('alpha', 1.0) or 1.0),
-                    float(row.get('beta',  1.0) or 1.0),
-                )
-            _thompson_bandit.load(thompson_params)
-            print(
-                f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료 "
-                f"(Thompson 파라미터 {len(thompson_params)}개 동기화)"
-            )
-        except Exception as e_new:
-            # alpha/beta 컬럼이 없는 구 스키마
-            try:
-                cursor.execute(
-                    "SELECT hint_type, shown_count, success_count FROM hint_stats"
-                )
-                for row in cursor.fetchall() or []:
-                    _hint_stats[row['hint_type']] = {
-                        "shown":   row['shown_count'],
-                        "success": row['success_count'],
-                    }
-                print(
-                    f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료 "
-                    f"(legacy 스키마 — Thompson 컬럼 없음, 균등 사전분포로 시작)"
-                )
-            except Exception as e_old:
-                msg = str(e_old).lower()
-                if "hint_stats" in msg or "doesn't exist" in msg:
-                    print(
-                        "[HintBandit] hint_stats 테이블 없음 — 빈 통계로 시작 "
-                        "(server/migrations/scoring_v2.sql 참고)"
-                    )
-                else:
-                    print(f"[HintBandit] 통계 로드 실패(new={e_new} / old={e_old})")
-        finally:
-            conn.close()
+        conn = pymysql.connect(**DB_CONFIG)
     except Exception as e:
         print(f"[HintBandit] DB 연결 실패: {e}")
+        return
+
+    try:
+        cursor = conn.cursor()
+        loaded = _load_hint_stats_rows(cursor)
+    finally:
+        conn.close()
+
+    if loaded is None:
+        print(
+            "[HintBandit] hint_stats 테이블 없음 — 빈 통계로 시작 "
+            "(server/migrations/scoring_v2.sql 참고)"
+        )
+        return
+
+    rows, has_thompson = loaded
+    thompson_params: dict[str, tuple[float, float]] = {}
+    for row in rows:
+        _hint_stats[row['hint_type']] = {
+            "shown":   row['shown_count'],
+            "success": row['success_count'],
+        }
+        if has_thompson:
+            thompson_params[row['hint_type']] = (
+                float(row.get('alpha', 1.0) or 1.0),
+                float(row.get('beta',  1.0) or 1.0),
+            )
+
+    if has_thompson:
+        _thompson_bandit.load(thompson_params)
+        print(
+            f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료 "
+            f"(Thompson 파라미터 {len(thompson_params)}개 동기화)"
+        )
+    else:
+        print(
+            f"[HintBandit] {len(_hint_stats)}개 힌트 통계 로드 완료 "
+            f"(legacy 스키마 — Thompson 컬럼 없음, 균등 사전분포로 시작)"
+        )
 
 
 def _bandit_select(group_key: str, context: list[float] | None = None) -> tuple[str, str]:
@@ -450,15 +459,82 @@ def _fetch_prev_submission(cursor, user_pk: int) -> dict | None:
         return None
 
 
+_LEGACY_SUCCESS_REWARD_THRESHOLD = 0.6
+
+
+def _safe_update_cluster_rank(cursor, conn, log_id: int, cluster_rank: int) -> None:
+    """code_logs.cluster_rank 갱신 — 컬럼 없으면 조용히 스킵."""
+    try:
+        cursor.execute(
+            "UPDATE code_logs SET cluster_rank = %s WHERE log_id = %s",
+            (cluster_rank, log_id),
+        )
+        conn.commit()
+    except Exception:
+        pass
+
+
+def _safe_update_hint_type(cursor, conn, log_id: int, hint_type: str) -> None:
+    """code_logs.hint_type 갱신 + hint_stats 노출 카운트 +1."""
+    try:
+        cursor.execute(
+            "UPDATE code_logs SET hint_type = %s WHERE log_id = %s",
+            (hint_type, log_id),
+        )
+        cursor.execute(
+            """
+            INSERT INTO hint_stats (hint_type, shown_count, success_count)
+            VALUES (%s, 1, 0)
+            ON DUPLICATE KEY UPDATE shown_count = shown_count + 1
+            """,
+            (hint_type,),
+        )
+        conn.commit()
+    except Exception:
+        pass
+
+
+def _safe_update_scoring_v2_columns(
+    cursor, conn, log_id: int,
+    base_score: float, personal_score: float, adoption_score: float,
+    antipattern_pen: float, antipattern_tags: list[str],
+    prev_reward: float | None, cur_error_type: str | None,
+) -> None:
+    """Scoring 2.0 신규 컬럼 일괄 UPDATE — 마이그레이션 전이면 조용히 스킵."""
+    tags_str = ",".join(antipattern_tags) if antipattern_tags else None
+    try:
+        cursor.execute(
+            """
+            UPDATE code_logs
+               SET base_score       = %s,
+                   personal_score   = %s,
+                   adoption_score   = %s,
+                   antipattern_pen  = %s,
+                   antipattern_tags = %s,
+                   reward           = %s,
+                   error_type       = %s
+             WHERE log_id = %s
+            """,
+            (
+                base_score, personal_score, adoption_score,
+                antipattern_pen, tags_str, prev_reward, cur_error_type, log_id,
+            ),
+        )
+        conn.commit()
+    except Exception:
+        pass
+
+
 def _persist_thompson_update(cursor, hint_type: str, reward: float) -> None:
     """
     Thompson 파라미터 (α, β) 를 hint_stats DB 에 영속화합니다.
-    legacy 컬럼(success_count) 도 보상이 0.6 이상이면 함께 +1 → A/B 비교 데이터 유지.
-    실패 시 조용히 무시 (마이그레이션 전 환경 보호).
+
+    신규 스키마(alpha/beta 컬럼 보유) 가 우선이며, 컬럼이 없는 legacy 환경에서는
+    reward ≥ _LEGACY_SUCCESS_REWARD_THRESHOLD 일 때만 success_count 를 +1 합니다.
+    어떤 단계가 실패해도 호출자 트랜잭션을 깨지 않도록 모든 예외를 흡수합니다.
     """
+    a, b = _thompson_bandit.get(hint_type)
     try:
-        a, b = _thompson_bandit.get(hint_type)
-        # alpha/beta 갱신 — 이미 update() 가 메모리에 반영했으므로 그대로 영속화
         cursor.execute(
             """
             INSERT INTO hint_stats (hint_type, shown_count, success_count, alpha, beta)
@@ -467,23 +543,26 @@ def _persist_thompson_update(cursor, hint_type: str, reward: float) -> None:
             """,
             (hint_type, a, b),
         )
+        return
     except Exception:
-        # alpha/beta 컬럼이 없는 경우 — legacy success_count 만 갱신 시도
-        try:
-            if reward >= 0.6:
-                cursor.execute(
-                    """
-                    INSERT INTO hint_stats (hint_type, shown_count, success_count)
-                    VALUES (%s, 0, 1)
-                    ON DUPLICATE KEY UPDATE success_count = success_count + 1
-                    """,
-                    (hint_type,),
-                )
-                # in-memory 도 호환 갱신
-                stats = _hint_stats.setdefault(hint_type, {"shown": 0, "success": 0})
-                stats["success"] += 1
-        except Exception:
-            pass
+        pass   # alpha/beta 컬럼이 없는 legacy 스키마 — 아래에서 폴백 시도
+
+    if reward < _LEGACY_SUCCESS_REWARD_THRESHOLD:
+        return
+
+    try:
+        cursor.execute(
+            """
+            INSERT INTO hint_stats (hint_type, shown_count, success_count)
+            VALUES (%s, 0, 1)
+            ON DUPLICATE KEY UPDATE success_count = success_count + 1
+            """,
+            (hint_type,),
+        )
+        stats = _hint_stats.setdefault(hint_type, {"shown": 0, "success": 0})
+        stats["success"] += 1
+    except Exception:
+        pass
 
 
 # ──────────────────────────────────────────────────────────
@@ -597,7 +676,12 @@ def calculate_score(request: CodeSubmitRequest, features: dict) -> float:
 # 군집 이동 이력 기반 성장/정체 문구 생성
 # ──────────────────────────────────────────────────────────
 
-_RANK_LABELS_SHORT = {0: "단순 코드형", 1: "일반 학습자형", 2: "효율 최적화형"}
+# cluster_rank → 표시 레이블 (성장/정체 문구 + /api/user_cluster_history 공용)
+_RANK_LABELS: dict[int, str] = {
+    0: "단순 코드형",
+    1: "일반 학습자형",
+    2: "효율 최적화형",
+}
 
 # 정체 감지 시 보여줄 다음 단계 유도 문구
 _STAGNATION_NUDGE = {
@@ -644,8 +728,8 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
     prev_ranks = [row['cluster_rank'] for row in rows]
     last_rank  = prev_ranks[0]   # 직전 제출의 rank
 
-    cur_label  = _RANK_LABELS_SHORT.get(current_rank, str(current_rank))
-    prev_label = _RANK_LABELS_SHORT.get(last_rank,    str(last_rank))
+    cur_label  = _RANK_LABELS.get(current_rank, str(current_rank))
+    prev_label = _RANK_LABELS.get(last_rank,    str(last_rank))
 
     # ── 성장 감지 (rank 상승) ─────────────────────────────────
     if current_rank > last_rank:
@@ -1562,59 +1646,17 @@ async def submit_code(request: CodeSubmitRequest):
         inserted_id = cursor.lastrowid
         conn.commit()
 
-        # cluster_rank 저장 (마이그레이션 완료 시)
         if cluster_rank >= 0:
-            try:
-                cursor.execute(
-                    "UPDATE code_logs SET cluster_rank = %s WHERE log_id = %s",
-                    (cluster_rank, inserted_id)
-                )
-                conn.commit()
-            except Exception:
-                pass
+            _safe_update_cluster_rank(cursor, conn, inserted_id, cluster_rank)
 
-        # hint_type 저장 + 밴딧 노출 카운트 갱신
         _hint_stats.setdefault(hint_type, {"shown": 0, "success": 0})["shown"] += 1
-        try:
-            cursor.execute(
-                "UPDATE code_logs SET hint_type = %s WHERE log_id = %s",
-                (hint_type, inserted_id)
-            )
-            cursor.execute(
-                """
-                INSERT INTO hint_stats (hint_type, shown_count, success_count)
-                VALUES (%s, 1, 0)
-                ON DUPLICATE KEY UPDATE shown_count = shown_count + 1
-                """,
-                (hint_type,)
-            )
-            conn.commit()
-        except Exception:
-            pass
+        _safe_update_hint_type(cursor, conn, inserted_id, hint_type)
 
-        # Scoring 2.0 신규 컬럼 — additive, 마이그레이션 전이면 조용히 스킵
-        try:
-            cursor.execute(
-                """
-                UPDATE code_logs
-                   SET base_score       = %s,
-                       personal_score   = %s,
-                       adoption_score   = %s,
-                       antipattern_pen  = %s,
-                       antipattern_tags = %s,
-                       reward           = %s,
-                       error_type       = %s
-                 WHERE log_id = %s
-                """,
-                (
-                    base_score, personal_score, adoption_score,
-                    antipattern_pen, ",".join(antipattern_tags) if antipattern_tags else None,
-                    prev_reward, cur_error_type, inserted_id,
-                )
-            )
-            conn.commit()
-        except Exception:
-            pass
+        _safe_update_scoring_v2_columns(
+            cursor, conn, inserted_id,
+            base_score, personal_score, adoption_score,
+            antipattern_pen, antipattern_tags, prev_reward, cur_error_type,
+        )
 
         # ─── ⑧ 루프 균형 분석 → 임밸런스 고장 / 복구 신호 ──────────
         # 현재 제출 INSERT 이후에 호출되어 최신 통계를 반영합니다.
@@ -1663,9 +1705,6 @@ async def submit_code(request: CodeSubmitRequest):
 # ──────────────────────────────────────────────────────────
 # 엔드포인트 2: 유저 군집 이동 이력 조회
 # ──────────────────────────────────────────────────────────
-
-_RANK_LABELS = {0: "단순 코드형", 1: "일반 학습자형", 2: "효율 최적화형"}
-
 
 @app.get("/api/user_cluster_history/{user_id}")
 async def get_user_cluster_history(user_id: str, limit: int = 10):

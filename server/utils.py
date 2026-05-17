@@ -189,8 +189,11 @@ def extract_features(source_code: str) -> dict:
                 features['assign_count'] += 1
 
         features['max_nesting_depth'] = _calculate_max_depth(tree)
-        features['has_loop'] = (
-            1 if (features['for_count'] + features['while_count']) > 0 else 0
+        features['has_loop'] = int(
+            (features['for_count'] + features['while_count']) > 0
+        )
+        features['has_infinite_loop'] = int(
+            features['has_infinite_while'] or features['has_infinite_for']
         )
 
         # 루프 효율성: for range(N) 총합 / 라인 수
@@ -200,18 +203,14 @@ def extract_features(source_code: str) -> dict:
                 for_range_total / features['line_count'], 4
             )
 
-        # 종합 무한 루프 플래그 — calculate_score 의 while_bonus / 클러스터링에 둘 다 영향
-        features['has_infinite_loop'] = (
-            1 if (features['has_infinite_while'] or features['has_infinite_for']) else 0
-        )
-
-        # while True / for in count() 감지 시 loop_efficiency 를 프록시 값으로 설정
-        # for range(N) 으로는 표현할 수 없는 "무한 반복" 효율을 피처에 반영합니다.
-        # 기존 for 효율보다 낮을 때만 덮어씁니다 (for + while 혼용 시 더 높은 쪽 유지).
-        if features['has_infinite_loop'] and features['loop_efficiency'] < _INFINITE_WHILE_EFFICIENCY_PROXY:
+        # while True / for in count() 감지 시 loop_efficiency 를 프록시 값으로 설정.
+        # for range(N) 으로는 표현할 수 없는 "무한 반복" 효율을 피처에 반영하되
+        # 기존 for 효율보다 낮을 때만 덮어씁니다 (혼용 시 더 높은 쪽 유지).
+        if (features['has_infinite_loop']
+                and features['loop_efficiency'] < _INFINITE_WHILE_EFFICIENCY_PROXY):
             features['loop_efficiency'] = _INFINITE_WHILE_EFFICIENCY_PROXY
 
     except SyntaxError:
-        pass  # 문법 오류 코드는 피처 기본값(0)으로 반환
+        pass   # 문법 오류 코드는 피처 기본값(0)으로 반환
 
     return features
