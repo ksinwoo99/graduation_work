@@ -1724,8 +1724,6 @@ INFO:     27.0.238.117:41982 - "GET /api/model_reload HTTP/1.1" 405 Method Not A
 INFO:     27.0.238.187:36946 - "GET /api/model_reload HTTP/1.1" 405 Method Not Allowed
 INFO:     109.236.63.126:63904 - "GET / HTTP/1.1" 404 Not Found
 INFO:     202.65.208.252:36526 - "GET / HTTP/1.0" 404 Not Found
-<<<<<<< Updated upstream
-=======
 WARNING:  Invalid HTTP request received.
 INFO:     122.42.2.61:35613 - "POST /api/submit_code HTTP/1.1" 200 OK
 [Model] 로드 완료  loaded_at=2026-05-10 16:26:15 | trained_at=2026-05-10 16:10:30 | data_count=510 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
@@ -1777,4 +1775,311 @@ WARNING:  Invalid HTTP request received.
 [Model] 로드 완료  loaded_at=2026-05-12 13:02:44 | trained_at=2026-05-12 12:10:33 | data_count=520 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
 [Model] 핫리로드 완료  이전 학습=2026-05-10 23:10:31 → 새 학습=2026-05-12 12:10:33
 INFO:     39.127.112.104:50829 - "POST /api/submit_code HTTP/1.1" 200 OK
->>>>>>> Stashed changes
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112123]
+INFO:     Started server process [127381]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-12 13:11:54 | trained_at=2026-05-12 13:10:34 | data_count=521 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[HintBandit] 13개 힌트 통계 로드 완료 (Thompson 파라미터 13개 동기화)
+[Model] 로드 완료  loaded_at=2026-05-12 13:13:20 | trained_at=2026-05-12 13:11:54 | data_count=521 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-12 13:10:34 → 새 학습=2026-05-12 13:11:54
+INFO:     39.127.112.104:50930 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:50933 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:50936 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:50939 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:50939 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:50946 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:50948 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51062 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51292 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51294 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51297 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51301 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51307 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.130.168.2:46208 - "GET / HTTP/1.1" 404 Not Found
+INFO:     39.127.112.104:51319 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51322 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51326 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51326 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.130.168.2:37290 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.112.104:51552 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51784 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51787 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51790 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51792 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51795 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51799 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51800 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51803 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51809 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51811 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51818 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51818 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51944 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:51947 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52000 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-12 14:13:17 | trained_at=2026-05-12 14:11:54 | data_count=537 | features=13 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-12 13:11:54 → 새 학습=2026-05-12 14:11:54
+INFO:     39.127.112.104:52014 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52018 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52022 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     142.93.116.18:33772 - "GET / HTTP/1.1" 404 Not Found
+INFO:     142.93.116.18:33786 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.218.118.203:51006 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [127381]
+INFO:     Started server process [131291]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [131291]
+INFO:     Started server process [131365]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [131365]
+INFO:     Started server process [131502]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-13 15:56:06 | trained_at=2026-05-13 15:56:06 | data_count=541 | features=13 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[HintBandit] 16개 힌트 통계 로드 완료 (Thompson 파라미터 16개 동기화)
+INFO:     125.250.81.167:11437 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51164 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:51164 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:58032 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56765 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56765 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56765 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56765 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56775 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:56774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4330 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4332 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2385 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2389 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     47.254.134.254:15360 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.254.134.254:15368 - "GET / HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [131502]
+INFO:     Started server process [131612]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [131612]
+INFO:     Started server process [131662]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-13 16:34:27 | trained_at=2026-05-13 16:34:26 | data_count=619 | features=13 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[HintBandit] 16개 힌트 통계 로드 완료 (Thompson 파라미터 16개 동기화)
+[ContextualPolicy] 로드 완료  hint_count=15 | context_dim=8
+INFO:     125.250.81.167:10659 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:60216 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:60218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:59031 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     222.106.97.48:59033 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-13 19:54:10 | trained_at=2026-05-13 19:34:27 | data_count=622 | features=13 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-13 16:34:26 → 새 학습=2026-05-13 19:34:27
+[ContextualPolicy] 로드 완료  hint_count=15 | context_dim=8
+INFO:     125.250.81.167:14844 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-13 21:02:27 | trained_at=2026-05-13 20:34:27 | data_count=623 | features=13 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-13 19:34:27 → 새 학습=2026-05-13 20:34:27
+[ContextualPolicy] 로드 완료  hint_count=15 | context_dim=8
+INFO:     125.250.81.167:3429 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     103.203.58.4:33132 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.129.187.38:47468 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.129.187.38:47478 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     16.58.56.214:34142 - "GET / HTTP/1.1" 404 Not Found
+INFO:     16.58.56.214:39376 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     209.97.137.40:39320 - "GET / HTTP/1.1" 404 Not Found
+INFO:     209.97.137.40:39336 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     45.156.128.64:39850 - "GET /api/v2/ HTTP/1.1" 404 Not Found
+INFO:     45.156.128.63:50168 - "GET /ms/1.0/ HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     45.156.128.62:53500 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.156.128.61:56444 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     45.156.128.61:56444 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     45.156.128.62:53520 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     91.230.168.192:36327 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.230.168.228:59987 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     54.202.255.38:53962 - "GET / HTTP/1.1" 404 Not Found
+INFO:     216.218.206.67:42570 - "GET / HTTP/1.1" 404 Not Found
+INFO:     216.218.206.67:57374 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     216.218.206.67:60560 - "GET /?format=json HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.70.145:31626 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.70.145:31632 - "GET / HTTP/1.1" 404 Not Found
+INFO:     20.65.168.78:36604 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [131662]
+INFO:     Started server process [138653]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-15 11:58:52 | trained_at=2026-05-15 11:58:51 | data_count=624 | features=13 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[HintBandit] 16개 힌트 통계 로드 완료 (Thompson 파라미터 16개 동기화)
+INFO:     3.130.168.2:44140 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     45.79.222.120:35220 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.132.26.232:37290 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     216.180.246.39:55870 - "GET / HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /manage/account/login HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /admin/index.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /index.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /%2BCSCOE%2B/logon.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /cgi-bin/login.cgi HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /login.htm HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /login.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /login.jsp HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /doc/index.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /remote/login HTTP/1.1" 404 Not Found
+INFO:     216.180.246.39:55870 - "GET /admin/login.asp HTTP/1.1" 404 Not Found
+INFO:     121.137.225.67:12207 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     188.240.59.8:37847 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.20.29:13910 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.20.29:13918 - "GET / HTTP/1.1" 404 Not Found
+INFO:     98.80.4.34:59540 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.168.2:42208 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     64.23.244.69:49284 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.23.244.69:49300 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.115.11:59172 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.84.115.11:59188 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.168.2:36892 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.168.2:43474 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.225.251.14:44846 - "GET / HTTP/1.0" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [138653]
+INFO:     Started server process [146452]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [146452]
+INFO:     Started server process [146502]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
