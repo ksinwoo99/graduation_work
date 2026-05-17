@@ -328,4 +328,9 @@ public class Login_Manager_Button : MonoBehaviour
         SceneManager.LoadScene("Menu_Scene");
     }
     
+    public void OnPresentLoginButtonClicked()
+    {
+        Shared_Manager_Session.CurrentUserId = "present";
+        SceneManager.LoadScene("Menu_Scene");
+    }
 }
