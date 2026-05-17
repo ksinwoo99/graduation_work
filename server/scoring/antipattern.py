@@ -3,12 +3,11 @@ server/scoring/antipattern.py
 ─────────────────────────────────────────────────────────────
 AST 기반 결정론 안티패턴 감지 + 페널티 산출.
 
-extract_features() 가 다루지 않는 "나쁜 코드 습관" 7종을 탐지해
+extract_features() 가 다루지 않는 "나쁜 코드 습관" 을 탐지해
 교육 목표에 정렬된 감점을 부여합니다.
 
 탐지 항목 / 가중치:
     dead_code          15  return/break/continue 다음 줄에 코드가 더 있음
-    duplicate_lines    12  같은 실행문이 3회 이상 반복 (루프 안 쓰고 복붙)
     over_nesting       10  제어 흐름 최대 중첩 깊이 ≥ 4
     infinite_no_break  10  while True 안에 break 가 없음
     unused_variable     8  할당했지만 어디에서도 사용하지 않은 변수
@@ -16,6 +15,12 @@ extract_features() 가 다루지 않는 "나쁜 코드 습관" 7종을 탐지해
     error_recurrence   20  직전 제출과 같은 종류의 에러 재발 (별도 함수)
 
 문법 오류 코드는 0 / [] 반환 (감점 중복 방지).
+
+NOTE: 과거에 존재하던 `duplicate_lines` (같은 실행문 N회 반복 감점) 은
+      mining() / producting() 같은 머신 함수를 디버깅 목적으로 여러 번 호출한
+      정상 코드까지 감점하는 부작용이 있어 제거되었습니다. 머신 함수는
+      스펙상 한 번만 호출하면 충분하지만, 그 외의 호출 횟수를 채점에서
+      가/감점하지 않습니다.
 """
 
 import ast
@@ -23,7 +28,6 @@ import ast
 
 PENALTY_WEIGHTS: dict[str, int] = {
     "dead_code":          15,
-    "duplicate_lines":    12,
     "over_nesting":       10,
     "infinite_no_break":  10,
     "unused_variable":     8,
@@ -31,21 +35,10 @@ PENALTY_WEIGHTS: dict[str, int] = {
     "error_recurrence":   20,
 }
 
-# duplicate_lines 임계값 — 같은 실행문이 N회 이상 반복되면 감점
-_DUPLICATE_THRESHOLD = 3
 # over_nesting 임계값 — 제어 흐름 최대 중첩 깊이가 이 이상이면 감점
 _NESTING_THRESHOLD   = 4
 # magic_range 임계값 — range 인자가 이 값 이상이면 무의미하게 큰 숫자로 간주
 _MAGIC_RANGE_THRESHOLD = 1000
-
-# duplicate_lines 검사 시 무시할 줄 패턴 (빈 줄 / 주석)
-def _is_meaningful_line(line: str) -> bool:
-    s = line.strip()
-    if not s:
-        return False
-    if s.startswith("#"):
-        return False
-    return True
 
 
 # ──────────────────────────────────────────────
@@ -59,34 +52,17 @@ def _has_dead_code(tree: ast.AST) -> bool:
     """
     return / break / continue / raise 다음 줄에
     같은 블록에서 실행될 코드가 남아 있는지 확인합니다.
+    if/for/while 의 else / orelse 블록까지 모두 검사합니다.
     """
     for node in ast.walk(tree):
-        body = getattr(node, "body", None)
-        if isinstance(body, list):
-            for i, stmt in enumerate(body[:-1]):
-                if isinstance(stmt, _TERMINATING):
-                    return True
-        # if/for/while 의 else / orelse 블록도 검사
-        orelse = getattr(node, "orelse", None)
-        if isinstance(orelse, list):
-            for i, stmt in enumerate(orelse[:-1]):
+        for block_name in ("body", "orelse"):
+            block = getattr(node, block_name, None)
+            if not isinstance(block, list):
+                continue
+            for stmt in block[:-1]:
                 if isinstance(stmt, _TERMINATING):
                     return True
     return False
-
-
-def _count_duplicate_stmts(source: str) -> int:
-    """
-    의미 있는 실행문 중 가장 많이 등장한 줄의 등장 횟수를 반환합니다.
-    (복사·붙여넣기로 같은 명령을 여러 번 작성한 케이스 감지)
-    """
-    counts: dict[str, int] = {}
-    for line in source.split("\n"):
-        if not _is_meaningful_line(line):
-            continue
-        key = line.strip()
-        counts[key] = counts.get(key, 0) + 1
-    return max(counts.values()) if counts else 0
 
 
 _DEPTH_NODES = (ast.For, ast.While, ast.If, ast.Try, ast.With)
@@ -176,10 +152,6 @@ def antipattern_penalty(source: str) -> tuple[float, list[str]]:
     if _has_dead_code(tree):
         total += PENALTY_WEIGHTS["dead_code"]
         tags.append("dead_code")
-
-    if _count_duplicate_stmts(source) >= _DUPLICATE_THRESHOLD:
-        total += PENALTY_WEIGHTS["duplicate_lines"]
-        tags.append("duplicate_lines")
 
     if _max_depth(tree) >= _NESTING_THRESHOLD:
         total += PENALTY_WEIGHTS["over_nesting"]

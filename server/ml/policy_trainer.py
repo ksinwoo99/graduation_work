@@ -17,6 +17,7 @@ Contextual Bandit 의 RandomForestRegressor 정책을 주기 재학습.
 ml_worker.py 가 KMeans 학습 직후 본 모듈의 train_policy() 를 호출합니다.
 """
 
+import math
 import os
 import sys
 import joblib
@@ -36,48 +37,55 @@ _MIN_TRAINING_SAMPLES = 100   # reward 가 기록된 (이전, 현재) 쌍이 이
 _MODEL_FILE_NAME      = "code_policy_model.pkl"
 _RANDOM_STATE         = 42
 
+# context_encoder._HISTORY_LIMIT 과 동일 (운영 인코더 / 학습 인코더 일치성)
+_CONTEXT_WINDOW = 5
+
 _BASE_DIR  = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 MODEL_PATH = os.path.join(_BASE_DIR, _MODEL_FILE_NAME)
+
+
+def _mean(xs: list[float]) -> float:
+    return (sum(xs) / len(xs)) if xs else 0.0
+
+
+def _std(xs: list[float]) -> float:
+    if len(xs) < 2:
+        return 0.0
+    m = _mean(xs)
+    return math.sqrt(sum((x - m) ** 2 for x in xs) / len(xs))
+
+
+def _trailing_run_length(ranks: list[int]) -> int:
+    """리스트 뒤쪽(가장 최근)에서 동일 rank 가 연속된 횟수."""
+    if not ranks:
+        return 0
+    head = ranks[-1]
+    count = 0
+    for r in reversed(ranks):
+        if r == head:
+            count += 1
+        else:
+            break
+    return count
 
 
 def _build_context_for_log(rows_window: list[dict]) -> list[float]:
     """
     학습 시 컨텍스트 재구성 — 한 유저의 시점별 context_vec 을 추정합니다.
-    기준 시점 이전 N개 행으로 평균/표준편차를 산출.
 
     rows_window 는 created_at 오름차순(과거→현재) 의 부분 리스트로
-    가장 마지막이 "현재 학습 샘플의 직전 시점" 이어야 합니다.
+    마지막 원소가 "현재 학습 샘플의 직전 시점" 이어야 합니다.
+    벡터 정의는 ml/context_encoder.encode_user_context() 와 동일합니다.
     """
-    import math
-
     if not rows_window:
         return [0.0] * CONTEXT_DIM
 
-    scores      = [float(r["score"]) for r in rows_window if r.get("score") is not None]
-    ranks       = [int(r["cluster_rank"]) for r in rows_window
-                   if r.get("cluster_rank") is not None and r["cluster_rank"] >= 0]
-    success     = [int(bool(r.get("is_success", 0))) for r in rows_window]
-    complexity  = [float(r["ast_complexity"]) for r in rows_window
-                   if r.get("ast_complexity") is not None]
-
-    def _mean(xs):
-        return (sum(xs) / len(xs)) if xs else 0.0
-
-    def _std(xs):
-        if len(xs) < 2:
-            return 0.0
-        m = _mean(xs)
-        return math.sqrt(sum((x - m) ** 2 for x in xs) / len(xs))
-
-    # 정체 감지: 마지막 rank 와 같은 값이 뒤에서 몇 개 연속인지
-    consecutive = 0
-    if ranks:
-        head = ranks[-1]
-        for r in reversed(ranks):
-            if r == head:
-                consecutive += 1
-            else:
-                break
+    scores     = [float(r["score"]) for r in rows_window if r.get("score") is not None]
+    ranks      = [int(r["cluster_rank"]) for r in rows_window
+                  if r.get("cluster_rank") is not None and r["cluster_rank"] >= 0]
+    success    = [int(bool(r.get("is_success", 0))) for r in rows_window]
+    complexity = [float(r["ast_complexity"]) for r in rows_window
+                  if r.get("ast_complexity") is not None]
 
     rank_span = (max(ranks) - min(ranks)) if len(ranks) >= 2 else 0
 
@@ -88,8 +96,8 @@ def _build_context_for_log(rows_window: list[dict]) -> list[float]:
         _mean(ranks),
         float(rank_span),
         _mean(complexity),
-        len(rows_window) / 5.0,
-        float(consecutive),
+        len(rows_window) / float(_CONTEXT_WINDOW),
+        float(_trailing_run_length(ranks)),
     ]
 
 
@@ -132,17 +140,15 @@ def _collect_training_samples():
     samples_y: list[float]       = []
     samples_h: list[str]         = []
 
-    for user_pk, rows in by_user.items():
+    for rows in by_user.values():
         # rows 는 시간순 정렬됨. 각 행의 reward 는 "직전 힌트(hint_type)" 에 대한 평가
         for i, row in enumerate(rows):
             ht = row["hint_type"]
             r  = row["reward"]
             if ht is None or r is None:
                 continue
-            # 컨텍스트 = 해당 시점 직전(과거 5개) 통계
-            window = rows[max(0, i - 5):i]
-            ctx = _build_context_for_log(window)
-            samples_X.append(ctx)
+            window = rows[max(0, i - _CONTEXT_WINDOW):i]
+            samples_X.append(_build_context_for_log(window))
             samples_y.append(float(r))
             samples_h.append(ht)
 
