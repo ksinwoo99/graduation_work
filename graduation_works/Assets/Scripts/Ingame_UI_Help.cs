@@ -34,6 +34,12 @@ public class Ingame_UI_Help : MonoBehaviour
     
     private List<GameObject> spawnedButtons = new List<GameObject>();
 
+    public static Ingame_UI_Help Instance;
+
+    void Awake() {
+        if (Instance == null) Instance = this;
+    }
+
     void Start()
     {
         // 1. 위치 초기화 (현재 에디터에 배치된 위치를 '보이는 위치'로 간주)
