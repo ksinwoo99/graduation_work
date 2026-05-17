@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aef642e8c1c1a0f439c8578b0d3955be, type: 3}
-  m_Name: Help_Variable
+  m_Name: Help_03
   m_EditorClassIdentifier: 
-  title: "1. \uBCC0\uC218\uB780?"
-  content: "\uBCC0\uC218\uC758 \uC815\uC758\uC5D0 \uB300\uD558\uC5EC"
-  unlockTutorialStep: 10
+  title: "3. \uAC00\uACF5\uAE30"
+  content: "\uAC00\uACF5\uAE30 \uC548\uB0B4"
+  unlockTutorialStep: 40
