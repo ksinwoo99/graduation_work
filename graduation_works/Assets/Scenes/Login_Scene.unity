@@ -6077,7 +6077,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 661839346}
         m_TargetAssemblyTypeName: Login_Manager_Button, Assembly-CSharp
-        m_MethodName: OnGuestLoginButtonClicked
+        m_MethodName: OnPresentLoginButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -210,11 +210,6 @@ class Machine:
         
         compiled = compile(module_node, "<sandbox>", "exec")
 
-        # ✨ [추가] "Common"이라고만 입력해도 "resCommon" 변수를 찾아주는 마법의 헬퍼 함수
-        def _get_var_name(target):
-            target_str = str(target)
-            return target_str if target_str.startswith("res") else f"res{target_str}"
-
         # ✨ [수정] 채굴 함수: 지정된 타겟의 변수를 실시간으로 증가
         def _mining(target="resCommon", amount=1):
             print(f"[ACTION] MINING_{str(target).upper()}")
