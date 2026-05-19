@@ -160,20 +160,18 @@ def _is_count_call(call_node: ast.AST) -> bool:
 
 class LoopTransformer(ast.NodeTransformer):
     def visit_While(self, node):
-    # 조건이 무엇이든(while True든 while resCommon < 100이든) 무조건 제어
-        has_break = any(isinstance(child, ast.Break) for child in ast.walk(node))
-        if not has_break:
-            print_node = ast.Expr(
-                value=ast.Call(
-                    func=ast.Name(id='print', ctx=ast.Load()),
-                    args=[ast.Constant(value="반복합니다.")],
-                    keywords=[]
+        if isinstance(node.test, ast.Constant) and node.test.value is True:
+            has_break = any(isinstance(child, ast.Break) for child in ast.walk(node))
+            if not has_break:
+                print_node = ast.Expr(
+                    value=ast.Call(
+                        func=ast.Name(id='print', ctx=ast.Load()),
+                        args=[ast.Constant(value="반복합니다.")],
+                        keywords=[]
+                    )
                 )
-            )
-            node.body.insert(0, print_node)
-
-    # 매 반복 틱마다 제어권을 Unity(클라이언트)로 넘겨주도록 yield 삽입
-        node.body.append(ast.Expr(value=ast.Yield(value=None)))
+                node.body.insert(0, print_node)
+            node.body.append(ast.Expr(value=ast.Yield(value=None)))
         return node
 
     def visit_For(self, node):
@@ -209,30 +207,17 @@ class Machine:
         ast.fix_missing_locations(module_node)
         
         compiled = compile(module_node, "<sandbox>", "exec")
+<<<<<<< HEAD
 
         # ✨ [수정] 채굴 함수: 지정된 타겟의 변수를 실시간으로 증가
+=======
+        
+>>>>>>> parent of cf812dd (Update 8000.py)
         def _mining(target="resCommon", amount=1):
             print(f"[ACTION] MINING_{str(target).upper()}")
-            var_name = _get_var_name(target)
-            # 샌드박스 환경(env)에 변수가 있으면 더하고, 없으면 새로 만듭니다
-            if var_name in self.env:
-                self.env[var_name] += amount
-            else:
-                self.env[var_name] = amount
             
-        # ✨ [수정] 생산/가공 함수: producting도 동일하게 변수 실시간 증가
         def _producting(target="Standard", amount=1):
             print(f"[ACTION] PRODUCTING_{str(target).upper()}")
-            var_name = _get_var_name(target)
-            if var_name in self.env:
-                self.env[var_name] += amount
-            else:
-                self.env[var_name] = amount
-
-        # ✨ [보너스] 판매 함수: 판매 동작을 하면 골드(Gold) 변수가 증가
-        def _selling(target="resCommon", amount=1):
-            print(f"[ACTION] SELLING_{str(target).upper()}")
-            self.env["Gold"] += 10  # 골드 10 획득 (원하는 수치로 조정 가능)
 
         def _move(speed="slow"):
             if speed == "fast":
@@ -241,6 +226,8 @@ class Machine:
                 print("[ACTION] MOVE")
 
         self.env = {
+            # 화이트리스트된 모듈(itertools.count 등)을 import 문으로 가져올 수 있도록
+            # __import__ 만 _safe_import 로 교체합니다. 그 외 동작은 동일.
             "__builtins__": {
                 "print": print, "range": range, "len": len,
                 "int": int, "float": float, "str": str, "bool": bool,
@@ -248,10 +235,10 @@ class Machine:
             },
             "mining": _mining,
             "producting": _producting,
-            "processing": lambda target="Standard": _producting(target), # 편의상 producting과 동일하게 처리
-            "machining": lambda target="Standard": _producting(target),
-            "storing": lambda target="Standard": print(f"[ACTION] STORING_{str(target).upper()}"),
-            "selling": _selling,
+            "processing": lambda: print("[ACTION] PROCESSING"),
+            "machining": lambda: print("[ACTION] MACHINING"),
+            "storing": lambda: print("[ACTION] STORING"),
+            "selling": lambda: print("[ACTION] SELLING"),
             "move": _move,
             "slow": "slow",
             "fast": "fast",
