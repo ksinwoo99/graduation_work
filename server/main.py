@@ -2,6 +2,9 @@
 server/main.py
 ML 서버 (Server B) — 코드 로그 저장 / AI 힌트 생성 / 루프 균형 분석 / Scoring 2.0
 
+사용자 표시 문구(AI 힌트·오류 안내·API message)는 user_messages.py 에만 두고,
+이 파일은 로직만 담당합니다. 문구 수정 시 user_messages.py 를 편집하세요.
+
 엔드포인트:
     POST /api/submit_code                       — 코드 제출 결과 저장 및 AI 힌트 반환
     GET  /api/user_cluster_history/{user_id}    — 유저 군집 이동 이력 조회
@@ -38,6 +41,26 @@ import pandas as pd
 
 from config import DB_CONFIG
 from utils import extract_features, calculate_ast_complexity
+from user_messages import (
+    HINT_VARIANTS,
+    HINT_VARIANTS_MAP,
+    RANK_LABELS,
+    STAGNATION_NUDGE,
+    STAGNATION_NUDGE_DEFAULT,
+    BANDIT_FALLBACK_OK,
+    SUCCESS_UNKNOWN_CLUSTER,
+    SUCCESS_MOVE_STANDALONE,
+    RANK_LABEL_UNKNOWN,
+    PROGRESSION_GROWTH,
+    PROGRESSION_DECLINE_FROM_RANK2,
+    PROGRESSION_DECLINE_GENERIC,
+    PROGRESSION_STAGNATION,
+    Move,
+    Err,
+    Machine,
+    Api,
+    msg,
+)
 
 # ── Scoring 2.0 (Layer 1) ───────────────────────────────────────
 from scoring.aggregator     import final_score, score_breakdown
@@ -56,10 +79,6 @@ app = FastAPI()
 _BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH   = os.path.join(_BASE_DIR, 'code_cluster_model.pkl')
 POLICY_PATH  = os.path.join(_BASE_DIR, 'code_policy_model.pkl')
-
-# DB 스키마는 server/migrations/scoring_v2.sql 로 적용된 상태를 가정합니다.
-# 신규 컬럼/테이블에 접근하는 코드는 모두 try/except 로 감싸 마이그레이션 전
-# 환경에서도 메인 기능(힌트 반환·기본 score 저장)이 동작하도록 폴백합니다.
 
 
 # ──────────────────────────────────────────────────────────
@@ -93,130 +112,7 @@ _feature_names:   list = []
 # (구버전의 ε-greedy 는 Thompson Sampling 으로 완전 교체됨)
 _hint_stats: dict[str, dict] = {}   # hint_type → {"shown": N, "success": M} (in-memory 노출 카운트)
 
-# 밴딧이 선택할 힌트 변형 풀 — (hint_text, hint_type_id) 쌍의 리스트.
-# 각 상황(group_key)에 2개의 변형을 두어 어떤 표현이 더 효과적인지 학습합니다.
-#
-# 그룹 키 명명 규칙:
-#   succ_r{rank}_{서브케이스}
-#       rank      0 단순 / 1 학습자 / 2 효율 최적화
-#       서브케이스 코드의 구조적 특징 (simple / has_if / for / while / for_count / infinite_while ...)
-_HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
-    # ────────────── rank 0: 루프 미사용 ──────────────
-    "succ_r0_simple": [
-        (
-            "[ 단순 코드형 ] "
-            "명령을 하나씩 순서대로 실행하는 코드예요. "
-            "반복문(for)을 사용하면 같은 명령을 여러 번 한 번에 실행할 수 있어요! "
-            "예시: for i in range(5): mining()",
-            "succ_r0_simple_A",
-        ),
-        (
-            "[ 단순 코드형 ] "
-            "mining()을 한 줄씩 쓰는 대신 for i in range(5): mining() 으로 묶어보세요! "
-            "숫자가 클수록 기계가 더 많이 일해요.",
-            "succ_r0_simple_B",
-        ),
-    ],
-    "succ_r0_has_if": [
-        (
-            "[ 단순 코드형 ] "
-            "조건문(if)을 활용하고 있어요! "
-            "여기에 반복문(for)까지 더하면 훨씬 강력해집니다. "
-            "예시: for i in range(5): mining()",
-            "succ_r0_has_if_A",
-        ),
-        (
-            "[ 단순 코드형 ] "
-            "if 판단을 잘 쓰고 있어요! "
-            "while True: 로 기계를 계속 돌리면서 if 로 상황을 판단하면 더 강력해요.",
-            "succ_r0_has_if_B",
-        ),
-    ],
-
-    # ────────────── rank 1: 일반 학습자 (단일 루프) ──────────────
-    "succ_r1_for": [
-        (
-            "[ 일반 학습자형 ] "
-            "for 반복문을 잘 쓰고 있어요! "
-            "range() 의 숫자를 더 키우거나, while True: + break 조건으로 자동화에 도전해보세요.",
-            "succ_r1_for_A",
-        ),
-        (
-            "[ 일반 학습자형 ] "
-            "for 루프로 좋은 구조를 만들었어요! "
-            "from itertools import count 후 for i in count(): 으로 무한 반복도 도전해보세요.",
-            "succ_r1_for_B",
-        ),
-    ],
-    "succ_r1_while": [
-        (
-            "[ 일반 학습자형 ] "
-            "while 반복문을 사용하고 있어요! "
-            "while True: 로 변경하면 기계가 멈추지 않고 계속 자동으로 작동해요.",
-            "succ_r1_while_A",
-        ),
-        (
-            "[ 일반 학습자형 ] "
-            "while 루프를 쓰고 있군요! "
-            "조건문 대신 while True: + 내부 break 로 더 명확한 종료 흐름을 만들 수 있어요.",
-            "succ_r1_while_B",
-        ),
-    ],
-
-    # ────────────── rank 2: 효율 최적화 (무한 / 고효율 루프) ──────────────
-    # while True: — "고전적" 무한 자동화
-    "succ_r2_infinite_while": [
-        (
-            "[ 효율 최적화형 ] "
-            "while True: 로 기계를 완전 자동화했어요! "
-            "내부에 if + break 종료 조건이 있으면 더 안전한 코드가 됩니다.",
-            "succ_r2_infinite_while_A",
-        ),
-        (
-            "[ 효율 최적화형 ] "
-            "무한 루프로 완벽한 자동화 코드예요! "
-            "자원량을 확인해서 멈추는 종료 조건을 추가하면 한층 견고해집니다.",
-            "succ_r2_infinite_while_B",
-        ),
-    ],
-    # for i in count(...) — itertools 활용한 "파이써닉" 무한 자동화
-    "succ_r2_infinite_for_count": [
-        (
-            "[ 효율 최적화형 ] "
-            "from itertools import count 와 for i in count(): 로 파이써닉한 무한 반복을 구현했네요! "
-            "i 값을 활용해 단계별 동작을 분기하면 표현력이 훨씬 풍부해져요.",
-            "succ_r2_infinite_for_count_A",
-        ),
-        (
-            "[ 효율 최적화형 ] "
-            "for i in count(start=, step=): 가 들어간 깔끔한 무한 자동화예요! "
-            "while True 보다 의도가 분명한 좋은 선택입니다. break 조건만 챙겨주세요.",
-            "succ_r2_infinite_for_count_B",
-        ),
-    ],
-    # for range — 큰 N 의 고효율 유한 루프
-    "succ_r2_for_range": [
-        (
-            "[ 효율 최적화형 ] "
-            "큰 횟수의 for range 로 고효율 작업 코드를 만들었어요! "
-            "더 나아가 while True: 나 for i in count(): 으로 완전 자동화도 가능합니다.",
-            "succ_r2_for_range_A",
-        ),
-        (
-            "[ 효율 최적화형 ] "
-            "효율적인 for range 루프예요! "
-            "기계를 멈추지 않게 하려면 for i in count(): 처럼 끝이 정해지지 않는 루프를 시도해보세요.",
-            "succ_r2_for_range_B",
-        ),
-    ],
-}
-
-# hint_type ID → hint_text 역방향 조회 맵 — 밴딧 선택 결과를 텍스트로 변환할 때 사용
-_HINT_VARIANTS_MAP: dict[str, str] = {
-    hint_type: text
-    for variants in _HINT_VARIANTS.values()
-    for (text, hint_type) in variants
-}
+# 밴딧 힌트 변형 풀·문구 → user_messages.py (HINT_VARIANTS, HINT_VARIANTS_MAP)
 
 # ── Thompson Sampling + Contextual Bandit 인스턴스 ──────────────
 # Thompson 은 항상 활성화(폴백 포함). Contextual 은 pkl 이 있을 때만 활성.
@@ -386,9 +282,9 @@ def _bandit_select(group_key: str, context: list[float] | None = None) -> tuple[
 
     반환: (hint_text, hint_type_id)
     """
-    variants = _HINT_VARIANTS.get(group_key, [])
+    variants = HINT_VARIANTS.get(group_key, [])
     if not variants:
-        return "코드가 정상 적용되었습니다.", f"succ_unknown_{group_key}"
+        return BANDIT_FALLBACK_OK, f"succ_unknown_{group_key}"
     if len(variants) == 1:
         return variants[0]
 
@@ -399,7 +295,7 @@ def _bandit_select(group_key: str, context: list[float] | None = None) -> tuple[
     if not selected:
         return random.choice(variants)
 
-    text = _HINT_VARIANTS_MAP.get(selected)
+    text = HINT_VARIANTS_MAP.get(selected)
     if text is None:
         return random.choice(variants)
     return text, selected
@@ -676,20 +572,7 @@ def calculate_score(request: CodeSubmitRequest, features: dict) -> float:
 # 군집 이동 이력 기반 성장/정체 문구 생성
 # ──────────────────────────────────────────────────────────
 
-# cluster_rank → 표시 레이블 (성장/정체 문구 + /api/user_cluster_history 공용)
-_RANK_LABELS: dict[int, str] = {
-    0: "단순 코드형",
-    1: "일반 학습자형",
-    2: "효율 최적화형",
-}
-
-# 정체 감지 시 보여줄 다음 단계 유도 문구
-_STAGNATION_NUDGE = {
-    # rank 0: 루프 미사용 — 반복문 첫 시도 유도
-    0: "for i in range(5): mining() 처럼 반복문을 시작해보세요!",
-    # rank 1: 루프 사용 중 — 더 효율적인 구조로 발전 유도
-    1: "range()의 숫자를 더 키우거나, while True 로 무한 반복에도 도전해보세요!",
-}
+# 군집 레이블·정체 유도 문구 → user_messages.py (RANK_LABELS, STAGNATION_NUDGE)
 
 
 def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
@@ -728,28 +611,18 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
     prev_ranks = [row['cluster_rank'] for row in rows]
     last_rank  = prev_ranks[0]   # 직전 제출의 rank
 
-    cur_label  = _RANK_LABELS.get(current_rank, str(current_rank))
-    prev_label = _RANK_LABELS.get(last_rank,    str(last_rank))
+    cur_label  = RANK_LABELS.get(current_rank, str(current_rank))
+    prev_label = RANK_LABELS.get(last_rank,    str(last_rank))
 
     # ── 성장 감지 (rank 상승) ─────────────────────────────────
     if current_rank > last_rank:
-        return (
-            f"\n[ 성장 중! ] {prev_label}에서 {cur_label}으로 올라섰어요! "
-            "이 방향으로 계속 나아가세요."
-        )
+        return msg(PROGRESSION_GROWTH, prev_label=prev_label, cur_label=cur_label)
 
     # ── 하락 감지 (rank 하락) ─────────────────────────────────
     if current_rank < last_rank:
         if last_rank == 2:
-            # 효율 최적화형에서 내려온 경우 — 루프 구조 약화를 명시
-            return (
-                f"\n[ 효율 하락 ] 이전에는 {prev_label}이었어요. "
-                "반복문(for/while)을 더 적극적으로 활용해보세요!"
-            )
-        return (
-            f"\n[ 패턴 단순화 ] 이전보다 코드 구조가 단순해졌어요. "
-            "반복문을 계속 활용해보세요!"
-        )
+            return msg(PROGRESSION_DECLINE_FROM_RANK2, prev_label=prev_label)
+        return msg(PROGRESSION_DECLINE_GENERIC)
 
     # ── 유지 / 정체 감지 ─────────────────────────────────────
     # rank 2는 이미 최고 효율 코드 — 유지 자체가 좋은 것, 정체 메시지 불필요
@@ -765,10 +638,12 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
             break
 
     if consecutive >= 2:   # 직전 2개 + 현재 = 총 3연속
-        nudge = _STAGNATION_NUDGE.get(current_rank, "새로운 방식을 시도해보세요.")
-        return (
-            f"\n[ {cur_label} 유지 중 ] "
-            f"{consecutive + 1}번 연속 같은 패턴이에요. {nudge}"
+        nudge = STAGNATION_NUDGE.get(current_rank, STAGNATION_NUDGE_DEFAULT)
+        return msg(
+            PROGRESSION_STAGNATION,
+            cur_label=cur_label,
+            consecutive=consecutive + 1,
+            nudge=nudge,
         )
 
     return ""
@@ -936,18 +811,11 @@ def _detect_move_typo(source_code: str) -> str | None:
         return None
 
     if _has_unclosed_move_call(source_code):
-        return (
-            "'move(' 의 닫는 괄호 ')' 가 빠진 것 같아요!\n"
-            "컨테이너 타일은 'move()' 처럼 빈 괄호로 정확히 입력해야 해요."
-        )
+        return msg(Move.UNCLOSED_PAREN)
 
     m = _MOVE_TYPO_VARIANT_RE.search(source_code)
     if m:
-        token = m.group('token')
-        return (
-            f"'{token}' 은(는) 'move()' 의 오타로 보여요!\n"
-            "컨테이너 타일을 설치하려면 정확히 'move()' 라고 입력해주세요."
-        )
+        return msg(Move.TYPO, token=m.group('token'))
 
     return None
 
@@ -1038,10 +906,7 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
         return move_typo_msg
 
     if _move_in_loop(request.source_code):
-        return (
-            "move() 는 컨테이너 타일을 설치하는 단독 명령어예요!\n"
-            "for / while 반복문 안에서는 사용할 수 없어요."
-        )
+        return msg(Move.IN_LOOP)
 
     # ══════════════════════════════════════════════════════
     # 1단계: 파이썬 문법 / 런타임 에러
@@ -1058,22 +923,12 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
             m = re.search(r"외부 모듈 사용 금지\s*\(([^)]+)\)", log)
             target = m.group(1) if m else None
             if target:
-                return (
-                    f"'{target}' 모듈은 사용할 수 없어요.\n"
-                    "이 게임에서 허용된 외부 모듈은 itertools.count 뿐이에요. "
-                    "예) from itertools import count"
-                )
-            return (
-                "외부 모듈 import 는 사용할 수 없어요!\n"
-                "허용된 항목: from itertools import count"
-            )
+                return msg(Err.SANDBOX_IMPORT_MODULE, target=target)
+            return msg(Err.SANDBOX_IMPORT_GENERIC)
         if "금지 함수 사용" in log:
             m = re.search(r"금지 함수 사용:\s*(\S+)", log)
-            target = m.group(1) if m else "해당 함수"
-            return (
-                f"'{target}' 는 보안상 사용할 수 없는 함수예요.\n"
-                "다른 방법으로 동일한 동작을 만들어보세요."
-            )
+            target = m.group(1) if m else Err.SANDBOX_FORBIDDEN_FN_FALLBACK_TARGET
+            return msg(Err.SANDBOX_FORBIDDEN_FN, target=target)
 
         # ── SyntaxError 계열 ─────────────────────────────
         # (IndentationError / TabError 도 8000.py 에서 SyntaxError: 로 포맷됨)
@@ -1083,75 +938,42 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
             if "expected an indented block" in error_log:
                 problem_line = _find_empty_block(source)
                 if problem_line:
-                    return (
-                        f"'{problem_line}' 아래에 실행할 코드가 없어요!\n"
-                        "콜론(:) 다음 줄을 4칸 들여쓰기 후 명령어를 써주세요."
-                    )
-                return (
-                    "콜론(:) 뒤에 실행할 코드 블록이 없어요.\n"
-                    "들여쓰기(4칸) 후 명령어를 추가해보세요."
-                )
+                    return msg(Err.SYNTAX_INDENT_BLOCK_LINE, problem_line=problem_line)
+                return msg(Err.SYNTAX_INDENT_BLOCK)
 
-            # 불필요한 들여쓰기 (IndentationError: unexpected indent)
             if "unexpected indent" in error_log:
-                return (
-                    "들여쓰기가 필요 없는 곳에 빈칸이 들어가 있어요!\n"
-                    "코드 앞의 불필요한 공백을 지워주세요."
-                )
+                return msg(Err.SYNTAX_UNEXPECTED_INDENT)
 
-            # 탭/스페이스 혼용 (TabError)
             if "inconsistent use of tabs" in error_log or "taberror" in error_log:
-                return (
-                    "탭(Tab)과 스페이스를 함께 쓰면 안 돼요!\n"
-                    "들여쓰기를 모두 스페이스 4칸으로 통일해보세요."
-                )
+                return msg(Err.SYNTAX_TAB_MIX)
 
-            # 괄호 미닫기
             if ("unexpected eof" in error_log
                     or "never closed" in error_log
                     or "was never closed" in error_log):
-                return "괄호 '(' 또는 '[' 를 열고 닫지 않았는지 확인해보세요!"
+                return msg(Err.SYNTAX_UNCLOSED_PAREN)
 
-            # 문자열 미닫기
             if ("unterminated string" in error_log
                     or "eol while scanning" in error_log):
-                return "따옴표('' 또는 \"\")를 열고 닫지 않았는지 확인해보세요!"
+                return msg(Err.SYNTAX_UNCLOSED_STRING)
 
-            # return / break / continue 오용
             if "return outside function" in error_log:
-                return (
-                    "return 은 def 로 만든 함수 안에서만 쓸 수 있어요!\n"
-                    "함수 정의(def) 없이 return 만 쓰지는 않았나요?"
-                )
+                return msg(Err.SYNTAX_RETURN_OUTSIDE)
             if "break outside loop" in error_log:
-                return "break 는 for / while 반복문 안에서만 쓸 수 있어요!"
+                return msg(Err.SYNTAX_BREAK_OUTSIDE)
             if "continue outside loop" in error_log:
-                return "continue 는 for / while 반복문 안에서만 쓸 수 있어요!"
+                return msg(Err.SYNTAX_CONTINUE_OUTSIDE)
 
-            # = 과 == 혼동
             if ("cannot assign to" in error_log
                     or "maybe you meant '=='" in error_log):
-                return (
-                    "조건식에서는 비교 연산자 == 을 써야 해요.\n"
-                    "대입(=)과 비교(==)를 헷갈린 건 아닌가요? 예) if a == 5:"
-                )
+                return msg(Err.SYNTAX_ASSIGN_VS_COMPARE)
 
-            # 보이지 않는 특수문자 (다른 곳에서 복붙 시)
             if "invalid character" in error_log:
-                return (
-                    "코드에 보이지 않는 특수문자가 섞여 있어요!\n"
-                    "다른 곳에서 복사·붙여넣기 했다면 직접 다시 입력해보세요."
-                )
+                return msg(Err.SYNTAX_INVALID_CHAR)
 
-            # f-string 오류
             if "f-string" in error_log:
-                return (
-                    "f-string 문법 오류예요.\n"
-                    "f\"...{변수이름}...\" 형식인지, 중괄호 {} 가 제대로 닫혔는지 확인해보세요."
-                )
+                return msg(Err.SYNTAX_FSTRING)
 
-            # 일반 SyntaxError 폴백
-            return "명령어에 오타가 있거나, 조건문·반복문 뒤에 콜론(:)을 빠뜨렸을지도 몰라요!"
+            return msg(Err.SYNTAX_GENERIC)
 
         # ── NameError ─────────────────────────────────────
         if "nameerror" in error_log:
@@ -1162,82 +984,47 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
                 if undef == "count" and not re.search(
                     r'from\s+itertools\s+import\s+[^#\n]*\bcount\b', source
                 ):
-                    return (
-                        "'count' 를 사용하려면 먼저 import 해야 해요!\n"
-                        "코드 맨 윗줄에 다음을 추가해보세요:\n"
-                        "from itertools import count"
-                    )
+                    return msg(Err.NAME_COUNT_IMPORT)
 
-                # 1순위: 기계 이름 필드에 따옴표를 빠뜨린 경우
                 if re.search(r'\bname\s*=\s*' + re.escape(undef), source):
-                    return (
-                        f"기계 이름 '{undef}' 을(를) 따옴표로 감싸지 않았어요!\n"
-                        f'name = "{undef}" 처럼 수정해보세요.'
-                    )
+                    return msg(Err.NAME_MACHINE_UNQUOTED, undef=undef)
 
-                # 2순위: 일반적인 따옴표 없는 문자열 값
                 if _looks_like_unquoted_string(undef, source):
-                    return (
-                        f"'{undef}' 을(를) 텍스트로 쓰려면 따옴표로 감싸야 해요!\n"
-                        f'예시: 변수 = "{undef}"'
-                    )
+                    return msg(Err.NAME_STRING_UNQUOTED, undef=undef)
 
-                # 3순위: 오타 제안 (게임 명령어 / 파이썬 내장 함수)
                 suggestion, category = _suggest_similar_name(undef)
                 if suggestion:
-                    ctx = "게임 명령어" if category == "game" else "파이썬 기본 명령어"
-                    return (
-                        f"'{undef}' 를 찾을 수 없어요.\n"
-                        f"{ctx} '{suggestion}' 의 오타는 아닌가요?"
+                    ctx = Err.CTX_GAME_CMD if category == "game" else Err.CTX_PYTHON_BUILTIN
+                    return msg(
+                        Err.NAME_TYPO_SUGGEST,
+                        undef=undef, ctx=ctx, suggestion=suggestion,
                     )
 
-            return "존재하지 않는 명령어(또는 변수)를 불렀어요. 오타가 발생했는지 확인해보세요!"
+            return msg(Err.NAME_GENERIC)
 
         # ── TypeError ─────────────────────────────────────
         if "typeerror" in error_log:
             # 문자열 + 숫자 연결 시도
             if ("can only concatenate str" in error_log
                     or "must be str, not" in error_log):
-                return (
-                    "문자열(글자)과 숫자를 바로 + 로 연결할 수 없어요!\n"
-                    "str(숫자) 로 변환 후 합쳐보세요. 예) \"결과: \" + str(5)"
-                )
+                return msg(Err.TYPE_STR_INT_CONCAT)
 
-            # 인자 개수 오류
             if "takes" in error_log and "argument" in error_log:
                 fn_name = _extract_fn_from_typeerror(log)
                 if fn_name:
-                    return (
-                        f"'{fn_name}()' 에 잘못된 개수의 값을 넣었어요.\n"
-                        "괄호 안에 값이 필요 없는 명령어일 수도 있어요! 예) mining()"
-                    )
-                return (
-                    "함수에 잘못된 개수의 인자를 전달했어요.\n"
-                    "괄호 안의 값 개수를 확인해보세요."
-                )
+                    return msg(Err.TYPE_WRONG_ARGS_FN, fn_name=fn_name)
+                return msg(Err.TYPE_WRONG_ARGS_GENERIC)
 
-            # None 값 오용
             if "'nonetype'" in error_log:
-                return (
-                    "결과값이 없는(None) 값을 사용하려 했어요.\n"
-                    "함수의 반환값이 있는지, 변수에 제대로 저장했는지 확인해보세요."
-                )
+                return msg(Err.TYPE_NONE)
 
-            # 대괄호 접근 불가
             if "not subscriptable" in error_log:
-                return (
-                    "대괄호([])로 접근할 수 없는 값이에요.\n"
-                    "리스트(list)나 딕셔너리(dict)가 맞는지 확인해보세요."
-                )
+                return msg(Err.TYPE_NOT_SUBSCRIPTABLE)
 
-            # range() 에 문자열 전달
             if "cannot be interpreted as an integer" in error_log:
-                return (
-                    "range() 안에는 정수(숫자)만 넣을 수 있어요.\n"
-                    "문자열이 들어가지는 않았나요? 예) range(5)"
-                )
+                return msg(Err.TYPE_RANGE_NOT_INT)
 
-            return "타입 에러가 발생했어요. 숫자가 들어갈 자리에 문자열(글자)을 넣지는 않았나요?"
+            return msg(Err.TYPE_GENERIC)
 
         # ── AttributeError ───────────────────────────────
         if "attributeerror" in error_log:
@@ -1245,73 +1032,40 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
             if attr:
                 suggestion, category = _suggest_similar_name(attr)
                 if suggestion:
-                    ctx = "게임 명령어" if category == "game" else "파이썬 기본 명령어"
-                    return (
-                        f"'{attr}' 를 찾을 수 없어요.\n"
-                        f"{ctx} '{suggestion}' 의 오타는 아닌가요?"
+                    ctx = Err.CTX_GAME_CMD if category == "game" else Err.CTX_PYTHON_BUILTIN
+                    return msg(
+                        Err.ATTR_TYPO_SUGGEST,
+                        attr=attr, ctx=ctx, suggestion=suggestion,
                     )
-                return f"'{attr}' 는 존재하지 않는 속성이에요. 오타인지 확인해보세요!"
-            return "존재하지 않는 속성이나 메서드를 불렀어요. 오타가 없는지 확인해보세요!"
+                return msg(Err.ATTR_UNKNOWN, attr=attr)
+            return msg(Err.ATTR_GENERIC)
 
         # ── ValueError ────────────────────────────────────
         if "valueerror" in error_log:
             if "invalid literal" in error_log and "int()" in error_log:
-                return (
-                    "숫자로 변환할 수 없는 값을 int()에 넣었어요.\n"
-                    "숫자로만 이루어진 문자열인지 확인해보세요. 예) int(\"123\")"
-                )
-            return (
-                "명령어의 형식은 맞지만, 올바르지 않은 값이 들어갔어요.\n"
-                "정확한 값을 입력했는지 확인해보세요."
-            )
+                return msg(Err.VALUE_INT_LITERAL)
+            return msg(Err.VALUE_GENERIC)
 
-        # ── ZeroDivisionError ─────────────────────────────
         if "zerodivisionerror" in error_log:
-            return (
-                "0으로 나누기를 시도했어요!\n"
-                "나누는 수(분모)가 0이 되지 않도록 코드를 확인해보세요."
-            )
+            return msg(Err.ZERO_DIVISION)
 
-        # ── IndexError ────────────────────────────────────
         if "indexerror" in error_log:
-            return (
-                "리스트의 범위를 벗어난 위치에 접근했어요.\n"
-                "인덱스 번호가 리스트 길이(len())를 넘지 않는지 확인해보세요."
-            )
+            return msg(Err.INDEX)
 
-        # ── KeyError ─────────────────────────────────────
         if "keyerror" in error_log:
             m = re.search(r"KeyError: (.+)", log)
             key_name = m.group(1).strip() if m else ""
             if key_name:
-                return (
-                    f"딕셔너리에 {key_name} 키가 없어요!\n"
-                    "키 이름의 오타나 존재 여부를 확인해보세요."
-                )
-            return (
-                "딕셔너리에 없는 키에 접근했어요.\n"
-                "키 이름의 오타나 존재 여부를 확인해보세요."
-            )
+                return msg(Err.KEY_WITH_NAME, key_name=key_name)
+            return msg(Err.KEY_GENERIC)
 
-        # ── RecursionError ───────────────────────────────
         if "recursionerror" in error_log:
-            return (
-                "함수가 자기 자신을 너무 많이 호출했어요(재귀 깊이 초과)!\n"
-                "함수 안에서 같은 함수를 계속 부르지는 않았나요?"
-            )
+            return msg(Err.RECURSION)
 
-        # ── TimeoutError ─────────────────────────────────
         if "timeouterror" in error_log:
-            return (
-                "코드 실행 시간이 너무 오래 걸려요!\n"
-                "끝나지 않는 무한 루프에 빠진 건 아닌지 확인해보세요."
-            )
+            return msg(Err.TIMEOUT)
 
-        # ── 알 수 없는 에러 폴백 ─────────────────────────
-        return (
-            "기계가 미지의 파이썬 에러를 뿜어내고 있습니다.\n"
-            "로그 창의 에러 메시지를 번역해서 문제를 해결해보세요!"
-        )
+        return msg(Err.UNKNOWN)
 
     # ══════════════════════════════════════════════════════
     # 2단계: 기계별 조건 미충족 (Unity client/-1..-9 매핑과 결을 맞춤)
@@ -1322,35 +1076,19 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
         # 게임 기믹: 무한 루프 미해금 상태에서 while True / for in count() 시도
         # (클라이언트가 -3 으로 차단하지만, 서버 hint 도 같은 사유로 응답)
         if features.get('has_infinite_loop', 0) or features.get('has_infinite_while', 0):
-            return (
-                "아직 '무한 루프' 시스템 권한이 잠겨 있어요!\n"
-                "while True / for i in count(): 는 게임을 더 진행해 해금 후 사용 가능해요. "
-                "지금은 for i in range(N): 으로 횟수 반복을 사용해보세요."
-            )
+            return msg(Machine.LOCKED_INFINITE)
 
-        # 게임 기믹: 일반 루프(level 1) 미해금 상태에서 for/while 시도
         if features.get('has_loop', 0):
-            return (
-                "아직 '반복문' 시스템 권한이 잠겨 있어요!\n"
-                "퀘스트를 더 진행해 for / while 권한을 해금한 뒤 사용해보세요."
-            )
+            return msg(Machine.LOCKED_LOOP)
 
-        # 기계 이름 누락
         if "name=" not in clean:
-            return (
-                "기계를 작동시키려면 먼저 이름을 지어줘야 해요!\n"
-                "코드 맨 윗줄에 name = \"이름\" 을 추가해보세요."
-            )
+            return msg(Machine.NO_NAME)
 
-        # REQUIRED_FUNCTIONS 딕셔너리 기반 체크 — 기계 추가 시 위 딕셔너리만 수정
         for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
             if fn.replace(" ", "") not in clean:
-                return (
-                    f"이 기계는 {fn} 명령어가 필요합니다.\n"
-                    "다른 명령어를 입력하지는 않았나요?"
-                )
+                return msg(Machine.MISSING_FN, fn=fn)
 
-        return "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
+        return msg(Machine.GENERIC)
 
     # 성공 힌트(3단계)는 _generate_hint_typed() 의 Contextual+Thompson 밴딧이 처리합니다.
     # 이 함수는 is_python_valid=False 또는 is_machine_valid=False 일 때만 호출됩니다.
@@ -1444,22 +1182,13 @@ def _generate_hint_typed(
         return move_typo_msg, "move_typo"
 
     if _move_in_loop(request.source_code):
-        return (
-            "move() 는 컨테이너 타일을 설치하는 단독 명령어예요!\n"
-            "for / while 반복문 안에서는 사용할 수 없어요.",
-            "move_in_loop",
-        )
+        return msg(Move.IN_LOOP), "move_in_loop"
 
     if request.is_python_valid and request.is_machine_valid:
         # ── Layer 0-success: move() 단독 호출 — 컨테이너 타일 설치 만점 ────
         # 반복문 없이 move() 만 호출된 경우 클러스터/밴딧을 거치지 않고 고정 메시지를 반환합니다.
         if _is_move_standalone(request.source_code, features):
-            return (
-                "[ 컨테이너 타일 ] "
-                "move() 명령으로 컨테이너 타일을 설치했어요! "
-                "단독 호출 전용 명령이라 만점(100점) 처리됩니다.",
-                "succ_move",
-            )
+            return msg(SUCCESS_MOVE_STANDALONE), "succ_move"
 
         if cluster_rank == 0:
             group = "succ_r0_has_if" if features.get('if_count', 0) > 0 else "succ_r0_simple"
@@ -1483,10 +1212,7 @@ def _generate_hint_typed(
                 return _bandit_select("succ_r2_infinite_while", context)
             return _bandit_select("succ_r2_for_range", context)
         # cluster_rank == -1 (모델 미로드)
-        return (
-            "코드가 정상 적용되었습니다. 반복문을 활용하면 더 높은 점수를 받을 수 있어요!",
-            "succ_unknown",
-        )
+        return msg(SUCCESS_UNKNOWN_CLUSTER), "succ_unknown"
 
     # 에러 / 기계 힌트 — 기존 로직 재사용
     hint_text = generate_hint(request, score, features, cluster_rank)
@@ -1538,7 +1264,9 @@ async def submit_code(request: CodeSubmitRequest):
         cursor.execute("SELECT pk_id FROM users WHERE id = %s", (search_id,))
         user_record = cursor.fetchone()
         if not user_record:
-            raise HTTPException(status_code=404, detail=f"'{search_id}' 유저를 찾을 수 없습니다.")
+            raise HTTPException(
+                status_code=404, detail=msg(Api.USER_NOT_FOUND, user_id=search_id),
+            )
         user_pk = user_record['pk_id']
 
         # ─── ③ Layer 1: 개인 성장 + 안티패턴 ──────────────────────
@@ -1729,7 +1457,9 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
         cursor.execute("SELECT pk_id FROM users WHERE id = %s", (user_id,))
         user_record = cursor.fetchone()
         if not user_record:
-            raise HTTPException(status_code=404, detail=f"'{user_id}' 유저를 찾을 수 없습니다.")
+            raise HTTPException(
+                status_code=404, detail=msg(Api.USER_NOT_FOUND, user_id=user_id),
+            )
 
         cursor.execute(
             """
@@ -1747,8 +1477,7 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
         if "cluster_rank" in str(e).lower() or "unknown column" in str(e).lower():
             raise HTTPException(
                 status_code=503,
-                detail="cluster_rank 컬럼이 없습니다. "
-                       "ALTER TABLE code_logs ADD COLUMN cluster_rank INT DEFAULT -1; 를 실행하세요."
+                detail=msg(Api.CLUSTER_RANK_COLUMN_MISSING),
             )
         raise
     finally:
@@ -1757,7 +1486,7 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
     if not rows:
         return {
             "status":            "no_data",
-            "message":           "군집 예측이 기록된 성공 제출이 없습니다.",
+            "message":           msg(Api.CLUSTER_HISTORY_NO_DATA),
             "history":           [],
             "rank_distribution": {0: 0, 1: 0, 2: 0},
             "current_rank":      -1,
@@ -1769,7 +1498,7 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
         {
             "created_at":   str(row['created_at']),
             "cluster_rank": row['cluster_rank'],
-            "rank_label":   _RANK_LABELS.get(row['cluster_rank'], "알 수 없음"),
+            "rank_label":   RANK_LABELS.get(row['cluster_rank'], RANK_LABEL_UNKNOWN),
             "score":        round(row['score'], 2),
         }
         for row in rows
@@ -1810,7 +1539,7 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
         "history":           history,
         "rank_distribution": dist,
         "current_rank":      ranks[0],
-        "current_rank_label": _RANK_LABELS.get(ranks[0], "알 수 없음"),
+        "current_rank_label": RANK_LABELS.get(ranks[0], RANK_LABEL_UNKNOWN),
         "trend":             trend,
         "consecutive_same":  consecutive_same,
     }
@@ -1872,11 +1601,11 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
         rows = cursor.fetchall() or []
     except Exception:
         return {**_no_data_base, "status": "no_data",
-                "message": "성공한 제출 기록 조회에 실패했습니다."}
+                "message": msg(Api.LOOP_BALANCE_QUERY_FAIL)}
 
     if not rows:
         return {**_no_data_base, "status": "no_data",
-                "message": "성공한 제출 기록이 없습니다."}
+                "message": msg(Api.LOOP_BALANCE_NO_SUBMISSIONS)}
 
     total_for = total_while = 0
     for row in rows:
@@ -1889,7 +1618,7 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
         return {
             **_no_data_base,
             "status":       "no_loops",
-            "message":      "아직 반복문을 사용한 기록이 없습니다.",
+            "message":      msg(Api.LOOP_BALANCE_NO_LOOPS),
             "sample_count": len(rows),
         }
 
@@ -1942,7 +1671,9 @@ async def get_user_loop_balance(user_id: str, sample_size: int = 20):
         cursor.execute("SELECT pk_id FROM users WHERE id = %s", (user_id,))
         user_record = cursor.fetchone()
         if not user_record:
-            raise HTTPException(status_code=404, detail=f"'{user_id}' 유저를 찾을 수 없습니다.")
+            raise HTTPException(
+                status_code=404, detail=msg(Api.USER_NOT_FOUND, user_id=user_id),
+            )
         return _compute_loop_balance(cursor, user_record['pk_id'], sample_size)
     finally:
         conn.close()
@@ -2096,13 +1827,14 @@ async def get_score_breakdown(log_id: int):
             if "unknown column" in msg or "base_score" in msg:
                 raise HTTPException(
                     status_code=503,
-                    detail="Scoring 2.0 컬럼 없음. "
-                           "server/migrations/scoring_v2.sql 을 적용하세요."
+                    detail=msg(Api.SCORING_V2_COLUMN_MISSING),
                 )
             raise
 
         if not row:
-            raise HTTPException(status_code=404, detail=f"log_id={log_id} 를 찾을 수 없습니다.")
+            raise HTTPException(
+                status_code=404, detail=msg(Api.LOG_NOT_FOUND, log_id=log_id),
+            )
 
         # 누락 값 폴백 (마이그레이션 후 누적 전 데이터)
         base   = float(row.get("base_score")      or 0.0)
