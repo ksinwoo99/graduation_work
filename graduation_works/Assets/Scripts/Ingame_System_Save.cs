@@ -142,7 +142,7 @@ public class Ingame_System_Save : MonoBehaviour {
             if (Ingame_UI_Tutorial.Instance.skipPanel != null && Ingame_UI_Tutorial.Instance.skipPanel.activeSelf) {
                 data.tutorial_step = 0;
             } else {
-                data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : -1;
+                data.tutorial_step = Ingame_UI_Tutorial.Instance.isTutorialActive ? Ingame_UI_Tutorial.Instance.currentStep : 76;
             }
         }
 
@@ -291,7 +291,7 @@ public class Ingame_System_Save : MonoBehaviour {
         if (!Shared_Manager_Session.IsVisiting && Ingame_UI_Tutorial.Instance != null && data.resources != null) {
             int savedStep = data.resources.tutorial_step;
             
-            if (savedStep == -1 || (savedStep == 0 && data.machines != null && data.machines.Count > 0)) {
+            if (savedStep == -1 || savedStep == 76 || (savedStep == 0 && data.machines != null && data.machines.Count > 0)) {
                 Ingame_UI_Tutorial.Instance.EndTutorial();
             } else {
                 if (tutorialPanel != null) tutorialPanel.SetActive(true);
