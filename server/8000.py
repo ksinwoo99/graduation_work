@@ -208,8 +208,12 @@ class Machine:
         
         compiled = compile(module_node, "<sandbox>", "exec")
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         # ✨ [수정] 채굴 함수: 지정된 타겟의 변수를 실시간으로 증가
+=======
+        
+>>>>>>> parent of cf812dd (Update 8000.py)
 =======
         
 >>>>>>> parent of cf812dd (Update 8000.py)
