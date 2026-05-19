@@ -211,7 +211,6 @@ class Machine:
         def _mining(target="resCommon", amount=1):
             print(f"[ACTION] MINING_{str(target).upper()}")
             
-        # ✨ [수정] 생산/가공 함수: producting도 동일하게 변수 실시간 증가
         def _producting(target="Standard", amount=1):
             print(f"[ACTION] PRODUCTING_{str(target).upper()}")
 
