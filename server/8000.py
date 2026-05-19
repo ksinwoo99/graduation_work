@@ -207,19 +207,11 @@ class Machine:
         ast.fix_missing_locations(module_node)
         
         compiled = compile(module_node, "<sandbox>", "exec")
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-        # ✨ [수정] 채굴 함수: 지정된 타겟의 변수를 실시간으로 증가
-=======
-        
->>>>>>> parent of cf812dd (Update 8000.py)
-=======
-        
->>>>>>> parent of cf812dd (Update 8000.py)
         def _mining(target="resCommon", amount=1):
             print(f"[ACTION] MINING_{str(target).upper()}")
             
+        # ✨ [수정] 생산/가공 함수: producting도 동일하게 변수 실시간 증가
         def _producting(target="Standard", amount=1):
             print(f"[ACTION] PRODUCTING_{str(target).upper()}")
 
@@ -230,8 +222,6 @@ class Machine:
                 print("[ACTION] MOVE")
 
         self.env = {
-            # 화이트리스트된 모듈(itertools.count 등)을 import 문으로 가져올 수 있도록
-            # __import__ 만 _safe_import 로 교체합니다. 그 외 동작은 동일.
             "__builtins__": {
                 "print": print, "range": range, "len": len,
                 "int": int, "float": float, "str": str, "bool": bool,
