@@ -342,7 +342,8 @@ public class Ingame_Button_Debugging : MonoBehaviour
                     Ingame_Manager_Coding.Instance.brokenMachines[curMachineId])
                 {
                     string finalCode = Ingame_Manager_Coding.Instance.GetSavedCode(curMachineId);
-                    Ingame_Manager_Coding.Instance.RefreshCodingPanelUI(finalCode, Color.red, false);
+                    
+                    Ingame_Manager_Coding.Instance.RefreshCodingPanelUI(finalCode, Color.red, false, false);
                 }
             }
         }
