@@ -13,7 +13,7 @@ public class Ingame_Controller_ItemPanel : MonoBehaviour {
     public Ease slideEase = Ease.OutQuart; 
 
     [Tooltip("패널이 내려갔는데도 흰 버튼이 보이면 이 값을 늘리세요.")]
-    public float extraDownDistance = 0f; 
+    public float extraDownDistance = 10f; 
 
     private Vector2 showPosition;
     private Vector2 hidePosition;

@@ -23,7 +23,10 @@ public class Ingame_UI_Help : MonoBehaviour
 
     [Header("리스트 뷰 설정")]
     public Transform contentParent;      
-    public GameObject helpButtonPrefab;  
+    public GameObject helpButtonPrefab;
+    public ScrollRect ListView_Scroll;
+    public ScrollRect DetailView_Scroll;
+    public float scrollSensitivity = 25f;
 
     [Header("디테일 뷰 설정")]
     public TextMeshProUGUI txtDetailTitle;
@@ -55,6 +58,11 @@ public class Ingame_UI_Help : MonoBehaviour
         helpPanelRect.anchoredPosition = new Vector2(hidePosX, helpPanelRect.anchoredPosition.y);
         UpdateButtonState(false);
         
+        if ((ListView_Scroll != null) && (DetailView_Scroll != null)) {
+            ListView_Scroll.scrollSensitivity = scrollSensitivity;
+            DetailView_Scroll.scrollSensitivity = scrollSensitivity;
+        }
+
         ShowListView();
         RefreshHelpList();
     }
@@ -62,14 +70,22 @@ public class Ingame_UI_Help : MonoBehaviour
     public void OnClick_ShowPanel()
     {
         if (isPanelShown) return;
-        helpPanelRect.DOAnchorPosX(showPosX, slideDuration).SetEase(slideEase);
+        helpPanelRect.DOAnchorPosX(showPosX, slideDuration).SetEase(slideEase).SetUpdate(true);
         isPanelShown = true;
         UpdateButtonState(true);
         
         ShowListView();     
         
-        // ✨ [추가] 패널을 열었으므로 알림을 끄고, '확인한 개수'를 갱신합니다.
-        if (redDotIcon != null) redDotIcon.SetActive(false);
+        if (redDotIcon != null) {
+            Image dotImage = redDotIcon.GetComponent<Image>();
+            if (dotImage != null) {
+                dotImage.DOKill(); // 깜빡임 트윈 종료
+                Color c = dotImage.color;
+                c.a = 1f;
+                dotImage.color = c;
+            }
+            redDotIcon.SetActive(false);
+        }
         UpdateViewedCount();
         
         RefreshHelpList();  
@@ -78,7 +94,7 @@ public class Ingame_UI_Help : MonoBehaviour
     public void OnClick_HidePanel()
     {
         if (!isPanelShown) return;
-        helpPanelRect.DOAnchorPosX(hidePosX, slideDuration).SetEase(slideEase);
+        helpPanelRect.DOAnchorPosX(hidePosX, slideDuration).SetEase(slideEase).SetUpdate(true);
         isPanelShown = false;
         UpdateButtonState(false);
     }
@@ -132,7 +148,7 @@ public class Ingame_UI_Help : MonoBehaviour
             currentTutorialStep = Ingame_UI_Tutorial.Instance.currentStep;
         }
 
-        int currentUnlockedCount = 0; // ✨ [추가] 이번 턴에 해금되어 있는 총 개수
+        int currentUnlockedCount = 0; // [추가] 이번 턴에 해금되어 있는 총 개수
 
         foreach(var item in allHelpItems)
         {
@@ -142,7 +158,7 @@ public class Ingame_UI_Help : MonoBehaviour
             TextMeshProUGUI btnText = newBtnObj.GetComponentInChildren<TextMeshProUGUI>();
             Button btn = newBtnObj.GetComponent<Button>();
 
-            // ✨ [수정] 조건 분기 처리 (해금 완료 vs 미해금 ??? 처리)
+            // 조건 분기 처리 (해금 완료 vs 미해금 ??? 처리)
             if (currentTutorialStep >= item.unlockTutorialStep)
             {
                 // 해금됨
@@ -163,9 +179,22 @@ public class Ingame_UI_Help : MonoBehaviour
             }
         }
 
-        // ✨ [추가] 새 도움말 알림(Red Dot) 켜기 로직
+        // 새 도움말 알림(Red Dot) 켜기 로직
         if (!isPanelShown && currentUnlockedCount > viewedUnlockedCount) {
-            if (redDotIcon != null) redDotIcon.SetActive(true);
+            if (redDotIcon != null && !redDotIcon.activeSelf) {
+                redDotIcon.SetActive(true);
+                
+                Image dotImage = redDotIcon.GetComponent<Image>();
+                if (dotImage != null) {
+                    dotImage.DOKill();
+                    Color c = dotImage.color;
+                    c.a = 1f;
+                    dotImage.color = c;
+                    
+                    // ✨ 투명도를 0(완전 투명)으로 0.5초 동안 서서히 바꾸는 것을 무한 반복(Yoyo)
+                    dotImage.DOFade(0f, 0.5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetUpdate(true);
+                }
+            }
         }
     }
 }
