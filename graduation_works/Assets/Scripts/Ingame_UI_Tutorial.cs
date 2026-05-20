@@ -254,10 +254,20 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         skipPanel.SetActive(true); dimBackground.SetActive(true); 
         btnSkipYes.onClick.RemoveAllListeners(); 
 
-        /* 자동지급 하려면 
-        btnSkipYes.onClick.AddListener(() => { EndTutorial(); OnClick_GiveTestData(); }); */
-        btnSkipYes.onClick.AddListener(EndTutorial); 
-        btnSkipNo.onClick.RemoveAllListeners(); btnSkipNo.onClick.AddListener(() => { skipPanel.SetActive(false); StartTutorial(); });
+        btnSkipYes.onClick.AddListener(ExecuteCompleteSkip); 
+        
+        btnSkipNo.onClick.RemoveAllListeners(); 
+        btnSkipNo.onClick.AddListener(() => { skipPanel.SetActive(false); StartTutorial(); });
+    }
+
+    public void ExecuteCompleteSkip()
+    {
+        currentStep = 76;
+        EndTutorial();
+
+        // UI 및 도움말 새로고침
+        if (Ingame_UI_SystemControl.Instance != null) Ingame_UI_SystemControl.Instance.UpdateAllUI();
+        if (Ingame_UI_Help.Instance != null) Ingame_UI_Help.Instance.RefreshHelpList();
     }
 
     public void StartTutorial() { 
