@@ -317,9 +317,11 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                             resMgr.AddResource(ResourceType.Rare, resMgr.maxResRare / 2);
                             resMgr.AddResource(ResourceType.Special, resMgr.maxResSpecial / 2);
                             resMgr.AddResource(ResourceType.Exotic, resMgr.maxResExotic / 2);
+                            resMgr.EarnGold(resMgr.maxGold / 2);
                             
                             if (buildManager != null) {
-                                buildManager.ShowFloatingText("과열 해결 완료! (최대 자원의 50% 지급)", Camera.main.transform.position);
+                                Vector3 textPos = Camera.main.transform.position + new Vector3(0, 2.5f, 0);
+                                buildManager.ShowFloatingText("과열 수리 완료! (최대 자원의 50% 지급)", textPos);
                             }
                         }
                     }
@@ -611,7 +613,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             // 랜덤 고장(코드 깨짐) 복구: 백업으로 통째 복원
             globalCodes[targetId] = backupCodes[targetId];
         }
-
         if (Ingame_Manager_Resource.Instance != null) {
             var resMgr = Ingame_Manager_Resource.Instance;
             
@@ -620,17 +621,25 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 resMgr.AddResource(ResourceType.Rare, resMgr.maxResRare / 2);
                 resMgr.AddResource(ResourceType.Special, resMgr.maxResSpecial / 2);
                 resMgr.AddResource(ResourceType.Exotic, resMgr.maxResExotic / 2);
+                resMgr.EarnGold(resMgr.maxGold / 2);
                 
-                if (buildManager != null) buildManager.ShowFloatingText("부품 균형 회복! (최대 자원의 50% 지급)", Camera.main.transform.position);
+                if (buildManager != null) {
+                    Vector3 textPos = Camera.main.transform.position + new Vector3(0, 2.5f, 0);
+                    buildManager.ShowFloatingText("부품 균형 회복! (최대 자원의 50% 지급)", textPos);
+                }
             } else if (isManualGiveUp) {
                 int penaltyAmount = Mathf.FloorToInt(resMgr.currentGold * 0.25f);
                 resMgr.SpendGold(penaltyAmount); 
                 
                 if (buildManager != null) {
-                    buildManager.ShowFloatingText($"수리 포기 (보유 골드의 25%G): -{penaltyAmount}G", Camera.main.transform.position);
+                    Vector3 textPos = Camera.main.transform.position + new Vector3(0, 2.5f, 0);
+                    buildManager.ShowFloatingText($"수리 포기 (보유 골드의 25%G): -{penaltyAmount}G", textPos);
                 }
             } else {
-                if (buildManager != null) buildManager.ShowFloatingText("시간이 지나 과열이 해결됐습니다.", Camera.main.transform.position);
+                if (buildManager != null) {
+                    Vector3 textPos = Camera.main.transform.position + new Vector3(0, 2.5f, 0);
+                    buildManager.ShowFloatingText("시간이 지나 과열이 해결됐습니다.", textPos);
+                }
             }
         }
         logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
