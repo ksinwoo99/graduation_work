@@ -177,6 +177,22 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         if (buildManager != null) buildManager.CancelBuildMode();
     }
 
+    // 코드창 UI 전체 강제 갱신
+    public void RefreshCodingPanelUI(string newCode, Color lightColor, bool showGiveUp) {
+        if (inputField != null) {
+            var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+            if (codeEditor != null) codeEditor.Text = newCode;
+            inputField.text = newCode;
+            inputField.ForceLabelUpdate(); 
+        }
+        
+        if (statusLight != null) statusLight.color = lightColor;
+        if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(showGiveUp);
+
+        Ingame_Button_Debugging debugger = codingPanel.GetComponentInChildren<Ingame_Button_Debugging>(true);
+        if (debugger != null) debugger.HideResult();
+    }
+
     public void CloseWindowOnly() { SaveCurrentInput(); codingPanel.SetActive(false); }
 
     public string GetSavedCode(int machineId) { return globalCodes.ContainsKey(machineId) ? globalCodes[machineId] : ""; }
@@ -292,22 +308,25 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
             if (state == logic_CodingBase.CodeState.Valid) {
                 if (isManualClick && brokenMachines.ContainsKey(currentMachineId) && brokenMachines[currentMachineId]) {
-                brokenMachines[currentMachineId] = false;
-                forbiddenKeywords[currentMachineId] = ""; 
-                if (autoFixTimers.ContainsKey(currentMachineId)) autoFixTimers.Remove(currentMachineId);
-
-                if (Ingame_Manager_Resource.Instance != null) {
-                    var resMgr = Ingame_Manager_Resource.Instance;
-                    resMgr.AddResource(ResourceType.Common, resMgr.maxResCommon / 2);
-                    resMgr.AddResource(ResourceType.Rare, resMgr.maxResRare / 2);
-                    resMgr.AddResource(ResourceType.Special, resMgr.maxResSpecial / 2);
-                    resMgr.AddResource(ResourceType.Exotic, resMgr.maxResExotic / 2);
                     
-                    if (buildManager != null) {
-                        buildManager.ShowFloatingText("과열 해결 완료! (최대 자원의 50% 지급)", codingPanel.transform.position);
+                    if (!imbalanceBrokenMachines.Contains(currentMachineId)) {
+                        brokenMachines[currentMachineId] = false;
+                        forbiddenKeywords[currentMachineId] = ""; 
+                        if (autoFixTimers.ContainsKey(currentMachineId)) autoFixTimers.Remove(currentMachineId);
+
+                        if (Ingame_Manager_Resource.Instance != null) {
+                            var resMgr = Ingame_Manager_Resource.Instance;
+                            resMgr.AddResource(ResourceType.Common, resMgr.maxResCommon / 2);
+                            resMgr.AddResource(ResourceType.Rare, resMgr.maxResRare / 2);
+                            resMgr.AddResource(ResourceType.Special, resMgr.maxResSpecial / 2);
+                            resMgr.AddResource(ResourceType.Exotic, resMgr.maxResExotic / 2);
+                            
+                            if (buildManager != null) {
+                                buildManager.ShowFloatingText("과열 해결 완료! (최대 자원의 50% 지급)", Camera.main.transform.position);
+                            }
+                        }
                     }
                 }
-            }
 
                 // 주석/문자열 내 'for'/'while' 오탐 방지 + itertools.count 무한 루프도 감지.
                 string clean = StripCommentsAndStringLiterals(code).ToLower();
@@ -464,34 +483,40 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         brokenMachines[targetId] = true; 
         backupCodes[targetId] = brokenCode; // 복구용 원본 백업
 
+        string breakdownReason = "";
         int errorType = Random.Range(0, 4); 
         switch (errorType) {
-            case 0: brokenCode = brokenCode.Replace("mining", "").Replace("producting", ""); break;
-            case 1: brokenCode = brokenCode.Replace("name=", ""); break;
+            case 0: 
+                brokenCode = brokenCode.Replace("mining", "").Replace("producting", ""); 
+                breakdownReason = "핵심 명령어가 지워졌습니다!";
+                break;
+            case 1: 
+                brokenCode = brokenCode.Replace("name=", ""); 
+                breakdownReason = "기계의 이름표가 지워졌습니다!";
+                break;
             case 2: 
                 string banTarget = brokenCode.Contains("for") ? "for" : (brokenCode.Contains("while") ? "while" : "loop");
                 if (banTarget != "loop") {
                     forbiddenKeywords[targetId] = banTarget;
                     brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode;
+                    breakdownReason = $"과부하로 인해 '{banTarget}' 문법을 당분간 사용할 수 없습니다!";
                 } else {
                     brokenCode = brokenCode.Replace("(", ""); 
+                    breakdownReason = "코드가 파손되었습니다!";
                 }
                 break;
             case 3: 
                 string[] lines = brokenCode.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
                 if (lines.Length > 1) {
-                    // 기계 식별을 위한 name 변수(보통 첫 줄)가 날아가는 것을 방지하기 위해 1번째 줄부터 타겟으로 삼습니다.
                     int lineToRemove = Random.Range(1, lines.Length);
                     List<string> lineList = new List<string>(lines);
                     lineList.RemoveAt(lineToRemove);
-                    
-                    // 삭제된 자리에 소실되었음을 알리는 주석을 남깁니다.
                     lineList.Insert(lineToRemove, "    # [DATA LOST] 시스템 과부하로 코드가 소실되었습니다.");
-                    
                     brokenCode = string.Join("\n", lineList);
+                    breakdownReason = "시스템 과부하로 코드의 일부가 날아갔습니다!";
                 } else {
-                    // 코드가 한 줄밖에 없었다면 그냥 통째로 날려버립니다.
                     brokenCode = "# [FATAL ERROR] 데이터 완전 소실"; 
+                    breakdownReason = "코드가 완전히 소실되었습니다!";
                 }
                 break;
         }
@@ -508,10 +533,20 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                     if (buildManager != null) {
                         string customName = GetMachineCustomName(targetId);
                         buildManager.ShowFloatingText($"{customName} 고장!", m.transform.position);
+
+                        // ✨ 팝업창 연동
+                        if (Ingame_UI_Tutorial.Instance != null) {
+                            Ingame_UI_Tutorial.Instance.ShowMessagePanel($"<color=#FF5A5A>[ {customName} 고장 발생! ]</color>\n{breakdownReason}");
                         }
+                    }
                 }
             }
         }
+
+        if (codingPanel.activeSelf && currentMachineId == targetId) {
+            RefreshCodingPanelUI(brokenCode, Color.red, true);
+        }
+        StartCoroutine(AutoFixRoutine(targetId));
 
         if (codingPanel.activeSelf && currentMachineId == targetId) {
             var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
@@ -587,21 +622,26 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
 
         if (Ingame_Manager_Resource.Instance != null) {
+            var resMgr = Ingame_Manager_Resource.Instance;
+            
             if (wasImbalance) {
-                // 임밸런스 고장은 균형 회복으로만 풀린다 — 골드 페널티 없음
-                if (buildManager != null) buildManager.ShowFloatingText("부품 균형 회복! 기계가 복구되었습니다.", codingPanel.transform.position);
+                resMgr.AddResource(ResourceType.Common, resMgr.maxResCommon / 2);
+                resMgr.AddResource(ResourceType.Rare, resMgr.maxResRare / 2);
+                resMgr.AddResource(ResourceType.Special, resMgr.maxResSpecial / 2);
+                resMgr.AddResource(ResourceType.Exotic, resMgr.maxResExotic / 2);
+                
+                if (buildManager != null) buildManager.ShowFloatingText("부품 균형 회복! (최대 자원의 50% 지급)", Camera.main.transform.position);
             } else if (isManualGiveUp) {
-                int penaltyAmount = Mathf.FloorToInt(Ingame_Manager_Resource.Instance.currentGold * 0.25f);
-                Ingame_Manager_Resource.Instance.SpendGold(penaltyAmount); 
+                int penaltyAmount = Mathf.FloorToInt(resMgr.currentGold * 0.25f);
+                resMgr.SpendGold(penaltyAmount); 
                 
                 if (buildManager != null) {
-                    buildManager.ShowFloatingText($"수리 포기 (보유 골드의 25%G): -{penaltyAmount}G", codingPanel.transform.position);
+                    buildManager.ShowFloatingText($"수리 포기 (보유 골드의 25%G): -{penaltyAmount}G", Camera.main.transform.position);
                 }
             } else {
-                if (buildManager != null) buildManager.ShowFloatingText("시간이 지나 과열이 해결됐습니다.", codingPanel.transform.position);
+                if (buildManager != null) buildManager.ShowFloatingText("시간이 지나 과열이 해결됐습니다.", Camera.main.transform.position);
             }
         }
-
         logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
         foreach (var m in allMachines) {
             Iteminfo_Base info = m.GetComponent<Iteminfo_Base>();
@@ -627,7 +667,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         bool hasAnyBreakdown = false;
-        bool hasTimedBreakdown = false; // 시간연장 버튼 표시 여부 (임밸런스는 시간 무관)
+        bool hasTimedBreakdown = false; 
+        bool hasGiveUpBreakdown = false; // ✨ [신규] 포기 가능한 일반 고장 여부
 
         foreach (var kvp in brokenMachines) {
             int mId = kvp.Key;
@@ -637,7 +678,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             string machineName = GetMachineCustomName(mId);
 
             if (imbalanceBrokenMachines.Contains(mId)) {
-                // 임밸런스 고장 — 시간으로 안 풀리므로 균형 회복 안내
                 hasAnyBreakdown = true;
                 string banned = forbiddenKeywords.ContainsKey(mId) ? forbiddenKeywords[mId] : "?";
                 string opposite = banned == "for" ? "while" : (banned == "while" ? "for" : "다른");
@@ -646,21 +686,25 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             else if (autoFixTimers.ContainsKey(mId)) {
                 hasAnyBreakdown = true;
                 hasTimedBreakdown = true;
+                hasGiveUpBreakdown = true; //
                 int timeLeft = Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId]));
                 sb.AppendLine($"{machineName}: {timeLeft}초 후 복구");
             }
         }
 
         if (hasAnyBreakdown) {
-            isShowingCompleteStatus = false; // 고장이 새로 발견되면 완료 상태 해제
+            isShowingCompleteStatus = false; 
             if (!breakdownStatusPanel.activeSelf) breakdownStatusPanel.SetActive(true);
             if (btnExtendTime != null) btnExtendTime.gameObject.SetActive(hasTimedBreakdown);
+            
+            if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(hasGiveUpBreakdown); 
+            
             txtBreakdownList.text = sb.ToString();
         } else {
-            // 고장난 기계가 없는데 패널이 켜져 있다면 (방금 수리됨)
             if (breakdownStatusPanel.activeSelf && !isShowingCompleteStatus) {
-                StartCoroutine(HidePanelAfterDelay(1.5f)); // 1.5초 뒤에 닫기
+                StartCoroutine(HidePanelAfterDelay(1.5f)); 
                 if (btnExtendTime != null) btnExtendTime.gameObject.SetActive(false);
+                if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(false);
             }
         }
     }
