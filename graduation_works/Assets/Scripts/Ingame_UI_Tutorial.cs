@@ -263,6 +263,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public void ExecuteCompleteSkip()
     {
         currentStep = 76;
+        UnlockFeatureBySkip(76, "");
         EndTutorial();
 
         // UI 및 도움말 새로고침
@@ -750,6 +751,10 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             // 퀘스트 ID를 강제로 올려서 버튼들을 활성화시킵니다.
             Ingame_Manager_Quest.Instance.currentQuestId = targetQuestId;
             Ingame_Manager_Quest.Instance.RefreshButtonStates(); 
+        }
+
+        if (!string.IsNullOrEmpty(msg)) {
+            ShowMessagePanel(msg);
         }
     }
 
