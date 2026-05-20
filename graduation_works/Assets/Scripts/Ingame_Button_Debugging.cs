@@ -332,6 +332,19 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
                 resultText.text += $"\n\n<color={highlightColor}>[AI 분석 결과]</color> (점수: {mlRes.score}점)\n{mlRes.hint}";
             }
+
+            if (Ingame_Manager_Coding.Instance != null && buildMgrForBalance != null && buildMgrForBalance.codingManager != null)
+            {
+                int curMachineId = buildMgrForBalance.codingManager.currentLogic != null ? 
+                    Ingame_System_Save.Instance.GetMachineTypeInt(buildMgrForBalance.codingManager.currentLogic.name.Replace("(Clone)", "").Trim()) : 0;
+
+                if (Ingame_Manager_Coding.Instance.brokenMachines.ContainsKey(curMachineId) && 
+                    Ingame_Manager_Coding.Instance.brokenMachines[curMachineId])
+                {
+                    string finalCode = Ingame_Manager_Coding.Instance.GetSavedCode(curMachineId);
+                    Ingame_Manager_Coding.Instance.RefreshCodingPanelUI(finalCode, Color.red, false);
+                }
+            }
         }
     }
 
