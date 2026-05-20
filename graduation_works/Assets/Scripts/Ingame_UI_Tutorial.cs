@@ -251,11 +251,12 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         ClearHighlight();
         StopButtonPulse();
 
-        skipPanel.SetActive(true); dimBackground.SetActive(true); 
-        btnSkipYes.onClick.RemoveAllListeners(); 
+        skipPanel.SetActive(true); dimBackground.SetActive(true);
 
+        Time.timeScale = 0f;
+
+        btnSkipYes.onClick.RemoveAllListeners(); 
         btnSkipYes.onClick.AddListener(ExecuteCompleteSkip); 
-        
         btnSkipNo.onClick.RemoveAllListeners(); 
         btnSkipNo.onClick.AddListener(() => { skipPanel.SetActive(false); StartTutorial(); });
     }
@@ -272,7 +273,9 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     public void StartTutorial() { 
         isTutorialActive = true; 
-        currentStep = 0; 
+        currentStep = 0;
+
+        Time.timeScale = 1f;
         
         if (dimBackground != null) {
             Image dimImg = dimBackground.GetComponent<Image>();
@@ -366,7 +369,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 49: SetDialogMode("매번 기계를 켜주는 건 번거롭죠.\nfor문이나 while문을 사용하면\n알아서 반복 작동합니다!"); break;
             case 50: SetDialogMode("다만!!!\n\n현재 공장 시스템의 과부하를 막기 위해\n반복문은 최대 10회까지만 허용됩니다."); break;
             case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining()"); break;
-            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n          (단, 10회 제한으로 인해\n        10번 이하 조건만 실행 가능)\n\n      예시:\n      while resCommon < 100:\n          mining()"); break;
+            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n\n      예시:\n      i = 0\n      while i < 10:\n          mining()\n          i += 1"); break;
             case 53: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetActionMode("채굴기와 가공기 각각의 코드에\n<color=red>반복문을 추가</color>하여\n퀘스트를 완료해 보세요!\n(예: for i in range(10):)"); break;
             case 54: SetDialogMode("정말 대단합니다! 이제 기계들이\n스스로 10번씩 척척 일할 겁니다."); break;
@@ -570,7 +573,9 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         skipPanel.SetActive(false); 
         bubblePanel.SetActive(false); 
         dimBackground.SetActive(false);
-        StopButtonPulse(); 
+        StopButtonPulse();
+
+        Time.timeScale = 1f;
         
         if (Ingame_Manager_Coding.Instance != null && Ingame_Manager_Coding.Instance.btnTestBreakdown != null) {
             if (!Shared_Manager_Session.IsVisiting) {
