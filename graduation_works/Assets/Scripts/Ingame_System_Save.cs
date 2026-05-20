@@ -327,7 +327,12 @@ public class Ingame_System_Save : MonoBehaviour {
             int savedStep = data.resources.tutorial_step;
             
             if (savedStep == -1 || savedStep == 76 || (savedStep == 0 && data.machines != null && data.machines.Count > 0)) {
+                Ingame_UI_Tutorial.Instance.currentStep = 76;
                 Ingame_UI_Tutorial.Instance.EndTutorial();
+                
+                if (Ingame_UI_Help.Instance != null) {
+                    Ingame_UI_Help.Instance.RefreshHelpList();
+                }
             } else {
                 if (tutorialPanel != null) tutorialPanel.SetActive(true);
                 if (savedStep == 0) {
@@ -335,7 +340,7 @@ public class Ingame_System_Save : MonoBehaviour {
                 } else {
                     Ingame_UI_Tutorial.Instance.isTutorialActive = true;
                     Ingame_UI_Tutorial.Instance.currentStep = savedStep;
-                    Ingame_UI_Tutorial.Instance.PlayStep(savedStep);
+                    Ingame_UI_Tutorial.Instance.PlayStep(savedStep); 
                 }
             }
         }
