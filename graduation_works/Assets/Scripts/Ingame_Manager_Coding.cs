@@ -69,6 +69,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     [Header("상시 고장 알림 UI")]
     public GameObject breakdownStatusPanel; 
     public TextMeshProUGUI txtBreakdownList;
+    public GameObject txtImbalanceNotice;
 
     [Header("시간 연장 시스템")]
     public Button btnExtendTime; // 시간 연장 버튼
@@ -668,7 +669,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         bool hasAnyBreakdown = false;
         bool hasTimedBreakdown = false; 
-        bool hasGiveUpBreakdown = false; // ✨ [신규] 포기 가능한 일반 고장 여부
+        bool hasGiveUpBreakdown = false; 
+        bool hasImbalanceBreakdown = false; 
 
         foreach (var kvp in brokenMachines) {
             int mId = kvp.Key;
@@ -679,6 +681,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
             if (imbalanceBrokenMachines.Contains(mId)) {
                 hasAnyBreakdown = true;
+                hasImbalanceBreakdown = true;
                 string banned = forbiddenKeywords.ContainsKey(mId) ? forbiddenKeywords[mId] : "?";
                 string opposite = banned == "for" ? "while" : (banned == "while" ? "for" : "다른");
                 sb.AppendLine($"{machineName}: 부품 부족 ('{banned}' 소진) — '{opposite}' 사용으로 균형 회복 필요");
@@ -686,7 +689,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             else if (autoFixTimers.ContainsKey(mId)) {
                 hasAnyBreakdown = true;
                 hasTimedBreakdown = true;
-                hasGiveUpBreakdown = true; //
+                hasGiveUpBreakdown = true; 
                 int timeLeft = Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId]));
                 sb.AppendLine($"{machineName}: {timeLeft}초 후 복구");
             }
@@ -696,8 +699,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             isShowingCompleteStatus = false; 
             if (!breakdownStatusPanel.activeSelf) breakdownStatusPanel.SetActive(true);
             if (btnExtendTime != null) btnExtendTime.gameObject.SetActive(hasTimedBreakdown);
-            
             if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(hasGiveUpBreakdown); 
+            
+            if (txtImbalanceNotice != null) txtImbalanceNotice.SetActive(hasImbalanceBreakdown);
             
             txtBreakdownList.text = sb.ToString();
         } else {
@@ -705,6 +709,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 StartCoroutine(HidePanelAfterDelay(1.5f)); 
                 if (btnExtendTime != null) btnExtendTime.gameObject.SetActive(false);
                 if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(false);
+                
+                if (txtImbalanceNotice != null) txtImbalanceNotice.SetActive(false);
             }
         }
     }
