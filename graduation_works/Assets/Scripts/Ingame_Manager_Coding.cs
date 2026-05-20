@@ -188,9 +188,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         
         if (statusLight != null) statusLight.color = lightColor;
         if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(showGiveUp);
-
-        Ingame_Button_Debugging debugger = codingPanel.GetComponentInChildren<Ingame_Button_Debugging>(true);
-        if (debugger != null) debugger.HideResult();
     }
 
     public void CloseWindowOnly() { SaveCurrentInput(); codingPanel.SetActive(false); }
@@ -545,17 +542,11 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         if (codingPanel.activeSelf && currentMachineId == targetId) {
             RefreshCodingPanelUI(brokenCode, Color.red, true);
+
+            Ingame_Button_Debugging debugger = codingPanel.GetComponentInChildren<Ingame_Button_Debugging>(true);
+            if (debugger != null) debugger.HideResult();
         }
         StartCoroutine(AutoFixRoutine(targetId));
-
-        if (codingPanel.activeSelf && currentMachineId == targetId) {
-            var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
-            if (codeEditor != null) codeEditor.Text = brokenCode;
-            else inputField.text = brokenCode;
-            if (statusLight != null) statusLight.color = Color.red;
-        }
-
-        StartCoroutine(AutoFixRoutine(targetId)); // 타이머 시작
     }
 
     // 복구 시스템 및 UI
@@ -919,13 +910,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
         // 현재 패널이 해당 기계를 보고 있으면 에디터에도 반영
         if (codingPanel.activeSelf && currentMachineId == targetId) {
-            var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
-            if (codeEditor != null) codeEditor.Text = brokenCode;
-            else inputField.text = brokenCode;
-            if (statusLight != null) statusLight.color = Color.red;
-            if (btnGiveUp != null) btnGiveUp.gameObject.SetActive(false); // 임밸런스는 포기 불가
+            RefreshCodingPanelUI(brokenCode, Color.red, false);
         }
-        // ※ AutoFixRoutine 은 시작하지 않습니다 — 균형 회복으로만 풀림
     }
 
     public Button btnTestBreakdown;
