@@ -37,6 +37,7 @@ public class GameLoadResponse {
 public class Ingame_System_Save : MonoBehaviour { 
     public static Ingame_System_Save Instance;
     public static bool isLoadRequested = false; 
+    public static bool isNewGameRequested = false;
 
     private string serverUrl = "http://13.237.51.219:8000";
 
@@ -52,6 +53,20 @@ public class Ingame_System_Save : MonoBehaviour {
 
     void Start() {
         lastSaveTime = Time.time;
+
+        if (isNewGameRequested) {
+            if (tutorialPanel != null) tutorialPanel.SetActive(true);
+            if (Ingame_UI_Tutorial.Instance != null) {
+                Ingame_UI_Tutorial.Instance.StartTutorial();
+            }
+            
+            // 기본 자원 세팅
+            string cid = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
+            if (string.IsNullOrEmpty(cid)) cid = "guest";
+            StartCoroutine(LoadFromServerCoroutine(cid));
+            return;
+        }
+
         if (isLoadRequested) {
             isLoadRequested = false;
             if (tutorialPanel != null) tutorialPanel.SetActive(false);
@@ -279,6 +294,26 @@ public class Ingame_System_Save : MonoBehaviour {
         
         if (Ingame_Manager_Time.Instance != null && data.resources != null) {
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
+        }
+
+        // [핵심 예외 차단] 새로하기(NewGame) 실행 도중일 때의 처리 ──
+        if (isNewGameRequested) {
+            isNewGameRequested = false;
+
+            if (Ingame_Manager_Build.Instance != null) {
+                Ingame_Manager_Build.Instance.ClearAllBuildingsForLoad();
+                Ingame_Manager_Build.Instance.UpdateQuestMachineCounts();
+            }
+            if (Ingame_Manager_Quest.Instance != null) {
+                Ingame_Manager_Quest.Instance.currentQuestId = 0;
+                Ingame_Manager_Quest.Instance.conveyorUpgradeLevel = 0;
+                Ingame_Manager_Quest.Instance.RefreshButtonStates();
+                Ingame_Manager_Quest.Instance.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
+            }
+            if (Ingame_UI_SystemControl.Instance != null) {
+                Ingame_UI_SystemControl.Instance.UpdateAllUI();
+            }
+            return;
         }
 
         if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
