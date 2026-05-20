@@ -19,7 +19,12 @@ public class Ingame_Manager_Time : MonoBehaviour {
         // 1. 현재 시간이 멈춰야 하는 상태인지 확인
         bool isStopped = isPaused || IsBuildOrCodingMode();
 
-        // ✨ [핵심 추가] 튜토리얼이 켜져 있고, 액션 모드가 아니라면 시간 정지!
+        if (Ingame_UI_Tutorial.Instance.skipPanel != null && Ingame_UI_Tutorial.Instance.skipPanel.activeSelf)
+        {
+            isStopped = true;
+        }
+
+        // 튜토리얼이 켜져 있고, 액션 모드가 아니라면 시간 정지
         if (Ingame_UI_Tutorial.Instance != null && 
             Ingame_UI_Tutorial.Instance.isTutorialActive && 
             !Ingame_UI_Tutorial.Instance.isActionMode) 
