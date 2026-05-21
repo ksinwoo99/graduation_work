@@ -59,6 +59,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     // 루프 빈도 불균형으로 인한 고장 (시간으로 풀리지 않음. 균형 회복 시에만 복구)
     // 기존 random 고장 시스템과 분리하기 위한 마커 집합.
     private HashSet<int> imbalanceBrokenMachines = new HashSet<int>();
+    private Dictionary<int, float> machineImbalanceScores = new Dictionary<int, float>();
+    private Dictionary<int, float> smoothedImbalanceScores = new Dictionary<int, float>();
+    private int debugGraceCount = 0;
+    private const int GRACE_PERIOD = 5;
 
     [Header("복구 및 포기 시스템")]
     public Button btnGiveUp; 
@@ -684,7 +688,27 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 hasImbalanceBreakdown = true;
                 string banned = forbiddenKeywords.ContainsKey(mId) ? forbiddenKeywords[mId] : "?";
                 string opposite = banned == "for" ? "while" : (banned == "while" ? "for" : "다른");
-                sb.AppendLine($"{machineName}: 부품 부족 ('{banned}' 소진) — '{opposite}' 사용으로 균형 회복 필요");
+                
+                // 1. 서버가 로그 기반으로 계산한 정직한 목표 점수 (0.0 ~ 1.0)
+                float targetScore = machineImbalanceScores.ContainsKey(mId) ? machineImbalanceScores[mId] : 0.6f;
+                
+                // 연출용 딕셔너리 초기화
+                if (!smoothedImbalanceScores.ContainsKey(mId)) {
+                    smoothedImbalanceScores[mId] = targetScore;
+                }
+
+                // ✨ [핵심 연출 추가] 현재 표시 중인 점수가 목표 점수를 향해 매 프레임 부드러운 속도로 굴러가며 차감됩니다!
+                // (3f 값을 조절하면 숫자가 깎이는 속도를 더 빠르게 혹은 느리게 바꿀 수 있습니다)
+                smoothedImbalanceScores[mId] = Mathf.MoveTowards(smoothedImbalanceScores[mId], targetScore, Time.deltaTime * 3f);
+                
+                // 2. 부드럽게 보간된 점수를 공식에 대입하여 실제 비율(%) 구하기
+                float realPercent = (smoothedImbalanceScores[mId] / 2f + 0.5f) * 100f;
+                
+                // 3. 해제 기준선인 65%를 '0'으로 잡고 남은 수치 계산
+                float remainBias = Mathf.Max(0f, realPercent - 65f);
+
+                // 이제 숫자가 15.0 ➔ 14.2 ➔ 11.5 ➔ 5.0 처럼 실시간으로 가독성 있게 차감됩니다!
+                sb.AppendLine($"{machineName}: 부품 부족 ('{banned}' 소진) <color=#FFDD00>[{remainBias:F1}]</color> — '{opposite}' 사용으로 균형 회복 필요");
             }
             else if (autoFixTimers.ContainsKey(mId)) {
                 hasAnyBreakdown = true;
@@ -842,6 +866,15 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                           || Shared_Manager_Session.IsVisiting;
         if (!enableDynamicDifficulty || isSafeMode) return;
 
+        // 현재 디버깅 중인 기계의 실시간 편향도 수치를 기록합니다.
+        int targetId = currentMachineId;
+        if (targetId >= 1 && targetId <= 8) {
+            machineImbalanceScores[targetId] = imbalanceScore;
+        }
+
+        debugGraceCount++;
+        if (debugGraceCount <= GRACE_PERIOD) return; 
+
         // 1) 균형 회복 신호 → 임밸런스 고장 모두 해제
         if (isFixed && imbalanceBrokenMachines.Count > 0) {
             // 순회 중 수정 방지를 위해 사본
@@ -859,13 +892,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             // 이미 임밸런스 고장이 활성화 중이면 중복 트리거 방지
             if (imbalanceBrokenMachines.Count > 0) return;
 
-            int targetId = currentMachineId;
-            // 현재 열린 기계가 없거나 비활성이면 활성 기계 중 하나 선택
-            if (targetId < 1 || targetId > 8 || !globalCodes.ContainsKey(targetId)
-                || string.IsNullOrEmpty(globalCodes[targetId])) {
+            // targetId 재검증 후 고장 발생
+            if (targetId < 1 || targetId > 8 || !globalCodes.ContainsKey(targetId) || string.IsNullOrEmpty(globalCodes[targetId])) {
                 foreach (var kvp in globalCodes) {
-                    if (kvp.Key >= 1 && kvp.Key <= 8
-                        && !string.IsNullOrEmpty(kvp.Value) && kvp.Value.Length > 5) {
+                    if (kvp.Key >= 1 && kvp.Key <= 8 && !string.IsNullOrEmpty(kvp.Value) && kvp.Value.Length > 5) {
                         targetId = kvp.Key;
                         break;
                     }
