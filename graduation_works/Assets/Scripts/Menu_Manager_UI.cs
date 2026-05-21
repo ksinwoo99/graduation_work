@@ -79,6 +79,7 @@ public class Menu_Manager_UI : MonoBehaviour {
     }
 
     public void StartGameTransition() {
+        if (leaderboardPanel != null) leaderboardPanel.SetActive(false);
         Sequence seq = DOTween.Sequence();
 
         seq.Append(menuSelectPanelRect.DOAnchorPosY(-1200f, 0.4f).SetEase(Ease.InBack));
