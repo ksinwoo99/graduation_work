@@ -11,6 +11,7 @@ public class CheckSaveResponse
 
 public class Menu_Manager_Button : MonoBehaviour {
     public Menu_Manager_UI uiManager; 
+    public GameObject leaderboardPanel;
 
     private string serverUrl = "http://13.237.51.219:8000"; 
 
@@ -76,6 +77,8 @@ public class Menu_Manager_Button : MonoBehaviour {
     }
 
     private void ExecuteNewGame() {
+        if (leaderboardPanel != null) leaderboardPanel.SetActive(false);
+
         Ingame_System_Save.isLoadRequested = false;
         Shared_Manager_Session.IsReadOnlyMode = false;
         uiManager.StartGameTransition();
@@ -116,6 +119,8 @@ public class Menu_Manager_Button : MonoBehaviour {
             CheckSaveResponse res = JsonUtility.FromJson<CheckSaveResponse>(www.downloadHandler.text);
             
             if (res.status == "EXIST") {
+                if (leaderboardPanel != null) leaderboardPanel.SetActive(false);
+                
                 Ingame_System_Save.isLoadRequested = true;
                 Shared_Manager_Session.IsReadOnlyMode = false;
                 uiManager.StartGameTransition();

@@ -2651,7 +2651,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1019280051
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2801,7 +2801,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1090329472
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5228,6 +5228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 692998596}
+  leaderboardPanel: {fileID: 1090329471}
 --- !u!114 &2114104160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5244,6 +5245,7 @@ MonoBehaviour:
   visitPanel: {fileID: 1227684878}
   targetIdInput: {fileID: 1099322033}
   btnGoVisit: {fileID: 1757357473}
+  leaderboardPanel: {fileID: 1090329471}
 --- !u!1 &2130197528
 GameObject:
   m_ObjectHideFlags: 0
