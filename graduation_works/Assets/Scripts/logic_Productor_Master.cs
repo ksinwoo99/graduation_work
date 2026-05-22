@@ -53,6 +53,8 @@ public class logic_Productor_Master : logic_CodingBase
     private ProductorRecipe currentProcessingRecipe = null;
 
     private List<ProcessRule> parsedRules = new List<ProcessRule>();
+    private string allowedProductingTier = "";
+    public string allowedProductingTierDisplay => allowedProductingTier;
 
     protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -61,6 +63,9 @@ public class logic_Productor_Master : logic_CodingBase
     }
 
     void Start() {
+        allowedProductingTier = GameCodeValidator.GetProductingTierForMachine(GetMachineName());
+        if (string.IsNullOrEmpty(allowedProductingTier) && multiRecipes.Count > 0)
+            allowedProductingTier = multiRecipes[0].targetTier.ToLower();
         if (spriteRenderer != null && spriteIdle != null) spriteRenderer.sprite = spriteIdle;
         UpdateStatusUI();
     }
@@ -102,6 +107,11 @@ public class logic_Productor_Master : logic_CodingBase
     }
 
     public override CodeState ValidateCode(string code) {
+        if (string.IsNullOrEmpty(allowedProductingTier))
+            allowedProductingTier = GameCodeValidator.GetProductingTierForMachine(GetMachineName());
+        if (string.IsNullOrEmpty(allowedProductingTier) && multiRecipes.Count > 0)
+            allowedProductingTier = multiRecipes[0].targetTier.ToLower();
+
         parsedRules.Clear();
         string noTags = Regex.Replace(code, "<.*?>", string.Empty);
         string[] lines = noTags.Split('\n', '\r');
@@ -132,15 +142,18 @@ public class logic_Productor_Master : logic_CodingBase
             } 
             // ✨ [핵심 파서 변경] producting(Common, A) 또는 따옴표가 있는 producting(Common, "A") 형태를 허용합니다!
             else if (line.StartsWith("producting(")) {
-                Match m = Regex.Match(line, @"producting\((common|advanced|hightech|superior|rare|special|exotic),['""]?(a|b)['""]?\)");
+                Match m = Regex.Match(line, @"producting\((common|rare|special|exotic),['""]?(a|b)['""]?\)");
                 if (m.Success) {
+                    string tier = GameCodeValidator.NormalizeProductingTierToken(m.Groups[1].Value);
+                    if (!string.IsNullOrEmpty(allowedProductingTier) && tier != allowedProductingTier)
+                        continue;
                     if (currentRule != null) {
-                        currentRule.actionTier = m.Groups[1].Value;
+                        currentRule.actionTier = tier;
                         currentRule.actionType = m.Groups[2].Value; // a 또는 b 로 저장됨
                         currentRule.hasAction = true;
                         codeIsValid = true;
                     } else {
-                        currentRule = new ProcessRule { isElse = true, actionTier = m.Groups[1].Value, actionType = m.Groups[2].Value, hasAction = true };
+                        currentRule = new ProcessRule { isElse = true, actionTier = tier, actionType = m.Groups[2].Value, hasAction = true };
                         parsedRules.Add(currentRule);
                         codeIsValid = true;
                     }
@@ -150,12 +163,17 @@ public class logic_Productor_Master : logic_CodingBase
 
         if (!codeIsValid) { processingCount = 0; return CodeState.Error; }
 
+        if (!GameCodeValidator.AllProductingCallsMatch(noTags, allowedProductingTier)) {
+            processingCount = 0;
+            return CodeState.Error_WrongMachineSyntax;
+        }
+
         string cleanCodeAll = Regex.Replace(noTags, @"\s+", "").ToLower();
         int loopLevel = 0;
         if (Ingame_Manager_Quest.Instance != null) loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
 
         // 무한 반복 (while true / for i in count(...)) 검사
-        //    - itertools.count 방식: `for i in count(...)` -> 공백 제거 시 `incount(` 패턴 등장
+        //    - `for i in count(...)` -> 공백 제거 시 `incount(` 패턴 등장
         if (cleanCodeAll.Contains("whiletrue:") || cleanCodeAll.Contains("while(true)") || cleanCodeAll.Contains("loop:")
             || cleanCodeAll.Contains("incount(")) {
             if (loopLevel < 2) { processingCount = 0; return CodeState.Error_InfiniteLocked; }

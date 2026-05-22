@@ -74,11 +74,16 @@ public class logic_Miner_Master : logic_CodingBase {
             return CodeState.Empty;
         }
 
+        if (!GameCodeValidator.AllMiningCallsMatch(noTags, requiredSyntax)) {
+            miningCount = 0;
+            return CodeState.Error_WrongMachineSyntax;
+        }
+
         int loopLevel = 0;
         if (Ingame_Manager_Quest.Instance != null) loopLevel = Ingame_Manager_Quest.Instance.loopUpgradeLevel;
 
         // 1. 무한 반복 (while true / for i in count(...)) 검사
-        //    - itertools.count 방식: `for i in count(...)` -> 공백 제거 시 `incount(` 패턴 등장
+        //    - `for i in count(...)` -> 공백 제거 시 `incount(` 패턴 등장
         if (cleanCode.Contains("whiletrue:") || cleanCode.Contains("while(true)") || cleanCode.Contains("loop:")
             || cleanCode.Contains("incount(")) {
             if (loopLevel < 2) { miningCount = 0; return CodeState.Error_InfiniteLocked; }

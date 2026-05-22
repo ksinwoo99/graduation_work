@@ -45,9 +45,14 @@ _KMEANS_RANDOM_STATE  = 42
 # (정규화 이전에 곱하면 스케일러가 다시 평탄화해 효과 없음)
 # main.predict_cluster_rank() 가 추론 시 동일한 가중치를 적용해야 합니다.
 _LOOP_FEATURE_WEIGHTS: dict[str, float] = {
-    'has_loop':           3.0,
-    'loop_efficiency':    2.0,
-    'has_infinite_while': 2.0,
+    'has_loop':             3.0,
+    'loop_efficiency':      2.0,
+    'has_infinite_while':   2.0,
+    'has_infinite_for':     2.0,
+    'uses_itertools':       1.5,
+    'has_if_inside_loop':   1.5,
+    'has_break_in_loop':    1.5,
+    'uses_loop_index':      1.0,
 }
 
 # rank → 표시 레이블 (학습 로그 및 메타데이터용)

@@ -33,7 +33,21 @@ HINT_TARGET_VECTORS: dict[str, dict[str, int]] = {
     "succ_r1_while_A":   {"has_infinite_while": +1},
     "succ_r1_while_B":   {"has_infinite_while": +1},
 
-    # ── rank 2: 효율 최적화형 → 유지가 곧 성공 (방향 유지)
+    # rank 1 mastery / rank 2 심화
+    "succ_r1_mastery_A": {"has_if_inside_loop": +1},
+    "succ_r1_mastery_B": {"has_if_inside_loop": +1},
+    "succ_r2_count_if_mastery_A": {"uses_loop_index": +1, "has_if_inside_loop": +1},
+    "succ_r2_count_if_mastery_B": {"has_if_inside_loop": +1},
+    "succ_r2_count_add_if_A":     {"has_if_inside_loop": +1},
+    "succ_r2_count_add_break_A":  {"has_break_in_loop": +1},
+    "succ_r2_count_ceiling_A":    {},
+    "succ_r2_while_add_break_A":  {"has_break_in_loop": +1},
+    "succ_r2_while_add_break_B":  {"has_break_in_loop": +1},
+    "succ_r2_while_add_if_A":     {"has_if_inside_loop": +1},
+    "succ_r2_while_mastery_A":    {},
+    "succ_r2_ceiling_A":          {},
+
+    # ── rank 2: 효율 최적화형 → 유지·심화
     "succ_r2_for_range_A":          {"has_loop": +1, "loop_efficiency": +1},
     "succ_r2_for_range_B":          {"has_infinite_loop": +1},
     "succ_r2_infinite_while_A":     {"has_infinite_while": +1, "loop_efficiency": +1},
