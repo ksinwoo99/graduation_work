@@ -704,10 +704,22 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 hasTimedBreakdown = true;
                 hasGiveUpBreakdown = true; 
 
-                string standardReason = timedBreakdownReasons.ContainsKey(mId) ? timedBreakdownReasons[mId] : "코드 파손됨";                
+                string standardReason = timedBreakdownReasons.ContainsKey(mId) ? timedBreakdownReasons[mId] : "코드 파손됨";
+
+                // ✨ [핵심 추가] 이름표가 소실된 케이스라면, 백업 코드에서 원래 이름을 역추적해 옵니다!
+                if (standardReason.Contains("이름표") && backupCodes.ContainsKey(mId)) {
+                    string originalCode = backupCodes[mId];
+                    // 원본 코드에서 name = "값" 또는 name = '값' 패턴을 정규식으로 매칭
+                    var match = System.Text.RegularExpressions.Regex.Match(originalCode, @"name\s*=\s*['""](.*?)['""]");
+                    
+                    if (match.Success) {
+                        // 추출 성공 시 지워지기 전 원래 이름으로 덮어씌우기
+                        machineName = match.Groups[1].Value;
+                    }
+                }
+
                 int timeLeft = autoFixTimers.ContainsKey(mId) ? Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId])) : 0;
-                // [텍스트 포맷팅] 유저가 기획한 4가지 파손 종류가 패널에 실시간으로 직관적으로 찍힙니다!
-                sb.AppendLine($"{machineName} 고장 \n <color=#FFDD00>[{standardReason}]</color> \n {timeLeft}초 후 자동 복구");
+                sb.AppendLine($"{machineName}에 문제 발생\n <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
             }
         }
 
