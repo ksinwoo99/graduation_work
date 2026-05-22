@@ -11,6 +11,7 @@ public class Menu_Manager_Visit : MonoBehaviour {
     public GameObject visitPanel;              
     public TMP_InputField targetIdInput;       
     public Button btnGoVisit; // '방문하기' 버튼을 여기에 연결해주세요.
+    public GameObject leaderboardPanel;
 
     private string serverUrl = "http://13.237.51.219:8000"; 
 
@@ -105,6 +106,9 @@ public class Menu_Manager_Visit : MonoBehaviour {
                 Ingame_System_Save.isLoadRequested = true; 
                 
                 if (visitPanel != null) visitPanel.SetActive(false);
+
+                if (leaderboardPanel != null) leaderboardPanel.SetActive(false);
+                
                 uiManager.StartGameTransition(); 
             } else {
                 uiManager.ShowError("해당 유저의 저장 데이터가 없습니다.");
