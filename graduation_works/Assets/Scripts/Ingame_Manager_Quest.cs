@@ -116,7 +116,7 @@ public class Ingame_Manager_Quest : MonoBehaviour
         if (currentQuestId >= questList.Count) {
             if (questTitleText != null) questTitleText.text = "[모든 퀘스트 완료]";
             if (questGoalText != null) questGoalText.text = "공장을 자유롭게 확장하세요!";
-            if (rewardText != null) rewardText.text = "";
+            if (rewardText != null) rewardText.text = "X 버튼을 눌러 패널을 닫을 수 있습니다.";
             
             if (btnCloseQuest != null && !btnCloseQuest.gameObject.activeSelf) {
                 btnCloseQuest.gameObject.SetActive(true);

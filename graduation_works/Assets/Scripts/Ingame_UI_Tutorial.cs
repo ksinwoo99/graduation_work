@@ -22,7 +22,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public GameObject dimBackground;   
     public GameObject bubblePanel;     
     public TextMeshProUGUI txtMessage; 
-    public Button btnNext;             
+    public Button btnNext;   
 
     [Header("3. 하이라이트 대상 패널")]
     public GameObject panelResource;            
@@ -34,8 +34,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     [Header("4. 튜토리얼 상호작용 버튼 및 패널")]
     public Button btnTutorialMiner;              
     public TextMeshProUGUI txtTutorialMinerName; 
-    public GameObject resizeHandle;              
-    public GameObject inputMinerCodeObj;        
+    public GameObject resizeHandle;
+    public GameObject inputMinerCodeObj;
     public Button btnDebug; 
 
     public Button btnTutorialProductor; 
@@ -100,7 +100,6 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         dimBackground.SetActive(false);
         skipPanel.SetActive(false); 
         
-        // ✨ [신규] 시작할 때 버튼의 원래 스케일을 기억해둡니다!
         if (btnNext != null) {
             nextBtnOriginalScale = btnNext.transform.localScale;
         }
