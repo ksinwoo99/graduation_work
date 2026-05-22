@@ -1,6 +1,7 @@
 import os
 import ast
 import asyncio
+import re
 import time
 import io
 import itertools
@@ -97,25 +98,28 @@ def format_error_user(e, source_code):
 
 FORBIDDEN_FUNCTIONS = {"eval", "exec", "open", "__import__", "compile", "globals", "locals"}
 
-# 화이트리스트: { module_name: {허용 심볼들} }
-# 다른 모든 import 는 SecurityVisitor 에서 차단됩니다.
-ALLOWED_IMPORT_FROMS: dict[str, set[str]] = {
-    "itertools": {"count"},
-}
+
+def _prepare_user_source(source_code: str) -> str:
+    """
+    사용자 코드에서 itertools/count import 줄을 제거합니다.
+    count 는 샌드박스 env 에 기본 제공되므로 import 없이 for i in count() 를 씁니다.
+    """
+    if not source_code:
+        return source_code
+    kept = []
+    for line in source_code.splitlines(keepends=True):
+        stripped = line.strip()
+        low = stripped.lower()
+        if low.startswith("from itertools import") and re.search(r"\bcount\b", stripped, re.I):
+            continue
+        if re.match(r"import\s+itertools\s*(?:#.*)?$", stripped, re.I):
+            continue
+        kept.append(line)
+    return "".join(kept)
 
 
 def _safe_import(name, globals=None, locals=None, fromlist=(), level=0):
-    """
-    Machine sandbox 의 __builtins__['__import__'] 로 주입되는 제한 import.
-    화이트리스트(ALLOWED_IMPORT_FROMS)에 등재된 모듈만 통과시킵니다.
-
-    유저가 `__import__('os')` 같이 직접 호출하는 경로는 SecurityVisitor 의
-    FORBIDDEN_FUNCTIONS 체크에서 이미 차단되므로, 본 함수는 `from X import Y`
-    같은 import 문이 내부적으로 호출하는 경로만 처리합니다.
-    """
-    if level == 0 and name in ALLOWED_IMPORT_FROMS:
-        if name == "itertools":
-            return itertools
+    """모든 외부 import 차단 (__import__ 경로). count 는 env 에 주입됨."""
     raise Exception(f"보안: 외부 모듈 사용 금지 ({name})")
 
 
@@ -125,14 +129,10 @@ class SecurityVisitor(ast.NodeVisitor):
         raise Exception("보안: 외부 모듈 사용 금지")
 
     def visit_ImportFrom(self, node):
-        # 화이트리스트된 모듈 + 심볼 조합만 통과
-        allowed = ALLOWED_IMPORT_FROMS.get(node.module, set())
-        bad = [a.name for a in node.names if a.name not in allowed]
-        if bad:
-            raise Exception(
-                f"보안: 외부 모듈 사용 금지 ({node.module}.{bad[0]})"
-            )
-        # 통과 — generic_visit 불필요 (ImportFrom 하위에는 검사할 노드 없음)
+        target = node.module or ""
+        if node.names:
+            target = f"{target}.{node.names[0].name}" if target else node.names[0].name
+        raise Exception(f"보안: 외부 모듈 사용 금지 ({target})")
 
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name) and node.func.id in FORBIDDEN_FUNCTIONS:
@@ -194,6 +194,7 @@ class LoopTransformer(ast.NodeTransformer):
 class Machine:
     def __init__(self, user_id, source_code, resCommon=0, resRare=0, resSpecial=0, resExotic=0):
         self.user_id, self.running = user_id, True
+        source_code = _prepare_user_source(source_code)
         tree = ast.parse(source_code)
         SecurityVisitor().visit(tree)
         tree = LoopTransformer().visit(tree)
@@ -254,7 +255,11 @@ class Machine:
             "resRare_Resource": resRare,
             "resSpecial_Resource": resSpecial,
             "resExotic_Resource": resExotic,
-            "Gold": 0
+            "Gold": 0,
+
+            # 무한 for: import 없이 for i in count() / for i in itertools.count()
+            "count": itertools.count,
+            "itertools": itertools,
         }
         exec(compiled, self.env)
         

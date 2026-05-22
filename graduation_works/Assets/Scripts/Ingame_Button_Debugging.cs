@@ -71,8 +71,8 @@ public class MLResponse
     public string hint;    // AI 생성 힌트 메시지
 
     // ── 루프 균형 신호 (서버 _compute_loop_balance 결과) ──
-    public bool   should_break_machine;  // true → 임밸런스 고장 트리거 (8:2 초과)
-    public bool   is_balance_fixed;      // true → 임밸런스 고장 해제 트리거 (6.5:3.5 이하)
+    public bool   should_break_machine;  // true → 임밸런스 고장 (한쪽 루프 75% 이상)
+    public bool   is_balance_fixed;      // true → 임밸런스 해제 (한쪽 루프 65% 이하, 8기계 저장 코드 기준)
     public string consumed_part_type;    // "for" | "while" — 소모된 부품 종류
     public float  imbalance_score;       // 0.0(균형) ~ 1.0(완전 편향)
 }
@@ -99,7 +99,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
     // ──────────────────────────────────────────────────────
     // 클라이언트 기계 검증 결과 코드 → (메시지, 표시 색상, 에러 여부) 매핑.
-    // 값 정의 / 추가 시 Ingame_Manager_Coding.CheckCodeAndApply() 와 동기화하세요.
+    // 값 정의 / 추가 시 Ingame_Manager_Coding.CheckCodeAndApply() 와 동기화 (-10: 등급별 인자 오류).
     // 새로운 케이스 추가는 본 딕셔너리에 한 줄 추가만으로 끝납니다.
     // ──────────────────────────────────────────────────────
     private struct ApplyFeedback {
@@ -120,6 +120,7 @@ public class Ingame_Button_Debugging : MonoBehaviour
             { -7, new ApplyFeedback("이미 다른 기계가 사용 중인 이름은 사용할 수 없습니다!",                              Color.red,    true) },
             { -8, new ApplyFeedback("과열로 인해 해당 문법을 사용할 수 없습니다. 우회 코드를 사용하세요.",                Color.red,    true) },
             { -9, new ApplyFeedback("[부품 부족] 사용 가능한 부품이 소진되었습니다. 반대 부품으로 균형을 맞춰 보충하세요!", Color.red,    true) },
+            { -10, new ApplyFeedback("이 기계 등급에 맞지 않는 mining / producting 인자가 있습니다. 왼쪽 정보창의 필수 문법을 확인하세요.", Color.red, true) },
         };
 
     private static readonly ApplyFeedback ApplyResultFallback

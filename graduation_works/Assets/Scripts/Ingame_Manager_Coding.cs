@@ -333,7 +333,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                     }
                 }
 
-                // 주석/문자열 내 'for'/'while' 오탐 방지 + itertools.count 무한 루프도 감지.
+                // 주석/문자열 내 'for'/'while' 오탐 방지 + count() 무한 루프도 감지.
                 string clean = StripCommentsAndStringLiterals(code).ToLower();
                 bool usedLoop =
                     Regex.IsMatch(clean, @"\bfor\b")
@@ -353,7 +353,13 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             } else if (state == logic_CodingBase.CodeState.Error_LoopLimit) { SetStatus(Color.red, false); return -2;
             } else if (state == logic_CodingBase.CodeState.Error_InfiniteLocked) { SetStatus(Color.red, false); return -3; 
             } else if (state == logic_CodingBase.CodeState.Error_ConveyorLocked) { SetStatus(Color.red, false); return -5; 
-            } else if (state == logic_CodingBase.CodeState.Error_ConveyorFastLocked) { SetStatus(Color.red, false); return -6; 
+            } else if (state == logic_CodingBase.CodeState.Error_ConveyorFastLocked) { SetStatus(Color.red, false); return -6;
+            } else if (state == logic_CodingBase.CodeState.Error_WrongMachineSyntax) {
+                string tierHint = GetWrongMachineSyntaxHint();
+                if (buildManager != null)
+                    buildManager.ShowFloatingText(tierHint, codingPanel.transform.position);
+                SetStatus(Color.red, false);
+                return -10;
             } else { SetStatus(Color.red, false); return 0; }
         } else {
             SetStatus(Color.red, false); return -4; 
@@ -811,6 +817,20 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
     // 주어진 코드에서 임밸런스 헤더 블록(시작 마커 ~ 끝 마커, 두 마커 포함)을 제거합니다.
     // 마커가 없으면 원본을 그대로 반환합니다.
+    string GetWrongMachineSyntaxHint() {
+        if (currentLogic is logic_Miner_Master miner)
+            return $"이 채굴기는 {miner.requiredSyntax} 만 사용할 수 있어요.";
+        if (currentLogic is logic_Productor_Master productor) {
+            string tier = string.IsNullOrEmpty(productor.allowedProductingTierDisplay)
+                ? GameCodeValidator.GetProductingTierForMachine(currentLogic.GetMachineName())
+                : productor.allowedProductingTierDisplay;
+            if (!string.IsNullOrEmpty(tier))
+                tier = char.ToUpper(tier[0]) + tier.Substring(1);
+            return $"이 가공기는 producting({tier}, 'A' 또는 'B') 만 사용할 수 있어요.";
+        }
+        return "이 기계 등급에 맞는 함수 인자만 사용할 수 있어요.";
+    }
+
     private static string StripImbalanceHeader(string code) {
         if (string.IsNullOrEmpty(code)) return code;
         int startIdx = code.IndexOf(ImbalanceHeaderStart);
@@ -860,7 +880,8 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     // 동작 흐름:
     //   - shouldBreak  → 현재 디버그 중인 기계를 'consumedPart'(for|while) 사용 불가 상태로 고장
     //   - isFixed      → 모든 임밸런스 고장 기계를 일괄 복구
-    //   - 중간 영역(0.3 < imbalance < 0.6) → 둘 다 false, 기존 상태 유지
+    //   - 중간 영역(0.3 < imbalance < 0.5) → 둘 다 false, 기존 상태 유지
+    //   - 편향도는 서버가 installed_machines(채굴기·가공기 8종) 저장 코드로 계산
     //
     // 기존 random 고장 시스템과 분리: imbalanceBrokenMachines 마커로 구분.
     // ──────────────────────────────────────────────────────────

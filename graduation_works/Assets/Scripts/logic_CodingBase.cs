@@ -22,7 +22,8 @@ public abstract class logic_CodingBase : MonoBehaviour
     public virtual string GetDefaultCode() { return ""; }
     public enum CodeState { 
         Empty, Error, Valid, Error_LoopLocked, Error_LoopLimit, 
-        Error_InfiniteLocked, Error_ConveyorLocked, Error_ConveyorFastLocked
+        Error_InfiniteLocked, Error_ConveyorLocked, Error_ConveyorFastLocked,
+        Error_WrongMachineSyntax
     }
     
     public virtual string GetMachineName() {
