@@ -750,12 +750,43 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         PlayStep(currentStep);
     }
 
-    // ✨ 기능을 강제로 열고 메시지를 띄우는 함수
+    // ✨ 기능을 강제로 열고 메시지를 띄우는 함수 (스킵 시 보상 일괄 지급 로직 추가)
     private void UnlockFeatureBySkip(int targetQuestId, string msg) {
         if (Ingame_Manager_Quest.Instance != null) {
-            // 퀘스트 ID를 강제로 올려서 버튼들을 활성화시킵니다.
-            Ingame_Manager_Quest.Instance.currentQuestId = targetQuestId;
-            Ingame_Manager_Quest.Instance.RefreshButtonStates(); 
+            var questMgr = Ingame_Manager_Quest.Instance;
+            var resMgr = Ingame_Manager_Resource.Instance;
+
+            for (int i = questMgr.currentQuestId; i < targetQuestId && i < questMgr.questList.Count; i++) {
+                QuestData quest = questMgr.questList[i];
+
+                // 1. 골드 및 자원 일괄 지급
+                if (resMgr != null) {
+                    if (quest.rewardGold > 0) resMgr.EarnGold(quest.rewardGold);
+                    if (quest.rewardCommonResource > 0) resMgr.resCommon += quest.rewardCommonResource;
+                    if (quest.rewardRareResource > 0) resMgr.resRare += quest.rewardRareResource;
+                    if (quest.rewardSpecialResource > 0) resMgr.resSpecial += quest.rewardSpecialResource;
+                }
+
+                // 2. 잠겨있던 하단 건설/기능 버튼들 강제 해금
+                foreach (UnityEngine.UI.Button btn in quest.unlockButtons) {
+                    if (btn != null) btn.interactable = true;
+                }
+
+                // 3. 시스템 업그레이드 강제 반영 (이게 없어서 컨베이어 업그레이드가 안 떴습니다!)
+                if (quest.rewardLoopLevelUp > 0) questMgr.loopUpgradeLevel += quest.rewardLoopLevelUp;
+                if (quest.rewardConveyorLevelUp > 0) questMgr.conveyorUpgradeLevel += quest.rewardConveyorLevelUp;
+            }
+
+            // 퀘스트 ID를 목표 수치로 강제 업데이트
+            questMgr.currentQuestId = targetQuestId;
+
+            // ✨ 시스템 상단 UI (컨베이어 업그레이드 등)에 즉시 반영
+            if (Ingame_UI_SystemControl.Instance != null) {
+                Ingame_UI_SystemControl.Instance.UpdateAllUI();
+            }
+
+            // 퀘스트 패널 갱신 (모든 퀘스트 완료 처리 및 닫기 버튼 노출 등)
+            questMgr.SendMessage("CheckConditions", SendMessageOptions.DontRequireReceiver);
         }
 
         if (!string.IsNullOrEmpty(msg)) {
