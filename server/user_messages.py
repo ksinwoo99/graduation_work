@@ -8,7 +8,7 @@ AI 힌트, 파이썬/게임 오류 안내, 성장·정체 메모, API 응답 mes
     from user_messages import HINT_VARIANTS, RANK_LABELS, msg, Err, Move, ...
 
     return msg(Err.NAME_GENERIC)
-    return msg(Err.NAME_COUNT_IMPORT)  # 고정 문구
+    return msg(Err.NAME_GENERIC)
     return msg(Move.TYPO, token=token)   # {token} 치환
 """
 
@@ -60,7 +60,7 @@ HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
         (
             "[ 일반 학습자형 ] "
             "for 루프로 좋은 구조를 만들었어요! "
-            "from itertools import count 후 for i in count(): 으로 무한 반복도 도전해보세요.",
+            "for i in count(): 으로 끝나지 않는 무한 반복도 도전해보세요.",
             "succ_r1_for_B",
         ),
     ],
@@ -95,7 +95,7 @@ HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
     "succ_r2_infinite_for_count": [
         (
             "[ 효율 최적화형 ] "
-            "from itertools import count 와 for i in count(): 로 파이써닉한 무한 반복을 구현했네요! "
+            "for i in count(): 로 깔끔한 무한 반복을 구현했네요! "
             "i 값을 활용해 단계별 동작을 분기하면 표현력이 훨씬 풍부해져요.",
             "succ_r2_infinite_for_count_A",
         ),
@@ -118,6 +118,100 @@ HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
             "효율적인 for range 루프예요! "
             "기계를 멈추지 않게 하려면 for i in count(): 처럼 끝이 정해지지 않는 루프를 시도해보세요.",
             "succ_r2_for_range_B",
+        ),
+    ],
+    # ── rank 1: 이미 무한 루프 — upsell 없음 ──
+    "succ_r1_mastery": [
+        (
+            "[ 일반 학습자형 ] "
+            "무한 자동화 코드를 잘 작성했어요! "
+            "다른 등급 기계에도 for / while 을 골고루 써서 균형을 맞춰보세요.",
+            "succ_r1_mastery_A",
+        ),
+        (
+            "[ 일반 학습자형 ] "
+            "자동화에 성공했어요! "
+            "루프 안에 if 로 자원량을 확인하면 더 영리한 코드가 됩니다.",
+            "succ_r1_mastery_B",
+        ),
+    ],
+    # ── rank 2: count 무한 for — 심화 / 천장 ──
+    "succ_r2_count_if_mastery": [
+        (
+            "[ 효율 최적화형 ] "
+            "for i in count() 와 if 분기를 함께 쓴 고급 자동화예요! "
+            "i 값으로 단계별 동작을 나누면 표현력이 더 풍부해집니다.",
+            "succ_r2_count_if_mastery_A",
+        ),
+        (
+            "[ 효율 최적화형 ] "
+            "count 무한 루프 + 조건 분기 — 훌륭합니다. "
+            "다른 기계에도 같은 패턴을 적용해보세요.",
+            "succ_r2_count_if_mastery_B",
+        ),
+    ],
+    "succ_r2_count_add_if": [
+        (
+            "[ 효율 최적화형 ] "
+            "for i in count() 자동화 성공! "
+            "루프 안에 if resCommon >= N: 분기를 넣으면 상황별 생산이 가능해요.",
+            "succ_r2_count_add_if_A",
+        ),
+    ],
+    "succ_r2_count_add_break": [
+        (
+            "[ 효율 최적화형 ] "
+            "for i in count() 로 잘 돌리고 있어요! "
+            "자원이 부족할 때 break 로 멈추면 더 안전한 코드가 됩니다.",
+            "succ_r2_count_add_break_A",
+        ),
+    ],
+    "succ_r2_count_ceiling": [
+        (
+            "[ 효율 최적화형 ] "
+            "count 무한 루프 자동화를 완성했어요! "
+            "이제 다른 등급 기계 코드도 점검해 보세요.",
+            "succ_r2_count_ceiling_A",
+        ),
+    ],
+    # ── rank 2: while True — break / if 심화 ──
+    "succ_r2_while_add_break": [
+        (
+            "[ 효율 최적화형 ] "
+            "while True 자동화 중이에요! "
+            "break 조건을 넣으면 예기치 않은 상황에서도 안전합니다.",
+            "succ_r2_while_add_break_A",
+        ),
+        (
+            "[ 효율 최적화형 ] "
+            "무한 while 루프 — break 로 종료 조건을 추가해보세요. "
+            "예) if resCommon < 10: break",
+            "succ_r2_while_add_break_B",
+        ),
+    ],
+    "succ_r2_while_add_if": [
+        (
+            "[ 효율 최적화형 ] "
+            "while True 에 if resCommon >= N: 같은 조건 분기를 추가하면 "
+            "더 영리한 자동화가 됩니다.",
+            "succ_r2_while_add_if_A",
+        ),
+    ],
+    "succ_r2_while_mastery": [
+        (
+            "[ 효율 최적화형 ] "
+            "while True + break + if 까지 갖춘 견고한 자동화 코드예요! "
+            "훌륭합니다.",
+            "succ_r2_while_mastery_A",
+        ),
+    ],
+    # ── 필터 후보 없을 때 공통 fallback ──
+    "succ_r2_ceiling": [
+        (
+            "[ 효율 최적화형 ] "
+            "훌륭한 코드입니다! "
+            "다른 기계에서도 다양한 반복문을 골고루 써보세요.",
+            "succ_r2_ceiling_A",
         ),
     ],
 }
@@ -211,12 +305,11 @@ class Err:
     # 샌드박스
     SANDBOX_IMPORT_MODULE = (
         "'{target}' 모듈은 사용할 수 없어요.\n"
-        "이 게임에서 허용된 외부 모듈은 itertools.count 뿐이에요. "
-        "예) from itertools import count"
+        "이 게임에서는 외부 모듈 import 를 쓸 수 없어요."
     )
     SANDBOX_IMPORT_GENERIC = (
         "외부 모듈 import 는 사용할 수 없어요!\n"
-        "허용된 항목: from itertools import count"
+        "게임 명령어와 기본 파이썬만 사용할 수 있습니다."
     )
     SANDBOX_FORBIDDEN_FN = (
         "'{target}' 는 보안상 사용할 수 없는 함수예요.\n"
@@ -266,11 +359,6 @@ class Err:
     )
 
     # NameError
-    NAME_COUNT_IMPORT = (
-        "'count' 를 사용하려면 먼저 import 해야 해요!\n"
-        "코드 맨 윗줄에 다음을 추가해보세요:\n"
-        "from itertools import count"
-    )
     NAME_MACHINE_UNQUOTED = (
         "기계 이름 '{undef}' 을(를) 따옴표로 감싸지 않았어요!\n"
         'name = "{undef}" 처럼 수정해보세요.'
@@ -391,6 +479,10 @@ class Machine:
         "이 기계는 {fn} 명령어가 필요합니다.\n"
         "다른 명령어를 입력하지는 않았나요?"
     )
+    WRONG_ARGS = (
+        "이 기계 등급에 맞지 않는 함수 인자가 있어요.\n"
+        "이 기계는 {expected} 형태만 사용할 수 있습니다."
+    )
     GENERIC = "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
 
 
@@ -409,9 +501,12 @@ class Api:
         "Scoring 2.0 컬럼 없음. server/migrations/scoring_v2.sql 을 적용하세요."
     )
     CLUSTER_HISTORY_NO_DATA = "군집 예측이 기록된 성공 제출이 없습니다."
-    LOOP_BALANCE_QUERY_FAIL = "성공한 제출 기록 조회에 실패했습니다."
-    LOOP_BALANCE_NO_SUBMISSIONS = "성공한 제출 기록이 없습니다."
-    LOOP_BALANCE_NO_LOOPS = "아직 반복문을 사용한 기록이 없습니다."
+    LOOP_BALANCE_QUERY_FAIL = "설치 기계 코드 기록 조회에 실패했습니다."
+    LOOP_BALANCE_NO_MACHINES = (
+        "채굴기·가공기(8종)에 저장된 코드가 없습니다. "
+        "각 기계 코드를 수정한 뒤 게임을 저장해 주세요."
+    )
+    LOOP_BALANCE_NO_LOOPS = "저장된 기계 코드에 반복문(for/while)이 없습니다."
 
 
 # ══════════════════════════════════════════════════════════════════════════════

@@ -3,9 +3,36 @@ import ast
 # while True / while 1 감지 시 loop_efficiency 에 부여하는 대표값
 # calculate_score 공식 기준: min(10, 값 × 5) → 2.0 이면 최대 효율 보너스(+10) 획득
 _INFINITE_WHILE_EFFICIENCY_PROXY = 2.0
+_INFINITE_MASTERY_EFFICIENCY_BONUS = 0.15  # break / if in loop 시 loop_efficiency 가산
 
 # _calculate_max_depth 에서 깊이 계산 대상이 되는 제어 흐름 노드 타입
 _CONTROL_NODES = (ast.For, ast.While, ast.If, ast.Try, ast.With)
+
+
+def _has_if_in_body(body: list) -> bool:
+    for stmt in body:
+        for node in ast.walk(stmt):
+            if isinstance(node, ast.If):
+                return True
+    return False
+
+
+def _has_break_in_body(body: list) -> bool:
+    for stmt in body:
+        for node in ast.walk(stmt):
+            if isinstance(node, ast.Break):
+                return True
+    return False
+
+
+def _uses_name_in_body(name: str, body: list) -> bool:
+    for stmt in body:
+        for node in ast.walk(stmt):
+            if (isinstance(node, ast.Name)
+                    and node.id == name
+                    and isinstance(node.ctx, ast.Load)):
+                return True
+    return False
 
 
 # ──────────────────────────────────────────────
@@ -23,7 +50,7 @@ def _is_infinite_while(node: ast.While) -> bool:
 def _is_count_call(call_node: ast.AST) -> bool:
     """
     `count(...)` 또는 `itertools.count(...)` 호출인지 판별합니다.
-    `from itertools import count` 후 `for i in count(...)` 같은 무한 루프 감지용.
+    `for i in count(...)` 무한 루프 감지용 (count 는 샌드박스 기본 제공).
     """
     if not isinstance(call_node, ast.Call):
         return False
@@ -117,7 +144,11 @@ def extract_features(source_code: str) -> dict:
               has_infinite_for     - for ... in count(...) / itertools.count(...) 패턴 여부 (0 or 1)
               has_infinite_loop    - has_infinite_while OR has_infinite_for (0 or 1)
                                      게임 최종 목표(무한루프 자동화) 달성 여부 종합 피처
-              uses_itertools       - itertools 의 count 를 사용하는지 (0 or 1) — 힌트 분기용
+              uses_itertools       - for ... in count(...) 사용 (0 or 1) — 힌트 분기용
+              has_if_inside_loop   - for/while 본문 안 if 존재 (0 or 1)
+              has_break_in_loop    - for/while 본문 안 break 존재 (0 or 1)
+              uses_loop_index      - for 타깃 변수(i 등)를 루프 본문에서 사용 (0 or 1)
+              max_range_n          - range(N) 인자 중 최대 N (0 이면 없음)
     """
     features = {
         'for_count': 0,
@@ -136,6 +167,10 @@ def extract_features(source_code: str) -> dict:
         'has_infinite_for':   0,
         'has_infinite_loop':  0,
         'uses_itertools':     0,
+        'has_if_inside_loop': 0,
+        'has_break_in_loop':  0,
+        'uses_loop_index':    0,
+        'max_range_n':        0,
     }
 
     if not source_code:
@@ -152,6 +187,13 @@ def extract_features(source_code: str) -> dict:
         for node in ast.walk(tree):
             if isinstance(node, ast.For):
                 features['for_count'] += 1
+                if _has_if_in_body(node.body):
+                    features['has_if_inside_loop'] = 1
+                if _has_break_in_body(node.body):
+                    features['has_break_in_loop'] = 1
+                if isinstance(node.target, ast.Name):
+                    if _uses_name_in_body(node.target.id, node.body):
+                        features['uses_loop_index'] = 1
                 # `for ... in count(...)` / `for ... in itertools.count(...)` → 무한 for
                 if _is_infinite_for(node):
                     features['has_infinite_for'] = 1
@@ -166,17 +208,18 @@ def extract_features(source_code: str) -> dict:
                         n = ast.literal_eval(node.iter.args[0])
                         if isinstance(n, int) and n > 0:
                             for_range_total += n
+                            features['max_range_n'] = max(features['max_range_n'], n)
                     except (ValueError, TypeError):
                         pass
 
             elif isinstance(node, ast.While):
                 features['while_count'] += 1
+                if _has_if_in_body(node.body):
+                    features['has_if_inside_loop'] = 1
+                if _has_break_in_body(node.body):
+                    features['has_break_in_loop'] = 1
                 if _is_infinite_while(node):
                     features['has_infinite_while'] = 1
-            elif isinstance(node, ast.ImportFrom):
-                if node.module == 'itertools':
-                    if any(a.name == 'count' for a in node.names):
-                        features['uses_itertools'] = 1
             elif isinstance(node, ast.If):
                 features['if_count'] += 1
             elif isinstance(node, ast.IfExp):
@@ -195,6 +238,8 @@ def extract_features(source_code: str) -> dict:
         features['has_infinite_loop'] = int(
             features['has_infinite_while'] or features['has_infinite_for']
         )
+        if features['has_infinite_for']:
+            features['uses_itertools'] = 1
 
         # 루프 효율성: for range(N) 총합 / 라인 수
         # 예) 4줄 코드에서 range(10) 사용 → 10 / 4 = 2.5
@@ -203,12 +248,15 @@ def extract_features(source_code: str) -> dict:
                 for_range_total / features['line_count'], 4
             )
 
-        # while True / for in count() 감지 시 loop_efficiency 를 프록시 값으로 설정.
-        # for range(N) 으로는 표현할 수 없는 "무한 반복" 효율을 피처에 반영하되
-        # 기존 for 효율보다 낮을 때만 덮어씁니다 (혼용 시 더 높은 쪽 유지).
-        if (features['has_infinite_loop']
-                and features['loop_efficiency'] < _INFINITE_WHILE_EFFICIENCY_PROXY):
-            features['loop_efficiency'] = _INFINITE_WHILE_EFFICIENCY_PROXY
+        # while True / for in count() — 무한 루프 프록시 (break·if in loop 시 가산)
+        if features['has_infinite_loop']:
+            proxy = _INFINITE_WHILE_EFFICIENCY_PROXY
+            if features['has_if_inside_loop']:
+                proxy += _INFINITE_MASTERY_EFFICIENCY_BONUS
+            if features['has_break_in_loop']:
+                proxy += _INFINITE_MASTERY_EFFICIENCY_BONUS
+            if features['loop_efficiency'] < proxy:
+                features['loop_efficiency'] = round(proxy, 4)
 
     except SyntaxError:
         pass   # 문법 오류 코드는 피처 기본값(0)으로 반환
