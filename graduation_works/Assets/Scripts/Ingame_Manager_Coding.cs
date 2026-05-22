@@ -55,6 +55,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public Dictionary<int, int> machineWorkCounts = new Dictionary<int, int>(); // 작업 횟수 추적
     public Dictionary<int, bool> brokenMachines = new Dictionary<int, bool>(); // 현재 고장 상태인지 확인
     public Dictionary<int, string> forbiddenKeywords = new Dictionary<int, string>(); // 금지된 문법 (for, while)
+    private Dictionary<int, string> timedBreakdownReasons = new Dictionary<int, string>();
 
     // 루프 빈도 불균형으로 인한 고장 (시간으로 풀리지 않음. 균형 회복 시에만 복구)
     // 기존 random 고장 시스템과 분리하기 위한 마커 집합.
@@ -491,11 +492,11 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         int errorType = Random.Range(0, 4); 
         switch (errorType) {
             case 0: 
-                brokenCode = brokenCode.Replace("mining", "").Replace("producting", ""); 
+                brokenCode = System.Text.RegularExpressions.Regex.Replace(brokenCode, @"^.*(mining|producting)\(.*\).*$\r?\n?", "", System.Text.RegularExpressions.RegexOptions.Multiline);
                 breakdownReason = "핵심 명령어가 지워졌습니다!";
                 break;
             case 1: 
-                brokenCode = brokenCode.Replace("name=", ""); 
+                brokenCode = System.Text.RegularExpressions.Regex.Replace(brokenCode, @"^.*name\s*=.*$\r?\n?", "", System.Text.RegularExpressions.RegexOptions.Multiline);
                 breakdownReason = "기계의 이름표가 지워졌습니다!";
                 break;
             case 2: 
@@ -524,7 +525,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
                 break;
         }
-
+        timedBreakdownReasons[targetId] = breakdownReason;
         globalCodes[targetId] = brokenCode;
 
         logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>();
@@ -691,31 +692,22 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 
                 // 1. 서버가 로그 기반으로 계산한 정직한 목표 점수 (0.0 ~ 1.0)
                 float targetScore = machineImbalanceScores.ContainsKey(mId) ? machineImbalanceScores[mId] : 0.6f;
-                
-                // 연출용 딕셔너리 초기화
-                if (!smoothedImbalanceScores.ContainsKey(mId)) {
-                    smoothedImbalanceScores[mId] = targetScore;
-                }
-
-                // ✨ [핵심 연출 추가] 현재 표시 중인 점수가 목표 점수를 향해 매 프레임 부드러운 속도로 굴러가며 차감됩니다!
-                // (3f 값을 조절하면 숫자가 깎이는 속도를 더 빠르게 혹은 느리게 바꿀 수 있습니다)
+                if (!smoothedImbalanceScores.ContainsKey(mId)) smoothedImbalanceScores[mId] = targetScore;
                 smoothedImbalanceScores[mId] = Mathf.MoveTowards(smoothedImbalanceScores[mId], targetScore, Time.deltaTime * 3f);
-                
-                // 2. 부드럽게 보간된 점수를 공식에 대입하여 실제 비율(%) 구하기
                 float realPercent = (smoothedImbalanceScores[mId] / 2f + 0.5f) * 100f;
-                
-                // 3. 해제 기준선인 65%를 '0'으로 잡고 남은 수치 계산
                 float remainBias = Mathf.Max(0f, realPercent - 65f);
-
-                // 이제 숫자가 15.0 ➔ 14.2 ➔ 11.5 ➔ 5.0 처럼 실시간으로 가독성 있게 차감됩니다!
-                sb.AppendLine($"{machineName}: 부품 부족 ('{banned}' 소진) <color=#FFDD00>[{remainBias:F1}]</color> — '{opposite}' 사용으로 균형 회복 필요");
+                sb.AppendLine($"{machineName}: 부품 부족 ('{banned}' 소진)\n<color=#FFDD00>[남은 편향도: {remainBias:F1}]</color>\n'{opposite}' 사용으로 균형 회복 필요");
             }
-            else if (autoFixTimers.ContainsKey(mId)) {
+            // 2) 일반 과열 고장일 때
+            else {
                 hasAnyBreakdown = true;
                 hasTimedBreakdown = true;
                 hasGiveUpBreakdown = true; 
-                int timeLeft = Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId]));
-                sb.AppendLine($"{machineName}: {timeLeft}초 후 복구");
+
+                string standardReason = timedBreakdownReasons.ContainsKey(mId) ? timedBreakdownReasons[mId] : "코드 파손됨";                
+                int timeLeft = autoFixTimers.ContainsKey(mId) ? Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId])) : 0;
+                // [텍스트 포맷팅] 유저가 기획한 4가지 파손 종류가 패널에 실시간으로 직관적으로 찍힙니다!
+                sb.AppendLine($"{machineName} 고장 \n <color=#FFDD00>[{standardReason}]</color> \n {timeLeft}초 후 자동 복구");
             }
         }
 
