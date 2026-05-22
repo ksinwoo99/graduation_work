@@ -493,18 +493,18 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         switch (errorType) {
             case 0: 
                 brokenCode = System.Text.RegularExpressions.Regex.Replace(brokenCode, @"^.*(mining|producting)\(.*\).*$\r?\n?", "", System.Text.RegularExpressions.RegexOptions.Multiline);
-                breakdownReason = "핵심 명령어가 지워졌습니다!";
+                breakdownReason = "핵심 명령어가 \n 지워졌습니다!";
                 break;
             case 1: 
                 brokenCode = System.Text.RegularExpressions.Regex.Replace(brokenCode, @"^.*name\s*=.*$\r?\n?", "", System.Text.RegularExpressions.RegexOptions.Multiline);
-                breakdownReason = "기계의 이름표가 지워졌습니다!";
+                breakdownReason = "기계의 이름표가 \n 지워졌습니다!";
                 break;
             case 2: 
                 string banTarget = brokenCode.Contains("for") ? "for" : (brokenCode.Contains("while") ? "while" : "loop");
                 if (banTarget != "loop") {
                     forbiddenKeywords[targetId] = banTarget;
                     brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode;
-                    breakdownReason = $"과부하로 인해 '{banTarget}' 문법을 당분간 사용할 수 없습니다!";
+                    breakdownReason = $"과부하로 인해 '{banTarget}' \n 문법을 사용할 수 없습니다!";
                 } else {
                     brokenCode = brokenCode.Replace("(", ""); 
                     breakdownReason = "코드가 파손되었습니다!";
@@ -518,10 +518,10 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                     lineList.RemoveAt(lineToRemove);
                     lineList.Insert(lineToRemove, "    # [DATA LOST] 시스템 과부하로 코드가 소실되었습니다.");
                     brokenCode = string.Join("\n", lineList);
-                    breakdownReason = "시스템 과부하로 코드의 일부가 날아갔습니다!";
+                    breakdownReason = "시스템 과부하로 \n 코드의 일부가 날아갔습니다!";
                 } else {
                     brokenCode = "# [FATAL ERROR] 데이터 완전 소실"; 
-                    breakdownReason = "코드가 완전히 소실되었습니다!";
+                    breakdownReason = "코드가 완전히 \n 소실되었습니다!";
                 }
                 break;
         }
@@ -719,7 +719,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
 
                 int timeLeft = autoFixTimers.ContainsKey(mId) ? Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId])) : 0;
-                sb.AppendLine($"{machineName}에 문제 발생\n <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
+                sb.AppendLine($"{machineName} : <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
             }
         }
 
