@@ -73,6 +73,11 @@ from ml.bandit_thompson   import ThompsonBandit
 from ml.contextual_policy import ContextualBandit
 from ml.context_encoder   import encode_user_context
 from ml.reward            import compute_reward
+from ml.hint_routing      import (
+    filter_variants,
+    resolve_success_hint_group,
+    effective_hint_rank,
+)
 
 app = FastAPI()
 
@@ -268,21 +273,20 @@ def _load_hint_stats_from_db() -> None:
         )
 
 
-def _bandit_select(group_key: str, context: list[float] | None = None) -> tuple[str, str]:
+def _bandit_select(
+    group_key: str,
+    context: list[float] | None = None,
+    features: dict | None = None,
+) -> tuple[str, str]:
     """
     Contextual Bandit + Thompson Sampling 으로 힌트 변형을 선택합니다.
 
-    선택 흐름:
-        ContextualBandit.select(context, candidates)
-            → RF 정책 모델이 로드돼 있으면 컨텍스트 기반 예측 보상 최대 변형
-            → 모델이 없거나 ε(=0.1) 탐색 발동 시 ThompsonBandit 으로 폴백
-        ThompsonBandit.select(candidates)
-            → Beta(α,β) 분포에서 1회 샘플링한 값이 가장 큰 변형 선택
-            → 표본이 적은 변형은 분산이 커서 자연스럽게 탐색 빈도 증가 (cold-start 강건)
-
-    반환: (hint_text, hint_type_id)
+    features 가 주어지면 hint_routing.filter_variants 로
+    현재 코드에 맞지 않는 변형(이미 달성한 upsell 등)을 제외합니다.
     """
-    variants = HINT_VARIANTS.get(group_key, [])
+    variants = filter_variants(group_key, features or {})
+    if not variants and group_key != "succ_r2_ceiling":
+        variants = filter_variants("succ_r2_ceiling", features or {})
     if not variants:
         return BANDIT_FALLBACK_OK, f"succ_unknown_{group_key}"
     if len(variants) == 1:
@@ -483,10 +487,14 @@ def predict_cluster_rank(features: dict, execution_time: float) -> int:
         return -1
 
     try:
-        # score는 학습 피처에서 제외(순환 결합 방지) — kmeans_trainer.py 와 동일하게 맞춤
         feat_with_meta = {**features, 'execution_time': execution_time}
-        user_df        = pd.DataFrame([feat_with_meta])
-        scaled         = scaler.transform(user_df)
+        if _feature_names:
+            user_df = pd.DataFrame(
+                [{k: feat_with_meta.get(k, 0) for k in _feature_names}]
+            )
+        else:
+            user_df = pd.DataFrame([feat_with_meta])
+        scaled = scaler.transform(user_df)
 
         # 학습 시 적용한 피처 가중치를 추론에도 동일하게 적용 (공간 일치)
         if _feature_weights and len(_feature_weights) == scaled.shape[1]:
@@ -531,31 +539,31 @@ def calculate_score(request: CodeSubmitRequest, features: dict) -> float:
 
     [공식]
         base          50점  : 코드가 실행된 것만으로 주어지는 기본 점수
-        loop_bonus    +20점 : 반복문(for/while) 1개 이상 사용 시
-        efficiency    +10점 : for range(N) 효율 비례 (loop_efficiency × 5, 최대 10)
-        while_bonus   +10점 : while 무한루프 사용 시에만
-                              일반 while 조건문은 for 와 동급 — 빈도 조절은 loop_balance API 담당
+        loop_bonus    +30점 : 반복문 사용 +20, range 효율 최대 +10
+        infinite_bonus +10점: 무한 루프(for count / while True) 기본 +6, break +2, if in loop +2
         time_penalty  -25점 : 실행 시간 × 5 (최대 25, 5초 이상 동일 패널티)
         density_bonus  +5점 : 줄당 함수 호출 수 비례 (빽빽하게 쓴 코드 보상)
 
     [설계 의도]
         - 루프를 안 쓰면 최대 55점 (base + density만)
         - for/while 반복문 사용 시 최대 85점 (loop_efficiency 비례)
-        - while True (퀘스트 해금 기능) 사용 시 최대 95점 — 게임 내 특수 기계 동작 보상
-          ※ while True 가 유일한 고득점 수단이 아님. 조건부 while 도 for 와 동급으로 평가
+        - 무한 루프만으로 만점이 아님 — break·if in loop 로 추가 보너스
     """
     base = 50.0
 
     loop_bonus = 0.0
     if features['has_loop']:
         loop_bonus += 20.0
-        # loop_efficiency = for range(N) 총합 / line_count
-        # 예: 4줄에서 range(10) → 10/4=2.5 → +min(10, 2.5*5)=+10
         loop_bonus += min(10.0, features['loop_efficiency'] * 5.0)
 
-    # while True / for i in count() (무한루프) 사용 시에만 보너스
-    # 일반 while 조건문(while i < 5 등)은 for 와 동급 취급 — 빈도 균형은 loop_balance API 담당
-    while_bonus = 10.0 if features.get('has_infinite_loop', features.get('has_infinite_while', 0)) else 0.0
+    infinite_bonus = 0.0
+    if features.get('has_infinite_for') or features.get('has_infinite_while'):
+        infinite_bonus += 6.0
+        if features.get('has_break_in_loop'):
+            infinite_bonus += 2.0
+        if features.get('has_if_inside_loop'):
+            infinite_bonus += 2.0
+    infinite_bonus = min(10.0, infinite_bonus)
 
     # 5초 이상은 동일 페널티로 묶어 지나친 감점 방지
     time_penalty = min(25.0, request.execution_time * 5.0)
@@ -564,7 +572,7 @@ def calculate_score(request: CodeSubmitRequest, features: dict) -> float:
     density       = features['func_call_count'] / max(1, features['line_count'])
     density_bonus = min(5.0, density * 10.0)
 
-    raw = base + loop_bonus + while_bonus - time_penalty + density_bonus
+    raw = base + loop_bonus + infinite_bonus - time_penalty + density_bonus
     return round(max(0.0, min(100.0, raw)), 2)
 
 
@@ -662,7 +670,6 @@ _PYTHON_BUILTINS = [
     "dict", "input", "type", "abs", "sum", "max", "min",
     "round", "sorted", "enumerate", "zip", "map", "filter",
     "True", "False", "None",
-    # itertools (화이트리스트로 허용된 심볼) — `from itertools import X` 안내에 활용
     "count",
 ]
 
@@ -869,11 +876,102 @@ def _is_move_standalone(source_code: str, features: dict) -> bool:
 # AI 힌트 생성 (3단계 폭포수 구조)
 # ──────────────────────────────────────────────────────────
 
-# 기계 타입별 필수 함수 목록
-# 새로운 기계 추가 시 이 딕셔너리에만 추가하면 됩니다.
+# 기계 타입별 필수 함수 목록 (공백 제거 후 부분 문자열 매칭)
 REQUIRED_FUNCTIONS: dict[str, list[str]] = {
-    "Miner_Common": ["mining()"],
+    "Miner_Common":       ["mining(resCommon)"],
+    "Miner_Advanced":     ["mining(resRare)"],
+    "Miner_Hightech":     ["mining(resSpecial)"],
+    "Miner_Superior":     ["mining(resExotic)"],
+    "Productor_Common":   ["producting(Common,"],
+    "Productor_Advanced": ["producting(Rare,"],
+    "Productor_Hightech": ["producting(Special,"],
+    "Productor_Superior": ["producting(Exotic,"],
 }
+
+# 2차 게임 문법 — 기계 등급별 허용 mining / producting 인자
+_MACHINE_CALL_RULES: dict[str, dict[str, str]] = {
+    "Miner_Common":       {"kind": "mining", "arg": "resCommon"},
+    "Miner_Advanced":     {"kind": "mining", "arg": "resRare"},
+    "Miner_Hightech":     {"kind": "mining", "arg": "resSpecial"},
+    "Miner_Superior":     {"kind": "mining", "arg": "resExotic"},
+    "Productor_Common":   {"kind": "producting", "tier": "Common"},
+    "Productor_Advanced": {"kind": "producting", "tier": "Rare"},
+    "Productor_Hightech": {"kind": "producting", "tier": "Special"},
+    "Productor_Superior": {"kind": "producting", "tier": "Exotic"},
+}
+
+_MACHINE_CALL_HINT: dict[str, str] = {
+    "Miner_Common":       "mining(resCommon)",
+    "Miner_Advanced":     "mining(resRare)",
+    "Miner_Hightech":     "mining(resSpecial)",
+    "Miner_Superior":     "mining(resExotic)",
+    "Productor_Common":   "producting(Common, 'A' 또는 'B')",
+    "Productor_Advanced": "producting(Rare, 'A' 또는 'B')",
+    "Productor_Hightech": "producting(Special, 'A' 또는 'B')",
+    "Productor_Superior": "producting(Exotic, 'A' 또는 'B')",
+}
+
+_MINING_CALL_RE = re.compile(r"mining\s*\(\s*([^)]*)\s*\)", re.IGNORECASE)
+_PRODUCTING_CALL_RE = re.compile(
+    r"producting\s*\(\s*([^,)]+)\s*,\s*['\"]?([ab])['\"]?\s*\)",
+    re.IGNORECASE,
+)
+
+
+def _strip_comments_for_game_check(source_code: str) -> str:
+    """클라이언트 GameCodeValidator 와 동일한 단순 주석/문자열 제거."""
+    if not source_code:
+        return ""
+    out: list[str] = []
+    for line in source_code.split("\n"):
+        buf: list[str] = []
+        in_single = in_double = False
+        for ch in line:
+            if not in_single and not in_double and ch == "#":
+                break
+            if not in_double and ch == "'":
+                in_single = not in_single
+                buf.append(" ")
+                continue
+            if not in_single and ch == '"':
+                in_double = not in_double
+                buf.append(" ")
+                continue
+            buf.append(" " if (in_single or in_double) else ch)
+        out.append("".join(buf))
+    return "\n".join(out)
+
+
+def _detect_wrong_machine_call(source_code: str, machine_type: str) -> str | None:
+    """
+    등급에 맞지 않는 mining / producting 인자가 있으면 안내용 expected 문자열 반환.
+    위반 없으면 None.
+    """
+    rule = _MACHINE_CALL_RULES.get(machine_type)
+    if not rule:
+        return None
+
+    src = _strip_comments_for_game_check(source_code)
+    expected_hint = _MACHINE_CALL_HINT.get(machine_type, "")
+
+    if rule["kind"] == "mining":
+        expected_arg = re.sub(r"\s+", "", rule["arg"]).lower()
+        calls = _MINING_CALL_RE.findall(src)
+        if not calls:
+            return None
+        for raw_arg in calls:
+            if re.sub(r"\s+", "", raw_arg).lower() != expected_arg:
+                return expected_hint or f"mining({rule['arg']})"
+        return None
+
+    expected_tier = rule["tier"].lower()
+    calls = _PRODUCTING_CALL_RE.findall(src)
+    if not calls:
+        return None
+    for raw_tier, _ in calls:
+        if re.sub(r"\s+", "", raw_tier).lower() != expected_tier:
+            return expected_hint or f"producting({rule['tier']}, 'A' 또는 'B')"
+    return None
 
 
 def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
@@ -918,7 +1016,7 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
 
         # ── Sandbox 보안 차단 ───────────────────────────
         # server/8000.py 의 SecurityVisitor 가 "보안: 외부 모듈 사용 금지 (X.Y)"
-        # 형식으로 던지는 메시지를 캐치. 화이트리스트(itertools.count) 외엔 모두 차단됨.
+        # 형식으로 던지는 메시지를 캐치. 외부 import 는 모두 차단됨 (count 는 샌드박스 기본 제공).
         if "보안: 외부 모듈 사용 금지" in log or "외부 모듈 사용 금지" in log:
             m = re.search(r"외부 모듈 사용 금지\s*\(([^)]+)\)", log)
             target = m.group(1) if m else None
@@ -980,12 +1078,6 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
             undef = _extract_name_from_nameerror(log)
 
             if undef:
-                # 0순위: itertools import 없이 count() 호출
-                if undef == "count" and not re.search(
-                    r'from\s+itertools\s+import\s+[^#\n]*\bcount\b', source
-                ):
-                    return msg(Err.NAME_COUNT_IMPORT)
-
                 if re.search(r'\bname\s*=\s*' + re.escape(undef), source):
                     return msg(Err.NAME_MACHINE_UNQUOTED, undef=undef)
 
@@ -1084,6 +1176,10 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
         if "name=" not in clean:
             return msg(Machine.NO_NAME)
 
+        wrong_call = _detect_wrong_machine_call(request.source_code, request.machine_type)
+        if wrong_call:
+            return msg(Machine.WRONG_ARGS, expected=wrong_call)
+
         for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
             if fn.replace(" ", "") not in clean:
                 return msg(Machine.MISSING_FN, fn=fn)
@@ -1149,6 +1245,8 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
             return "machine_locked_loop"
         if "name=" not in clean:
             return "machine_no_name"
+        if _detect_wrong_machine_call(request.source_code, request.machine_type):
+            return "machine_wrong_args"
         for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
             if fn.replace(" ", "") not in clean:
                 return "machine_missing_fn"
@@ -1162,16 +1260,13 @@ def _generate_hint_typed(
     request: CodeSubmitRequest, score: float,
     features: dict, cluster_rank: int,
     context: list[float] | None = None,
+    antipattern_tags: list[str] | None = None,
 ) -> tuple[str, str]:
     """
     힌트 텍스트와 hint_type ID를 함께 반환합니다.
 
-    Layer 0 (move 전용)  : 오타 / 미완성 / 루프 내 사용 감지 — 성공/실패 무관 최우선
-    성공 힌트(move 단독): "succ_move" — 컨테이너 타일 설치 만점 케이스
-    성공 힌트(rank 0/1) : Contextual Bandit + Thompson Sampling 으로 변형 선택
-                          (context 인자가 있으면 RF 정책 사용, 없으면 Thompson 단독)
-    성공 힌트(rank 2)   : 단일 최상위 메시지 반환
-    에러 / 기계 힌트    : 기존 generate_hint() 로직 유지 + 타입 태그 부여
+    성공 힌트: effective_hint_rank + resolve_success_hint_group 으로 풀 결정,
+               filter_variants 로 현재 코드에 맞지 않는 upsell 변형 제외 후 밴딧 선택.
     """
     # ══════════════════════════════════════════════════════
     # Layer 0: move() 전용 — 성공/실패 모든 경로에서 최우선 평가
@@ -1190,28 +1285,12 @@ def _generate_hint_typed(
         if _is_move_standalone(request.source_code, features):
             return msg(SUCCESS_MOVE_STANDALONE), "succ_move"
 
-        if cluster_rank == 0:
-            group = "succ_r0_has_if" if features.get('if_count', 0) > 0 else "succ_r0_simple"
-            return _bandit_select(group, context)
-        if cluster_rank == 1:
-            group = (
-                "succ_r1_while"
-                if (features.get('while_count', 0) > 0
-                    and not features.get('has_infinite_while', 0))
-                else "succ_r1_for"
+        hint_rank = effective_hint_rank(cluster_rank, features)
+        if hint_rank >= 0:
+            group = resolve_success_hint_group(
+                hint_rank, features, antipattern_tags,
             )
-            return _bandit_select(group, context)
-        if cluster_rank == 2:
-            # rank 2 는 "무한 자동화" 형태에 따라 3가지 풀로 라우팅:
-            #   while True:           → succ_r2_infinite_while  (대표적 무한 자동화)
-            #   for i in count(...):  → succ_r2_infinite_for_count (itertools 활용 파이써닉)
-            #   for range 만 사용      → succ_r2_for_range (큰 N 고효율 유한 루프)
-            if features.get('has_infinite_for', 0):
-                return _bandit_select("succ_r2_infinite_for_count", context)
-            if features.get('has_infinite_while', 0):
-                return _bandit_select("succ_r2_infinite_while", context)
-            return _bandit_select("succ_r2_for_range", context)
-        # cluster_rank == -1 (모델 미로드)
+            return _bandit_select(group, context, features)
         return msg(SUCCESS_UNKNOWN_CLUSTER), "succ_unknown"
 
     # 에러 / 기계 힌트 — 기존 로직 재사용
@@ -1252,6 +1331,8 @@ async def submit_code(request: CodeSubmitRequest):
         # '일반 학습자형'으로 오분류하는 현상을 방지하는 보정 규칙.
         if cluster_rank > 0 and features.get('has_loop', 0) == 0:
             cluster_rank = 0
+        if cluster_rank == 1 and features.get('has_infinite_loop', 0):
+            cluster_rank = 2
 
         ast_complexity = calculate_ast_complexity(request.source_code)
         cur_error_type = (
@@ -1344,7 +1425,9 @@ async def submit_code(request: CodeSubmitRequest):
         except Exception:
             user_context = None
         ai_hint, hint_type = _generate_hint_typed(
-            request, score, features, cluster_rank, context=user_context,
+            request, score, features, cluster_rank,
+            context=user_context,
+            antipattern_tags=antipattern_tags,
         )
 
         if cluster_rank >= 0:
@@ -1387,14 +1470,10 @@ async def submit_code(request: CodeSubmitRequest):
         )
 
         # ─── ⑧ 루프 균형 분석 → 임밸런스 고장 / 복구 신호 ──────────
-        # 현재 제출 INSERT 이후에 호출되어 최신 통계를 반영합니다.
-        # is_success=1 만 집계하므로 실패 제출에는 자연스럽게 무영향.
-        #
-        # sample_size=10 — 회복 후 재트리거가 16+ 제출이나 걸리는 문제를 막기 위해
-        # 실시간 트리거용 윈도우는 짧게 둡니다.
-        # /api/user_loop_balance 는 통계 조회용으로 기본 20 유지.
+        # installed_machines(채굴기 4 + 가공기 4) 에 저장된 코드 기준.
+        # 디버깅 연타만으로 균형이 풀리지 않도록 code_logs 가 아닌 세이브 DB 를 사용합니다.
         try:
-            balance = _compute_loop_balance(cursor, user_pk, sample_size=10)
+            balance = _compute_loop_balance(cursor, user_pk)
         except Exception as e:
             print(f"[LoopBalance] 분석 실패: {e}")
             balance = {
@@ -1550,20 +1629,40 @@ async def get_user_cluster_history(user_id: str, limit: int = 10):
 # ──────────────────────────────────────────────────────────
 # imbalance_score 가 이 값 이상이면 한쪽 루프에 과하게 치우친 것으로 간주하여
 # 기계를 고장내는 신호(should_break_machine=True) 를 보냅니다.
-# 0.6 = 8:2 편향 (for:while 또는 while:for 가 8:2 이상)
-#       |0.8 - 0.5| × 2 = 0.6  (또는 for_ratio=0.2 일 때 동일)
-_IMBALANCE_BREAK_THRESHOLD: float = 0.6
+# 0.5 = 75:25 편향 (한쪽 루프 비율 75% 이상) — |0.75 - 0.5| × 2 = 0.5
+_IMBALANCE_BREAK_THRESHOLD: float = 0.5
 
 # imbalance_score 가 이 값 이하면 다시 균형을 회복한 것으로 간주하여
 # 클라이언트가 임밸런스 고장을 해제하도록 신호(is_balance_fixed=True) 를 보냅니다.
-# 0.3 = 6.5:3.5 비율 (|0.65 - 0.5| × 2 = 0.3)
+# 0.3 = 65:35 이하 (한쪽 루프 비율 65% 이하) — |0.65 - 0.5| × 2 = 0.3
 _IMBALANCE_FIX_THRESHOLD: float = 0.3
 
+# Unity Ingame_System_Save.GetMachineTypeInt 와 동일 (채굴기 1~4, 가공기 5~8)
+_LOOP_BALANCE_MACHINE_TYPES: tuple[int, ...] = (1, 2, 3, 4, 5, 6, 7, 8)
 
-def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
+
+def _fetch_installed_machine_codes(cursor, user_pk: int) -> list[dict]:
+    """유저 세이브 DB 의 채굴기·가공기(최대 8종) source_code 를 조회합니다."""
+    placeholders = ",".join(["%s"] * len(_LOOP_BALANCE_MACHINE_TYPES))
+    cursor.execute(
+        f"""
+        SELECT machine_type, source_code
+        FROM   installed_machines
+        WHERE  user_pk = %s
+          AND  machine_type IN ({placeholders})
+        """,
+        (user_pk, *_LOOP_BALANCE_MACHINE_TYPES),
+    )
+    return cursor.fetchall() or []
+
+
+def _compute_loop_balance(cursor, user_pk: int) -> dict:
     """
-    유저의 최근 성공 제출(최대 sample_size 개)에서
+    유저의 installed_machines(채굴기 4 + 가공기 4) 에 저장된 코드에서
     for / while 누적 사용량을 분석한 균형 지표 dict 를 반환합니다.
+
+    code_logs(디버깅 성공 이력)가 아닌 세이브 슬롯 코드를 쓰므로,
+    여러 기계의 코드를 직접 수정·저장해야만 편향도가 회복됩니다.
 
     /api/user_loop_balance/{user_id} 와 /api/submit_code 모두에서 공통 사용.
 
@@ -1572,8 +1671,8 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
         sample_count, total_for_count, total_while_count
         for_ratio, while_ratio (0.0~1.0)
         imbalance_score      (0.0~1.0)  — 0 에 가까울수록 균형
-        should_break_machine (bool)     — imbalance_score >= 0.6
-        is_balance_fixed     (bool)     — imbalance_score <= 0.3 (6.5:3.5 이하)
+        should_break_machine (bool)     — imbalance_score >= 0.5 (75% 편향 이상)
+        is_balance_fixed     (bool)     — imbalance_score <= 0.3 (65% 편향 이하)
         consumed_part_type   ("for"|"while") — 더 많이 사용된 부품 종류
     """
     _no_data_base = {
@@ -1589,29 +1688,29 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
     }
 
     try:
-        cursor.execute(
-            """
-            SELECT source_code FROM code_logs
-            WHERE  user_pk = %s AND is_success = 1
-            ORDER  BY created_at DESC
-            LIMIT  %s
-            """,
-            (user_pk, sample_size)
-        )
-        rows = cursor.fetchall() or []
+        rows = _fetch_installed_machine_codes(cursor, user_pk)
     except Exception:
         return {**_no_data_base, "status": "no_data",
                 "message": msg(Api.LOOP_BALANCE_QUERY_FAIL)}
 
     if not rows:
         return {**_no_data_base, "status": "no_data",
-                "message": msg(Api.LOOP_BALANCE_NO_SUBMISSIONS)}
+                "message": msg(Api.LOOP_BALANCE_NO_MACHINES)}
 
     total_for = total_while = 0
+    machines_with_code = 0
     for row in rows:
-        f = extract_features(row['source_code'])
+        source = (row.get('source_code') or '').strip()
+        if not source:
+            continue
+        machines_with_code += 1
+        f = extract_features(source)
         total_for   += f['for_count']
         total_while += f['while_count']
+
+    if machines_with_code == 0:
+        return {**_no_data_base, "status": "no_data",
+                "message": msg(Api.LOOP_BALANCE_NO_MACHINES)}
 
     total_loops = total_for + total_while
     if total_loops == 0:
@@ -1619,7 +1718,7 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
             **_no_data_base,
             "status":       "no_loops",
             "message":      msg(Api.LOOP_BALANCE_NO_LOOPS),
-            "sample_count": len(rows),
+            "sample_count": machines_with_code,
         }
 
     for_ratio   = total_for   / total_loops
@@ -1629,7 +1728,7 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
     # 0.0 = 완전 균형(for 50% : while 50%) / 1.0 = 한쪽만 사용
     imbalance_score = round(abs(for_ratio - 0.5) * 2, 3)
 
-    # 8:2 이상 치우치면 고장 트리거, 6.5:3.5 이하로 회복하면 해제 신호
+    # 75:25 이상 치우치면 고장, 65:35 이하로 회복하면 해제 신호
     should_break_machine = imbalance_score >= _IMBALANCE_BREAK_THRESHOLD
     is_balance_fixed     = imbalance_score <= _IMBALANCE_FIX_THRESHOLD
 
@@ -1638,7 +1737,7 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
 
     return {
         "status":               "success",
-        "sample_count":         len(rows),
+        "sample_count":         machines_with_code,
         "total_for_count":      total_for,
         "total_while_count":    total_while,
         "for_ratio":            round(for_ratio, 3),
@@ -1653,18 +1752,21 @@ def _compute_loop_balance(cursor, user_pk: int, sample_size: int = 20) -> dict:
 @app.get("/api/user_loop_balance/{user_id}")
 async def get_user_loop_balance(user_id: str, sample_size: int = 20):
     """
-    유저의 최근 성공 제출(최대 sample_size개)에서
+    유저의 installed_machines(채굴기·가공기 8종) 저장 코드에서
     for / while 사용 비율을 분석하여 균형 지표를 반환합니다.
+
+    sample_size 는 하위 호환용으로만 남아 있으며 집계에 사용하지 않습니다.
 
     Unity 클라이언트 활용 가이드:
         should_break_machine (bool)            : True 면 기계 고장 이벤트 발생
-                                                 (imbalance_score >= _IMBALANCE_BREAK_THRESHOLD)
+                                                 (한쪽 루프 75% 이상, score >= 0.5)
         is_balance_fixed     (bool)            : True 면 임밸런스 고장 해제 트리거
-                                                 (imbalance_score <= _IMBALANCE_FIX_THRESHOLD)
+                                                 (한쪽 루프 65% 이하, score <= 0.3)
         consumed_part_type   (str, "for"|"while") : 고장 시 소모될 부품 종류
                                                     (= 더 많이 사용된 루프 유형)
         imbalance_score      (float, 0.0~1.0)  : 0 에 가까울수록 균형 잡힌 코딩 스타일
     """
+    del sample_size  # code_logs 윈도우 방식 폐기 — installed_machines 만 사용
     conn   = pymysql.connect(**DB_CONFIG)
     cursor = conn.cursor()
     try:
@@ -1674,7 +1776,7 @@ async def get_user_loop_balance(user_id: str, sample_size: int = 20):
             raise HTTPException(
                 status_code=404, detail=msg(Api.USER_NOT_FOUND, user_id=user_id),
             )
-        return _compute_loop_balance(cursor, user_record['pk_id'], sample_size)
+        return _compute_loop_balance(cursor, user_record['pk_id'])
     finally:
         conn.close()
 
