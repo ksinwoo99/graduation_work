@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef642e8c1c1a0f439c8578b0d3955be, type: 3}
+  m_Name: Help_22
+  m_EditorClassIdentifier: 
+  title: "2-2. \uC870\uAC74\uBB38"
+  content: "\uC870\uAC74\uBB38(\uAC00\uACF5\uAE30 \uC2EC\uD654)"
+  unlockTutorialStep: 44
+  categoryPrefab: {fileID: 4205076946549086250, guid: 931bbea53d1489640accd18c8908c48a, type: 3}

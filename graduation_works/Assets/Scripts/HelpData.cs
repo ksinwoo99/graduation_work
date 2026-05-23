@@ -10,4 +10,7 @@ public class HelpData : ScriptableObject
     
     [Header("해금 조건")]
     public int unlockTutorialStep; // 이 튜토리얼 Step에 도달하면 해금됨
+    
+    [Header("프리팹 설정")]
+    public GameObject categoryPrefab;
 }

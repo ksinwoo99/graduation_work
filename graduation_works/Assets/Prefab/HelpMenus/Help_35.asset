@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aef642e8c1c1a0f439c8578b0d3955be, type: 3}
-  m_Name: Help_04
+  m_Name: Help_35
   m_EditorClassIdentifier: 
-  title: "4. if\uBB38\uC5D0 \uB300\uD574\uC11C"
-  content: "if\uBB38 \uC548\uB0B4"
-  unlockTutorialStep: 44
+  title: "3-5. \uC124\uCE58\uBB3C: \uCC3D\uACE0 \uBC0F \uD310\uB9E4\uC18C"
+  content: "\uCC3D\uACE0 \uBC0F \uD310\uB9E4\uC18C"
+  unlockTutorialStep: 69
+  categoryPrefab: {fileID: 4205076946549086250, guid: b7e4cd0e6c50f0041b7e623e3d08d67e, type: 3}
