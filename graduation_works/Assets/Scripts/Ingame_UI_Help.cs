@@ -168,15 +168,16 @@ public class Ingame_UI_Help : MonoBehaviour
 
         foreach(var item in allHelpItems)
         {
-            GameObject newBtnObj = Instantiate(helpButtonPrefab, contentParent);
+            GameObject prefabToUse = item.categoryPrefab != null ? item.categoryPrefab : helpButtonPrefab;
+            GameObject newBtnObj = Instantiate(prefabToUse, contentParent);
             spawnedButtons.Add(newBtnObj);
 
             TextMeshProUGUI btnText = newBtnObj.GetComponentInChildren<TextMeshProUGUI>();
             Button btn = newBtnObj.GetComponent<Button>();
 
-            // 프리팹 내부에 들어있는 개별 레드도트 오브젝트 찾기
-            // (주의: 프리팹 내 레드도트 오브젝트명이 "RedDot"이어야 합니다)
+            // 프리팹 내부에 들어있는 오브젝트명이 "RedDot"인 요소 찾기
             Transform subRedDotTransform = newBtnObj.transform.Find("RedDot");
+
             GameObject subRedDot = subRedDotTransform != null ? subRedDotTransform.gameObject : null;
 
             if (currentTutorialStep >= item.unlockTutorialStep)

@@ -7331,7 +7331,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: --
+  m_text: "\uC218\uC1A1 \uBCA8\uD2B8"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
   m_sharedMaterial: {fileID: 3358187383594666783, guid: b0b819ab419fe3642b5fc1d824636fef, type: 2}
@@ -14870,8 +14870,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -18659,7 +18659,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1269763379}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.0021001399, w: 0.9999978}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -18668,11 +18668,11 @@ RectTransform:
   - {fileID: 877477513}
   - {fileID: 225661258}
   m_Father: {fileID: 219230709}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.241}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1073.7, y: 610.5}
-  m_SizeDelta: {x: 134.88, y: 18.02}
+  m_AnchoredPosition: {x: 1075.4, y: 610.2}
+  m_SizeDelta: {x: 134.88, y: 30.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1269763381
 MonoBehaviour:
@@ -18816,7 +18816,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.00013733, y: 0}
-  m_SizeDelta: {x: 454.4, y: 1067.7}
+  m_SizeDelta: {x: 454.4, y: 1008.86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1305971560
 MonoBehaviour:
@@ -21023,8 +21023,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_AnchoredPosition: {x: -0.000015258789, y: -0.24499989}
+  m_SizeDelta: {x: 35, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1496722002
 MonoBehaviour:
@@ -21771,8 +21771,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000017405, y: -5.55}
-  m_SizeDelta: {x: 414.29, y: 861.58}
+  m_AnchoredPosition: {x: -0.000017405, y: -24.13}
+  m_SizeDelta: {x: 414.29, y: 824.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1563790233
 MonoBehaviour:
@@ -23947,7 +23947,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c1bc8a683d8d14d42b0acd01162df0ec, type: 2}
   - {fileID: 11400000, guid: 5b21dee31ae6dc74cbd53a1422ec2c03, type: 2}
   - {fileID: 11400000, guid: 86841847512f6f544a4ed5d11121e555, type: 2}
+  - {fileID: 11400000, guid: 3d8e636ed4410c7468de7d448ecc30cb, type: 2}
   - {fileID: 11400000, guid: de11431ae21fb5c45a0b568cb040ce32, type: 2}
+  - {fileID: 11400000, guid: 0da428539e8ef4548b235f8287895d11, type: 2}
+  - {fileID: 11400000, guid: 22a68351f14efae4383fbf909f22bc73, type: 2}
+  - {fileID: 11400000, guid: 90e619d494a57f042943cdb961f553a7, type: 2}
+  - {fileID: 11400000, guid: e232968bf8036b74ca51653e6790cd5f, type: 2}
+  - {fileID: 11400000, guid: 8051bd493be49c84b895ae669ead2dbd, type: 2}
+  - {fileID: 11400000, guid: a835fa53a980e074e8e32b19f48787f3, type: 2}
+  - {fileID: 11400000, guid: 2955b58563122ed4ca0abdbbb26b59c8, type: 2}
+  - {fileID: 11400000, guid: c92f1fec1b048804dad7d934af6a2946, type: 2}
+  - {fileID: 11400000, guid: 2ffc8bf2fc4e3e945a4f54dba5d4fdf2, type: 2}
   redDotIcon: {fileID: 917165341}
   viewedUnlockedCount: 0
   currentUnlockedCount: 0
@@ -25951,7 +25961,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 234.7, y: -55.01001}
+  m_AnchoredPosition: {x: 227.2, y: -86}
   m_SizeDelta: {x: 367.07, y: 70.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1907332461
@@ -27296,7 +27306,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1978854431
 RectTransform:
   m_ObjectHideFlags: 0
