@@ -662,7 +662,7 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
 # ──────────────────────────────────────────────────────────
 
 # 게임 내 사용 가능한 명령어 목록 (오타 제안에 사용)
-_GAME_FUNCTIONS = ["mining", "producting", "move", "name"]
+_GAME_FUNCTIONS = ["mining", "producting", "moving", "name"]
 
 # 자주 오타 나는 파이썬 내장 함수 목록
 _PYTHON_BUILTINS = [
@@ -793,7 +793,7 @@ def _has_unclosed_move_call(source_code: str) -> bool:
     """
     for raw_line in source_code.split('\n'):
         line = re.sub(r'#.*', '', raw_line)        # 라인 주석 제거
-        m = re.search(r'\bmove\s*\(', line)
+        m = re.search(r'\bmoving\s*\(', line)
         if not m:
             continue
         depth = 1
@@ -838,7 +838,7 @@ def _ast_contains_move_call(source_code: str) -> bool:
     for node in ast.walk(tree):
         if (isinstance(node, ast.Call)
                 and isinstance(node.func, ast.Name)
-                and node.func.id == 'move'):
+                and node.func.id == 'moving'):
             return True
     return False
 
@@ -857,7 +857,7 @@ def _move_in_loop(source_code: str) -> bool:
         for child in ast.walk(node):
             if (isinstance(child, ast.Call)
                     and isinstance(child.func, ast.Name)
-                    and child.func.id == 'move'):
+                    and child.func.id == 'moving'):
                 return True
     return False
 

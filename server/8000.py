@@ -215,7 +215,7 @@ class Machine:
         def _producting(target="Standard", amount=1):
             print(f"[ACTION] PRODUCTING_{str(target).upper()}")
 
-        def _move(speed="slow"):
+        def _moving(speed="slow"):
             if speed == "fast":
                 print("[ACTION] MOVE_FAST")
             else:
@@ -233,7 +233,7 @@ class Machine:
             "machining": lambda: print("[ACTION] MACHINING"),
             "storing": lambda: print("[ACTION] STORING"),
             "selling": lambda: print("[ACTION] SELLING"),
-            "move": _move,
+            "moving": _moving,
             "slow": "slow",
             "fast": "fast",
             

@@ -36,7 +36,7 @@
             "pos_y": -9999.0,
             "pos_z": -9999.0,
             "rotation_y": 0.0,
-            "source_code": "name = 'belt'\nmove()"
+            "source_code": "name = 'belt'\nmoving()"
         }
     ]
 }
