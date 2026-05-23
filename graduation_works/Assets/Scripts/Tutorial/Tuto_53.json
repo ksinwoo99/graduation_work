@@ -5,10 +5,10 @@
     "res3": 0,
     "res4": 201,
     "res5": 0,
-    "play_time": 38,
+    "play_time": 66,
     "expand_count": 0,
     "quest_id": 4,
-    "tutorial_step": 60,
+    "tutorial_step": 54,
     "conveyor_level": 1,
     "machines": [
         {
@@ -18,7 +18,7 @@
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining()"
+            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining(resCommon)"
         },
         {
             "machine_type": 5,
@@ -28,15 +28,6 @@
             "pos_z": 0.0,
             "rotation_y": 0.0,
             "source_code": "name = '튜토2'\nfor i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')"
-        },
-        {
-            "machine_type": 9,
-            "tile_index": 0,
-            "pos_x": -9999.0,
-            "pos_y": -9999.0,
-            "pos_z": -9999.0,
-            "rotation_y": 0.0,
-            "source_code": "name = 'belt'\nmove()"
         }
     ]
 }
