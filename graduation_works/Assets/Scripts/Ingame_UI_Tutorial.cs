@@ -47,12 +47,6 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     [Header("6. 단계별 프리셋 불러오기 (자동완성)")]
     public Button btnForceSkip;
     public Button btnLoadPreset;
-    public TextAsset json_Step14;
-    public TextAsset json_Step31;
-    public TextAsset json_Step43;
-    public TextAsset json_Step45;
-    public TextAsset json_Step53;
-    public TextAsset json_Step59;
     public TextAsset json_END;
     public GameObject message_Panel;
     public TextMeshProUGUI txtMessagePop;
