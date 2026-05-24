@@ -37,7 +37,7 @@ public class logic_Conveyor : logic_CodingBase {
         return ""; 
     }
 
-    // ✨ [핵심 2] 코드가 없으면 멈추고, moving()가 확인되면 즉시 가동합니다!
+    // ✨ [핵심 2] 코드가 없으면 멈추고, moving()이 확인되면 즉시 가동합니다!
     public override CodeState ValidateCode(string code) {
         string noTags = Regex.Replace(code, "<.*?>", string.Empty);
         string cleanCode = Regex.Replace(noTags, @"\s+", "").ToLower();
