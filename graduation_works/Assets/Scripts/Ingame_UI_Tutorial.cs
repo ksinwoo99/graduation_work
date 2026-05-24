@@ -306,9 +306,9 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
         switch (stepIndex)
         {
-            case 0: SetDialogMode("안녕하세요, 당신의 py.Factory\n발전을 도와줄 어시스트입니다!"); break;
-            case 1: SetDialogMode("기본 목표는,\n'설치물의 코딩과 공장의 자동화'\n입니다!"); break;
-            case 2: SetActionMode("<color=red>우클릭을 누른 후 드래그</color>하면,\n공장 부지를 옮겨 볼 수 있습니다."); break;
+            case 0: SetDialogMode("안녕하세요, 당신의 py.Factory\n발전을 도와줄 어시스트입니다!\n\n기본 목표는,\n'설치물의 코딩과 공장의 자동화'\n입니다"); break;
+            case 1: SetDialogMode("일단 오른쪽에 보시면\n'도움말' 패널이 있어요!\n\n일정 단계 진행시마다 도움말이\n오픈됩니다. 자세한 정보는\n도움말을 참고해주세요!"); break;
+            case 2: SetActionMode("먼저 기본 조작부터\n알려드리겠습니다.\n\n<color=red>우클릭을 누른 후 드래그</color>하면,\n공장 부지를 옮겨 볼 수 있어요."); break;
             case 3: 
                 isActionMode = true;
                 if (dimBackground != null) dimBackground.SetActive(false); 
