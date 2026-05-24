@@ -160,6 +160,8 @@ def _is_count_call(call_node: ast.AST) -> bool:
 
 class LoopTransformer(ast.NodeTransformer):
     def visit_While(self, node):
+        self.generic_visit(node) # 자식 노드들 먼저 처리
+        
         if isinstance(node.test, ast.Constant) and node.test.value is True:
             has_break = any(isinstance(child, ast.Break) for child in ast.walk(node))
             if not has_break:
@@ -172,6 +174,18 @@ class LoopTransformer(ast.NodeTransformer):
                 )
                 node.body.insert(0, print_node)
             node.body.append(ast.Expr(value=ast.Yield(value=None)))
+            return node # 기존 로직이 끝나면 여기서 반환
+            
+        # 일반 while문 (while i < 10 등) 무한 루프 방지 장치 삽입!
+        check_call = ast.Expr(
+            value=ast.Call(
+                func=ast.Name(id='_check_loop', ctx=ast.Load()),
+                args=[], keywords=[]
+            )
+        )
+        # while문의 맨 첫 줄에 _check_loop() 실행 코드를 몰래 끼워넣습니다.
+        node.body.insert(0, check_call)
+        
         return node
 
     def visit_For(self, node):
@@ -221,6 +235,12 @@ class Machine:
             else:
                 print("[ACTION] MOVING")
 
+        self.loop_count = 0
+        def _check_loop():
+            self.loop_count += 1
+            if self.loop_count > 2000:  # 2000번 반복 시 강제 에러 (수치 조절 가능)
+                raise Exception("i += 1 같은 증감식이 있는지 확인하세요")
+
         self.env = {
             "__builtins__": {
                 "print": print, "range": range, "len": len,
@@ -234,6 +254,7 @@ class Machine:
             "storing": lambda: print("[ACTION] STORING"),
             "selling": lambda: print("[ACTION] SELLING"),
             "moving": _moving,
+            "_check_loop": _check_loop,
             "slow": "slow",
             "fast": "fast",
             
