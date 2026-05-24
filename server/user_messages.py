@@ -5,11 +5,11 @@ AI 힌트, 파이썬/게임 오류 안내, 성장·정체 메모, API 응답 mes
 플레이어·클라이언트에 노출되는 한국어 문구는 이 파일만 편집하면 됩니다.
 
 사용법 (main.py):
-    from user_messages import HINT_VARIANTS, RANK_LABELS, msg, Err, Move, ...
+    from user_messages import HINT_VARIANTS, RANK_LABELS, msg, Err, Moving, ...
 
     return msg(Err.NAME_GENERIC)
     return msg(Err.NAME_GENERIC)
-    return msg(Move.TYPO, token=token)   # {token} 치환
+    return msg(Moving.TYPO, token=token)   # {token} 치환
 """
 
 from __future__ import annotations
@@ -271,28 +271,28 @@ SUCCESS_UNKNOWN_CLUSTER = (
     "코드가 정상 적용되었습니다. 반복문을 활용하면 더 높은 점수를 받을 수 있어요!"
 )
 
-SUCCESS_MOVE_STANDALONE = (
+SUCCESS_MOVING_STANDALONE = (
     "[ 컨테이너 타일 ] "
-    "move() 명령으로 컨테이너 타일을 설치했어요! "
+    "moving() 명령으로 컨테이너 타일을 설치했어요! "
     "단독 호출 전용 명령이라 100점 처리됩니다."
 )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# move() 전용 (Layer 0)
+# moving() 전용 (Layer 0)
 # ══════════════════════════════════════════════════════════════════════════════
 
-class Move:
+class Moving:
     UNCLOSED_PAREN = (
-        "'move(' 의 닫는 괄호 ')' 가 빠진 것 같아요!\n"
-        "컨테이너 타일은 'move()' 처럼 빈 괄호로 정확히 입력해야 해요."
+        "'moving(' 의 닫는 괄호 ')' 가 빠진 것 같아요!\n"
+        "컨테이너 타일은 'moving()' 처럼 빈 괄호로 정확히 입력해야 해요."
     )
     TYPO = (
-        "'{token}' 은(는) 'move()' 의 오타로 보여요!\n"
-        "컨테이너 타일을 설치하려면 정확히 'move()' 라고 입력해주세요."
+        "'{token}' 은(는) 'moving()' 의 오타로 보여요!\n"
+        "컨테이너 타일을 설치하려면 정확히 'moving()' 라고 입력해주세요."
     )
     IN_LOOP = (
-        "move() 는 컨테이너 타일을 설치하는 단독 명령어예요!\n"
+        "moving() 는 컨테이너 타일을 설치하는 단독 명령어예요!\n"
         "for / while 반복문 안에서는 사용할 수 없어요."
     )
 
