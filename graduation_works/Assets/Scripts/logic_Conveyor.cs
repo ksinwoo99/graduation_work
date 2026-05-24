@@ -22,7 +22,9 @@ public class logic_Conveyor : logic_CodingBase {
 
     protected override void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        base.Awake(); 
+        if (GetComponent<BoxCollider2D>() == null) gameObject.AddComponent<BoxCollider2D>();
+        
+        base.Awake();
     }
 
     void Start() {
