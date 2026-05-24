@@ -25,13 +25,13 @@ HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
             "[ 단순 코드형 ] "
             "명령을 하나씩 순서대로 실행하는 코드예요. "
             "반복문(for)을 사용하면 같은 명령을 여러 번 한 번에 실행할 수 있어요! "
-            "예시: for i in range(5): mining()",
+            "예시: for i in range(5): mining(Common)",
             "succ_r0_simple_A",
         ),
         (
             "[ 단순 코드형 ] "
             "자원 함수를 한 줄씩 쓰는 대신 반복문으로 묶어보세요! "
-            "예시: for i in range(5): mining()",
+            "예시: for i in range(5): mining(Common)",
             "succ_r0_simple_B",
         ),
     ],
@@ -40,7 +40,7 @@ HINT_VARIANTS: dict[str, list[tuple[str, str]]] = {
             "[ 단순 코드형 ] "
             "조건문(if)을 활용하고 있어요! "
             "여기에 반복문(for)까지 더하면 훨씬 강력해집니다. "
-            "예시: for i in range(5): mining()",
+            "예시: for i in range(5): mining(Common)",
             "succ_r0_has_if_A",
         ),
         (
@@ -236,7 +236,7 @@ RANK_LABELS: dict[int, str] = {
 RANK_LABEL_UNKNOWN = "알 수 없음"
 
 STAGNATION_NUDGE: dict[int, str] = {
-    0: "for i in range(5): mining() 처럼 반복문을 시작해보세요!",
+    0: "for i in range(5): mining(Common) 처럼 반복문을 시작해보세요!",
     1: "while True, for i in count() 로 무한 반복에 도전해보세요!",
 }
 
@@ -274,7 +274,6 @@ SUCCESS_UNKNOWN_CLUSTER = (
 SUCCESS_MOVING_STANDALONE = (
     "[ 컨테이너 타일 ] "
     "moving() 명령으로 컨테이너 타일을 설치했어요! "
-    "단독 호출 전용 명령이라 100점 처리됩니다."
 )
 
 
@@ -384,7 +383,7 @@ class Err:
     )
     TYPE_WRONG_ARGS_FN = (
         "'{fn_name}()' 에 잘못된 개수의 값을 넣었어요.\n"
-        "괄호 안에 값이 필요 없는 명령어일 수도 있어요! 예) mining()"
+        "괄호 안에 자원 등급이 필요해요! 예) mining(Common)"
     )
     TYPE_WRONG_ARGS_GENERIC = (
         "함수에 잘못된 개수의 인자를 전달했어요.\n"
@@ -482,6 +481,11 @@ class Machine:
     WRONG_ARGS = (
         "이 기계 등급에 맞지 않는 함수 인자가 있어요.\n"
         "이 기계는 {expected} 형태만 사용할 수 있습니다."
+    )
+    MINING_USE_TIER_NOT_INVENTORY = (
+        "mining() 안에는 보유량 변수 '{inventory}' 가 아니라 자원 등급 '{tier}' 를 넣어야 해요.\n"
+        "채굴 명령: {expected}\n"
+        "보유량 확인: if {inventory} >= N: 처럼 조건문에서 사용하세요."
     )
     GENERIC = "문법은 맞았지만, 이 기계가 수행할 수 없는 명령입니다."
 

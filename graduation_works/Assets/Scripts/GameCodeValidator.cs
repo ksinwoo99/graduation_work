@@ -39,7 +39,7 @@ public static class GameCodeValidator
         return sb.ToString();
     }
 
-    /// <summary>requiredSyntax 예: mining(resCommon) — 코드 내 모든 mining 호출이 동일 인자인지 검사.</summary>
+    /// <summary>requiredSyntax 예: mining(Common) — 코드 내 모든 mining 호출이 동일 등급 인자인지 검사.</summary>
     public static bool AllMiningCallsMatch(string code, string requiredSyntax)
     {
         if (string.IsNullOrWhiteSpace(requiredSyntax)) return true;
@@ -78,6 +78,18 @@ public static class GameCodeValidator
         }
         return true;
     }
+
+    public static string GetMiningTierForMachine(string machineName)
+    {
+        if (string.IsNullOrEmpty(machineName)) return "";
+        if (machineName.IndexOf("Common", System.StringComparison.OrdinalIgnoreCase) >= 0) return "common";
+        if (machineName.IndexOf("Advanced", System.StringComparison.OrdinalIgnoreCase) >= 0) return "rare";
+        if (machineName.IndexOf("Hightech", System.StringComparison.OrdinalIgnoreCase) >= 0) return "special";
+        if (machineName.IndexOf("Superior", System.StringComparison.OrdinalIgnoreCase) >= 0) return "exotic";
+        return "";
+    }
+
+    public static string NormalizeMiningTierToken(string raw) => NormalizeToken(raw);
 
     public static string GetProductingTierForMachine(string machineName)
     {

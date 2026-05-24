@@ -190,7 +190,7 @@ MonoBehaviour:
   spriteStopped: {fileID: 21300000, guid: 9d9dd6293d56fd643acf50f24205aec3, type: 3}
   isOperating: 1
   isStopping: 0
-  requiredSyntax: mining(resSpecial)
+  requiredSyntax: mining(Special)
   dropList:
   - itemPrefab: {fileID: 1521137862196071764, guid: 83d4b9fd6f14ee045a65e22b7f3c6aa7, type: 3}
     probability: 30
