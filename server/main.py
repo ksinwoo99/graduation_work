@@ -883,10 +883,10 @@ def _is_moving_standalone(source_code: str, features: dict) -> bool:
 
 # 기계 타입별 필수 함수 목록 (공백 제거 후 부분 문자열 매칭)
 REQUIRED_FUNCTIONS: dict[str, list[str]] = {
-    "Miner_Common":       ["mining(resCommon)"],
-    "Miner_Advanced":     ["mining(resRare)"],
-    "Miner_Hightech":     ["mining(resSpecial)"],
-    "Miner_Superior":     ["mining(resExotic)"],
+    "Miner_Common":       ["mining(Common)"],
+    "Miner_Advanced":     ["mining(Rare)"],
+    "Miner_Hightech":     ["mining(Special)"],
+    "Miner_Superior":     ["mining(Exotic)"],
     "Productor_Common":   ["producting(Common,"],
     "Productor_Advanced": ["producting(Rare,"],
     "Productor_Hightech": ["producting(Special,"],
@@ -895,10 +895,10 @@ REQUIRED_FUNCTIONS: dict[str, list[str]] = {
 
 # 2차 게임 문법 — 기계 등급별 허용 mining / producting 인자
 _MACHINE_CALL_RULES: dict[str, dict[str, str]] = {
-    "Miner_Common":       {"kind": "mining", "arg": "resCommon"},
-    "Miner_Advanced":     {"kind": "mining", "arg": "resRare"},
-    "Miner_Hightech":     {"kind": "mining", "arg": "resSpecial"},
-    "Miner_Superior":     {"kind": "mining", "arg": "resExotic"},
+    "Miner_Common":       {"kind": "mining", "tier": "Common"},
+    "Miner_Advanced":     {"kind": "mining", "tier": "Rare"},
+    "Miner_Hightech":     {"kind": "mining", "tier": "Special"},
+    "Miner_Superior":     {"kind": "mining", "tier": "Exotic"},
     "Productor_Common":   {"kind": "producting", "tier": "Common"},
     "Productor_Advanced": {"kind": "producting", "tier": "Rare"},
     "Productor_Hightech": {"kind": "producting", "tier": "Special"},
@@ -906,10 +906,10 @@ _MACHINE_CALL_RULES: dict[str, dict[str, str]] = {
 }
 
 _MACHINE_CALL_HINT: dict[str, str] = {
-    "Miner_Common":       "mining(resCommon)",
-    "Miner_Advanced":     "mining(resRare)",
-    "Miner_Hightech":     "mining(resSpecial)",
-    "Miner_Superior":     "mining(resExotic)",
+    "Miner_Common":       "mining(Common)",
+    "Miner_Advanced":     "mining(Rare)",
+    "Miner_Hightech":     "mining(Special)",
+    "Miner_Superior":     "mining(Exotic)",
     "Productor_Common":   "producting(Common, 'A' 또는 'B')",
     "Productor_Advanced": "producting(Rare, 'A' 또는 'B')",
     "Productor_Hightech": "producting(Special, 'A' 또는 'B')",
@@ -921,6 +921,43 @@ _PRODUCTING_CALL_RE = re.compile(
     r"producting\s*\(\s*([^,)]+)\s*,\s*['\"]?([ab])['\"]?\s*\)",
     re.IGNORECASE,
 )
+
+# mining() 에 보유량 변수(resCommon 등)를 넣는 구버전/혼동 패턴
+_MINING_INVENTORY_ARG_ALIASES: dict[str, str] = {
+    "rescommon":  "resCommon",
+    "resrare":    "resRare",
+    "resspecial": "resSpecial",
+    "resexotic":  "resExotic",
+}
+
+
+def _normalize_mining_tier(raw: str) -> str:
+    """mining() 첫 인자를 등급 토큰(common|rare|…)으로 정규화합니다."""
+    return re.sub(r"\s+", "", raw or "").lower()
+
+
+def _detect_mining_inventory_confusion(source_code: str, machine_type: str) -> str | None:
+    """
+    mining(resCommon) 처럼 보유량 변수를 채굴 인자로 쓴 경우 전용 안내.
+    resCommon 변수 자체(조건문 등)는 이 검사 대상이 아닙니다.
+    """
+    rule = _MACHINE_CALL_RULES.get(machine_type)
+    if not rule or rule.get("kind") != "mining":
+        return None
+
+    src = _strip_comments_for_game_check(source_code)
+    for raw_arg in _MINING_CALL_RE.findall(src):
+        norm = _normalize_mining_tier(raw_arg)
+        if norm in _MINING_INVENTORY_ARG_ALIASES:
+            inv = _MINING_INVENTORY_ARG_ALIASES[norm]
+            tier = rule["tier"]
+            return msg(
+                Machine.MINING_USE_TIER_NOT_INVENTORY,
+                inventory=inv,
+                tier=tier,
+                expected=f"mining({tier})",
+            )
+    return None
 
 
 def _strip_comments_for_game_check(source_code: str) -> str:
@@ -960,13 +997,13 @@ def _detect_wrong_machine_call(source_code: str, machine_type: str) -> str | Non
     expected_hint = _MACHINE_CALL_HINT.get(machine_type, "")
 
     if rule["kind"] == "mining":
-        expected_arg = re.sub(r"\s+", "", rule["arg"]).lower()
+        expected_tier = rule["tier"].lower()
         calls = _MINING_CALL_RE.findall(src)
         if not calls:
             return None
         for raw_arg in calls:
-            if re.sub(r"\s+", "", raw_arg).lower() != expected_arg:
-                return expected_hint or f"mining({rule['arg']})"
+            if _normalize_mining_tier(raw_arg) != expected_tier:
+                return expected_hint or f"mining({rule['tier']})"
         return None
 
     expected_tier = rule["tier"].lower()
@@ -1181,6 +1218,12 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
         if "name=" not in clean:
             return msg(Machine.NO_NAME)
 
+        confusion = _detect_mining_inventory_confusion(
+            request.source_code, request.machine_type,
+        )
+        if confusion:
+            return confusion
+
         wrong_call = _detect_wrong_machine_call(request.source_code, request.machine_type)
         if wrong_call:
             return msg(Machine.WRONG_ARGS, expected=wrong_call)
@@ -1250,6 +1293,8 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
             return "machine_locked_loop"
         if "name=" not in clean:
             return "machine_no_name"
+        if _detect_mining_inventory_confusion(request.source_code, request.machine_type):
+            return "machine_mining_tier_confusion"
         if _detect_wrong_machine_call(request.source_code, request.machine_type):
             return "machine_wrong_args"
         for fn in REQUIRED_FUNCTIONS.get(request.machine_type, []):
