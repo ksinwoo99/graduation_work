@@ -227,7 +227,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     }
 
     public void CheckMiningCodeAndProceed() {
-        if (currentStep == 13 && GetCleanInputText().Contains("mining(rescommon)")) { currentStep++; PlayStep(currentStep); }
+        if (currentStep == 13 && GetCleanInputText().Contains("mining(common)")) { currentStep++; PlayStep(currentStep); }
     }
 
     public void CheckProductorSimpleCodeAndProceed() {
@@ -340,7 +340,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 11: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("설치물 버튼의 이름을 보시면,\nname 변수에 저장한 내용으로\n변경되었습니다."); break;
             case 12: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetDialogMode("이렇게 python에서는\n'변수명 = 데이터' 형식으로\n값을 저장하는 공간을\n만들 수 있습니다.\n\nname 변수에 저장된 이름은\n공장 내에서 이 기계의\n고유한 이름표가 됩니다."); break;
-            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining()</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
+            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining(resCommon)</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
             case 14: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo);
                 SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가\n가능해졌습니다.\n\n이 버튼을 선택한채로 채굴기를 설치하면,\n현재 코드를 따라 작동합니다!"); break;
             case 15: SetActionMode("채굴기같은 <color=red>설치물 선택 중 R키</color>를 누르면\n'생성될 요소의 위치 조절'이 가능해요.\n한번 맵에 클릭하여 설치해볼까요?"); break;
@@ -664,7 +664,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         else if (currentStep == 59) CheckConveyorCodeAndProceed(); 
     }
 
-    // 현재 단계에 맞는 JSON 파일을 자동으로 찾아서 실행(로드)하는 함수
+    // 현재 단계에 맞는 코드를 하드코딩으로 주입하는 자동완성 함수
     public void OnClick_LoadPresetForCurrentStep()
     {
         if (Ingame_Manager_Build.Instance == null || Ingame_Manager_Build.Instance.codingManager == null) return;
@@ -682,12 +682,12 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         {
             // 10단계 이름 짓기 자동완성 코드 세팅
             case 10: codeToInject = "name = '기본 채굴기'"; break; 
-            case 13: codeToInject = "mining(resCommon)"; break;
+            case 13: codeToInject = "mining(Common)"; break;
             case 31: codeToInject = "name = '기본 가공기'\nproducting(Common, 'A')"; break;
             case 43: codeToInject = "if resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"; break;
             case 53:
                 if (targetLogic.GetComponent<logic_Miner_Master>() != null)
-                    codeToInject = "for i in range(10):\n    mining(resCommon)";
+                    codeToInject = "for i in range(10):\n    mining(Common)";
                 else if (targetLogic.GetComponent<logic_Productor_Master>() != null)
                     codeToInject = "for i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')";
                 break;

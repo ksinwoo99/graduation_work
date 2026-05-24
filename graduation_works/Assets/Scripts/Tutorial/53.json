@@ -3,13 +3,13 @@
     "res1": 10,
     "res2": 0,
     "res3": 0,
-    "res4": 139,
+    "res4": 201,
     "res5": 0,
-    "play_time": 56,
+    "play_time": 66,
     "expand_count": 0,
-    "quest_id": 3,
-    "tutorial_step": 46,
-    "conveyor_level": 0,
+    "quest_id": 4,
+    "tutorial_step": 54,
+    "conveyor_level": 1,
     "machines": [
         {
             "machine_type": 1,
@@ -18,7 +18,7 @@
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nmining(resCommon)"
+            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining(Common)"
         },
         {
             "machine_type": 5,
@@ -27,7 +27,7 @@
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = '튜토2'\nif resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"
+            "source_code": "name = '튜토2'\nfor i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')"
         }
     ]
 }
