@@ -217,9 +217,9 @@ class Machine:
 
         def _moving(speed="slow"):
             if speed == "fast":
-                print("[ACTION] MOVE_FAST")
+                print("[ACTION] MOVING_FAST")
             else:
-                print("[ACTION] MOVE")
+                print("[ACTION] MOVING")
 
         self.env = {
             "__builtins__": {
