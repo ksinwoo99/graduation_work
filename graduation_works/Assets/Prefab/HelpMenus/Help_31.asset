@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Help_31
   m_EditorClassIdentifier: 
   title: "3-1. \uC124\uCE58\uBB3C: \uCC44\uAD74\uAE30"
-  content: "\uCC44\uAD74\uAE30"
+  content: "\uCC44\uAD74\uAE30\uB294 py.Factory\uC5D0\uC11C \uAC00\uC7A5 \uAE30\uBCF8\uC801\uC774\uBA74\uC11C
+    \uC911\uC694\uD55C \uC124\uCE58\uBB3C \uC911 \uD558\uB098\uC785\uB2C8\uB2E4.\n\uAE30\uBCF8\uC801\uC73C\uB85C
+    mining(\uC790\uC6D0 \uC885\uB958) \uCF54\uB4DC\uB85C \uC791\uB3D9\uD558\uBA70,
+    \uAC01 \uCC44\uAD74\uAE30\uB9C8\uB2E4 \uCC44\uAD74 \uAC00\uB2A5\uD55C \uC790\uC6D0\uC758
+    \uC885\uB958\uAC00 \uB2E4\uB985\uB2C8\uB2E4."
   unlockTutorialStep: 22
   categoryPrefab: {fileID: 4205076946549086250, guid: b7e4cd0e6c50f0041b7e623e3d08d67e, type: 3}
