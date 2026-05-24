@@ -18,7 +18,7 @@
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining(Common)"
+            "source_code": "name = '기본 채굴기'\nfor i in range(10):\n    mining(Common)"
         },
         {
             "machine_type": 5,
@@ -27,7 +27,7 @@
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = '튜토2'\nfor i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')"
+            "source_code": "name = '기본 가공기'\nfor i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')"
         },
         {
             "machine_type": 9,
@@ -36,7 +36,7 @@
             "pos_y": 0.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = 'belt'\nmoving()"
+            "source_code": "name = '수송 벨트'\nmoving()"
         },
         {
             "machine_type": 9,
@@ -45,7 +45,7 @@
             "pos_y": 0.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = 'belt'\nmoving()"
+            "source_code": "name = '수송 벨트'\nmoving()"
         },
         {
             "machine_type": 10,

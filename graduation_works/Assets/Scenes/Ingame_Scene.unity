@@ -1804,7 +1804,7 @@ MonoBehaviour:
   machineDescription: "\uB0AE\uC740 \uD655\uB960\uB85C \uAE30\uBCF8 \uC790\uC6D0\uC744
     \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uD76C\uADC0 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uB9E4\uC6B0
     \uB0AE\uC740 \uD655\uB960\uB85C \uD2B9\uC218 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
-  codeSyntax: "mining(resSpecial) \uD568\uC218 \uD544\uC694"
+  codeSyntax: "mining(Special) \uD568\uC218 \uD544\uC694"
   buildingSize: {x: 1, y: 1}
   buildCost: 1000
   requiredResources:
@@ -8373,7 +8373,7 @@ MonoBehaviour:
   machineName: "\uCC44\uAD74\uAE30B"
   machineDescription: "\uAE30\uBCF8 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uB0AE\uC740
     \uD655\uB960\uB85C \uD76C\uADC0 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
-  codeSyntax: "mining(resRare) \uD568\uC218 \uD544\uC694"
+  codeSyntax: "mining(Rare) \uD568\uC218 \uD544\uC694"
   buildingSize: {x: 1, y: 1}
   buildCost: 500
   requiredResources:
@@ -16178,7 +16178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   machineName: "\uCC44\uAD74\uAE30A"
   machineDescription: "\uAE30\uBCF8 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
-  codeSyntax: "mining(resCommon) \uD568\uC218 \uD544\uC694"
+  codeSyntax: "mining(Common) \uD568\uC218 \uD544\uC694"
   buildingSize: {x: 1, y: 1}
   buildCost: 100
   requiredResources: []
@@ -27044,12 +27044,6 @@ MonoBehaviour:
   recommendPanelObj: {fileID: 1054365298}
   btnForceSkip: {fileID: 1970641954}
   btnLoadPreset: {fileID: 723085568}
-  json_Step14: {fileID: 4900000, guid: d777389530beec149b878197a95abf33, type: 3}
-  json_Step31: {fileID: 4900000, guid: 22e0f4bebdfd34c4f922d462a6c10c8f, type: 3}
-  json_Step43: {fileID: 4900000, guid: 89547711761269440badc56801c2a78f, type: 3}
-  json_Step45: {fileID: 4900000, guid: f5c18a0d18d24324b8fa93db8a7b020f, type: 3}
-  json_Step53: {fileID: 4900000, guid: b3056fe7d92495341acadfcf81e87fea, type: 3}
-  json_Step59: {fileID: 4900000, guid: 9e51c9ec8d38ab8479fc0477bfd7cf36, type: 3}
   json_END: {fileID: 4900000, guid: ea2b7eec9535ad146a92d2f331ed0796, type: 3}
   message_Panel: {fileID: 320258230}
   txtMessagePop: {fileID: 943587151}
@@ -29102,7 +29096,7 @@ MonoBehaviour:
   machineDescription: "\uB0AE\uC740 \uD655\uB960\uB85C \uD76C\uADC0 \uC790\uC6D0\uC744
     \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uD2B9\uC218 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4.\n\uB9E4\uC6B0
     \uB0AE\uC740 \uD655\uB960\uB85C \uACBD\uC774 \uC790\uC6D0\uC744 \uCC44\uAD74\uD569\uB2C8\uB2E4."
-  codeSyntax: "mining(resExotic) \uD568\uC218 \uD544\uC694"
+  codeSyntax: "mining(Exotic) \uD568\uC218 \uD544\uC694"
   buildingSize: {x: 1, y: 1}
   buildCost: 2000
   requiredResources:
