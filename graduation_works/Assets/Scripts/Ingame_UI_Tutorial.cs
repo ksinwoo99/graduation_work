@@ -221,7 +221,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     }
 
     public void CheckMiningCodeAndProceed() {
-        if (currentStep == 13 && GetCleanInputText().Contains("mining()")) { currentStep++; PlayStep(currentStep); }
+        if (currentStep == 13 && GetCleanInputText().Contains("mining(common)")) { currentStep++; PlayStep(currentStep); }
     }
 
     public void CheckProductorSimpleCodeAndProceed() {
@@ -324,7 +324,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 11: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("설치물 버튼의 이름을 보시면,\nname 변수에 저장한 내용으로\n변경되었습니다."); break;
             case 12: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetDialogMode("이렇게 python에서는\n'변수명 = 데이터' 형식으로\n값을 저장하는 공간을\n만들 수 있습니다.\n\nname 변수에 저장된 이름은\n공장 내에서 이 기계의\n고유한 이름표가 됩니다."); break;
-            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining()</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
+            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining(resCommon)</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
             case 14: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo);
                 SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가\n가능해졌습니다.\n\n중요한 점은, 이 버튼을 통해 설치되는\n'모든' 채굴기는 방금 작성한 코드를\n모두가 따라 작동한다는 것입니다!"); break;
             case 15: SetActionMode("채굴기같은 <color=red>설치물 선택 중 R키</color>를 누르면\n'생성될 요소의 위치 조절'이 가능해요.\n한번 맵에 클릭하여 설치해볼까요?"); break;

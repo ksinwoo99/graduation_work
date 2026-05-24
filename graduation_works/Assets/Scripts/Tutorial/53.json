@@ -18,7 +18,7 @@
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining()"
+            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining(Common)"
         },
         {
             "machine_type": 5,

@@ -209,8 +209,8 @@ class Machine:
         
         compiled = compile(module_node, "<sandbox>", "exec")
 
-        def _mining(target="resCommon", amount=1):
-            print(f"[ACTION] MINING_{str(target).upper()}")
+        def _mining(tier="Common", amount=1):
+            print(f"[ACTION] MINING_{str(tier).upper()}")
             
         def _producting(target="Standard", amount=1):
             print(f"[ACTION] PRODUCTING_{str(target).upper()}")
