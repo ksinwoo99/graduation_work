@@ -253,7 +253,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
             if (titleText != null) titleText.text = $"{newName}.py";
             
             if (currentBuildButton != null) {
-                if (currentBuildButton.nameText != null) currentBuildButton.nameText.text = newName;
+                // 긴 이름 축약 적용 (원본 newName은 info에 저장하고, UI 텍스트만 줄입니다)
+                if (currentBuildButton.nameText != null) 
+                    currentBuildButton.nameText.text = GetTruncatedName(newName, 5); 
                 
                 Iteminfo_Base info = currentBuildButton.GetComponent<Iteminfo_Base>();
                 if (info != null) {
@@ -422,9 +424,9 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                     }
 
                     if (!string.IsNullOrEmpty(newName)) {
-                        if (btn.nameText != null) btn.nameText.text = newName;
-                        // ✨ [핵심 추가 2] 세이브를 불러왔을 때도 Info 창 이름이 정상 반영되도록 동기화!
-                        info.machineName = newName; 
+                        // 세이브를 로드할 때도 긴 이름 축약 적용
+                        if (btn.nameText != null) btn.nameText.text = GetTruncatedName(newName, 5);
+                        info.machineName = newName;
                     }
                 }
             }
@@ -933,6 +935,12 @@ public class Ingame_Manager_Coding : MonoBehaviour {
 
             TriggerImbalanceBreakdownOn(targetId, consumedPart);
         }
+    }
+
+    private string GetTruncatedName(string name, int maxLength = 5) {
+        if (string.IsNullOrEmpty(name)) return name;
+        if (name.Length > maxLength) return name.Substring(0, maxLength) + "...";
+        return name;
     }
 
     private void TriggerImbalanceBreakdownOn(int targetId, string consumedPart) {

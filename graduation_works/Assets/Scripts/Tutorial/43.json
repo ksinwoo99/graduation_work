@@ -12,22 +12,13 @@
     "conveyor_level": 0,
     "machines": [
         {
-            "machine_type": 1,
-            "tile_index": 0,
-            "pos_x": -2.0,
-            "pos_y": 1.0,
-            "pos_z": 0.0,
-            "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nmining()"
-        },
-        {
             "machine_type": 5,
             "tile_index": 0,
             "pos_x": -1.0,
             "pos_y": 1.0,
             "pos_z": 0.0,
             "rotation_y": 0.0,
-            "source_code": "name = '튜토2'\nif resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"
+            "source_code": "name = '기본 채굴기'\nif resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"
         }
     ]
 }

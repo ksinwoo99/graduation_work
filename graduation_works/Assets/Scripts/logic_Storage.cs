@@ -11,7 +11,7 @@ public class logic_Storage : logic_CodingBase {
         BoxCollider2D col = GetComponent<BoxCollider2D>();
         if (col != null) col.isTrigger = true; 
 
-        // ✨ [추가] 창고는 기본 정지 규칙을 무시하고 항상 켜져있게 만듭니다.
+        // 창고는 기본 정지 규칙을 무시하고 항상 켜져있게 만듭니다.
         isOperating = true;
         UpdateStatusUI();
     }

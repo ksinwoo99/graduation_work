@@ -125,7 +125,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.7222222, y: 0.7222222}
     newSize: {x: 23, y: 23}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -149,7 +149,7 @@ MonoBehaviour:
   isProduct: 1
   resourceType: 0
   amount: 1
-  sellPrice: 31000
+  sellPrice: 5000
   sparkleEffectObject: {fileID: 3307374658721745758}
   isHighQuality: 0
   qualityMultiplier: 1.4
