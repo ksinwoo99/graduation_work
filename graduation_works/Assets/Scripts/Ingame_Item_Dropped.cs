@@ -117,6 +117,21 @@ public class Ingame_Item_Dropped : MonoBehaviour
 
         Destroy(gameObject); 
     }
+    
+    public void StopMovement() {
+        // 1. 현재 진행 중인 컨베이어 이동 코루틴(ConveyorRideRoutine)을 즉시 멈춥니다.
+        StopAllCoroutines();
+
+        // 2. 공중에 떠있거나 엉뚱한 깊이에 있지 않도록 바닥(z: -1)으로 확실히 떨어뜨려 줍니다.
+        Vector3 currentPos = transform.position;
+        currentPos.z = -1f;
+        transform.position = currentPos;
+
+        // 3. (선택) 유저에게 벨트가 끊어져 아이템이 떨어졌다는 시각적 알림을 줍니다.
+        if (Ingame_Manager_Build.Instance != null) {
+            Ingame_Manager_Build.Instance.ShowFloatingText("벨트 끊어짐!", transform.position);
+        }
+    }
 
     string GetKoreanName(ResourceType type) {
         switch (type) {

@@ -12,31 +12,13 @@
     "conveyor_level": 1,
     "machines": [
         {
-            "machine_type": 1,
-            "tile_index": 0,
-            "pos_x": -2.0,
-            "pos_y": 1.0,
-            "pos_z": 0.0,
-            "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nfor i in range(10):\n    mining()"
-        },
-        {
-            "machine_type": 5,
-            "tile_index": 0,
-            "pos_x": -1.0,
-            "pos_y": 1.0,
-            "pos_z": 0.0,
-            "rotation_y": 0.0,
-            "source_code": "name = '튜토2'\nfor i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')"
-        },
-        {
             "machine_type": 9,
             "tile_index": 0,
             "pos_x": -9999.0,
             "pos_y": -9999.0,
             "pos_z": -9999.0,
             "rotation_y": 0.0,
-            "source_code": "name = 'belt'\nmove()"
+            "source_code": "name = '벨트'\nmoving()"
         }
     ]
 }

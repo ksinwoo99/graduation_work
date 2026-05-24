@@ -33,7 +33,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
     public TileBase floorTileBase; 
     public int currentMapSize = 4; 
     public int expandCount = 0;    
-    public int baseExpandCost = 1000; 
+    public int baseExpandCost = 500; 
     public int expandSizeStep = 2; 
 
     [Header("매니저 연결")]
@@ -552,6 +552,18 @@ public class Ingame_Manager_Build : MonoBehaviour {
         
         if (info.machineInstance != null) info.machineInstance.SetActive(false); 
 
+        MonoBehaviour[] allItems = FindObjectsOfType<MonoBehaviour>(); 
+        foreach(var item in allItems) {
+            // 스크립트 이름으로 드롭된 아이템인지 확인
+            if (item.GetType().Name == "Ingame_Item_Dropped") {
+                // 철거된 위치와 아이템의 거리가 가깝다면
+                if (Vector3.Distance(item.transform.position, tileWorldPos) < 1.5f) {
+                    // 아이템에게 그 자리에 당장 멈추라고 메시지를 보냅니다.
+                    item.SendMessage("StopMovement", SendMessageOptions.DontRequireReceiver);
+                }
+            }
+        }
+        
         installedCosts.Remove(originPos);
         installedDirections.Remove(originPos);
         

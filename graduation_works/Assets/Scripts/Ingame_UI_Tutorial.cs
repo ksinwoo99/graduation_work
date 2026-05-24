@@ -41,7 +41,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     public Button btnTutorialProductor; 
     public Button btnTutorialConveyor;  
     public Button btnTutorialExpand;    
-    public Button btnTutorialDemolish;  
+    public Button btnTutorialDemolish;
+    public GameObject recommendPanelObj;
 
     [Header("6. 단계별 프리셋 불러오기 (자동완성)")]
     public Button btnForceSkip;
@@ -78,11 +79,14 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         public string origSortingLayerName;
         public int origSortingOrder;
         public GameObject redOutlineObj; 
-    }
-    private List<HighlightData> activeHighlights = new List<HighlightData>();
 
-    private bool hasScrolledUp = false;
-    private bool hasScrolledDown = false;
+        // ✨ [추가] 자식 패널들이 자체 캔버스를 가지고 있을 경우를 대비한 복구 데이터
+        public List<Canvas> childCanvases = new List<Canvas>();
+        public List<bool> childOrigOverrides = new List<bool>();
+        public List<int> childOrigOrders = new List<int>();
+    }
+
+    private List<HighlightData> activeHighlights = new List<HighlightData>();
 
     void Awake() 
     { 
@@ -100,6 +104,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         dimBackground.SetActive(false);
         skipPanel.SetActive(false); 
         
+        if (recommendPanelObj != null) recommendPanelObj.SetActive(false);
+
         if (btnNext != null) {
             nextBtnOriginalScale = btnNext.transform.localScale;
         }
@@ -130,16 +136,16 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     {
         if (!isTutorialActive) return;
 
+        // 엔터 및 스페이스바로 다음 버튼 입력
+        if (btnNext != null && btnNext.gameObject.activeSelf) {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
+                btnNext.onClick.Invoke();
+            }
+        }
+
         if (currentStep == 2 && Input.GetMouseButtonUp(1)) 
         {
             currentStep++; PlayStep(currentStep);
-        }
-        else if (currentStep == 3)
-        {
-            float scroll = Input.mouseScrollDelta.y;
-            if (scroll > 0) hasScrolledUp = true;
-            if (scroll < 0) hasScrolledDown = true;
-            if (hasScrolledUp && hasScrolledDown) { currentStep++; PlayStep(currentStep); }
         }
         else if (currentStep == 8)
         {
@@ -221,7 +227,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     }
 
     public void CheckMiningCodeAndProceed() {
-        if (currentStep == 13 && GetCleanInputText().Contains("mining()")) { currentStep++; PlayStep(currentStep); }
+        if (currentStep == 13 && GetCleanInputText().Contains("mining(rescommon)")) { currentStep++; PlayStep(currentStep); }
     }
 
     public void CheckProductorSimpleCodeAndProceed() {
@@ -309,15 +315,25 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 0: SetDialogMode("안녕하세요, 당신의 py.Factory\n발전을 도와줄 어시스트입니다!"); break;
             case 1: SetDialogMode("기본 목표는,\n'설치물의 코딩과 공장의 자동화'\n입니다!"); break;
             case 2: SetActionMode("<color=red>우클릭을 누른 후 드래그</color>하면,\n공장 부지를 옮겨 볼 수 있습니다."); break;
-            case 3: hasScrolledUp = false; hasScrolledDown = false; SetActionMode("또한 <color=red>스크롤</color>을 통하여 공장의\n줌 인/아웃도 가능합니다!"); break;
-            
-            // ✨ [수정] 4, 5, 6단계에만 붉은 네모 박스(true) 활성화!
+            case 3: 
+                isActionMode = true;
+                if (dimBackground != null) dimBackground.SetActive(false); 
+                if (txtMessage != null) txtMessage.text = "또한 <color=red>스크롤</color>을 통하여 공장의\n줌 인/아웃도 가능합니다!\n\n기본 조작을 익히셨다면\n다음 버튼을 눌러주세요.";
+                
+                if (btnNext != null) {
+                    btnNext.gameObject.SetActive(true);
+                    StartButtonPulse(); // 다음 버튼 맥박 효과 작동
+                    btnNext.onClick.RemoveAllListeners(); 
+                    btnNext.onClick.AddListener(() => { currentStep++; PlayStep(currentStep); });
+                }
+                break;
+            // 4, 5, 6단계에만 붉은 네모 박스(true) 활성화
             case 4: HighlightPanel(panelResource, true); SetDialogMode("왼쪽 위에는 현재 보유한 자원,\n그리고 퀘스트 라인을 볼 수 있어요."); break;
             case 5: HighlightPanel(panelSideGroup, true); SetDialogMode("오른쪽 패널들에선 현재 공장의 상태,\n업그레이드 등을 할 수 있습니다!"); break;
             case 6: HighlightPanel(panelInstallation, true); SetPilotMode("아래쪽 패널에서는 맵에 지을 수 있는\n다양한 설치물들을 선택할 수 있어요.\n\n한번 <color=red>채굴기</color>를 클릭해보시겠어요?");
                 if (btnTutorialMiner != null) btnTutorialMiner.onClick.AddListener(OnMinerButtonClicked); break;
             
-            case 7: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("이렇게, 코딩을 위한 개발환경과\n해당 설치물에 대한 설명이 뜹니다!"); break;
+            case 7: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo, true); SetDialogMode("이렇게, 코딩을 위한 개발환경과\n해당 설치물에 대한 설명이 뜹니다!\n\n<color=red>왼쪽 아래의 설치물 정보 패널</color>은\n해당 기계에 대한 정보가 적혀있어요.\n코딩에 필요한 정보도 적혀있습니다."); break;
             case 8: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("<color=red>코딩 창의 위를 누르고 드래그</color>하여\n위치를 바꿀 수도 있어요.\n\n코딩 창의 글씨가 너무 작거나 크다면,\n<color=red>'Ctrl + 마우스 휠'</color>을 이용해 글자 크기를 조절해 보세요!"); break;
             case 9: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetPilotMode("<color=red>코딩 창 우측 하단의 손잡이를 드래그</color>해서\n창의 크기도 마음대로 조절할 수 있습니다!"); break;
             case 10: SetActionMode("자, 이제 첫 번째 퀘스트를\n진행해 볼까요?\n\n<color=red>코딩 창에 name = \"이름\" 을 입력 후\n저장 및 디버깅(F5)</color>을 하여,\n채굴기의 이름을 지어주세요!"); break;
@@ -326,11 +342,11 @@ public class Ingame_UI_Tutorial : MonoBehaviour
                 SetDialogMode("이렇게 python에서는\n'변수명 = 데이터' 형식으로\n값을 저장하는 공간을\n만들 수 있습니다.\n\nname 변수에 저장된 이름은\n공장 내에서 이 기계의\n고유한 이름표가 됩니다."); break;
             case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining()</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
             case 14: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo);
-                SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가\n가능해졌습니다.\n\n중요한 점은, 이 버튼을 통해 설치되는\n'모든' 채굴기는 방금 작성한 코드를\n모두가 따라 작동한다는 것입니다!"); break;
+                SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가\n가능해졌습니다.\n\n이 버튼을 선택한채로 채굴기를 설치하면,\n현재 코드를 따라 작동합니다!"); break;
             case 15: SetActionMode("채굴기같은 <color=red>설치물 선택 중 R키</color>를 누르면\n'생성될 요소의 위치 조절'이 가능해요.\n한번 맵에 클릭하여 설치해볼까요?"); break;
             case 16: SetDialogMode("훌륭합니다!\n맵에 채굴기가\n성공적으로 배치되었습니다."); break;
             case 17: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
-            case 18: SetDialogMode("성공적으로 상태가 저장되고,\n설치 모드에서 빠져나왔습니다!"); break;
+            case 18: SetDialogMode("설치 상태를 저장하고,\n설치 모드를 종료하였습니다!\n\n설치 모드 중에는\n설치물이 작동하지 않아요.\n기계 작동을 위해선,\n꼭 설치 모드를 나가주세요!"); break;
             case 19: SetActionMode("코딩대로 자원이 잘 채굴되는지\n조금만 기다려 볼까요?"); break;
             case 20: SetDialogMode("채굴기가 첫 자원 채집을\n성공하였습니다!"); break;
             case 21: SetActionMode("생성된 자원을 <color=red>마우스로 직접 클릭</color>해서\n획득해 보세요!"); break;
@@ -344,15 +360,15 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 28: SetDialogMode("가공기는 자원을 소모하여\n판매 가능한 상품을 만들어냅니다.\n\n모든 가공기는 A타입과 B타입,\n두 가지 상품을 만들 수 있어요."); break;
             case 29: HighlightPanel(panelInstallation); SetPilotMode("<color=red>아래쪽 패널에서 '가공기'</color>를\n한번 클릭해 보시겠어요?");
                 if (btnTutorialProductor != null) btnTutorialProductor.onClick.AddListener(OnProductorButtonClicked); break;
-            case 30: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("가공기는 꼭 복잡하게 짤 필요 없이,\n단순히 producting(Common, 'A')\n한 줄만 적어도 A상품을 만들어냅니다.\n\n(물론 이름 설정은 필수에요!)"); break;
-            case 31: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetActionMode("코딩 창에 producting(Common, 'A') 입력 후\n저장 및 디버깅(F5)을 눌러보세요!"); break;
+            case 30: SetDialogMode("가공기는 꼭 복잡하게 짤 필요 없이,\n단순히 producting(Common, 'A')\n한 줄만 적어도 A상품을 만들어냅니다."); break;
+            case 31: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetActionMode("코딩 창에\nproducting(Common, 'A') 입력 후,\n저장 및 디버깅(F5)을 눌러보세요!\n(이름 설정도 잊지마세요!)"); break;
             case 32: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("완벽합니다!\n이제 이 가공기의 설치가\n가능해졌습니다."); break;
             case 33: SetActionMode("채굴기 때처럼 맵에 가공기를\n클릭하여 설치해볼까요?\n(R키로 상품 생성위치 조절 가능)"); break;
             case 34: SetDialogMode("훌륭합니다!\n가공기가 성공적으로\n배치되었습니다."); break;
             case 35: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
-            case 36: SetDialogMode("설치 상태가 정상적으로 저장되고\n설치 모드에서 빠져나왔습니다!"); break;
-            case 37: SetActionMode("가공기가 자원을 가져가서 코딩된 대로\n상품을 만들어낼 때까지 기다려 볼까요?"); break;
-            case 38: SetDialogMode("가공기에서 판매 가능한\n첫 상품을 만들어냈습니다!\n\n가끔씩, 빛나는 효과가 붙은 상품도 나옵니다.\n이들은 고품질 제품으로.\n더 높은 가격을 받을 수 있습니다!"); break;
+            case 36: SetDialogMode("설치 상태를 저장하고,\n설치 모드를 종료하였습니다."); break;
+            case 37: SetActionMode("가공기가 자원을 가져가서 코딩된 대로\n상품을 만들어낼 때까지 기다려 볼까요?\n\n(혹시 자원이 부족하다면 그만큼\n채굴기를 작동시켜주세요.)"); break;
+            case 38: SetDialogMode("가공기에서 판매 가능한\n첫 상품을 만들어냈습니다!\n\n가끔 빛나는 효과가 붙은 상품도\n나올 수 있습니다.\n이들은 고품질 제품으로.\n더 높은 가격을 받을 수 있습니다!"); break;
             case 39: SetActionMode("<color=red>생성된 상품을 마우스로 직접 클릭</color>해서\n판매해 보세요."); break;
             case 40: SetDialogMode("첫 수익입니다, 축하드려요!\n이렇게 단일 품목만 만들 수도 있지만,\n자원 상태에 따라 나눌 수도 있습니다."); break;
             
@@ -361,17 +377,17 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 43: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetActionMode("    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')\n\n        입력 후 디버깅(F5) 하세요!"); break;
             case 44: SetDialogMode("정확합니다!\n이제 자원 상황에 맞춰\n알아서 똑똑하게 생산할 겁니다."); break;
-            case 45: SetActionMode("가공기가 조건문에 맞게\n상품을 만들어낼 때까지\n다시 한번 기다려 볼까요?\n\n자원이 부족하다면 그만큼\n채굴기를 작동시켜주세요."); break;
+            case 45: SetActionMode("가공기가 조건문에 맞게\n상품을 만들어낼 때까지\n다시 한번 기다려 볼까요?\n\n(자원이 부족하다면 그만큼\n채굴기를 작동시켜주세요.)"); break;
             case 46: SetDialogMode("조건에 맞는 상품이 생성되었습니다!"); break;
             case 47: SetActionMode("생성된 상품을 마우스로 클릭해서\n판매해 보세요."); break;
 
             case 48: SetDialogMode("완벽합니다!\n이제 <color=red>'반복문(Loop)'</color>을\n배워볼 시간입니다."); break;
             case 49: SetDialogMode("매번 기계를 켜주는 건 번거롭죠.\nfor문이나 while문을 사용하면\n알아서 반복 작동합니다!"); break;
-            case 50: SetDialogMode("다만!!!\n\n현재 공장 시스템의 과부하를 막기 위해\n반복문은 최대 10회까지만 허용됩니다."); break;
-            case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining()"); break;
-            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n\n      예시:\n      i = 0\n      while i < 10:\n          mining()\n          i += 1"); break;
+            case 50: SetDialogMode("다만!!!\n\n현재 공장 시스템의 과부하를 막기 위해\n반복문은 최대 10회까지만 허용됩니다.\n(튜토리얼 완료 시 무한반복 가능)"); break;
+            case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining(resCommon)"); break;
+            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n\n      예시:\n      i = 0\n      while i < 10:\n          mining(resCommon)\n          i += 1"); break;
             case 53: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
-                SetActionMode("채굴기와 가공기 각각의 코드에\n<color=red>반복문을 추가</color>하여\n퀘스트를 완료해 보세요!\n(예: for i in range(10):)"); break;
+                SetActionMode("채굴기와 가공기 각각의 코드에\n<color=red>반복문을 추가</color>하여\n퀘스트를 완료해 보세요!\n\n예시가 기억나지 않는다면,\n도움말 -> 반복문 을 참고하세요."); break;
             case 54: SetDialogMode("성공하셨네요!\n이제 기계들이 스스로,\n10번씩 작동할 겁니다."); break;
             
             case 55: SetDialogMode("그런데요, 이렇게 자동 반복하면\n계속 생산되는 자원을\n저희가 직접 눌러줘야 하겠네요..."); break;
@@ -380,7 +396,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 58: HighlightPanel(panelInstallation); SetPilotMode("<color=red>아래쪽 패널에서 '수송 벨트'</color>를\n한번 클릭해 보시겠어요?");
                 if (btnTutorialConveyor != null) btnTutorialConveyor.onClick.AddListener(OnConveyorButtonClicked); break;
             case 59: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
-                SetActionMode("컨베이어의 코딩은 아주 단순합니다.\n<color=red>코딩 창에 move() 라고 적고\n디버깅(F5)</color> 해보세요!"); break;
+                SetActionMode("컨베이어의 코딩은 아주 단순합니다.\n<color=red>코딩 창에 moving()을 적고\n디버깅(F5)</color> 해보세요!"); break;
             case 60: SetActionMode("완벽합니다!\n이제 채굴기나 가공기 배출구 앞에\n<color=red>컨베이어를 설치</color>해볼까요?\n(R키로 운송 방향 조절 가능)"); break;
             case 61: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
             case 62: SetDialogMode("설치 상태가 정상적으로 저장되고\n설치 모드에서 빠져나왔습니다!"); break;
@@ -416,7 +432,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         }
 
         // 1. [자동 완성]
-        bool isPresetStep = (stepIndex == 13 || stepIndex == 31 || stepIndex == 43 || stepIndex == 53 || stepIndex == 59);
+        bool isPresetStep = (stepIndex == 10 || stepIndex == 13 || stepIndex == 31 || stepIndex == 43 || stepIndex == 53 || stepIndex == 59);
         if (btnLoadPreset != null) btnLoadPreset.gameObject.SetActive(isPresetStep);
 
         // ✨ 2. [스킵]
@@ -480,7 +496,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         img.color = Color.red; img.raycastTarget = false; 
     }
 
-    // ✨ [수정] showRedBox 매개변수 추가 (기본값 false)
+    // showRedBox 매개변수 추가 (기본값 false)
     private void HighlightPanel(GameObject targetUI, bool showRedBox = false) {
         if (targetUI == null) return;
         HighlightData data = new HighlightData { panel = targetUI };
@@ -493,9 +509,22 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         if (raycaster == null) { raycaster = targetUI.AddComponent<GraphicRaycaster>(); data.wasRaycasterAdded = true; } 
         else { data.wasRaycasterAdded = false; }
 
-        canvas.overrideSorting = true; canvas.sortingLayerName = "UI"; canvas.sortingOrder = 9; 
+        // 부모 그룹을 99라는 아주 높은 숫자로 끌어올립니다.
+        canvas.overrideSorting = true; canvas.sortingLayerName = "UI"; canvas.sortingOrder = 99; 
         
-        // ✨ true 일 때만 테두리 생성!
+        // 부모 안에 있는 실제 패널(자식)들의 캔버스도 앞으로 당겨줍니다!
+        foreach (Canvas childCanvas in targetUI.GetComponentsInChildren<Canvas>(true)) {
+            if (childCanvas.gameObject != targetUI) {
+                data.childCanvases.Add(childCanvas);
+                data.childOrigOverrides.Add(childCanvas.overrideSorting);
+                data.childOrigOrders.Add(childCanvas.sortingOrder);
+
+                childCanvas.overrideSorting = true;
+                childCanvas.sortingLayerName = "UI";
+                childCanvas.sortingOrder = 100; // 부모보다 1 더 높게 하여 맨 앞으로 뺍니다.
+            }
+        }
+
         if (showRedBox) {
             data.redOutlineObj = CreateRedBox(targetUI);
         }
@@ -576,6 +605,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         StopButtonPulse();
 
         Time.timeScale = 1f;
+
+        if (recommendPanelObj != null) recommendPanelObj.SetActive(true);
         
         if (Ingame_Manager_Coding.Instance != null && Ingame_Manager_Coding.Instance.btnTestBreakdown != null) {
             if (!Shared_Manager_Session.IsVisiting) {
@@ -633,33 +664,55 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         else if (currentStep == 59) CheckConveyorCodeAndProceed(); 
     }
 
-    // ✨ 현재 단계에 맞는 JSON 파일을 자동으로 찾아서 실행(로드)하는 함수
+    // 현재 단계에 맞는 JSON 파일을 자동으로 찾아서 실행(로드)하는 함수
     public void OnClick_LoadPresetForCurrentStep()
     {
-        if (Ingame_System_Save.Instance == null) return;
+        if (Ingame_Manager_Build.Instance == null || Ingame_Manager_Build.Instance.codingManager == null) return;
+        
+        var codingMgr = Ingame_Manager_Build.Instance.codingManager;
+        if (!codingMgr.codingPanel.activeSelf) return;
 
-        TextAsset targetJson = null;
+        var targetLogic = codingMgr.GetCurrentTargetLogic();
+        if (targetLogic == null) return;
 
-        // 현재 단계가 무엇인지 확인하고, 그에 맞는 JSON 파일을 골라냅니다.
+        string codeToInject = "";
+
+        // 현재 튜토리얼 단계에 맞춰 주입할 코드 세팅
         switch (currentStep)
         {
-            case 13: targetJson = json_Step14; break;
-            case 31: targetJson = json_Step31; break;
-            case 43: targetJson = json_Step43; break;
-            case 45: targetJson = json_Step45; break;
-            case 53: targetJson = json_Step53; break;
-            case 59: targetJson = json_Step59; break;
+            // 10단계 이름 짓기 자동완성 코드 세팅
+            case 10: codeToInject = "name = '기본 채굴기'"; break; 
+            case 13: codeToInject = "mining(resCommon)"; break;
+            case 31: codeToInject = "name = '기본 가공기'\nproducting(Common, 'A')"; break;
+            case 43: codeToInject = "if resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"; break;
+            case 53:
+                if (targetLogic.GetComponent<logic_Miner_Master>() != null)
+                    codeToInject = "for i in range(10):\n    mining(resCommon)";
+                else if (targetLogic.GetComponent<logic_Productor_Master>() != null)
+                    codeToInject = "for i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')";
+                break;
+            case 59: codeToInject = "name = '수송 벨트'\nmoving()"; break;
         }
 
-        // 골라낸 파일이 있다면 실행(로드)합니다!
-        if (targetJson != null)
-        {
-            Ingame_System_Save.Instance.LoadLocalPreset(targetJson);
+        if (string.IsNullOrEmpty(codeToInject)) return;
+
+        var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
+        string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
+
+        string finalCode = codeToInject;
+
+        // 10단계가 아닐 때만 기존 유저 이름을 보존하고, 10단계일 때는 지정된 정답을 통째로 주입
+        if (currentStep != 10) {
+            System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(currentText, @"name\s*=\s*['""][^'""]+['""]");
+            if (match.Success) {
+                finalCode = match.Value + "\n" + codeToInject;
+            }
         }
-        else
-        {
-            Debug.LogWarning($"⚠️ {currentStep}단계의 JSON 파일이 연결되지 않았습니다! (인스펙터를 확인해주세요)");
-        }
+
+        if (codeEditor != null) codeEditor.Text = finalCode;
+        else codingMgr.inputField.text = finalCode;
+
+        Ingame_Manager_Build.Instance.ShowFloatingText("자동완성 적용 완료!", codingMgr.codingPanel.transform.position);
     }
     
     public void HandleTutorialCodeAction(bool isCopyOnly) {
@@ -722,10 +775,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     {
         if (!isTutorialActive) return;
 
-        // --- [A] 모든 스킵은 가장 안전하고 완벽한 Invoke 방식으로 통일! (Show 방식 폐기) ---
         if (currentStep == 6 && btnTutorialMiner != null) { btnTutorialMiner.onClick.Invoke(); return; }
         if (currentStep == 29 && btnTutorialProductor != null) { btnTutorialProductor.onClick.Invoke(); return; }
-        // ✨ 42단계 스킵 시 Show 방식 사용
         if (currentStep == 42) { 
             StartCoroutine(WaitAndShowCodingDirectly(5)); 
             currentStep++; 
@@ -734,13 +785,11 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         }
         if (currentStep == 58 && btnTutorialConveyor != null) { btnTutorialConveyor.onClick.Invoke(); return; }
 
-        // --- [B] 보상 해금이 필요한 특정 단계 스킵 처리 ---
         if (currentStep == 47) { UnlockFeatureBySkip(5, ""); }
         else if (currentStep == 69) { UnlockFeatureBySkip(12, ""); }
 
-        // --- [C] JSON 로딩이 필요한 단계 처리 ---
+        // JSON 덮어쓰기 로직 제거! (스킵은 그냥 스킵으로 진행)
         if (currentStep == 43 || currentStep == 53 || currentStep == 59) {
-            OnClick_LoadPresetForCurrentStep(); 
             currentStep++; PlayStep(currentStep);
             return;
         }

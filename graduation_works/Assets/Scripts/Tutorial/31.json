@@ -12,22 +12,13 @@
     "conveyor_level": 0,
     "machines": [
         {
-            "machine_type": 1,
-            "tile_index": 0,
-            "pos_x": -2.0,
-            "pos_y": 1.0,
-            "pos_z": 0.0,
-            "rotation_y": 0.0,
-            "source_code": "name = \"튜토1\"\nmining()"
-        },
-        {
             "machine_type": 5,
             "tile_index": 0,
             "pos_x": -9999.0,
             "pos_y": -9999.0,
             "pos_z": -9999.0,
             "rotation_y": 0.0,
-            "source_code": "name = '튜토2'\r\nproducting(Common, 'A')"
+            "source_code": "name = '기본 가공기'\nproducting(Common, 'A')"
         }
     ]
 }
