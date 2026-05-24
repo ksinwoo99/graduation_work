@@ -33,10 +33,10 @@ MonoBehaviour:
   symbolGroup:
     symbols: + - * / % ** // = += *= /= %= //= **= &= |= ^= >>= <<= == != > < >=
       <= & | ^ ~ << >>
-    highlightColor: {r: 0.0754717, g: 0.0754717, b: 0.0754717, a: 1}
+    highlightColor: {r: 0.5521093, g: 0.7169812, b: 0.46333218, a: 1}
   numberGroup:
     highlightNumbers: 1
-    highlightColor: {r: 0, g: 0, b: 1, a: 1}
+    highlightColor: {r: 0.3372549, g: 0.6117647, b: 0.8392157, a: 1}
   commentGroup:
     lineCommentStart: '#'
     blockCommentStart: 
@@ -50,4 +50,4 @@ MonoBehaviour:
     autoIndentMode: 2
     allowAutoIndent: 1
     indentIncreaseCharacter: 58
-    indentDecreaseCharacter: 0
+    indentDecreaseCharacter: 411
