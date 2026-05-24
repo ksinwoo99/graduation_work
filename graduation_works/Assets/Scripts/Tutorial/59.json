@@ -18,7 +18,8 @@
             "pos_y": -9999.0,
             "pos_z": -9999.0,
             "rotation_y": 0.0,
-            "source_code": "name = '벨트'\nmoving()"
+
+            "source_code": "name = 'belt'\nmoving()"
         }
     ]
 }
