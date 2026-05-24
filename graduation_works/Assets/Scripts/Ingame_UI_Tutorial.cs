@@ -244,7 +244,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
     }
 
     public void CheckConveyorCodeAndProceed() {
-        if (currentStep == 59 && GetCleanInputText().Contains("move()")) {
+        if (currentStep == 59 && GetCleanInputText().Contains("moving()")) {
             currentStep++; PlayStep(currentStep);
         }
     }
@@ -395,7 +395,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 57: SetDialogMode("'수송 벨트'를 이용한다면\n원하는 방향으로 운송이 가능해요."); break;
             case 58: HighlightPanel(panelInstallation); SetPilotMode("<color=red>아래쪽 패널에서 '수송 벨트'</color>를\n한번 클릭해 보시겠어요?");
                 if (btnTutorialConveyor != null) btnTutorialConveyor.onClick.AddListener(OnConveyorButtonClicked); break;
-            case 59: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
+            case 59: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo);
                 SetActionMode("컨베이어의 코딩은 아주 단순합니다.\n<color=red>코딩 창에 moving()을 적고\n디버깅(F5)</color> 해보세요!"); break;
             case 60: SetActionMode("완벽합니다!\n이제 채굴기나 가공기 배출구 앞에\n<color=red>컨베이어를 설치</color>해볼까요?\n(R키로 운송 방향 조절 가능)"); break;
             case 61: SetActionMode("이제 <color=red>우클릭</color>을 누르거나\n선택된 설치물 버튼을 다시 눌러서,\n설치 모드에서 나가보세요."); break;
