@@ -49,13 +49,13 @@ from user_messages import (
     STAGNATION_NUDGE_DEFAULT,
     BANDIT_FALLBACK_OK,
     SUCCESS_UNKNOWN_CLUSTER,
-    SUCCESS_MOVE_STANDALONE,
+    SUCCESS_MOVING_STANDALONE,
     RANK_LABEL_UNKNOWN,
     PROGRESSION_GROWTH,
     PROGRESSION_DECLINE_FROM_RANK2,
     PROGRESSION_DECLINE_GENERIC,
     PROGRESSION_STAGNATION,
-    Move,
+    Moving,
     Err,
     Machine,
     Api,
@@ -662,7 +662,7 @@ def _get_progression_note(cursor, user_pk: int, current_rank: int) -> str:
 # ──────────────────────────────────────────────────────────
 
 # 게임 내 사용 가능한 명령어 목록 (오타 제안에 사용)
-_GAME_FUNCTIONS = ["mining", "producting", "move", "name"]
+_GAME_FUNCTIONS = ["mining", "producting", "moving", "name"]
 
 # 자주 오타 나는 파이썬 내장 함수 목록
 _PYTHON_BUILTINS = [
@@ -759,77 +759,82 @@ def _extract_fn_from_typeerror(output_log: str) -> str:
 
 
 # ──────────────────────────────────────────────────────────
-# move() 함수 — 컨테이너 타일 설치 전용 (Layer 0)
+# moving() 함수 — 컨테이너 타일 설치 전용 (Layer 0)
 # ──────────────────────────────────────────────────────────
-# move() 는 게임 내 컨테이너 타일 설치에만 사용되는 단독 호출 명령어로,
+# moving() 는 게임 내 컨테이너 타일 설치에만 사용되는 단독 호출 명령어로,
 # 반복문(for/while) 안에 넣을 수 없습니다.
 #   - 정상 호출 시  → score = 100 만점 부여 (submit_code 에서 처리)
 #   - 오타 / 미완성 / 루프 내 사용 시 → Layer 0 힌트로 안내
 #
 # 감지 패턴:
-#   ① 알파벳 변형  : mov / mvoe / moev / moove / movee / moveing 등
-#   ② 대소문자 변형: MOVE / Move / MOve / MoVe 등 (move 자체는 제외)
-#   ③ 미완성 호출 : "move(" 만 쓰고 ")" 를 빠뜨린 경우
-#   ④ 루프 내 사용: for/while 블록 안에 move() 호출이 위치한 경우
+#   ① 알파벳 변형  : movin / mving / movng / movign / moveing 등
+#   ② 대소문자 변형: MOVING / Moving / MOving 등 (moving 자체는 제외)
+#   ③ 구버전 move : move / MOVE / Move 등 (moving() 으로 변경됨)
+#   ④ 미완성 호출 : "moving(" 만 쓰고 ")" 를 빠뜨린 경우
+#   ⑤ 루프 내 사용: for/while 블록 안에 moving() 호출이 위치한 경우
 # ──────────────────────────────────────────────────────────
 
 # 오타 후보 토큰 — 함수 호출 시도(뒤에 '(' 동반)만 감지하여 문자열/주석 내 단어 오탐 방지
-# 정확한 'move(' 는 제외 (단어 경계 + 알파벳 변형 / 대소문자 변형만 매칭)
-_MOVE_TYPO_VARIANT_RE = re.compile(
+# 정확한 'moving(' 는 제외 (단어 경계 + 알파벳 변형 / 대소문자 변형만 매칭)
+_MOVING_TYPO_VARIANT_RE = re.compile(
     r'(?<![A-Za-z0-9_])'
     r'(?P<token>'
-    r'mov|mvoe|moev|moove|moeve|movee|moveing|moveee'   # 철자 변형 (move 자체는 제외)
-    r'|MOVE|Move|MOve|MOVe|MoVe|moVe|movE|mOVE'         # 대소문자 변형 (move 자체는 제외)
+    r'movin|movinng|mving|movng|movign|mvoing|moviing|movingg|movingee|moveing'  # 철자 변형 (moving 자체는 제외)
+    r'|move|mov|mvoe|moev|moove|moeve|movee|moveee'                                 # 구버전 move 및 변형
+    r'|MOVING|Moving|MOving|MovIng|MoVing|movING|mOVING'                           # 대소문자 변형 (moving 자체는 제외)
+    r'|MOVE|Move|MOve|MOVe|MoVe|moVe|movE|mOVE'                                    # 구버전 move 대소문자 변형
     r')'
-    r'\s*\('                                            # 반드시 '(' 가 뒤따라야 함
+    r'\s*\('                                                                        # 반드시 '(' 가 뒤따라야 함
 )
 
 
-def _has_unclosed_move_call(source_code: str) -> bool:
+def _has_unclosed_moving_call(source_code: str) -> bool:
     """
-    'move(' 가 있지만 같은 라인 안에서 ')' 로 닫히지 않은 패턴을 감지합니다.
-    예) move(            ← 닫는 괄호 누락
-        move("fast"      ← 닫는 괄호 누락
+    'moving(' (또는 구버전 'move(') 가 있지만 같은 라인 안에서 ')' 로 닫히지 않은
+    패턴을 감지합니다.
+    예) moving(          ← 닫는 괄호 누락
+        move(            ← 구버전 + 닫는 괄호 누락
     """
     for raw_line in source_code.split('\n'):
         line = re.sub(r'#.*', '', raw_line)        # 라인 주석 제거
-        m = re.search(r'\bmove\s*\(', line)
-        if not m:
-            continue
-        depth = 1
-        for ch in line[m.end():]:
-            if ch == '(':
-                depth += 1
-            elif ch == ')':
-                depth -= 1
-                if depth == 0:
-                    break
-        if depth > 0:
-            return True
+        for pattern in (r'\bmoving\s*\(', r'\bmove\s*\('):
+            m = re.search(pattern, line)
+            if not m:
+                continue
+            depth = 1
+            for ch in line[m.end():]:
+                if ch == '(':
+                    depth += 1
+                elif ch == ')':
+                    depth -= 1
+                    if depth == 0:
+                        break
+            if depth > 0:
+                return True
     return False
 
 
-def _detect_move_typo(source_code: str) -> str | None:
+def _detect_moving_typo(source_code: str) -> str | None:
     """
-    move() 함수의 흔한 오타 / 미완성 패턴을 감지하고 안내 메시지를 반환합니다.
+    moving() 함수의 흔한 오타 / 미완성 패턴을 감지하고 안내 메시지를 반환합니다.
     감지 실패 시 None.
     """
     if not source_code:
         return None
 
-    if _has_unclosed_move_call(source_code):
-        return msg(Move.UNCLOSED_PAREN)
+    if _has_unclosed_moving_call(source_code):
+        return msg(Moving.UNCLOSED_PAREN)
 
-    m = _MOVE_TYPO_VARIANT_RE.search(source_code)
+    m = _MOVING_TYPO_VARIANT_RE.search(source_code)
     if m:
-        return msg(Move.TYPO, token=m.group('token'))
+        return msg(Moving.TYPO, token=m.group('token'))
 
     return None
 
 
-def _ast_contains_move_call(source_code: str) -> bool:
-    """AST 파싱 후 move(...) 호출이 한 번이라도 나타나는지 검사합니다."""
-    if not source_code or 'move' not in source_code:
+def _ast_contains_moving_call(source_code: str) -> bool:
+    """AST 파싱 후 moving(...) 호출이 한 번이라도 나타나는지 검사합니다."""
+    if not source_code or 'moving' not in source_code:
         return False
     try:
         tree = ast.parse(source_code)
@@ -838,14 +843,14 @@ def _ast_contains_move_call(source_code: str) -> bool:
     for node in ast.walk(tree):
         if (isinstance(node, ast.Call)
                 and isinstance(node.func, ast.Name)
-                and node.func.id == 'move'):
+                and node.func.id == 'moving'):
             return True
     return False
 
 
-def _move_in_loop(source_code: str) -> bool:
-    """move() 호출이 for / while 블록 내부에 위치하는지 검사합니다."""
-    if not source_code or 'move' not in source_code:
+def _moving_in_loop(source_code: str) -> bool:
+    """moving() 호출이 for / while 블록 내부에 위치하는지 검사합니다."""
+    if not source_code or 'moving' not in source_code:
         return False
     try:
         tree = ast.parse(source_code)
@@ -857,19 +862,19 @@ def _move_in_loop(source_code: str) -> bool:
         for child in ast.walk(node):
             if (isinstance(child, ast.Call)
                     and isinstance(child.func, ast.Name)
-                    and child.func.id == 'move'):
+                    and child.func.id == 'moving'):
                 return True
     return False
 
 
-def _is_move_standalone(source_code: str, features: dict) -> bool:
+def _is_moving_standalone(source_code: str, features: dict) -> bool:
     """
-    move() 가 반복문 없이 단독으로 호출되었는지 검사합니다.
+    moving() 가 반복문 없이 단독으로 호출되었는지 검사합니다.
     True 면 submit_code 에서 score = 100 만점을 부여합니다.
     """
     if features.get('has_loop', 0):
         return False
-    return _ast_contains_move_call(source_code)
+    return _ast_contains_moving_call(source_code)
 
 
 # ──────────────────────────────────────────────────────────
@@ -979,7 +984,7 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
     """
     제출 결과에 따라 단계별로 힌트를 생성합니다.
 
-    0단계 (move() 전용)               : 컨테이너 타일 설치용 move() 의 오타 / 미완성 /
+    0단계 (moving() 전용)               : 컨테이너 타일 설치용 moving() 의 오타 / 미완성 /
                                         반복문 내 사용을 가장 먼저 감지 (Layer 0)
     1단계 (is_python_valid == False) : 파이썬 에러 유형별 세분화 힌트
     2단계 (is_machine_valid == False): 기계 조건 미충족 힌트
@@ -993,18 +998,18 @@ def generate_hint(request: CodeSubmitRequest, score: float, features: dict,
     """
 
     # ══════════════════════════════════════════════════════
-    # 0단계: move() 함수 전용 검사 (컨테이너 타일 설치)
-    #   - 오타 (mov, MOVE, moove …)
-    #   - 미완성 호출 (move( 만 입력)
+    # 0단계: moving() 함수 전용 검사 (컨테이너 타일 설치)
+    #   - 오타 (movin, MOVE, move …)
+    #   - 미완성 호출 (moving( 만 입력)
     #   - 반복문 안에서 호출
     # 일반 NameError / SyntaxError 안내보다 우선 표시되어 더 구체적인 안내를 제공합니다.
     # ══════════════════════════════════════════════════════
-    move_typo_msg = _detect_move_typo(request.source_code)
-    if move_typo_msg:
-        return move_typo_msg
+    moving_typo_msg = _detect_moving_typo(request.source_code)
+    if moving_typo_msg:
+        return moving_typo_msg
 
-    if _move_in_loop(request.source_code):
-        return msg(Move.IN_LOOP)
+    if _moving_in_loop(request.source_code):
+        return msg(Moving.IN_LOOP)
 
     # ══════════════════════════════════════════════════════
     # 1단계: 파이썬 문법 / 런타임 에러
@@ -1199,11 +1204,11 @@ def _infer_hint_type(request: CodeSubmitRequest, features: dict, cluster_rank: i
     generate_hint() 의 분기 로직과 동일한 기준으로 hint_type 문자열을 결정합니다.
     성공 케이스(rank 0/1/2)는 _generate_hint_typed() 내 밴딧이 처리하므로 None 반환.
     """
-    # ── Layer 0: move() 전용 분류 ───────────────────────────
-    if _detect_move_typo(request.source_code) is not None:
-        return "move_typo"
-    if _move_in_loop(request.source_code):
-        return "move_in_loop"
+    # ── Layer 0: moving() 전용 분류 ───────────────────────────
+    if _detect_moving_typo(request.source_code) is not None:
+        return "moving_typo"
+    if _moving_in_loop(request.source_code):
+        return "moving_in_loop"
 
     if not request.is_python_valid:
         log = request.output_log.lower()
@@ -1269,21 +1274,21 @@ def _generate_hint_typed(
                filter_variants 로 현재 코드에 맞지 않는 upsell 변형 제외 후 밴딧 선택.
     """
     # ══════════════════════════════════════════════════════
-    # Layer 0: move() 전용 — 성공/실패 모든 경로에서 최우선 평가
+    # Layer 0: moving() 전용 — 성공/실패 모든 경로에서 최우선 평가
     # (오타 / 미완성 / 루프 내 사용은 일반 힌트 / 밴딧을 우회)
     # ══════════════════════════════════════════════════════
-    move_typo_msg = _detect_move_typo(request.source_code)
-    if move_typo_msg:
-        return move_typo_msg, "move_typo"
+    moving_typo_msg = _detect_moving_typo(request.source_code)
+    if moving_typo_msg:
+        return moving_typo_msg, "moving_typo"
 
-    if _move_in_loop(request.source_code):
-        return msg(Move.IN_LOOP), "move_in_loop"
+    if _moving_in_loop(request.source_code):
+        return msg(Moving.IN_LOOP), "moving_in_loop"
 
     if request.is_python_valid and request.is_machine_valid:
-        # ── Layer 0-success: move() 단독 호출 — 컨테이너 타일 설치 만점 ────
-        # 반복문 없이 move() 만 호출된 경우 클러스터/밴딧을 거치지 않고 고정 메시지를 반환합니다.
-        if _is_move_standalone(request.source_code, features):
-            return msg(SUCCESS_MOVE_STANDALONE), "succ_move"
+        # ── Layer 0-success: moving() 단독 호출 — 컨테이너 타일 설치 만점 ────
+        # 반복문 없이 moving() 만 호출된 경우 클러스터/밴딧을 거치지 않고 고정 메시지를 반환합니다.
+        if _is_moving_standalone(request.source_code, features):
+            return msg(SUCCESS_MOVING_STANDALONE), "succ_moving"
 
         hint_rank = effective_hint_rank(cluster_rank, features)
         if hint_rank >= 0:
@@ -1408,14 +1413,14 @@ async def submit_code(request: CodeSubmitRequest):
         # ─── ⑤ Aggregator: 최종 점수 가중합 ──────────────────────
         score = final_score(base_score, personal_score, adoption_score, antipattern_pen)
 
-        # ─── ⑤-bis: move() 단독 호출 — 컨테이너 타일 만점 오버라이드 ──
-        # move() 는 반복문 불가 + 단독 사용 함수라 정상 호출 자체로 만점 부여.
+        # ─── ⑤-bis: moving() 단독 호출 — 컨테이너 타일 만점 오버라이드 ──
+        # moving() 는 반복문 불가 + 단독 사용 함수라 정상 호출 자체로 만점 부여.
         # base_score 도 함께 100 으로 맞춰 응답 / score_breakdown 일관성을 보장합니다.
-        is_move_standalone_call = (
+        is_moving_standalone_call = (
             request.is_success
-            and _is_move_standalone(request.source_code, features)
+            and _is_moving_standalone(request.source_code, features)
         )
-        if is_move_standalone_call:
+        if is_moving_standalone_call:
             base_score = 100.0
             score      = 100.0
 
