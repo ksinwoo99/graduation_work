@@ -1006,4 +1006,38 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         Test_TriggerForcedBreakdown();
     }
 
+    public void OnClick_BreakdownStatusPanel() {
+        int targetId = 0;
+
+        // 1. 고장 난 기계 ID 찾기
+        foreach (var kvp in brokenMachines) {
+            if (kvp.Value == true) {
+                targetId = kvp.Key;
+                break;
+            }
+        }
+
+        if (targetId == 0) return;
+
+        // 2. 씬에 있는 모든 기계 찾기
+        logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>(true); 
+
+        foreach (var m in allMachines) {
+            // ✨ 핵심: Iteminfo_Base를 찾지 않고, 오브젝트 이름에서 "(Clone)"을 지워서 프리팹 이름을 알아냅니다.
+            string mName = m.gameObject.name.Replace("(Clone)", "").Trim();
+            
+            int mId = 0;
+            if (Ingame_System_Save.Instance != null) {
+                mId = Ingame_System_Save.Instance.GetMachineTypeInt(mName);
+            }
+            
+            // 3. 찾는 ID와 일치하면 코딩창 띄우기!
+            if (mId == targetId) {
+                string customName = GetMachineCustomName(targetId);
+                OpenFromExternal(targetId, customName, null, null, m);
+                return; // 성공했으니 함수 종료
+            }
+        }
+    }
+
 }
