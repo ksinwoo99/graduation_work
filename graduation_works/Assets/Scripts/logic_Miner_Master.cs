@@ -140,6 +140,15 @@ public class logic_Miner_Master : logic_CodingBase {
         UpdateStatusUI(); 
 
         while (miningCount == -1 || currentCount < miningCount) {
+            if (Ingame_Manager_Coding.Instance != null && Ingame_System_Save.Instance != null) {
+                int mId = Ingame_System_Save.Instance.GetMachineTypeInt(this.GetMachineName());
+                if (Ingame_Manager_Coding.Instance.brokenMachines.ContainsKey(mId) && 
+                    Ingame_Manager_Coding.Instance.brokenMachines[mId]) {
+                    yield return new WaitForSeconds(1f);
+                    continue; 
+                }
+            }
+
             float timer = 0;
             while (timer < miningInterval) {
                 bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
