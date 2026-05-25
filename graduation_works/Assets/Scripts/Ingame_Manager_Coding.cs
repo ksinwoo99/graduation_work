@@ -210,7 +210,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         string codeToVerify = (codeEditor != null) ? codeEditor.Text : inputField.text;
         
         SaveCurrentInput();
-
         int result = CheckCodeAndApply(codeToVerify, true); 
         
         if (Ingame_System_Save.Instance != null) {
@@ -218,7 +217,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         }
 
         if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
-            bool isError = (result != 2); 
+            bool isError = (result <= 0); 
             Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
         }
     }
