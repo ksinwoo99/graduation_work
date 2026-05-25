@@ -592,8 +592,19 @@ public class Ingame_Manager_Build : MonoBehaviour {
     
     public void ShowFloatingText(string msg, Vector3 worldPos) {
         if (floatingTextPrefab != null) {
-            worldPos.z = -5f; 
+            worldPos.z = -1f; 
+            
+            // 프리팹 생성!
             GameObject go = Instantiate(floatingTextPrefab, worldPos, Quaternion.identity);
+            
+            // 생성 직후, 프리팹의 Canvas를 찾아서 레이어(Installation)와 순서(10)를 강제로 고정
+            Canvas canvas = go.GetComponent<Canvas>();
+            if (canvas != null) {
+                canvas.overrideSorting = true;
+                canvas.sortingLayerName = "Installation"; 
+                canvas.sortingOrder = 10;
+            }
+
             Ingame_UI_Message uiMsg = go.GetComponent<Ingame_UI_Message>();
             if (uiMsg != null) uiMsg.Setup(msg, worldPos);
         }
@@ -843,7 +854,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
 
     public int GetCurrentExpandCost() { 
         if (expandCount == 0) return 0;
-        return baseExpandCost * (expandCount + 1); 
+        return baseExpandCost * (int)Mathf.Pow(2, expandCount - 1);
     }
 
     public bool TryExpandMap() {
