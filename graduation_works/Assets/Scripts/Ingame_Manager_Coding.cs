@@ -434,7 +434,19 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     }
     
     // 동적 난이도 조절 시스템 
+    private bool IsInSafeState() {
+        // 1. 튜토리얼 중이거나 다른 플레이어 농장을 방문 중일 때
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) return true;
+        if (Shared_Manager_Session.IsVisiting) return true;
 
+        // 2. 설치 모드 중일 때 (기계 건설, 코딩창 오픈 등)
+        if (buildManager != null && buildManager.isBuildMode) return true;
+
+        // 3. 시간이 멈춰있을 때 (ESC 메뉴창, 스킵 팝업 등)
+        if (Time.timeScale <= 0.01f) return true;
+
+        return false; // 위 조건에 모두 해당하지 않는 '기본 상태'
+    }
     private bool IsAnyMachineBroken() {
         foreach (var isBroken in brokenMachines.Values) {
             if (isBroken) return true; 
@@ -446,8 +458,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         while (true) {
             yield return new WaitForSecondsRealtime(breakdownCheckInterval);
 
-            bool isSafeMode = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) || Shared_Manager_Session.IsVisiting;
-            if (!enableDynamicDifficulty || isSafeMode || IsAnyMachineBroken()) continue;
+            if (!enableDynamicDifficulty || IsInSafeState() || IsAnyMachineBroken()) continue;
 
             float currentProb = breakdownProbability;
             if (buildManager != null && buildManager.expandCount > 0) currentProb += (buildManager.expandCount * 0.05f);
@@ -459,8 +470,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public void ReportMachineWork(int machineId) {
         if (machineId < 1 || machineId > 8) return;
 
-        bool isSafeMode = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) || Shared_Manager_Session.IsVisiting;
-        if (!enableDynamicDifficulty || isSafeMode || globalCodes.Count == 0) return;
+        if (!enableDynamicDifficulty || IsInSafeState() || globalCodes.Count == 0) return;
 
         if (!machineWorkCounts.ContainsKey(machineId)) machineWorkCounts[machineId] = 0;
         machineWorkCounts[machineId]++;
