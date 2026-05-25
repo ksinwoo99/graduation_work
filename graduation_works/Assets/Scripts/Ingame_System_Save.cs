@@ -132,6 +132,43 @@ public class Ingame_System_Save : MonoBehaviour {
         StartCoroutine(SaveToServerCoroutine(GatherAllData(currentId)));
     }
 
+    public void SaveGameSilent() {
+        if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null) {
+            Ingame_Manager_Build.Instance.codingManager.SaveCurrentInput();
+        }
+        
+        string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
+        if (string.IsNullOrEmpty(currentId)) currentId = "guest";
+        
+        StartCoroutine(SaveToServerSilentCoroutine(GatherAllData(currentId)));
+    }
+
+    // ✨ [추가] UI 알림창을 띄우지 않는 백그라운드 저장 코루틴
+    IEnumerator SaveToServerSilentCoroutine(GameSaveRequest requestData) {
+        string json = JsonUtility.ToJson(requestData);
+        UnityWebRequest www = new UnityWebRequest($"{serverUrl}/save/game", "POST");
+        www.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
+        www.downloadHandler = new DownloadHandlerBuffer();
+        www.SetRequestHeader("Content-Type", "application/json");
+        
+        yield return www.SendWebRequest();
+        
+        if (www.result == UnityWebRequest.Result.Success) {
+            lastSavedSnapshot = GetMapCodeSnapshot(requestData);
+            lastSaveTime = Time.time;
+            
+            // "저장 완료" 팝업을 띄우는 코드를 빼고 내부 상태만 안전하게 갱신!
+            if (Ingame_Manager_Menu.Instance != null) {
+                Ingame_Manager_Menu.Instance.isSaved = true;
+            }
+            if (Ingame_Manager_Build.Instance != null) {
+                Ingame_Manager_Build.Instance.ClearSessionLists();
+            }
+        } else {
+            Debug.LogWarning("조용한 자동 저장 실패: " + www.error);
+        }
+    }
+
     private GameSaveRequest GatherAllData(string userId) {
         GameSaveRequest data = new GameSaveRequest { user_id = userId };
         

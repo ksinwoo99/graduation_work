@@ -664,17 +664,50 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         if (Ingame_Manager_Build.Instance == null || Ingame_Manager_Build.Instance.codingManager == null) return;
         
         var codingMgr = Ingame_Manager_Build.Instance.codingManager;
-        if (!codingMgr.codingPanel.activeSelf) return;
+        
+        if (!codingMgr.codingPanel.activeSelf) 
+        {
+            logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>(true);
+            logic_CodingBase machineToOpen = null;
 
+            if (currentStep == 10 || currentStep == 13) {
+                machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Miner_Master>() != null);
+            } 
+            else if (currentStep == 31 || currentStep == 43) {
+                machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Productor_Master>() != null);
+            } 
+            else if (currentStep == 53) {
+                bool minerDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isMinerLoopUsed;
+                bool productorDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isProductorLoopUsed;
+
+                if (!minerDone) machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Miner_Master>() != null);
+                else if (!productorDone) machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Productor_Master>() != null);
+                else machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Miner_Master>() != null);
+            } 
+            else if (currentStep == 59) {
+                machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Conveyor>() != null); 
+            }
+
+            if (machineToOpen != null && Ingame_System_Save.Instance != null) {
+                string mName = machineToOpen.gameObject.name.Replace("(Clone)", "").Trim();
+                int mId = Ingame_System_Save.Instance.GetMachineTypeInt(mName);
+                
+                // 기계 코딩창 오픈
+                codingMgr.OpenFromExternal(mId, mName, null, null, machineToOpen);
+            } else {
+                Ingame_Manager_Build.Instance.ShowFloatingText("맵에 튜토리얼 대상 기계가 설치되어 있지 않습니다!", transform.position);
+                return;
+            }
+        }
+
+        // ✨ 2. 창이 열렸으니 현재 화면에 띄워진 타겟 기계를 가져와서 코드를 주입합니다.
         var targetLogic = codingMgr.GetCurrentTargetLogic();
         if (targetLogic == null) return;
 
         string codeToInject = "";
 
-        // 현재 튜토리얼 단계에 맞춰 주입할 코드 세팅
         switch (currentStep)
         {
-            // 10단계 이름 짓기 자동완성 코드 세팅
             case 10: codeToInject = "name = '기본 채굴기'"; break; 
             case 13: codeToInject = "mining(Common)"; break;
             case 31: codeToInject = "name = '기본 가공기'\nproducting(Common, 'A')"; break;
@@ -688,14 +721,17 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 59: codeToInject = "name = '수송 벨트'\nmoving()"; break;
         }
 
-        if (string.IsNullOrEmpty(codeToInject)) return;
+        if (string.IsNullOrEmpty(codeToInject)) {
+            Ingame_Manager_Build.Instance.ShowFloatingText("이 기계는 현재 튜토리얼 목표 기계가 아닙니다!", codingMgr.codingPanel.transform.position);
+            return;
+        }
 
         var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
         string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
 
         string finalCode = codeToInject;
 
-        // 10단계가 아닐 때만 기존 유저 이름을 보존하고, 10단계일 때는 지정된 정답을 통째로 주입
+        // 10단계가 아닐 때만 기존 유저 이름을 보존
         if (currentStep != 10) {
             System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(currentText, @"name\s*=\s*['""][^'""]+['""]");
             if (match.Success) {
