@@ -334,7 +334,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 11: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); SetDialogMode("설치물 버튼의 이름을 보시면,\nname 변수에 저장한 내용으로\n변경되었습니다."); break;
             case 12: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetDialogMode("이렇게 python에서는\n'변수명 = 데이터' 형식으로\n값을 저장하는 공간을\n만들 수 있습니다.\n\nname 변수에 저장된 이름은\n공장 내에서 이 기계의\n고유한 이름표가 됩니다."); break;
-            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining(resCommon)</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
+            case 13: SetActionMode("채굴기의 코드에,\n'필요 문법'을 넣어줘야 합니다.\n왼쪽 아래 정보창을 볼까요?\n\n<color=red>mining(Common)</color> 이라고 적혀있네요,\n적어넣고 디버깅을 해봅시다."); break;
             case 14: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo);
                 SetDialogMode("완벽합니다!\n이제 이 채굴기의 설치가\n가능해졌습니다.\n\n이 버튼을 선택한채로 채굴기를 설치하면,\n현재 코드를 따라 작동합니다!"); break;
             case 15: SetActionMode("채굴기같은 <color=red>설치물 선택 중 R키</color>를 누르면\n'생성될 요소의 위치 조절'이 가능해요.\n한번 맵에 클릭하여 설치해볼까요?"); break;
@@ -378,8 +378,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 48: SetDialogMode("완벽합니다!\n이제 <color=red>'반복문(Loop)'</color>을\n배워볼 시간입니다."); break;
             case 49: SetDialogMode("매번 기계를 켜주는 건 번거롭죠.\nfor문이나 while문을 사용하면\n알아서 반복 작동합니다!"); break;
             case 50: SetDialogMode("다만!!!\n\n현재 공장 시스템의 과부하를 막기 위해\n반복문은 최대 10회까지만 허용됩니다.\n(튜토리얼 완료 시 무한반복 가능)"); break;
-            case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining(resCommon)"); break;
-            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n\n      예시:\n      i = 0\n      while i < 10:\n          mining(resCommon)\n          i += 1"); break;
+            case 51: SetDialogMode("              for문을 사용하면\n    원하는 횟수만큼 반복할 수 있습니다.\n\n        예시:\n        for i in range(10):\n            mining(Common)"); break;
+            case 52: SetDialogMode("       while문은 조건을 체크하고,\n       조건이 참인 동안 반복합니다.\n\n      예시:\n      i = 0\n      while i < 10:\n          mining(Common)\n          i += 1"); break;
             case 53: HighlightPanel(panelInstallation); HighlightPanel(panelCoding); HighlightPanel(panelInstallationInfo); 
                 SetActionMode("채굴기와 가공기 각각의 코드에\n<color=red>반복문을 추가</color>하여\n퀘스트를 완료해 보세요!\n\n예시가 기억나지 않는다면,\n도움말 -> 반복문 을 참고하세요."); break;
             case 54: SetDialogMode("성공하셨네요!\n이제 기계들이 스스로,\n10번씩 작동할 겁니다."); break;

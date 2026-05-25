@@ -205,10 +205,18 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         else globalCodes.Add(machineId, code);
     }
 
-    void OnClick_Verify() {
+    public void OnClick_Verify() {
         var codeEditor = inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
         string codeToVerify = (codeEditor != null) ? codeEditor.Text : inputField.text;
-        CheckCodeAndApply(codeToVerify, false);
+        
+        // 코드 검사 실행 (CheckCodeAndApply는 성공 시 2를 반환합니다)
+        int result = CheckCodeAndApply(codeToVerify, true); 
+        
+        // [신규 추가] 튜토리얼 진행 검사는 오직 '디버깅(Verify) 버튼'을 직접 눌렀을 때만 실행!
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
+            bool isError = (result <= 0);
+            Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
+        }
     }
 
     public int CheckCodeAndApply(string code, bool isManualClick = false) {
@@ -371,11 +379,6 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     void SetStatus(Color color, bool isAllowed) {
         if (statusLight != null) statusLight.color = color;
         if (buildManager != null) buildManager.SetPlacementPermission(isAllowed);
-
-        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) {
-            bool isError = (color == Color.red);
-            Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
-        }
     }
 
     public void ToggleTheme() {
