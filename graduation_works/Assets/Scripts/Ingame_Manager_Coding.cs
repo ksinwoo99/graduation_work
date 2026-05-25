@@ -598,24 +598,31 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     }
 
     IEnumerator AutoFixRoutine(int targetId) {
-    autoFixTimers[targetId] = autoFixTime; 
+        autoFixTimers[targetId] = autoFixTime; 
 
-    // ✨ autoFixTimers에 해당 ID가 있는지 먼저 확인하는 조건 추가
-    while (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId] && 
-           autoFixTimers.ContainsKey(targetId) && autoFixTimers[targetId] > 0) {
+        // 게임 스케일이 멈춰도 코루틴이 계속 살아있도록 무조건 작동하는 루프로 변경
+        while (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId] && 
+               autoFixTimers.ContainsKey(targetId) && autoFixTimers[targetId] > 0) {
+            
+            // 현실 시간 기준으로 정확히 1초씩 대기합니다 (timeScale의 영향을 받지 않음)
+            yield return new WaitForSecondsRealtime(1f);
+
+            // 1초가 지났을 때, 게임이 정지 상태(메뉴창 활성화, 설치 모드 등)인지 체크합니다.
+            // timeScale이 0에 가깝다면 시간이 멈춘 것이므로 타이머를 깎지 않고 그대로 유지(패스)합니다!
+            if (Time.timeScale <= 0.01f) {
+                continue; 
+            }
+
+            // 게임이 정상 구동 중일 때만 정확히 1초씩 차감합니다.
+            if (autoFixTimers.ContainsKey(targetId)) {
+                autoFixTimers[targetId] -= 1f;
+            }
+        }
         
-        yield return new WaitForSecondsRealtime(1f);
-
-        // 기다리는 동안 데이터가 삭제될 수 있으므로 다시 한번 체크
-        if (autoFixTimers.ContainsKey(targetId)) {
-            autoFixTimers[targetId] -= 1f;
+        if (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId]) {
+            RestoreMachine(targetId, false); 
         }
     }
-    
-    if (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId]) {
-        RestoreMachine(targetId, false); 
-    }
-}
 
     private void RestoreMachine(int targetId, bool isManualGiveUp) {
         if (!brokenMachines.ContainsKey(targetId) || !brokenMachines[targetId]) return;
