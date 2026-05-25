@@ -41,17 +41,32 @@ public abstract class logic_CodingBase : MonoBehaviour
     public virtual void OnMouseDown() {
         var buildMgr = Ingame_Manager_Build.Instance;
         
-        // ✨ 빌드(설치) 모드이거나 철거 모드일 때는 클릭 무시 (설치/철거가 우선)
+        // 설치 모드이거나 철거 모드일 때는 클릭 무시 (설치/철거가 우선)
         if (buildMgr != null && buildMgr.isBuildMode) return;
         
         if (Shared_Manager_Session.IsVisiting) return;
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
 
-        // ✨ [수정] 개별 기계를 클릭해서 정지/가동하는 로직 제거
-        // ToggleOperation(); 
-
-        // ✨ [신규] 기계를 클릭하면, 하단 메뉴 버튼을 클릭한 것과 동일한 로직 실행!
+        // 좌클릭: 코딩 창 열기
         OpenMyCodingWindow();
+    }
+
+    public virtual void OnMouseOver() {
+        var buildMgr = Ingame_Manager_Build.Instance;
+        if (buildMgr != null && buildMgr.isBuildMode) return;
+        if (Shared_Manager_Session.IsVisiting) return;
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+
+        // 우클릭을 감지하면 기계를 개별적으로 끄거나 켭니다.
+        if (Input.GetMouseButtonDown(1)) {
+            ToggleOperation();
+            
+            // 시각적 피드백 (선택사항)
+            if (Ingame_Manager_Build.Instance != null) {
+                string stateMsg = isOperating ? "재가동" : "정지";
+                Ingame_Manager_Build.Instance.ShowFloatingText(stateMsg, transform.position);
+            }
+        }
     }
 
     private void OpenMyCodingWindow() {

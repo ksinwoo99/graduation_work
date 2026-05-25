@@ -16832,7 +16832,7 @@ MonoBehaviour:
   floorTileBase: {fileID: 11400000, guid: 27d0a3c8585c764418197915cab251c1, type: 2}
   currentMapSize: 4
   expandCount: 0
-  baseExpandCost: 500
+  baseExpandCost: 1000
   expandSizeStep: 2
   codingManager: {fileID: 1617483139}
   machineInfoUI: {fileID: 211726238}
