@@ -512,7 +512,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 if (banTarget != "loop") {
                     forbiddenKeywords[targetId] = banTarget;
                     brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode;
-                    breakdownReason = $"과부하로 인해 '{banTarget}' \n 문법을 사용할 수 없습니다!";
+                    breakdownReason = $"과부하로 인해 '{banTarget}' 문법을 사용할 수 없습니다!";
                 } else {
                     brokenCode = brokenCode.Replace("(", ""); 
                     breakdownReason = "코드가 파손되었습니다!";
@@ -727,7 +727,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
 
                 int timeLeft = autoFixTimers.ContainsKey(mId) ? Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId])) : 0;
-                sb.AppendLine($"{machineName} : <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
+                sb.AppendLine($"{machineName} : \n <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
             }
         }
 
