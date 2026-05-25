@@ -221,6 +221,15 @@ public class logic_Productor_Master : logic_CodingBase
         UpdateStatusUI(); 
 
         while (processingCount == -1 || currentCount < processingCount) {
+            if (Ingame_Manager_Coding.Instance != null && Ingame_System_Save.Instance != null) {
+                int mId = Ingame_System_Save.Instance.GetMachineTypeInt(this.GetMachineName());
+                if (Ingame_Manager_Coding.Instance.brokenMachines.ContainsKey(mId) && 
+                    Ingame_Manager_Coding.Instance.brokenMachines[mId]) {
+                    yield return new WaitForSeconds(1f);
+                    continue; 
+                }
+            }
+
             bool isBuildMode = (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.isBuildMode);
             bool isPaused = (Ingame_Manager_Time.Instance != null && Ingame_Manager_Time.Instance.isPaused);
 
