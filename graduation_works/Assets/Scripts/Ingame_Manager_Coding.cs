@@ -434,7 +434,19 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     }
     
     // 동적 난이도 조절 시스템 
+    private bool IsInSafeState() {
+        // 1. 튜토리얼 중이거나 다른 플레이어 농장을 방문 중일 때
+        if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) return true;
+        if (Shared_Manager_Session.IsVisiting) return true;
 
+        // 2. 설치 모드 중일 때 (기계 건설, 코딩창 오픈 등)
+        if (buildManager != null && buildManager.isBuildMode) return true;
+
+        // 3. 시간이 멈춰있을 때 (ESC 메뉴창, 스킵 팝업 등)
+        if (Time.timeScale <= 0.01f) return true;
+
+        return false; // 위 조건에 모두 해당하지 않는 '기본 상태'
+    }
     private bool IsAnyMachineBroken() {
         foreach (var isBroken in brokenMachines.Values) {
             if (isBroken) return true; 
@@ -446,8 +458,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         while (true) {
             yield return new WaitForSecondsRealtime(breakdownCheckInterval);
 
-            bool isSafeMode = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) || Shared_Manager_Session.IsVisiting;
-            if (!enableDynamicDifficulty || isSafeMode || IsAnyMachineBroken()) continue;
+            if (!enableDynamicDifficulty || IsInSafeState() || IsAnyMachineBroken()) continue;
 
             float currentProb = breakdownProbability;
             if (buildManager != null && buildManager.expandCount > 0) currentProb += (buildManager.expandCount * 0.05f);
@@ -459,8 +470,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     public void ReportMachineWork(int machineId) {
         if (machineId < 1 || machineId > 8) return;
 
-        bool isSafeMode = (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) || Shared_Manager_Session.IsVisiting;
-        if (!enableDynamicDifficulty || isSafeMode || globalCodes.Count == 0) return;
+        if (!enableDynamicDifficulty || IsInSafeState() || globalCodes.Count == 0) return;
 
         if (!machineWorkCounts.ContainsKey(machineId)) machineWorkCounts[machineId] = 0;
         machineWorkCounts[machineId]++;
@@ -512,7 +522,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 if (banTarget != "loop") {
                     forbiddenKeywords[targetId] = banTarget;
                     brokenCode = $"# [ERROR]\n# 과부하로 인해 '{banTarget}'는 사용할 수 없습니다.!\n# 다른 반복문은 사용 가능합니다.\n" + brokenCode;
-                    breakdownReason = $"과부하로 인해 '{banTarget}' \n 문법을 사용할 수 없습니다!";
+                    breakdownReason = $"과부하로 인해 '{banTarget}' 문법을 사용할 수 없습니다!";
                 } else {
                     brokenCode = brokenCode.Replace("(", ""); 
                     breakdownReason = "코드가 파손되었습니다!";
@@ -588,24 +598,31 @@ public class Ingame_Manager_Coding : MonoBehaviour {
     }
 
     IEnumerator AutoFixRoutine(int targetId) {
-    autoFixTimers[targetId] = autoFixTime; 
+        autoFixTimers[targetId] = autoFixTime; 
 
-    // ✨ autoFixTimers에 해당 ID가 있는지 먼저 확인하는 조건 추가
-    while (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId] && 
-           autoFixTimers.ContainsKey(targetId) && autoFixTimers[targetId] > 0) {
+        // 게임 스케일이 멈춰도 코루틴이 계속 살아있도록 무조건 작동하는 루프로 변경
+        while (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId] && 
+               autoFixTimers.ContainsKey(targetId) && autoFixTimers[targetId] > 0) {
+            
+            // 현실 시간 기준으로 정확히 1초씩 대기합니다 (timeScale의 영향을 받지 않음)
+            yield return new WaitForSecondsRealtime(1f);
+
+            // 1초가 지났을 때, 게임이 정지 상태(메뉴창 활성화, 설치 모드 등)인지 체크합니다.
+            // timeScale이 0에 가깝다면 시간이 멈춘 것이므로 타이머를 깎지 않고 그대로 유지(패스)합니다!
+            if (Time.timeScale <= 0.01f) {
+                continue; 
+            }
+
+            // 게임이 정상 구동 중일 때만 정확히 1초씩 차감합니다.
+            if (autoFixTimers.ContainsKey(targetId)) {
+                autoFixTimers[targetId] -= 1f;
+            }
+        }
         
-        yield return new WaitForSecondsRealtime(1f);
-
-        // 기다리는 동안 데이터가 삭제될 수 있으므로 다시 한번 체크
-        if (autoFixTimers.ContainsKey(targetId)) {
-            autoFixTimers[targetId] -= 1f;
+        if (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId]) {
+            RestoreMachine(targetId, false); 
         }
     }
-    
-    if (brokenMachines.ContainsKey(targetId) && brokenMachines[targetId]) {
-        RestoreMachine(targetId, false); 
-    }
-}
 
     private void RestoreMachine(int targetId, bool isManualGiveUp) {
         if (!brokenMachines.ContainsKey(targetId) || !brokenMachines[targetId]) return;
@@ -727,7 +744,7 @@ public class Ingame_Manager_Coding : MonoBehaviour {
                 }
 
                 int timeLeft = autoFixTimers.ContainsKey(mId) ? Mathf.Max(0, Mathf.CeilToInt(autoFixTimers[mId])) : 0;
-                sb.AppendLine($"{machineName} : <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
+                sb.AppendLine($"{machineName} : \n <color=#FFDD00>[{standardReason}]</color><br>  - 자동 복구까지: {timeLeft}초");
             }
         }
 
