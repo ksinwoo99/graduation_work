@@ -198,3 +198,7 @@ def train() -> None:
 
     except Exception as e:
         print(f"\n[ERROR] ML 학습 중 에러 발생: {e}")
+
+
+if __name__ == "__main__":
+    train()

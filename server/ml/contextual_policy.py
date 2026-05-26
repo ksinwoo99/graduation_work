@@ -18,6 +18,7 @@ import joblib
 import numpy as np
 
 from ml.bandit_thompson import ThompsonBandit
+from ml.context_encoder import CONTEXT_DIM, CONTEXT_VERSION
 
 
 class ContextualBandit:
@@ -39,20 +40,31 @@ class ContextualBandit:
         self.model            = None      # sklearn RandomForestRegressor
         self.hint_index: list[str] = []   # one-hot 매핑용 hint_type 순서
         self.context_dim: int    = 0
+        self.context_version: int = 0
         self._loaded_mtime: float = 0.0
 
     # ── 모델 로드 / 핫리로드 ───────────────────────────────
     def _load(self) -> None:
         try:
             data = joblib.load(self.model_path)
-            self.model       = data.get("model")
-            self.hint_index  = list(data.get("hint_index", []))
-            self.context_dim = int(data.get("context_dim", 0))
-            self._loaded_mtime = os.path.getmtime(self.model_path)
-            print(
-                f"[ContextualPolicy] 로드 완료  "
-                f"hint_count={len(self.hint_index)} | context_dim={self.context_dim}"
-            )
+            self.model           = data.get("model")
+            self.hint_index      = list(data.get("hint_index", []))
+            self.context_dim     = int(data.get("context_dim", 0))
+            self.context_version = int(data.get("context_version", 1))
+            self._loaded_mtime   = os.path.getmtime(self.model_path)
+            if self.context_version != CONTEXT_VERSION:
+                print(
+                    f"[ContextualPolicy] 구버전 pkl (v{self.context_version}≠v{CONTEXT_VERSION}) "
+                    f"— Thompson 폴백"
+                )
+                self.model = None
+                self.hint_index = []
+            else:
+                print(
+                    f"[ContextualPolicy] 로드 완료  "
+                    f"hint_count={len(self.hint_index)} | "
+                    f"context_dim={self.context_dim} | context_version={self.context_version}"
+                )
         except Exception as e:
             self.model      = None
             self.hint_index = []
@@ -71,7 +83,12 @@ class ContextualBandit:
 
     def is_ready(self) -> bool:
         """RF 모델이 사용 가능한 상태인지."""
-        return self.model is not None and bool(self.hint_index)
+        return (
+            self.model is not None
+            and bool(self.hint_index)
+            and self.context_version == CONTEXT_VERSION
+            and self.context_dim == CONTEXT_DIM
+        )
 
     # ── 선택 ────────────────────────────────────────────────
     def _onehot(self, hint_type: str) -> np.ndarray:
@@ -89,7 +106,7 @@ class ContextualBandit:
             return self.fallback.select(candidates)
 
         # 컨텍스트 차원이 안 맞으면 안전하게 폴백
-        if self.context_dim and len(context) != self.context_dim:
+        if len(context) != CONTEXT_DIM:
             return self.fallback.select(candidates)
 
         # 후보 중 hint_index 에 등록된 것이 하나도 없으면 폴백
@@ -102,7 +119,7 @@ class ContextualBandit:
             return random.choice(candidates)
 
         ctx_arr = np.asarray(context, dtype=float)
-        best_ht, best_pred = registered[0], -float("inf")
+        best_ht, best_pred = None, -float("inf")
         for ht in registered:
             x = np.concatenate([ctx_arr, self._onehot(ht)]).reshape(1, -1)
             try:
@@ -112,6 +129,9 @@ class ContextualBandit:
             if pred > best_pred:
                 best_pred = pred
                 best_ht   = ht
+
+        if best_ht is None:
+            return self.fallback.select(candidates)
         return best_ht
 
     # ── 업데이트는 항상 폴백(Thompson) 에 누적 ──────────────

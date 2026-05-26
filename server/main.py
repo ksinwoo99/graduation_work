@@ -21,7 +21,7 @@ Scoring 2.0 / Contextual Bandit 모듈:
     scoring/antipattern     — 7종 안티패턴 결정론 감지 + 에러 재발 페널티
     ml/bandit_thompson      — Beta(α,β) Thompson Sampling
     ml/contextual_policy    — RandomForest 정책 + Thompson 폴백
-    ml/context_encoder      — 유저 상태 8차원 벡터 인코딩
+    ml/context_encoder      — 유저 상태 14차원 벡터 (히스토리 8 + 현재 제출 6)
     ml/reward               — 5단계 연속형 보상 산출
     ml/policy_trainer       — 주기 RF 재학습 (ml_worker 가 호출)
 """
@@ -1471,7 +1471,7 @@ async def submit_code(request: CodeSubmitRequest):
 
         # ─── ⑥ Contextual Bandit 으로 힌트 선택 ───────────────────
         try:
-            user_context = encode_user_context(cursor, user_pk)
+            user_context = encode_user_context(cursor, user_pk, features)
         except Exception:
             user_context = None
         ai_hint, hint_type = _generate_hint_typed(
