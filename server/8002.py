@@ -20,7 +20,7 @@ app = FastAPI()
 SMTP_SERVER    = "smtp.gmail.com"
 SMTP_PORT      = 587
 SENDER_EMAIL   = os.getenv("SMTP_SENDER_EMAIL", "py.factory26@gmail.com")
-SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD", "")
+SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD", "REDACTED_SMTP_PASSWORD")
 
 # 이메일 형식 검증 정규식 (send_register_auth_code, send_auth_code 공통 사용)
 _EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
@@ -118,7 +118,8 @@ def find_id_by_email(req: EmailRequest):
         else:
             return {"status": "FAIL", "msg": "해당 이메일로 가입된 내역이 없습니다."}
     except Exception as e:
-        return {"status": "ERROR", "msg": str(e)}
+        print(f"[아이디 찾기 DB 에러] {str(e)}") # 서버에서만 확인
+        return {"status": "ERROR", "msg": "조회 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."}
     finally: conn.close()
 
 # ✨ 1. 회원가입용 인증번호 발송 API (통합 DB 저장)
@@ -141,7 +142,8 @@ def send_register_auth_code(req: RegisterCodeRequest):
         
         return {"status": "SUCCESS", "msg": f"[{req.email}]로 인증번호가 발송되었습니다."}
     except Exception as e:
-        return {"status": "ERROR", "msg": f"발송 오류: {str(e)}"}
+        print(f"[회원가입 메일 에러] {str(e)}") # 서버 콘솔 확인용
+        return {"status": "ERROR", "msg": "인증 메일 발송에 실패했습니다. (발송 오류)"}
     finally: conn.close()
 
 # ✨ 2. 회원가입 API
@@ -164,7 +166,9 @@ def register(req: UserAuth):
             del auth_codes_db[req.email] # 인증 통과 시 파기
 
         return {"status": "REGISTER_SUCCESS", "msg": "회원가입 완료"}
-    except Exception as e: return {"status": "ERROR", "msg": str(e)}
+    except Exception as e:
+        print(f"[회원가입 DB 에러] {str(e)}") # 서버에서만 확인
+        return {"status": "ERROR", "msg": "회원가입 처리 중 오류가 발생했습니다."}
     finally: conn.close()
 
 # ✨ 3. 비밀번호 찾기용 인증번호 발송 API
@@ -187,7 +191,8 @@ def send_auth_code(req: AuthCodeRequest):
         
         return {"status": "SUCCESS", "msg": f"[{req.email}] 이메일로 인증번호가 발송되었습니다."}
     except Exception as e:
-        return {"status": "ERROR", "msg": f"발송 오류: {str(e)}"}
+        print(f"[비번찾기 메일 에러] {str(e)}") # 서버 콘솔 확인용
+        return {"status": "ERROR", "msg": "인증 메일 발송에 실패했습니다. (발송 오류)"}
     finally: conn.close()
 
 # ✨ 4. 비밀번호 찾기 인증번호 확인 및 반환 API
