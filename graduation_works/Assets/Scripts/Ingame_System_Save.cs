@@ -38,6 +38,7 @@ public class Ingame_System_Save : MonoBehaviour {
     public static Ingame_System_Save Instance;
     public static bool isLoadRequested = false; 
     public static bool isNewGameRequested = false;
+    public static bool isLoadSuccessful = false;
 
     private string serverUrl = "http://13.237.51.219:8000";
 
@@ -144,6 +145,12 @@ public class Ingame_System_Save : MonoBehaviour {
     }
 
     IEnumerator SaveToServerSilentCoroutine(GameSaveRequest requestData) {
+        // 새로하기 모드가 아닌데 로드 인증 마커가 없다면? 저장을 강제로 취소합니다!
+        if (!isLoadSuccessful && !isNewGameRequested) {
+            Debug.LogWarning("로드 실패 상태이므로 빈 맵 덮어쓰기 방지를 위해 자동 저장을 차단합니다!");
+            yield break; // 여기서 코루틴을 완전히 끝내버림
+        }
+
         string json = JsonUtility.ToJson(requestData);
         
         // [Curl 26 완벽 해결법] Put으로 생성해서 데이터를 안전하게 담은 뒤, 전송 방식만 POST로 바꿉니다.
@@ -255,6 +262,13 @@ public class Ingame_System_Save : MonoBehaviour {
     }
 
     IEnumerator SaveToServerCoroutine(GameSaveRequest requestData) {
+        if (!isLoadSuccessful && !isNewGameRequested) {
+            if (Ingame_Manager_Menu.Instance != null) {
+                Ingame_Manager_Menu.Instance.ShowInfoWindow("서버 데이터 동기화 실패\n재시도 해주세요.", true);
+            }
+            yield break;
+        }
+
         if (Ingame_Manager_Menu.Instance != null) {
             Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 중...", false);
         }
@@ -301,6 +315,9 @@ public class Ingame_System_Save : MonoBehaviour {
             GameLoadResponse response = JsonUtility.FromJson<GameLoadResponse>(www.downloadHandler.text);
             if (response.status == "SUCCESS") {
                 ApplyGameData(response);
+                
+                // ✨ [핵심] 로드가 완벽하게 성공했으므로 이제 저장을 허용합니다!
+                isLoadSuccessful = true; 
 
                 string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
                 if (string.IsNullOrEmpty(currentId)) currentId = "guest";
@@ -309,6 +326,7 @@ public class Ingame_System_Save : MonoBehaviour {
             }
         } else {
             Debug.LogError("로드 실패: " + www.error);
+            isLoadSuccessful = false; 
         }
     }
     
@@ -389,7 +407,16 @@ public class Ingame_System_Save : MonoBehaviour {
 
             if (data.machines != null) {
                 buildMgr.ClearAllBuildingsForLoad();
-                foreach (var mData in data.machines) {
+
+                List<MachineData> sortedMachines = new List<MachineData>(data.machines);
+                sortedMachines.Sort((a, b) => {
+                // 예: 창고(10, 11)나 시장(12, 13)을 가장 먼저 배치하도록 우선순위 부여
+                int priorityA = (a.machine_type >= 10) ? 0 : 1;
+                int priorityB = (b.machine_type >= 10) ? 0 : 1;
+                return priorityA.CompareTo(priorityB);
+                });
+
+                foreach (var mData in sortedMachines) {
                     if (mData.pos_y <= -9000f) {
                         if (buildMgr.codingManager != null && !string.IsNullOrEmpty(mData.source_code)) {
                             buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
@@ -397,8 +424,7 @@ public class Ingame_System_Save : MonoBehaviour {
                         continue; 
                     }
 
-                    Vector3Int checkPos = new Vector3Int(Mathf.RoundToInt(mData.pos_x), Mathf.RoundToInt(mData.pos_y), Mathf.RoundToInt(mData.pos_z));
-                    
+                    Vector3Int checkPos = new Vector3Int( (int)Mathf.Round(mData.pos_x), (int)Mathf.Round(mData.pos_y), (int)Mathf.Round(mData.pos_z));
                     GameObject prefab = GetPrefabFromInt(mData.machine_type);
                     if (prefab == null) continue;
 
@@ -418,7 +444,11 @@ public class Ingame_System_Save : MonoBehaviour {
                             break;
                         }
                     }
-                    if (isOccupied) continue; 
+                    if (isOccupied) {
+                        // 💡 무조건 스킵하지 말고, 로그를 남겨서 어디서 겹치는지 알아야 합니다!
+                        Debug.LogError($"[위치 충돌] {mData.machine_type}번 기계가 {checkPos}에서 겹쳐서 로드 실패!");
+                        continue;
+                        }
 
                     buildMgr.LoadBuildingFromServer(mData, prefab);
                 }
