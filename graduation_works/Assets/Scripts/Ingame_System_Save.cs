@@ -353,6 +353,13 @@ public class Ingame_System_Save : MonoBehaviour {
 
             if (data.machines != null) {
                 buildMgr.ClearAllBuildingsForLoad();
+
+                List<MachineData> sortedMachines = new List<MachineData>(data.machines);sortedMachines.Sort((a, b) => {
+                    int priorityA = (a.machine_type >= 10) ? 0 : 1;
+                    int priorityB = (b.machine_type >= 10) ? 0 : 1;
+                    return priorityA.CompareTo(priorityB);
+                    });
+
                 foreach (var mData in data.machines) {
                     if (mData.pos_y <= -9000f) {
                         if (buildMgr.codingManager != null && !string.IsNullOrEmpty(mData.source_code)) {
@@ -361,8 +368,7 @@ public class Ingame_System_Save : MonoBehaviour {
                         continue; 
                     }
 
-                    Vector3Int checkPos = new Vector3Int(Mathf.RoundToInt(mData.pos_x), Mathf.RoundToInt(mData.pos_y), Mathf.RoundToInt(mData.pos_z));
-                    
+                    Vector3Int checkPos = new Vector3Int( (int)Mathf.Round(mData.pos_x), (int)Mathf.Round(mData.pos_y), (int)Mathf.Round(mData.pos_z));
                     GameObject prefab = GetPrefabFromInt(mData.machine_type);
                     if (prefab == null) continue;
 
@@ -382,7 +388,11 @@ public class Ingame_System_Save : MonoBehaviour {
                             break;
                         }
                     }
-                    if (isOccupied) continue; 
+                    if (isOccupied) {
+                        // 💡 무조건 스킵하지 말고, 로그를 남겨서 어디서 겹치는지 알아야 합니다!    
+                        Debug.LogError($"[위치 충돌] {mData.machine_type}번 기계가 {checkPos}에서 겹쳐서 로드 실패!");
+                        continue;
+                    }
 
                     buildMgr.LoadBuildingFromServer(mData, prefab);
                 }
