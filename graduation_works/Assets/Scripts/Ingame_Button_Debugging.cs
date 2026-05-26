@@ -237,6 +237,14 @@ public class Ingame_Button_Debugging : MonoBehaviour
             isMachValid = (applyResult == 2);
             isSuccess   = isMachValid;   // is_python_valid 는 이미 true
 
+            // 튜토리얼이 진행 중이라면 결과를 보고합니다!
+            if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) 
+            {
+                // applyResult가 2 이하면 정상(false), 2 초과(오류)면 isError=true로 판단
+                bool isError = (applyResult <= 0); 
+                Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
+            }
+
             string timeMsg = $"  (실행 시간: {response.execution_time:F3}초)";
 
             ApplyFeedback fb = ApplyResultTable.TryGetValue(applyResult, out var found)

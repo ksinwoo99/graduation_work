@@ -649,8 +649,29 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     public void TriggerCompileResult(bool isCompileError) {
         if (!isTutorialActive) return;
-        if (isCompileError) return;
+        
+        bool isPresetStep = (currentStep == 10 || currentStep == 13 || currentStep == 31 || currentStep == 43 || currentStep == 53 || currentStep == 59);
 
+        // 1. 에러가 났을 때 자동완성 버튼을 다시 살려줍니다.
+        if (isCompileError) {
+            if (isPresetStep && btnLoadPreset != null) {
+                btnLoadPreset.gameObject.SetActive(true);
+            }
+            return;
+        }
+
+        // ✨ 2. [53단계 특별 처리] 한 기계만 성공했을 때는 다른 기계를 위해 버튼을 계속 살려둡니다!
+        if (currentStep == 53 && btnLoadPreset != null) {
+            bool minerDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isMinerLoopUsed;
+            bool productorDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isProductorLoopUsed;
+            
+            // 둘 중 하나라도 아직 안 끝났다면 버튼 유지!
+            if (!minerDone || !productorDone) {
+                btnLoadPreset.gameObject.SetActive(true);
+            }
+        }
+
+        // 정답일 경우 정상적으로 다음 단계 검사
         if (currentStep == 10) CheckNameCodeAndProceed();
         else if (currentStep == 13) CheckMiningCodeAndProceed();
         else if (currentStep == 31) CheckProductorSimpleCodeAndProceed(); 
@@ -658,91 +679,89 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         else if (currentStep == 59) CheckConveyorCodeAndProceed(); 
     }
 
-    // 현재 단계에 맞는 코드를 하드코딩으로 주입하는 자동완성 함수
     public void OnClick_LoadPresetForCurrentStep()
     {
         if (Ingame_Manager_Build.Instance == null || Ingame_Manager_Build.Instance.codingManager == null) return;
-        
         var codingMgr = Ingame_Manager_Build.Instance.codingManager;
         
+        // 창이 닫혀있다면 타겟 기계를 찾아 먼저 엽니다.
         if (!codingMgr.codingPanel.activeSelf) 
         {
             logic_CodingBase[] allMachines = FindObjectsOfType<logic_CodingBase>(true);
             logic_CodingBase machineToOpen = null;
 
-            if (currentStep == 10 || currentStep == 13) {
+            if (currentStep == 10 || currentStep == 13 || currentStep == 53) 
                 machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Miner_Master>() != null);
-            } 
-            else if (currentStep == 31 || currentStep == 43) {
+            else if (currentStep == 31 || currentStep == 43) 
                 machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Productor_Master>() != null);
-            } 
-            else if (currentStep == 53) {
-                bool minerDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isMinerLoopUsed;
-                bool productorDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isProductorLoopUsed;
-
-                if (!minerDone) machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Miner_Master>() != null);
-                else if (!productorDone) machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Productor_Master>() != null);
-                else machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Miner_Master>() != null);
-            } 
-            else if (currentStep == 59) {
-                machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Conveyor>() != null); 
-            }
+            else if (currentStep == 59) 
+                machineToOpen = System.Array.Find(allMachines, m => m.GetComponent<logic_Conveyor>() != null);
 
             if (machineToOpen != null && Ingame_System_Save.Instance != null) {
                 string mName = machineToOpen.gameObject.name.Replace("(Clone)", "").Trim();
                 int mId = Ingame_System_Save.Instance.GetMachineTypeInt(mName);
-                
-                // 기계 코딩창 오픈
                 codingMgr.OpenFromExternal(mId, mName, null, null, machineToOpen);
-            } else {
-                Ingame_Manager_Build.Instance.ShowFloatingText("맵에 튜토리얼 대상 기계가 설치되어 있지 않습니다!", transform.position);
-                return;
             }
         }
 
-        // ✨ 2. 창이 열렸으니 현재 화면에 띄워진 타겟 기계를 가져와서 코드를 주입합니다.
-        var targetLogic = codingMgr.GetCurrentTargetLogic();
-        if (targetLogic == null) return;
+        // ✨ 코루틴으로 인자(waitTime)만 넘겨주고, 타겟 확인은 열린 뒤에 실행합니다!
+        StartCoroutine(InjectCodeDelayed(0.1f)); 
+    }
 
+    IEnumerator InjectCodeDelayed(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime); 
+        
+        var codingMgr = Ingame_Manager_Build.Instance.codingManager;
+        var targetLogic = codingMgr.currentLogic; // 현재 활성화된(열려있는) 기계 확인
+        
         string codeToInject = "";
-
-        switch (currentStep)
-        {
+        
+        // ✨ 주입할 코드 세팅 (53단계는 열려있는 기계가 뭔지 보고 똑똑하게 결정!)
+        switch (currentStep) {
             case 10: codeToInject = "name = '기본 채굴기'"; break; 
             case 13: codeToInject = "mining(Common)"; break;
             case 31: codeToInject = "name = '기본 가공기'\nproducting(Common, 'A')"; break;
             case 43: codeToInject = "if resCommon >= 100:\n    producting(Common, 'A')\nelif resCommon >= 50:\n    producting(Common, 'B')"; break;
-            case 53:
-                if (targetLogic.GetComponent<logic_Miner_Master>() != null)
-                    codeToInject = "for i in range(10):\n    mining(Common)";
-                else if (targetLogic.GetComponent<logic_Productor_Master>() != null)
+            case 53: 
+                // 가공기가 열려있다면 가공기 코드를, 아니라면 채굴기 코드를 줍니다!
+                if (targetLogic != null && targetLogic.GetComponent<logic_Productor_Master>() != null) {
                     codeToInject = "for i in range(10):\n    if resCommon >= 100:\n        producting(Common, 'A')\n    elif resCommon >= 50:\n        producting(Common, 'B')";
-                break;
+                } else {
+                    codeToInject = "for i in range(10):\n    mining(Common)";
+                }
+                break; 
             case 59: codeToInject = "name = '수송 벨트'\nmoving()"; break;
-        }
-
-        if (string.IsNullOrEmpty(codeToInject)) {
-            Ingame_Manager_Build.Instance.ShowFloatingText("이 기계는 현재 튜토리얼 목표 기계가 아닙니다!", codingMgr.codingPanel.transform.position);
-            return;
         }
 
         var codeEditor = codingMgr.inputField.GetComponentInParent<InGameCodeEditor.CodeEditor>();
         string currentText = (codeEditor != null) ? codeEditor.Text : codingMgr.inputField.text;
-
         string finalCode = codeToInject;
 
-        // 10단계가 아닐 때만 기존 유저 이름을 보존
+        // 이름 유지 로직
         if (currentStep != 10) {
             System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(currentText, @"name\s*=\s*['""][^'""]+['""]");
-            if (match.Success) {
-                finalCode = match.Value + "\n" + codeToInject;
-            }
+            if (match.Success) finalCode = match.Value + "\n" + codeToInject;
         }
 
+        // 텍스트 반영
         if (codeEditor != null) codeEditor.Text = finalCode;
         else codingMgr.inputField.text = finalCode;
 
-        Ingame_Manager_Build.Instance.ShowFloatingText("자동완성 적용 완료!", codingMgr.codingPanel.transform.position);
+        if (!string.IsNullOrEmpty(finalCode)) {
+            Ingame_Manager_Build.Instance.ShowFloatingText("자동완성 적용 완료!", codingMgr.codingPanel.transform.position);
+            
+            // ✨ 53단계일 경우, 두 기계 모두 끝나기 전까지는 팝업창의 자동완성 버튼을 숨기지 않습니다!
+            if (btnLoadPreset != null) {
+                if (currentStep == 53) {
+                    bool minerDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isMinerLoopUsed;
+                    bool productorDone = Ingame_Manager_Quest.Instance != null && Ingame_Manager_Quest.Instance.isProductorLoopUsed;
+                    if (minerDone && productorDone) btnLoadPreset.gameObject.SetActive(false);
+                } else {
+                    btnLoadPreset.gameObject.SetActive(false);
+                }
+            }
+        }
     }
     
     public void HandleTutorialCodeAction(bool isCopyOnly) {

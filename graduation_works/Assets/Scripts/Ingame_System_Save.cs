@@ -143,12 +143,12 @@ public class Ingame_System_Save : MonoBehaviour {
         StartCoroutine(SaveToServerSilentCoroutine(GatherAllData(currentId)));
     }
 
-    // ✨ [추가] UI 알림창을 띄우지 않는 백그라운드 저장 코루틴
     IEnumerator SaveToServerSilentCoroutine(GameSaveRequest requestData) {
         string json = JsonUtility.ToJson(requestData);
-        UnityWebRequest www = new UnityWebRequest($"{serverUrl}/save/game", "POST");
-        www.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
-        www.downloadHandler = new DownloadHandlerBuffer();
+        
+        // [Curl 26 완벽 해결법] Put으로 생성해서 데이터를 안전하게 담은 뒤, 전송 방식만 POST로 바꿉니다.
+        UnityWebRequest www = UnityWebRequest.Put($"{serverUrl}/save/game", json);
+        www.method = "POST";
         www.SetRequestHeader("Content-Type", "application/json");
         
         yield return www.SendWebRequest();
@@ -157,7 +157,6 @@ public class Ingame_System_Save : MonoBehaviour {
             lastSavedSnapshot = GetMapCodeSnapshot(requestData);
             lastSaveTime = Time.time;
             
-            // "저장 완료" 팝업을 띄우는 코드를 빼고 내부 상태만 안전하게 갱신!
             if (Ingame_Manager_Menu.Instance != null) {
                 Ingame_Manager_Menu.Instance.isSaved = true;
             }
@@ -261,9 +260,9 @@ public class Ingame_System_Save : MonoBehaviour {
         }
 
         string json = JsonUtility.ToJson(requestData);
-        UnityWebRequest www = new UnityWebRequest($"{serverUrl}/save/game", "POST");
-        www.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-        www.downloadHandler = new DownloadHandlerBuffer();
+        
+        UnityWebRequest www = UnityWebRequest.Put($"{serverUrl}/save/game", json);
+        www.method = "POST";
         www.SetRequestHeader("Content-Type", "application/json");
         
         yield return www.SendWebRequest();
