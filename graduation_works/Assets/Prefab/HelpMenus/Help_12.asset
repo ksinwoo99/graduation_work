@@ -28,5 +28,5 @@ MonoBehaviour:
     \uC2A4\uD06C\uB864\n- \uCC3D \uD06C\uAE30 \uC870\uC808: \uC624\uB978\uCABD \uC544\uB798
     \uD654\uC0B4\uD45C \uC88C\uD074\uB9AD \uD6C4 \uB4DC\uB798\uADF8\n- \uD3F0\uD2B8
     \uC870\uC808: Ctrl + \uC2A4\uD06C\uB864"
-  unlockTutorialStep: 14
+  unlockTutorialStep: 7
   categoryPrefab: {fileID: 4205076946549086250, guid: b7e4cd0e6c50f0041b7e623e3d08d67e, type: 3}

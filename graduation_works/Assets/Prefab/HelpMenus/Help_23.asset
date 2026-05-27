@@ -28,5 +28,5 @@ MonoBehaviour:
     \uC791\uB2E4\uBA74 \uC544\uB798 \uB0B4\uC6A9 \uBC18\uBCF5:\n3. mining(Common)
     \uC2E4\uD589 \uD6C4 i\uAC12\uC5D0 1 \uCD94\uAC00\n\u203B \uB9CC\uC57D i\uAC12\uC744
     \uADF8\uB300\uB85C \uB454\uB2E4\uBA74 \uBB34\uD55C \uBC18\uBCF5\uC774 \uB418\uC5B4\uBC84\uB9BD\uB2C8\uB2E4."
-  unlockTutorialStep: 54
+  unlockTutorialStep: 53
   categoryPrefab: {fileID: 4205076946549086250, guid: 931bbea53d1489640accd18c8908c48a, type: 3}

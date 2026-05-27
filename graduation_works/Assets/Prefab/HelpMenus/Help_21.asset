@@ -21,5 +21,5 @@ MonoBehaviour:
     \" \"\uB85C \uBB36\uC740 \uBB38\uC790\uC5F4\uC744 \uC785\uB825\uD574\uC8FC\uBA74
     \uD574\uB2F9 \uC774\uB984\uC73C\uB85C \uC124\uCE58\uBB3C\uC758 \uC774\uB984\uC774
     \uBC14\uB01D\uB2C8\uB2E4."
-  unlockTutorialStep: 14
+  unlockTutorialStep: 10
   categoryPrefab: {fileID: 4205076946549086250, guid: 931bbea53d1489640accd18c8908c48a, type: 3}

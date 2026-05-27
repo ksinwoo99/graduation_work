@@ -24,5 +24,5 @@ MonoBehaviour:
     \uACBD\uC6B0\n3-1. \uCC38\uC77C\uACBD\uC6B0: \uB124\uBC88\uC9F8 \uC904 \uC2E4\uD589
     \uD6C4 \uCF54\uB4DC \uC885\uB8CC\n3-2. \uAC70\uC9D3\uC77C\uACBD\uC6B0: \uCF54\uB4DC
     \uC885\uB8CC\n\n\uAC19\uC740 \uBC29\uC2DD\uC73C\uB85C \uC9C4\uD589\uB429\uB2C8\uB2E4."
-  unlockTutorialStep: 44
+  unlockTutorialStep: 43
   categoryPrefab: {fileID: 4205076946549086250, guid: 931bbea53d1489640accd18c8908c48a, type: 3}
