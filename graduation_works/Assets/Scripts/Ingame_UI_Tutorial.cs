@@ -627,6 +627,17 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         return isActionMode; 
     }
 
+    public bool CanInstallBuilding() { // 튜토리얼이 종료/스킵, 설치 단계면 허용
+        if (!isTutorialActive) return true;
+
+        if (currentStep == 15 || currentStep == 33 || currentStep == 60 || currentStep >= 65) {
+            return true;
+        }
+
+        // 그 외의 코딩 중이거나 설명 중인 단계에서는 설치 차단
+        return false;
+    }
+
     public void TriggerMachineInstalled() { 
         if (currentStep == 15 || currentStep == 33 || currentStep == 60) { currentStep++; PlayStep(currentStep); } 
     }
