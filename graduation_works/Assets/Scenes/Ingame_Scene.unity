@@ -240,6 +240,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 49890454091707330, guid: d7d1fa5f4a55ec049b8b3da926c798db, type: 3}
   m_PrefabInstance: {fileID: 2974604}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2974606 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7055451332988612730, guid: d7d1fa5f4a55ec049b8b3da926c798db, type: 3}
+  m_PrefabInstance: {fileID: 2974604}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &15993575
 GameObject:
   m_ObjectHideFlags: 0
@@ -9535,6 +9540,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 49890454091707330, guid: d7d1fa5f4a55ec049b8b3da926c798db, type: 3}
   m_PrefabInstance: {fileID: 631489000}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &631489002 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7055451332988612730, guid: d7d1fa5f4a55ec049b8b3da926c798db, type: 3}
+  m_PrefabInstance: {fileID: 631489000}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &640813521 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1860355732336806, guid: 79a74f96889fc1c429f043e7fa8caf72, type: 3}
@@ -10687,15 +10697,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccde45f11d020d2439e683bc73741d5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recommendButton: {fileID: 0}
+  recommendButton: {fileID: 2136745557}
   recommendCountTextObj: {fileID: 1453939451}
   leaderboardManager: {fileID: 713284109}
   disableUIsWhenVisiting:
   - {fileID: 1724868765}
-  - {fileID: 0}
+  - {fileID: 631489002}
   - {fileID: 1561142991}
   - {fileID: 1607689080}
-  - {fileID: 0}
+  - {fileID: 2974606}
   - {fileID: 1863930934}
   - {fileID: 1743388032}
   - {fileID: 1978854430}
