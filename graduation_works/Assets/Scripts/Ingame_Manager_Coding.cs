@@ -177,6 +177,22 @@ public class Ingame_Manager_Coding : MonoBehaviour {
         else globalCodes.Add(currentMachineId, currentText);
     }
 
+    /// <summary>
+    /// [저장하기] 버튼과 동일한 서버 저장 시퀀스.
+    /// 디버깅(F5) 후 dirty 상태 해제 및 종료 확인 팝업 방지용.
+    /// </summary>
+    public void PerformGameSave(bool showProgressUi = true) {
+        if (Ingame_System_Save.Instance != null) {
+            Ingame_System_Save.Instance.PerformGameSave(showProgressUi);
+        }
+    }
+
+    public IEnumerator PerformGameSaveCoroutine(bool showProgressUi = true) {
+        if (Ingame_System_Save.Instance != null) {
+            yield return Ingame_System_Save.Instance.PerformGameSaveCoroutine(showProgressUi);
+        }
+    }
+
     public void CloseWindow() {
         SaveCurrentInput(); 
         codingPanel.SetActive(false);
