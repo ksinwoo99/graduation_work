@@ -223,6 +223,11 @@ public class Ingame_System_Save : MonoBehaviour {
             Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 중...", false);
         }
 
+        // 게임이 저장될 때, 유저의 도움말 레드닷 상태를 기기에 확정 저장!
+        if (Ingame_UI_Help.Instance != null) {
+            Ingame_UI_Help.Instance.SaveReadStatusToDevice();
+        }
+
         string json = JsonUtility.ToJson(requestData);
         UnityWebRequest www = new UnityWebRequest($"{serverUrl}/save/game", "POST");
         www.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));

@@ -62,6 +62,13 @@ public class Ingame_UI_Help : MonoBehaviour
         if (ListView_Scroll != null) ListView_Scroll.scrollSensitivity = scrollSensitivity;
         if (DetailView_Scroll != null) DetailView_Scroll.scrollSensitivity = scrollSensitivity;
 
+        // 새로하기면 레드닷 초기화, 아니면 기기에서 불러오기
+        if (Ingame_System_Save.isNewGameRequested) {
+            ResetReadStatus();
+        } else {
+            LoadReadStatusFromDevice();
+        }
+
         ShowListView();
         RefreshHelpList();
     }
@@ -237,5 +244,48 @@ public class Ingame_UI_Help : MonoBehaviour
                 redDotIcon.SetActive(false);
             }
         }
+    }
+
+    // ==========================================
+    // 💡 레드닷(읽음 상태) 기기 저장 및 초기화 로직
+    // ==========================================
+
+    // [기능 A] 저장하기 (Ingame_System_Save에서 호출됨)
+    public void SaveReadStatusToDevice() {
+        string userId = Shared_Manager_Session.CurrentUserId;
+        if (string.IsNullOrEmpty(userId)) return;
+
+        foreach (var item in readHelpItems) {
+            PlayerPrefs.SetInt("HelpRead_" + userId + "_" + item.title, 1);
+        }
+        PlayerPrefs.Save();
+        Debug.Log("도움말 레드닷 상태가 기기에 저장되었습니다.");
+    }
+
+    // [기능 B] 불러오기 (Start에서 이어하기 시 호출됨)
+    public void LoadReadStatusFromDevice() {
+        string userId = Shared_Manager_Session.CurrentUserId;
+        if (string.IsNullOrEmpty(userId)) return;
+
+        readHelpItems.Clear(); 
+        foreach (var item in allHelpItems) {
+            // 기기에 1(읽음)로 저장되어 있으면 메모리 리스트에 추가
+            if (PlayerPrefs.GetInt("HelpRead_" + userId + "_" + item.title, 0) == 1) {
+                readHelpItems.Add(item); 
+            }
+        }
+    }
+
+    // [기능 C] 초기화 (Start에서 새로하기 시 호출됨)
+    public void ResetReadStatus() {
+        string userId = Shared_Manager_Session.CurrentUserId;
+        if (string.IsNullOrEmpty(userId)) return;
+
+        foreach (var item in allHelpItems) {
+            PlayerPrefs.DeleteKey("HelpRead_" + userId + "_" + item.title);
+        }
+        readHelpItems.Clear();
+        PlayerPrefs.Save();
+        Debug.Log("도움말 레드닷 상태가 초기화되었습니다.");
     }
 }
