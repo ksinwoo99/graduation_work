@@ -262,8 +262,8 @@ public class Ingame_UI_Tutorial : MonoBehaviour
 
     public void ExecuteCompleteSkip()
     {
-        currentStep = 76;
-        UnlockFeatureBySkip(76, "");
+        currentStep = 77;
+        UnlockFeatureBySkip(77, "");
         EndTutorial();
 
         // UI 및 도움말 새로고침
@@ -418,10 +418,10 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 73: SetActionMode("가운데 팝업창에서 '예' 버튼을 눌러\n공장 확장을 완료해 주세요!"); break;
             
             case 74: HighlightPanel(panelInstallation); SetDialogMode("공장이 한결 넓어졌네요!"); break;
-            case 75: SetDialogMode("이것으로 파견 AI 어시스턴트의\n모든 기초 안내가 끝났습니다!"); break;
-            case 76: SetDialogMode("이제부턴 무한 반복문도 가능해요.\n도움말을 참고하여 적용해보시고,\n이후는 자유롭게 발전해 보세요!");
+            case 75: SetDialogMode("이것으로 파견 AI 어시스턴트의\n모든 기초 안내가 끝났습니다!\n"); break;
+            case 76: SetDialogMode("이제부턴 <color=red>무한 반복문</color>도\n활용이 가능해집니다.\n또한, 일정 시간마다\n<color=red>기계가 고장</color>날 수도 있어요!\n\n자세한 내용은 도움말을 참고해주세요."); break;
+            case 77: SetDialogMode("이상으로 튜토리얼을 마칩니다.\n자유롭게 공장을 발전시켜 보세요!\n");
                 btnNext.onClick.RemoveAllListeners(); btnNext.onClick.AddListener(EndTutorial); break;
-                
             default: EndTutorial(); break;
         }
 

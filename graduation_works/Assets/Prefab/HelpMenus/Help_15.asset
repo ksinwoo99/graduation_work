@@ -20,5 +20,5 @@ MonoBehaviour:
     \uBCA8\uD2B8 \uC18D\uB3C4 \uAC1C\uC120\n- \uACE8\uB4DC\uB97C \uC18C\uBAA8\uD558\uC5EC
     \uCEE8\uBCA0\uC774\uC5B4 \uBCA8\uD2B8\uC758 \uC18D\uB3C4\uB97C \uC62C\uB9B4 \uC218
     \uC788\uC2B5\uB2C8\uB2E4."
-  unlockTutorialStep: 74
+  unlockTutorialStep: 72
   categoryPrefab: {fileID: 4205076946549086250, guid: b7e4cd0e6c50f0041b7e623e3d08d67e, type: 3}
