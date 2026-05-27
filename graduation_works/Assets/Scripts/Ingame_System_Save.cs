@@ -121,15 +121,29 @@ public class Ingame_System_Save : MonoBehaviour {
         return 0;
     }
 
-    public void OnClick_Save() {
+    /// <summary>
+    /// 일반 [저장하기] 버튼과 동일한 전체 시퀀스.
+    /// SaveCurrentInput → GatherAllData → 서버 POST → snapshot/플래그 갱신 → ClearSessionLists
+    /// </summary>
+    public void PerformGameSave(bool showProgressUi = true) {
+        StartCoroutine(PerformGameSaveCoroutine(showProgressUi));
+    }
+
+    public IEnumerator PerformGameSaveCoroutine(bool showProgressUi = true) {
+        if (Shared_Manager_Session.IsVisiting) yield break;
+
         if (Ingame_Manager_Build.Instance != null && Ingame_Manager_Build.Instance.codingManager != null) {
             Ingame_Manager_Build.Instance.codingManager.SaveCurrentInput();
         }
-        
-        string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
+
+        string currentId = Shared_Manager_Session.CurrentUserId;
         if (string.IsNullOrEmpty(currentId)) currentId = "guest";
-        
-        StartCoroutine(SaveToServerCoroutine(GatherAllData(currentId)));
+
+        yield return SaveToServerCoroutine(GatherAllData(currentId), showProgressUi);
+    }
+
+    public void OnClick_Save() {
+        PerformGameSave(showProgressUi: true);
     }
 
     private GameSaveRequest GatherAllData(string userId) {
@@ -218,8 +232,8 @@ public class Ingame_System_Save : MonoBehaviour {
         return data;
     }
 
-    IEnumerator SaveToServerCoroutine(GameSaveRequest requestData) {
-        if (Ingame_Manager_Menu.Instance != null) {
+    IEnumerator SaveToServerCoroutine(GameSaveRequest requestData, bool showProgressUi = true) {
+        if (showProgressUi && Ingame_Manager_Menu.Instance != null) {
             Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 중...", false);
         }
 
@@ -239,10 +253,12 @@ public class Ingame_System_Save : MonoBehaviour {
         if (www.result == UnityWebRequest.Result.Success) {
             lastSavedSnapshot = GetMapCodeSnapshot(requestData);
             lastSaveTime = Time.time;
-            
+
             if (Ingame_Manager_Menu.Instance != null) {
-                Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 완료!", true);
                 Ingame_Manager_Menu.Instance.isSaved = true;
+                if (showProgressUi) {
+                    Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 완료!", true);
+                }
             }
 
             if (Ingame_Manager_Build.Instance != null) {
@@ -250,7 +266,7 @@ public class Ingame_System_Save : MonoBehaviour {
             }
         } else {
             Debug.LogError("저장 실패: " + www.error);
-            if (Ingame_Manager_Menu.Instance != null) {
+            if (showProgressUi && Ingame_Manager_Menu.Instance != null) {
                 Ingame_Manager_Menu.Instance.ShowInfoWindow("저장 실패\n다시 시도해주세요.", true);
             }
         }

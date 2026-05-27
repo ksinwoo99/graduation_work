@@ -219,55 +219,75 @@ public class Ingame_Button_Debugging : MonoBehaviour
 
         yield return www.SendWebRequest();
 
+        DebuggingResponse response = null;
+        bool              isPyValid  = false;
+        bool              isMachValid = false;
+        bool              isSuccess  = false;
+        float             execTime = 0f;
+        string            outputLog = "";
+
         if (www.result != UnityWebRequest.Result.Success)
         {
             SetUI("서버 연결 실패\n" + www.error, Color.red, false);
-            yield break;
-        }
-
-        DebuggingResponse response   = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
-        bool              isPyValid  = (response.status == "success");
-        bool              isMachValid = false;
-        bool              isSuccess  = false;
-
-        if (isPyValid)
-        {
-            // 파이썬 문법이 유효한 경우, 클라이언트 측에서 기계 조건을 검증합니다.
-            int  applyResult = TryApplyCodeToMachine(code);
-            isMachValid = (applyResult == 2);
-            isSuccess   = isMachValid;   // is_python_valid 는 이미 true
-
-            // 튜토리얼이 진행 중이라면 결과를 보고합니다!
-            if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) 
-            {
-                // applyResult가 2 이하면 정상(false), 2 초과(오류)면 isError=true로 판단
-                bool isError = (applyResult <= 0); 
-                Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
-            }
-
-            string timeMsg = $"  (실행 시간: {response.execution_time:F3}초)";
-
-            ApplyFeedback fb = ApplyResultTable.TryGetValue(applyResult, out var found)
-                ? found
-                : ApplyResultFallback;
-
-            string body = (applyResult == 2)
-                ? fb.Message + "\n" + response.output + timeMsg
-                : fb.Message + timeMsg;
-            SetUI(body, fb.Tint, fb.IsError);
         }
         else
         {
-            // 파이썬 실행 자체가 실패한 경우 에러 로그를 표시합니다.
-            SetUI(response.output, Color.red, true);
+            response   = JsonUtility.FromJson<DebuggingResponse>(www.downloadHandler.text);
+            isPyValid  = (response.status == "success");
+            execTime   = response.execution_time;
+            outputLog  = response.output;
+
+            if (isPyValid)
+            {
+                // 파이썬 문법이 유효한 경우, 클라이언트 측에서 기계 조건을 검증합니다.
+                int  applyResult = TryApplyCodeToMachine(code);
+                isMachValid = (applyResult == 2);
+                isSuccess   = isMachValid;   // is_python_valid 는 이미 true
+
+                // 튜토리얼이 진행 중이라면 결과를 보고합니다!
+                if (Ingame_UI_Tutorial.Instance != null && Ingame_UI_Tutorial.Instance.isTutorialActive) 
+                {
+                    // applyResult가 2 이하면 정상(false), 2 초과(오류)면 isError=true로 판단
+                    bool isError = (applyResult <= 0); 
+                    Ingame_UI_Tutorial.Instance.TriggerCompileResult(isError);
+                }
+
+                string timeMsg = $"  (실행 시간: {response.execution_time:F3}초)";
+
+                ApplyFeedback fb = ApplyResultTable.TryGetValue(applyResult, out var found)
+                    ? found
+                    : ApplyResultFallback;
+
+                string body = (applyResult == 2)
+                    ? fb.Message + "\n" + response.output + timeMsg
+                    : fb.Message + timeMsg;
+                SetUI(body, fb.Tint, fb.IsError);
+            }
+            else
+            {
+                // 파이썬 실행 자체가 실패한 경우 에러 로그를 표시합니다.
+                SetUI(response.output, Color.red, true);
+            }
         }
 
-        // 성공/실패 여부에 관계없이 항상 ML 서버에 로그를 전송합니다.
-        StartCoroutine(SendLogToMLServer(
-            userId, actualMachineType, code,
-            isPyValid, isMachValid, isSuccess,
-            response.execution_time, response.output
-        ));
+        // [저장하기]와 동일한 서버 저장 — snapshot/lastSaveTime/isSaved 갱신으로 종료 시 dirty 경고 방지
+        var codingMgr = Ingame_Manager_Build.Instance != null
+            ? Ingame_Manager_Build.Instance.codingManager
+            : null;
+        if (codingMgr != null) {
+            yield return codingMgr.PerformGameSaveCoroutine(showProgressUi: false);
+        } else if (Ingame_System_Save.Instance != null) {
+            yield return Ingame_System_Save.Instance.PerformGameSaveCoroutine(showProgressUi: false);
+        }
+
+        // 실행 서버 응답이 있을 때만 ML 로그 전송
+        if (response != null) {
+            StartCoroutine(SendLogToMLServer(
+                userId, actualMachineType, code,
+                isPyValid, isMachValid, isSuccess,
+                execTime, outputLog
+            ));
+        }
     }
 
     /// <summary>
