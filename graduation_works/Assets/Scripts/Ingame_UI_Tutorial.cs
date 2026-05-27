@@ -307,7 +307,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
         switch (stepIndex)
         {
             case 0: SetDialogMode("안녕하세요, 당신의 py.Factory\n발전을 도와줄 어시스트입니다!\n\n기본 목표는,\n'설치물의 코딩과 공장의 자동화'\n입니다"); break;
-            case 1: SetDialogMode("일단 오른쪽에 보시면\n'도움말' 패널이 있어요!\n\n일정 단계 진행시마다 도움말이\n오픈됩니다. 자세한 정보는\n도움말을 참고해주세요!"); break;
+            case 1: SetDialogMode("일단 오른쪽에 보시면\n<color=red>'도움말' 패널</color>이 있어요!\n\n일정 단계 진행시마다 도움말이\n오픈됩니다. 자세한 정보는\n도움말을 참고해주세요!"); break;
             case 2: SetActionMode("먼저 기본 조작부터\n알려드리겠습니다.\n\n<color=red>우클릭을 누른 후 드래그</color>하면,\n공장 부지를 옮겨 볼 수 있어요."); break;
             case 3: 
                 isActionMode = true;
@@ -347,7 +347,7 @@ public class Ingame_UI_Tutorial : MonoBehaviour
             case 22: SetDialogMode("처음으로 얻은 자원이네요, 축하합니다!\n\n지금은 기본자원만 얻었지만,\n채굴기마다 채취할 수 있는 자원이\n다양하게 있습니다."); break;
             case 23: SetDialogMode("그런데 자원을 획득하고 나니\n채굴기가 멈춰버렸네요?"); break;
             case 24: SetDialogMode("이 채굴기는 반복문이 없는\n'단순 코드형'이라서\n1회 채굴 후 정지되었기 때문입니다!"); break;
-            case 25: HighlightPanel(panelSideGroup); SetActionMode("<color=red>우측 패널의 '전체 (재)가동'</color>을 눌러\n다시 작동시킬 수 있습니다.\n\n자원을 한 번 더 획득해 보세요!"); break;
+            case 25: HighlightPanel(panelSideGroup); SetActionMode("<color=red>우측 패널의 '전체 (재)가동'</color>을 눌러\n다시 작동시킬 수 있습니다.\n혹은 <color=red>설치물을 직접 우클릭</color>하여\n하나만 재가동 시킬 수도 있습니다.\n\n자원을 한 번 더 획득해 보세요!"); break;
             case 26: SetDialogMode("좋습니다, 잘 따라오고 계시네요!\n\n다만 지금같은 방법은 너무 불편하죠?\n진행하다 보면, 기계가 자동 반복하도록\n코딩하는 방법을 알려드리겠습니다!"); break;
             
             case 27: SetDialogMode("지금은 우선 획득한 자원을 바탕으로,\n더 복잡한 로직이 필요한\n'가공기'를 알려드릴게요."); break; 
