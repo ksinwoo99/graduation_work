@@ -209,7 +209,7 @@ public class Ingame_Item_Dropped : MonoBehaviour
 
             if (!moved) {
                 transform.position = basePos;
-                yield return null;
+                yield return new WaitForSeconds(0.3f);
             }
         }
     }

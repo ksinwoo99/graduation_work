@@ -611,7 +611,7 @@ public class Ingame_Manager_Build : MonoBehaviour {
             Canvas canvas = go.GetComponent<Canvas>();
             if (canvas != null) {
                 canvas.overrideSorting = true;
-                canvas.sortingLayerName = "Installation"; 
+                canvas.sortingLayerName = "Installations"; 
                 canvas.sortingOrder = 10;
             }
 
