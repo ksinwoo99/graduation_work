@@ -168,6 +168,16 @@ public class Ingame_Manager_Build : MonoBehaviour {
             
             if (Shared_Manager_Session.IsVisiting) return; 
 
+            // 튜토리얼 중 설치할 타이밍이 아니라면 설치를 즉시 취소합니다!
+            if (Ingame_UI_Tutorial.Instance != null && !Ingame_UI_Tutorial.Instance.CanInstallBuilding()) {
+                if (!isDemolishMode && selectedTile != null) { // 철거 모드가 아니고, 설치물을 들고 있을 때
+                    Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    clickPos.z = -5f;
+                    ShowFloatingText("튜토리얼을 더 진행 해주세요!", clickPos);
+                    return; // 더 이상 아래 코드가 실행되지 않고 차단됨!
+                }
+            }
+
             if (isDemolishMode) TryDemolishMachine(cellPos);
             else if (selectedTile != null) { 
                 if (!isPlacementAllowed) {
