@@ -162,8 +162,10 @@ public class Ingame_UI_Help : MonoBehaviour
             currentTutorialStep = Ingame_UI_Tutorial.Instance.currentStep;
         }
 
+        // 방문 모드인지 확인하는 변수 추가
+        bool isVisiting = Shared_Manager_Session.IsVisiting;
+
         currentUnlockedCount = 0;
-        // ✨ [추가] 해금은 되었으나 아직 유저가 읽지 않은 아이템이 있는지 체크하는 변수
         bool hasUnreadItem = false;
 
         foreach(var item in allHelpItems)
@@ -175,12 +177,11 @@ public class Ingame_UI_Help : MonoBehaviour
             TextMeshProUGUI btnText = newBtnObj.GetComponentInChildren<TextMeshProUGUI>();
             Button btn = newBtnObj.GetComponent<Button>();
 
-            // 프리팹 내부에 들어있는 오브젝트명이 "RedDot"인 요소 찾기
             Transform subRedDotTransform = newBtnObj.transform.Find("RedDot");
-
             GameObject subRedDot = subRedDotTransform != null ? subRedDotTransform.gameObject : null;
 
-            if (currentTutorialStep >= item.unlockTutorialStep)
+            // 튜토리얼 단계를 만족했거나, '방문 모드'라면 해금!
+            if (currentTutorialStep >= item.unlockTutorialStep || isVisiting)
             {
                 currentUnlockedCount++;
                 if (btnText != null) btnText.text = item.title;
@@ -189,15 +190,14 @@ public class Ingame_UI_Help : MonoBehaviour
                     btn.onClick.AddListener(() => ShowDetailView(item));
                 }
 
-                // ✨ [추가] 해금은 되었는데 유저가 아직 한 번도 클릭해서 읽지 않은 경우
-                if (!readHelpItems.Contains(item))
+                if (!readHelpItems.Contains(item) && !isVisiting)
                 {
                     hasUnreadItem = true;
                     if (subRedDot != null) subRedDot.SetActive(true); // 프리팹 레드도트 ON
                 }
                 else
                 {
-                    if (subRedDot != null) subRedDot.SetActive(false); // 읽었으면 프리팹 레드도트 OFF
+                    if (subRedDot != null) subRedDot.SetActive(false); // 읽었거나 방문모드면 OFF
                 }
             }
             else
