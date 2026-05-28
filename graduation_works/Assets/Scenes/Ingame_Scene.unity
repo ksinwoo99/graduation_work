@@ -10711,6 +10711,7 @@ MonoBehaviour:
   - {fileID: 1978854430}
   - {fileID: 174881330}
   - {fileID: 1251595998}
+  - {fileID: 247782906}
 --- !u!4 &713284108
 Transform:
   m_ObjectHideFlags: 0
@@ -24859,6 +24860,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2955b58563122ed4ca0abdbbb26b59c8, type: 2}
   - {fileID: 11400000, guid: c92f1fec1b048804dad7d934af6a2946, type: 2}
   - {fileID: 11400000, guid: 2ffc8bf2fc4e3e945a4f54dba5d4fdf2, type: 2}
+  - {fileID: 11400000, guid: 213fd7d56a2d93f4e98467fdd38805cb, type: 2}
   redDotIcon: {fileID: 917165341}
   viewedUnlockedCount: 0
   currentUnlockedCount: 0

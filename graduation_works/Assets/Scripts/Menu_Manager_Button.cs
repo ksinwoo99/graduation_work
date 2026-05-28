@@ -33,6 +33,7 @@ public class Menu_Manager_Button : MonoBehaviour {
 
     public void OnClick_NewGame() {
         StartCoroutine(CheckSaveAndNewGame());
+        Ingame_System_Save.isNewGameRequested = true;
     }
 
     IEnumerator CheckSaveAndNewGame() {
@@ -81,6 +82,7 @@ public class Menu_Manager_Button : MonoBehaviour {
 
         Ingame_System_Save.isLoadRequested = false;
         Shared_Manager_Session.IsReadOnlyMode = false;
+        Shared_Manager_Session.IsVisiting = false;
         uiManager.StartGameTransition();
     }
 
@@ -99,6 +101,7 @@ public class Menu_Manager_Button : MonoBehaviour {
 
     public void OnClick_Continue() {
         StartCoroutine(CheckSaveAndContinue());
+        Ingame_System_Save.isNewGameRequested = true;
     }
 
     IEnumerator CheckSaveAndContinue() {
@@ -123,6 +126,7 @@ public class Menu_Manager_Button : MonoBehaviour {
                 
                 Ingame_System_Save.isLoadRequested = true;
                 Shared_Manager_Session.IsReadOnlyMode = false;
+                Shared_Manager_Session.IsVisiting = false;
                 uiManager.StartGameTransition();
             } else {
                 uiManager.ShowError("저장된 데이터가 없습니다.\n[새 게임]을 눌러주세요.");
