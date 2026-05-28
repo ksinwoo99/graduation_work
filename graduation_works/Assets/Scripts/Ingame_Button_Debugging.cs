@@ -217,7 +217,29 @@ public class Ingame_Button_Debugging : MonoBehaviour
         www.downloadHandler = new DownloadHandlerBuffer();
         www.SetRequestHeader("Content-Type", "application/json");
 
-        yield return www.SendWebRequest();
+        www.timeout = 10; // 최대 10초 대기
+        var operation = www.SendWebRequest();
+        
+        float elapsedTime = 0f;
+        int lastDisplayedTime = -1;
+
+        // 통신이 안 끝났다면 매 프레임마다 반복!
+        while (!operation.isDone)
+        {
+            elapsedTime += Time.deltaTime;
+            
+            // 남은 시간 계산 (10 - 흐른 시간, 소수점 버림)
+            int remainTime = Mathf.Max(0, 10 - Mathf.FloorToInt(elapsedTime)); 
+
+            // 숫자가 바뀌었을 때만 글씨를 업데이트합니다 (깜빡임 방지 및 최적화)
+            if (remainTime != lastDisplayedTime)
+            {
+                SetUI($"서버와 통신 중... {remainTime}..", Color.gray, false);
+                lastDisplayedTime = remainTime;
+            }
+
+            yield return null; // 한 프레임 대기
+        }
 
         DebuggingResponse response = null;
         bool              isPyValid  = false;
@@ -226,9 +248,29 @@ public class Ingame_Button_Debugging : MonoBehaviour
         float             execTime = 0f;
         string            outputLog = "";
 
-        if (www.result != UnityWebRequest.Result.Success)
+        // 에러 원인을 띄워줍니다.
+        if (www.result == UnityWebRequest.Result.ConnectionError)
+        {
+            // 타임아웃인지, 아예 랜선(와이파이)이 뽑힌 건지 구분
+            if (www.error != null && www.error.ToLower().Contains("timeout"))
+            {
+                SetUI("네트워크 문제: 10초 타임아웃", Color.red, false);
+            }
+            else
+            {
+                SetUI("네트워크 문제: 기기의 인터넷 연결이 끊겼습니다.", Color.red, false);
+            }
+            yield break; 
+        }
+        else if (www.result == UnityWebRequest.Result.ProtocolError)
+        {
+            SetUI($"코드 에러일 수 있습니다. 서버 문제 : ({www.responseCode})", Color.red, false);
+            yield break;
+        }
+        else if (www.result != UnityWebRequest.Result.Success)
         {
             SetUI("서버 연결 실패\n" + www.error, Color.red, false);
+            yield break;
         }
         else
         {
@@ -276,8 +318,6 @@ public class Ingame_Button_Debugging : MonoBehaviour
             : null;
         if (codingMgr != null) {
             yield return codingMgr.PerformGameSaveCoroutine(showProgressUi: false);
-        } else if (Ingame_System_Save.Instance != null) {
-            yield return Ingame_System_Save.Instance.PerformGameSaveCoroutine(showProgressUi: false);
         }
 
         // 실행 서버 응답이 있을 때만 ML 로그 전송
