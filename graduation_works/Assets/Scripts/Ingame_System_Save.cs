@@ -57,7 +57,7 @@ public class Ingame_System_Save : MonoBehaviour {
         if (isNewGameRequested) {
             if (tutorialPanel != null) tutorialPanel.SetActive(true);
             if (Ingame_UI_Tutorial.Instance != null) {
-                Ingame_UI_Tutorial.Instance.StartTutorial();
+                Ingame_UI_Tutorial.Instance.ShowSkipPrompt(); 
             }
             
             // 기본 자원 세팅
