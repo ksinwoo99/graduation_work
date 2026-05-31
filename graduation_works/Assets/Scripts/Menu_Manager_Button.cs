@@ -101,7 +101,6 @@ public class Menu_Manager_Button : MonoBehaviour {
 
     public void OnClick_Continue() {
         StartCoroutine(CheckSaveAndContinue());
-        Ingame_System_Save.isNewGameRequested = true;
     }
 
     IEnumerator CheckSaveAndContinue() {
