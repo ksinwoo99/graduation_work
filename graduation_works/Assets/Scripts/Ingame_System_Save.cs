@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -43,6 +44,9 @@ public class Ingame_System_Save : MonoBehaviour {
 
     [Header("튜토리얼 UI 연결")]
     public GameObject tutorialPanel; 
+    [Header("로딩 UI 연결")]
+    public GameObject loadingPanel;
+    public TMPro.TMP_Text loadingText;
 
     private string lastSavedSnapshot = ""; 
     private float lastSaveTime = 0f;
@@ -279,26 +283,54 @@ public class Ingame_System_Save : MonoBehaviour {
     }
 
     IEnumerator LoadFromServerCoroutine(string userId) {
+        if (loadingPanel != null) {
+            loadingPanel.SetActive(true);
+            // ✨ 1. 로딩 시작할 때는 정상적인 문구 출력
+            if (loadingText != null) loadingText.text = "맵을 불러오는 중입니다...\n잠시만 기다려주세요.";
+        }
+
         UnityWebRequest www = UnityWebRequest.Get($"{serverUrl}/load/game?user_id={userId}");
         yield return www.SendWebRequest();
         
         if (www.result == UnityWebRequest.Result.Success) {
             GameLoadResponse response = JsonUtility.FromJson<GameLoadResponse>(www.downloadHandler.text);
             if (response.status == "SUCCESS") {
-                ApplyGameData(response);
+                
+                yield return StartCoroutine(ApplyGameDataCoroutine(response)); 
 
                 string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
                 if (string.IsNullOrEmpty(currentId)) currentId = "guest";
                 lastSavedSnapshot = GetMapCodeSnapshot(GatherAllData(currentId));
                 lastSaveTime = Time.time;
+            } else {
+                Debug.LogError($"데이터를 불러오지 못했습니다.: {response.msg}");
+                
+                if (loadingText != null) {
+                    loadingText.text = "<color=red>데이터를 불러오지 못했습니다.</color>\n메인 화면으로 돌아갑니다.";
+                }
+                
+                yield return new WaitForSeconds(2.5f);
+                Menu_Manager_UI.pendingErrorMessage = "데이터를 불러오지 못하여\n초기 화면으로 이동되었습니다.";
+                SceneManager.LoadScene("Menu_Scene");
             }
         } else {
-            Debug.LogError("로드 실패: " + www.error);
+            Debug.LogError("네트워크 에러로 데이터를 불러오지 못했습니다.: " + www.error);
+            
+            // ✨ 3. 네트워크 에러 시에도 동일하게 텍스트만 변경!
+            if (loadingText != null) {
+                loadingText.text = "<color=red>네트워크 에러가 발생했습니다.</color>\n메인 화면으로 돌아갑니다.";
+            }
+            
+            yield return new WaitForSeconds(2.5f);
+            Menu_Manager_UI.pendingErrorMessage = "서버와의 연결이 끊어져\n초기 화면으로 이동되었습니다.";
+            SceneManager.LoadScene("Menu_Scene");
         }
     }
     
-    private void ApplyGameData(GameLoadResponse data) {
-        if (data == null) return;
+    private IEnumerator ApplyGameDataCoroutine(GameLoadResponse data) {
+        if (data == null) yield break;
+
+        if (loadingPanel != null) { loadingPanel.SetActive(true);}
 
         if (Ingame_Manager_Build.Instance != null) {
             Ingame_Manager_Build.Instance.CancelBuildMode(); 
@@ -317,7 +349,7 @@ public class Ingame_System_Save : MonoBehaviour {
             Ingame_Manager_Time.Instance.gameTime = data.resources.total_play_time;
         }
 
-        // [핵심 예외 차단] 새로하기(NewGame) 실행 도중일 때의 처리 ──
+        // [새로하기 예외 처리]
         if (isNewGameRequested) {
             isNewGameRequested = false;
 
@@ -334,7 +366,11 @@ public class Ingame_System_Save : MonoBehaviour {
             if (Ingame_UI_SystemControl.Instance != null) {
                 Ingame_UI_SystemControl.Instance.UpdateAllUI();
             }
-            return;
+            
+            if (loadingPanel != null) {
+                loadingPanel.SetActive(false); 
+                }
+            yield break; 
         }
 
         if (Ingame_Manager_Quest.Instance != null && data.resources != null) {
@@ -375,13 +411,16 @@ public class Ingame_System_Save : MonoBehaviour {
             if (data.machines != null) {
                 buildMgr.ClearAllBuildingsForLoad();
 
-                List<MachineData> sortedMachines = new List<MachineData>(data.machines);sortedMachines.Sort((a, b) => {
+                List<MachineData> sortedMachines = new List<MachineData>(data.machines);
+                sortedMachines.Sort((a, b) => {
                     int priorityA = (a.machine_type >= 10) ? 0 : 1;
                     int priorityB = (b.machine_type >= 10) ? 0 : 1;
                     return priorityA.CompareTo(priorityB);
-                    });
+                });
 
-                foreach (var mData in data.machines) {
+                int count = 0; 
+
+                foreach (var mData in sortedMachines) {
                     if (mData.pos_y <= -9000f) {
                         if (buildMgr.codingManager != null && !string.IsNullOrEmpty(mData.source_code)) {
                             buildMgr.codingManager.SetSavedCode(mData.machine_type, mData.source_code);
@@ -410,13 +449,19 @@ public class Ingame_System_Save : MonoBehaviour {
                         }
                     }
                     if (isOccupied) {
-                        // 💡 무조건 스킵하지 말고, 로그를 남겨서 어디서 겹치는지 알아야 합니다!    
                         Debug.LogError($"[위치 충돌] {mData.machine_type}번 기계가 {checkPos}에서 겹쳐서 로드 실패!");
                         continue;
                     }
 
                     buildMgr.LoadBuildingFromServer(mData, prefab);
+                    
+                    // ✨ 비동기 프레임 양보
+                    count++;
+                    if (count % 100 == 0) {
+                        yield return null; 
+                    }
                 }
+                
                 buildMgr.UpdateQuestMachineCounts(); 
                 if (buildMgr.codingManager != null) buildMgr.codingManager.SyncAllButtonNames();
             }
@@ -425,6 +470,11 @@ public class Ingame_System_Save : MonoBehaviour {
                 Ingame_UI_SystemControl.Instance.UpdateAllUI();
             }
         }
+
+        // ✨ 2. 배치가 다 끝나면 기존 창을 이용해 "완료!" 로 바꿔주기
+        if (loadingPanel != null) {
+            loadingPanel.SetActive(false);
+            }
     }
 
     public void OnClick_ExportPresetToJSON() 
@@ -471,7 +521,7 @@ public class Ingame_System_Save : MonoBehaviour {
         };
         response.machines = savedData.machines;
 
-        ApplyGameData(response);
+        StartCoroutine(ApplyGameDataCoroutine(response));
 
         if (openCodingPos.HasValue) {
             StartCoroutine(RestoreCodingPanelCoroutine(openCodingPos.Value));

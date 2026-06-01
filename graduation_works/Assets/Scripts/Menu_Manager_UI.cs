@@ -34,6 +34,7 @@ public class Menu_Manager_UI : MonoBehaviour {
     [Header("확인 패널 (Yes/No)")]
     public GameObject confirmPanel;
     public TMP_Text confirmText;
+    public static string pendingErrorMessage = ""; 
 
     private Vector2 originalSize = new Vector2(500, 380);
     private Vector2 expandedSize = new Vector2(500, 980);
@@ -45,6 +46,11 @@ public class Menu_Manager_UI : MonoBehaviour {
         errorPanel.SetActive(false);
         menuSelectPanel.SetActive(false);
 
+        if (!string.IsNullOrEmpty(pendingErrorMessage)) {
+            ShowError(pendingErrorMessage);  // 에러창 띄우기
+            pendingErrorMessage = "";        // 띄운 후에는 다음 번을 위해 비워줍니다.
+        }
+        
         loginSuccessPanelRect.sizeDelta = originalSize;
         loginSuccessPanelRect.pivot = new Vector2(0.5f, 0f);
 
