@@ -2083,3 +2083,2038 @@ INFO:     Started server process [146502]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-17 22:10:25 | trained_at=2026-05-17 22:10:24 | data_count=624 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[HintBandit] 16개 힌트 통계 로드 완료 (Thompson 파라미터 16개 동기화)
+INFO:     122.42.2.61:5902 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-17 23:56:58 | trained_at=2026-05-17 23:10:25 | data_count=624 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-17 22:10:24 → 새 학습=2026-05-17 23:10:25
+[ContextualPolicy] 로드 완료  hint_count=15 | context_dim=8
+INFO:     122.42.2.61:5905 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:9414 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     45.156.128.153:55620 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.156.128.153:39154 - "GET /console HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     45.156.128.155:42384 - "GET /showLogin.cc HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     3.130.168.2:51622 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.130.168.2:60670 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     40.124.175.233:32944 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.254.184.200:13744 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.254.184.200:28062 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.110.133:62129 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-19 12:29:52 | trained_at=2026-05-19 12:10:33 | data_count=626 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-17 23:10:25 → 새 학습=2026-05-19 12:10:33
+[ContextualPolicy] 로드 완료  hint_count=15 | context_dim=8
+INFO:     39.127.110.133:54315 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:55743 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:55760 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:64077 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:53670 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:53670 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:63896 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:63908 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:56616 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:56617 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:49726 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:56215 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:56215 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:56225 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [146502]
+INFO:     Started server process [153023]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-19 13:16:35 | trained_at=2026-05-19 13:10:34 | data_count=634 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[HintBandit] 19개 힌트 통계 로드 완료 (Thompson 파라미터 19개 동기화)
+[Model] 로드 완료  loaded_at=2026-05-19 13:24:45 | trained_at=2026-05-19 13:16:35 | data_count=634 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-19 13:10:34 → 새 학습=2026-05-19 13:16:35
+[ContextualPolicy] 로드 완료  hint_count=18 | context_dim=8
+INFO:     39.127.110.133:58538 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:59459 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.132.26.232:59014 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.132.26.232:34830 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.112.104:52923 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52930 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52933 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52940 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52947 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52964 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52967 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52975 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52991 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:52991 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53000 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53026 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53029 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53029 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53035 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53044 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53044 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53048 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53051 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [153023]
+INFO:     Started server process [153435]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 실패: You may be trying to read with python 3 a joblib pickle generated with python 2. This feature is not supported by joblib.
+[HintBandit] 23개 힌트 통계 로드 완료 (Thompson 파라미터 23개 동기화)
+INFO:     39.127.112.104:53068 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53072 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53168 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-19 14:22:16 | trained_at=2026-05-19 14:12:10 | data_count=639 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=2026-05-19 14:12:10
+[ContextualPolicy] 로드 완료  hint_count=22 | context_dim=8
+INFO:     39.127.112.104:53170 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53174 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53179 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53183 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53192 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53195 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53198 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53200 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53200 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53200 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53200 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53205 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [153435]
+INFO:     Started server process [153565]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 실패: invalid load key, '_'.
+[HintBandit] 23개 힌트 통계 로드 완료 (Thompson 파라미터 23개 동기화)
+[Model] 로드 완료  loaded_at=2026-05-19 14:26:48 | trained_at=2026-05-19 14:26:15 | data_count=649 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=없음 → 새 학습=2026-05-19 14:26:15
+[ContextualPolicy] 로드 완료  hint_count=22 | context_dim=8
+INFO:     39.127.112.104:53220 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53224 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53228 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:64546 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53234 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53237 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53237 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.133:64549 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53244 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53253 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53261 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53264 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53268 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53275 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53280 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53283 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53289 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.104:53292 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.37.0:32362 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.37.0:32368 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     8.216.16.99:52296 - "GET / HTTP/1.1" 404 Not Found
+INFO:     8.216.16.99:52306 - "GET / HTTP/1.1" 404 Not Found
+INFO:     103.203.58.4:37414 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     185.242.226.74:42024 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     103.203.58.4:55198 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.131.220.121:48414 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.131.220.121:43430 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-05-20 17:26:36 | trained_at=2026-05-20 17:26:22 | data_count=662 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-19 14:26:15 → 새 학습=2026-05-20 17:26:22
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:7479 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7457 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7459 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9325 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9327 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9330 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9332 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12075 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11667 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11669 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11671 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-20 20:25:08 | trained_at=2026-05-20 19:26:22 | data_count=669 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-20 17:26:22 → 새 학습=2026-05-20 19:26:22
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:13600 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13603 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11909 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-20 20:51:35 | trained_at=2026-05-20 20:26:23 | data_count=671 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-20 19:26:22 → 새 학습=2026-05-20 20:26:23
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     121.137.225.67:11916 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5478 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9665 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3971 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3971 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3016 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14625 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12357 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-20 21:29:52 | trained_at=2026-05-20 21:26:23 | data_count=679 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-20 20:26:23 → 새 학습=2026-05-20 21:26:23
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:5702 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5702 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5706 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2715 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7896 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7900 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7900 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14100 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1467 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     64.23.160.164:35646 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     39.127.110.131:59659 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.177.106:59018 - "GET / HTTP/1.0" 404 Not Found
+INFO:     172.105.177.106:37674 - "GET /nice%20ports%2C/Trinity.txt.bak HTTP/1.0" 404 Not Found
+INFO:     172.105.177.106:37780 - "OPTIONS / HTTP/1.0" 404 Not Found
+INFO:     172.105.177.106:37786 - "OPTIONS / HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.177.106:39086 - "GET /devicedesc.xml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     172.105.177.106:39290 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     172.105.177.106:49608 - "GET / HTTP/1.1" 404 Not Found
+INFO:     172.105.177.106:49624 - "GET /dashboard/ HTTP/1.1" 404 Not Found
+INFO:     172.105.177.106:49646 - "GET /webui/index.html HTTP/1.1" 404 Not Found
+INFO:     172.105.177.106:49660 - "GET /routes HTTP/1.1" 404 Not Found
+INFO:     172.105.177.106:39308 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.116.101.220:33668 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.116.101.220:39874 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.224.39.187:54926 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.20.29:53122 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.20.29:53138 - "GET / HTTP/1.1" 404 Not Found
+INFO:     54.164.61.181:59344 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     54.164.61.181:59352 - "GET /.bash_history HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-05-21 21:17:17 | trained_at=2026-05-21 20:26:29 | data_count=688 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-20 21:26:23 → 새 학습=2026-05-21 20:26:29
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:6290 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6290 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6290 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5257 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4947 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-21 21:49:49 | trained_at=2026-05-21 21:26:29 | data_count=693 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-21 20:26:29 → 새 학습=2026-05-21 21:26:29
+INFO:     125.250.81.167:10328 - "POST /api/submit_code HTTP/1.1" 200 OK
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:10328 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10836 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10838 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10838 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10838 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8826 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8834 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1107 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1107 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1107 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1107 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     18.97.5.53:45516 - "GET / HTTP/1.1" 404 Not Found
+[Model] 로드 완료  loaded_at=2026-05-21 22:32:24 | trained_at=2026-05-21 22:26:29 | data_count=711 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-21 21:26:29 → 새 학습=2026-05-21 22:26:29
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11058 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11058 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11058 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11058 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8985 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8990 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8990 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8990 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8992 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9117 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9117 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9117 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9119 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9119 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9119 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9119 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9119 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9123 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9123 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9123 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9123 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10854 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10854 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10854 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10854 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8747 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8752 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8752 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8752 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8752 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     20.65.193.108:54866 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5508 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5519 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5519 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5519 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5519 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9236 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-21 23:30:05 | trained_at=2026-05-21 23:26:29 | data_count=792 | features=16 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-21 22:26:29 → 새 학습=2026-05-21 23:26:29
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:2182 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5430 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8840 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8842 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8847 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     54.172.12.66:42690 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     54.198.251.206:53542 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     142.93.153.50:55696 - "GET / HTTP/1.1" 404 Not Found
+INFO:     142.93.153.50:55712 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     54.227.78.170:53494 - "GET /.env HTTP/1.1" 404 Not Found
+[Model] 로드 완료  loaded_at=2026-05-22 10:06:56 | trained_at=2026-05-22 09:26:32 | data_count=798 | features=16 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-21 23:26:29 → 새 학습=2026-05-22 09:26:32
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:7287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7287 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3905 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3905 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3907 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3905 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3907 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3905 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3905 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5943 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10410 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9184 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9184 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9184 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9184 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9186 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9189 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9189 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9189 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9189 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10673 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-22 10:27:53 | trained_at=2026-05-22 10:26:32 | data_count=828 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-22 09:26:32 → 새 학습=2026-05-22 10:26:32
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:13507 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13507 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4102 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4102 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10144 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10146 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-22 12:22:03 | trained_at=2026-05-22 11:26:33 | data_count=832 | features=16 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-22 10:26:32 → 새 학습=2026-05-22 11:26:33
+INFO:     125.250.81.167:10148 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-22 12:51:18 | trained_at=2026-05-22 12:26:33 | data_count=833 | features=16 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-22 11:26:33 → 새 학습=2026-05-22 12:26:33
+[ContextualPolicy] 로드 완료  hint_count=23 | context_dim=8
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     18.218.118.203:50424 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.218.118.203:38850 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.250.81.167:4794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4794 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7379 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7381 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7381 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7381 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12422 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1519 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1522 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:6672 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:12045 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     18.234.88.95:57310 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [153565]
+INFO:     Started server process [166418]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-22 15:32:45 | trained_at=2026-05-22 15:26:34 | data_count=857 | features=16 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[HintBandit] 26개 힌트 통계 로드 완료 (Thompson 파라미터 26개 동기화)
+[Model] 로드 완료  loaded_at=2026-05-22 15:35:46 | trained_at=2026-05-22 15:32:45 | data_count=857 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-22 15:26:34 → 새 학습=2026-05-22 15:32:45
+[ContextualPolicy] 로드 완료  hint_count=25 | context_dim=8
+INFO:     125.250.81.167:6028 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     118.193.59.10:46124 - "GET / HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:46132 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:46142 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:46150 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:46162 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:47648 - "GET /mcp HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:47656 - "GET /mcp-sse HTTP/1.1" 404 Not Found
+INFO:     118.193.59.10:47672 - "GET /get_server_info HTTP/1.1" 404 Not Found
+INFO:     18.232.139.128:32802 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     47.251.30.24:33626 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.30.24:33628 - "GET / HTTP/1.1" 404 Not Found
+INFO:     71.6.236.110:59692 - "GET / HTTP/1.0" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     65.49.20.66:37938 - "GET / HTTP/1.1" 404 Not Found
+INFO:     65.49.20.66:11928 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     65.49.20.66:8476 - "GET /?format=json HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     54.174.216.139:39452 - "GET /.bash_history HTTP/1.1" 404 Not Found
+INFO:     54.174.216.139:39490 - "GET /.env.local HTTP/1.1" 404 Not Found
+INFO:     54.174.216.139:39478 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     54.174.216.139:39460 - "GET /config.json HTTP/1.1" 404 Not Found
+INFO:     54.174.216.139:39464 - "GET /config.py HTTP/1.1" 404 Not Found
+INFO:     54.174.216.139:39484 - "GET /config.js HTTP/1.1" 404 Not Found
+INFO:     13.220.182.93:48430 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     18.218.118.203:53188 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.218.118.203:48354 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     1.75.199.11:12452 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13919 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13920 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13924 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13925 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:10353 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-23 22:58:14 | trained_at=2026-05-23 22:32:55 | data_count=858 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-22 15:32:45 → 새 학습=2026-05-23 22:32:55
+[ContextualPolicy] 로드 완료  hint_count=26 | context_dim=8
+INFO:     1.75.199.11:3085 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13833 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:10084 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4223 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4226 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4227 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4234 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4234 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4234 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4234 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4234 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9840 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:48653 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9846 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9652 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9654 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9658 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9659 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:6289 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9390 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9192 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:10304 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:10306 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:1633 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:1635 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6901 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:14043 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:1379 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-23 23:39:44 | trained_at=2026-05-23 23:32:55 | data_count=874 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-23 22:32:55 → 새 학습=2026-05-23 23:32:55
+[ContextualPolicy] 로드 완료  hint_count=26 | context_dim=8
+INFO:     1.75.199.11:6990 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:6991 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:6993 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:6994 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:6993 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:10059 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:9335 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4220 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4221 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:4223 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2812 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2814 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2816 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2820 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2822 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2822 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2418 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2420 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:7783 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:2236 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:5628 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:5630 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:5628 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:5632 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:5128 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13965 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:13966 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:7583 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:12656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     1.75.199.11:5531 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11411 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11424 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11429 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:6685 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-24 02:41:47 | trained_at=2026-05-24 02:32:56 | data_count=900 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-23 23:32:55 → 새 학습=2026-05-24 02:32:56
+[ContextualPolicy] 로드 완료  hint_count=27 | context_dim=8
+INFO:     121.137.225.67:6690 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:7171 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:7171 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [166418]
+INFO:     Started server process [173231]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-24 08:27:36 | trained_at=2026-05-24 08:27:35 | data_count=902 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[HintBandit] 28개 힌트 통계 로드 완료 (Thompson 파라미터 28개 동기화)
+INFO:     125.250.81.167:13395 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7259 - "POST /api/submit_code HTTP/1.1" 200 OK
+[ContextualPolicy] 로드 완료  hint_count=27 | context_dim=8
+INFO:     125.250.81.167:6954 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6954 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     47.250.83.82:29898 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.250.83.82:29910 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.116.101.220:57338 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     121.137.225.67:4943 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-24 14:20:30 | trained_at=2026-05-24 13:27:37 | data_count=904 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-24 08:27:35 → 새 학습=2026-05-24 13:27:37
+[ContextualPolicy] 로드 완료  hint_count=27 | context_dim=8
+INFO:     121.137.225.67:4949 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11575 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11575 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3221 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3221 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:9608 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-24 14:28:54 | trained_at=2026-05-24 14:27:38 | data_count=908 | features=20 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-24 13:27:37 → 새 학습=2026-05-24 14:27:38
+[ContextualPolicy] 로드 완료  hint_count=27 | context_dim=8
+INFO:     121.137.225.67:11706 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     23.94.204.22:34452 - "GET /healthz HTTP/1.1" 404 Not Found
+INFO:     121.137.225.67:11769 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:6219 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [173231]
+INFO:     Started server process [174396]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-24 16:08:47 | trained_at=2026-05-24 16:08:47 | data_count=910 | features=20 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[HintBandit] 28개 힌트 통계 로드 완료 (Thompson 파라미터 28개 동기화)
+[ContextualPolicy] 로드 완료  hint_count=27 | context_dim=8
+INFO:     122.42.2.61:9266 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5568 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:9456 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:59815 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:10564 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:12178 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-24 17:10:40 | trained_at=2026-05-24 17:08:47 | data_count=913 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-24 16:08:47 → 새 학습=2026-05-24 17:08:47
+[ContextualPolicy] 로드 완료  hint_count=27 | context_dim=8
+INFO:     122.42.2.61:12178 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:35615 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:9330 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14703 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:6745 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:11735 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:12808 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:11766 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:59785 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:18316 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:21774 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:49424 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:59816 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:13518 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:13521 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1538 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:9618 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:9639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:9648 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:9684 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3926 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3932 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3932 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1174 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3912 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [174396]
+INFO:     Started server process [175018]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-24 18:16:27 | trained_at=2026-05-24 18:16:26 | data_count=927 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[HintBandit] 33개 힌트 통계 로드 완료 (Thompson 파라미터 33개 동기화)
+[ContextualPolicy] 로드 완료  hint_count=32 | context_dim=8
+INFO:     125.250.81.167:2450 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14064 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8900 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8903 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8903 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:7335 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:7374 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6412 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:7381 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6414 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:7086 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [175018]
+INFO:     Started server process [175390]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Started server process [1090]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1090]
+INFO:     Started server process [1247]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-24 19:20:33 | trained_at=2026-05-24 19:20:32 | data_count=934 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[HintBandit] 33개 힌트 통계 로드 완료 (Thompson 파라미터 33개 동기화)
+[ContextualPolicy] 로드 완료  hint_count=32 | context_dim=8
+INFO:     125.250.81.167:6158 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13208 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8711 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7979 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14336 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6987 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7142 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11299 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3411 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3411 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3411 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13843 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10332 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9722 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8710 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10295 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10295 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10297 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1240 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7126 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4245 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4247 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6301 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7005 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11671 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11671 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11671 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11671 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7856 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7856 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7856 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6414 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8438 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10588 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8482 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8482 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1656 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10639 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11787 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11787 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11787 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8667 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10773 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3312 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5707 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5707 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5707 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5707 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5707 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8593 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5527 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2978 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5944 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5944 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3565 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5111 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5111 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5111 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11110 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14530 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14530 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10047 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10047 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10047 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     64.23.171.61:36704 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     167.71.173.64:51848 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     185.180.141.35:59176 - "GET /api/v2/ HTTP/1.1" 404 Not Found
+INFO:     185.180.141.32:34540 - "GET /ms/1.0/ HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     185.180.141.33:37778 - "GET / HTTP/1.1" 404 Not Found
+INFO:     185.180.141.32:48208 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     185.180.141.32:48208 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     185.180.141.34:58508 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     20.65.195.109:49662 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     143.198.230.221:57238 - "GET / HTTP/1.1" 404 Not Found
+INFO:     143.198.230.221:57244 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     134.199.237.198:35862 - "GET /.env HTTP/1.1" 404 Not Found
+[Model] 로드 완료  loaded_at=2026-05-25 13:23:27 | trained_at=2026-05-25 13:20:39 | data_count=1049 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-24 19:20:32 → 새 학습=2026-05-25 13:20:39
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2220 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2221 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2218 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5153 - "POST /api/submit_code HTTP/1.1" 200 OK
+[ContextualPolicy] 로드 완료  hint_count=32 | context_dim=8
+INFO:     125.250.81.167:5155 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5155 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5155 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7330 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7330 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9145 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9149 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9151 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9153 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9154 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9154 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9155 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4490 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4490 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4490 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4490 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4490 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4490 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8024 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:8024 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11968 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11968 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11970 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2949 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2949 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2951 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-25 14:20:53 | trained_at=2026-05-25 14:20:40 | data_count=1086 | features=20 | cluster_rank_map={2: 0, 1: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 13:20:39 → 새 학습=2026-05-25 14:20:40
+[ContextualPolicy] 로드 완료  hint_count=32 | context_dim=8
+INFO:     125.250.81.167:1666 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1668 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1668 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1670 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11086 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11090 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11096 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-25 15:51:48 | trained_at=2026-05-25 15:20:40 | data_count=1090 | features=20 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 14:20:40 → 새 학습=2026-05-25 15:20:40
+[ContextualPolicy] 로드 완료  hint_count=32 | context_dim=8
+INFO:     121.137.225.67:11100 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11100 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11109 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11109 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11123 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:5052 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:5052 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:5057 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:5057 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:5057 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:5057 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:3531 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11062 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11067 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11067 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11073 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11073 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11082 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11103 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11112 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11112 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:11120 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:14689 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:14694 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:14706 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.137.225.67:14706 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-25 17:08:25 | trained_at=2026-05-25 16:20:40 | data_count=1105 | features=20 | cluster_rank_map={2: 0, 1: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 15:20:40 → 새 학습=2026-05-25 16:20:40
+[ContextualPolicy] 로드 완료  hint_count=34 | context_dim=8
+INFO:     125.250.81.167:1676 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     121.139.195.6:64525 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64527 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64529 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64532 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64535 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64537 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-25 19:49:09 | trained_at=2026-05-25 19:20:42 | data_count=1106 | features=20 | cluster_rank_map={2: 0, 1: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 16:20:40 → 새 학습=2026-05-25 19:20:42
+[ContextualPolicy] 로드 완료  hint_count=34 | context_dim=8
+INFO:     121.139.195.6:64539 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64541 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64543 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:5266 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64555 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:5274 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:5274 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:2346 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:61041 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:61043 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:61045 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:61047 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:2359 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57195 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57197 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57199 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57201 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57212 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57214 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:57216 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63047 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63047 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63049 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63049 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.136.132.253:58440 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63051 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:4008 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.136.132.253:49982 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63055 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:4026 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:63057 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.136.132.253:49987 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     220.88.24.31:3288 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64172 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64172 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64174 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:64176 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:49835 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.136.132.253:65408 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.136.132.253:65408 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:49841 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:49844 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     121.139.195.6:49846 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     8.216.6.206:41794 - "GET / HTTP/1.1" 404 Not Found
+INFO:     8.216.6.206:41804 - "GET / HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:1779 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-25 21:44:17 | trained_at=2026-05-25 21:20:42 | data_count=1108 | features=20 | cluster_rank_map={2: 0, 1: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 19:20:42 → 새 학습=2026-05-25 21:20:42
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:1779 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:1781 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4247 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4250 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4250 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4320 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2238 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2238 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2242 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2245 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2249 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2251 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     146.190.132.105:33338 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:3653 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3653 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10141 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-25 23:20:44 | trained_at=2026-05-25 23:20:43 | data_count=1119 | features=20 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 21:20:42 → 새 학습=2026-05-25 23:20:43
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:10141 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10884 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10887 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:2240 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     164.92.228.44:44298 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     178.128.33.223:58920 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.107:50208 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.107:26340 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.107:9012 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.172.107:9020 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.172.107:9046 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.107:45088 - "GET /security.txt HTTP/1.1" 404 Not Found
+INFO:     64.227.22.185:53336 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.227.22.185:53344 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+[Model] 로드 완료  loaded_at=2026-05-26 12:45:33 | trained_at=2026-05-26 12:20:48 | data_count=1121 | features=20 | cluster_rank_map={2: 0, 1: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-25 23:20:43 → 새 학습=2026-05-26 12:20:48
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     183.96.30.123:60335 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:63028 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:63030 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:63033 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:63035 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:63038 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:63040 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:58316 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     183.96.30.123:49673 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1247]
+INFO:     Started server process [8340]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[Model] 로드 완료  loaded_at=2026-05-26 13:24:31 | trained_at=2026-05-26 13:20:49 | data_count=1126 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[HintBandit] 36개 힌트 통계 로드 완료 (Thompson 파라미터 36개 동기화)
+INFO:     125.250.81.167:6951 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-26 13:27:05 | trained_at=2026-05-26 13:24:31 | data_count=1126 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-26 13:20:49 → 새 학습=2026-05-26 13:24:31
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:6951 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     143.198.146.69:56610 - "GET / HTTP/1.1" 404 Not Found
+INFO:     143.198.146.69:56620 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     3.145.11.65:21416 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.145.11.65:30132 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.250.81.167:5103 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12923 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6137 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11657 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11660 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11660 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-26 14:31:53 | trained_at=2026-05-26 14:24:31 | data_count=1132 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-26 13:24:31 → 새 학습=2026-05-26 14:24:31
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:3216 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3222 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3222 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3226 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3229 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3232 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14816 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14816 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14819 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14822 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14825 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14828 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     91.196.152.22:58715 - "GET / HTTP/1.1" 404 Not Found
+INFO:     210.100.165.150:12171 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     91.231.89.63:45909 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:6898 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6898 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5296 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5299 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     210.100.165.150:13544 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     210.100.165.150:13551 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6495 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6495 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12915 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12915 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9341 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9344 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9347 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9347 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9347 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     47.91.24.61:36956 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.91.24.61:36958 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     137.184.89.232:33690 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:12652 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-26 20:06:12 | trained_at=2026-05-26 19:24:33 | data_count=1150 | features=20 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-26 14:24:31 → 새 학습=2026-05-26 19:24:33
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:12652 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12655 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12658 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12661 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12661 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:12664 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9469 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9469 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5203 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5208 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5211 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5211 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10877 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7314 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7314 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7318 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7320 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7323 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7326 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7326 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14081 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     143.110.158.64:42132 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:3793 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3793 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3795 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3797 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14659 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14659 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14659 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:14662 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     103.203.58.4:55992 - "GET / HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:10069 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-26 20:39:09 | trained_at=2026-05-26 20:24:34 | data_count=1170 | features=20 | cluster_rank_map={1: 0, 0: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-26 19:24:33 → 새 학습=2026-05-26 20:24:34
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:10069 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10073 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3845 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3851 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4588 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4588 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6711 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6714 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6717 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6717 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10759 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10771 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:10773 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3292 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3294 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3294 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:3294 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     138.197.184.68:49540 - "GET /.env HTTP/1.1" 404 Not Found
+[Model] 로드 완료  loaded_at=2026-05-26 22:33:44 | trained_at=2026-05-26 22:24:35 | data_count=1188 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-26 20:24:34 → 새 학습=2026-05-26 22:24:35
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:7516 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7371 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7375 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4455 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:4459 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6580 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6592 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7098 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7104 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:7108 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9805 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     198.11.183.234:36046 - "GET / HTTP/1.1" 404 Not Found
+INFO:     198.11.183.234:36048 - "GET / HTTP/1.1" 404 Not Found
+INFO:     123.160.223.75:29276 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.195.67:48044 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.195.67:5800 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.195.67:46790 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.195.67:37406 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.195.67:11024 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     159.65.61.152:43740 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.112.103:55412 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-27 10:38:38 | trained_at=2026-05-27 10:24:40 | data_count=1199 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-26 22:24:35 → 새 학습=2026-05-27 10:24:40
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     39.127.112.103:55416 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:55425 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:62351 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:61775 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:55434 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:55434 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:55443 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.112.103:55443 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:53235 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:60315 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.134:60315 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52821 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52837 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-27 11:25:26 | trained_at=2026-05-27 11:24:40 | data_count=1197 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-27 10:24:40 → 새 학습=2026-05-27 11:24:40
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     39.127.110.131:52837 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52857 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52862 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:51053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:51053 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52882 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:51056 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52887 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52887 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52887 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52889 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52889 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:52891 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.131:59315 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     3.15.227.56:27864 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.15.227.56:42484 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     146.190.161.89:42008 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     161.35.16.156:42246 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     125.250.81.167:2032 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-27 16:30:04 | trained_at=2026-05-27 16:24:42 | data_count=1203 | features=20 | cluster_rank_map={1: 0, 2: 1, 0: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-27 11:24:40 → 새 학습=2026-05-27 16:24:42
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:2032 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:11819 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:12330 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:12333 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:12335 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:12335 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:52893 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14880 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5814 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5816 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5818 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5820 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5827 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:5839 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14054 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14056 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14960 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14959 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14956 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14965 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14971 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14971 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14971 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:14971 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:18323 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:28693 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:42535 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:59781 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     122.42.2.61:10829 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:9374 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:5590 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:6518 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-27 18:43:16 | trained_at=2026-05-27 18:24:43 | data_count=1240 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-27 16:24:42 → 새 학습=2026-05-27 18:24:43
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:7276 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     195.178.110.204:33332 - "GET / HTTP/1.0" 404 Not Found
+INFO:     125.250.81.167:6195 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-27 21:25:36 | trained_at=2026-05-27 21:24:44 | data_count=1241 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-27 18:24:43 → 새 학습=2026-05-27 21:24:44
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     125.250.81.167:6195 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13546 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     125.250.81.167:13546 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.33:59136 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.33:6130 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.172.33:6144 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.172.33:6156 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.33:58226 - "GET /login HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     34.12.47.188:44734 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     8.216.8.6:53710 - "GET / HTTP/1.1" 404 Not Found
+INFO:     8.216.8.6:56610 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.251.186.126:60726 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     216.180.246.168:43638 - "GET / HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /manage/account/login HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /admin/index.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /index.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /%2BCSCOE%2B/logon.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /cgi-bin/login.cgi HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /login.htm HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /login.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /login.jsp HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /doc/index.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /remote/login HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /admin/login.asp HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /web/ HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /webpages/login.html HTTP/1.1" 404 Not Found
+INFO:     216.180.246.168:43638 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     128.203.204.199:59324 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     39.127.110.133:64993 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-28 10:44:41 | trained_at=2026-05-28 10:24:50 | data_count=1243 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-27 21:24:44 → 새 학습=2026-05-28 10:24:50
+INFO:     39.127.110.132:58966 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64081 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64081 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64081 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64084 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64087 - "POST /api/submit_code HTTP/1.1" 200 OK
+[ContextualPolicy] 로드 완료  hint_count=35 | context_dim=8
+INFO:     39.127.110.132:64168 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64173 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64173 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64181 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64189 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64189 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64209 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64212 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64215 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64219 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64223 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64227 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.74.106:9666 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.74.106:15364 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64278 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64281 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64286 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64306 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64309 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64325 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64375 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:64380 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62463 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62466 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62474 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:62502 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     18.221.195.141:17178 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.221.195.141:23864 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     118.235.74.106:11824 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.74.106:17696 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.74.106:12177 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-28 12:48:17 | trained_at=2026-05-28 12:24:51 | data_count=1224 | features=20 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-28 10:24:50 → 새 학습=2026-05-28 12:24:51
+[ContextualPolicy] 로드 완료  hint_count=36 | context_dim=8
+INFO:     118.235.74.106:10881 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.74.106:10881 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.13.192:39265 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-28 13:43:59 | trained_at=2026-05-28 13:24:51 | data_count=1224 | features=20 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-28 12:24:51 → 새 학습=2026-05-28 13:24:51
+[ContextualPolicy] 로드 완료  hint_count=36 | context_dim=8
+INFO:     118.235.13.192:45319 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-28 15:05:16 | trained_at=2026-05-28 14:24:52 | data_count=1225 | features=20 | cluster_rank_map={0: 0, 2: 1, 1: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-28 13:24:51 → 새 학습=2026-05-28 14:24:52
+[ContextualPolicy] 로드 완료  hint_count=36 | context_dim=8
+INFO:     118.235.13.192:44584 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.13.192:33562 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.13.192:46160 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.13.192:37395 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.13.192:15773 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.132:53451 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:44297 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:15760 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:35081 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:35920 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-05-28 15:26:39 | trained_at=2026-05-28 15:24:52 | data_count=1229 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-28 14:24:52 → 새 학습=2026-05-28 15:24:52
+[ContextualPolicy] 로드 완료  hint_count=36 | context_dim=8
+INFO:     118.235.12.150:40556 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:48969 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:37143 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:37143 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:37143 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:37143 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:35109 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:46384 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:57076 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:36703 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     118.235.12.150:44392 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     159.223.216.67:50870 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.223.216.67:50876 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     165.232.145.98:41976 - "GET /.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.77.220.169:44612 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.77.220.169:44624 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.164:42704 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.164:27434 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.186.164:27450 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.186.164:27462 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.164:43308 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     143.110.161.149:52956 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     18.220.7.93:49062 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.220.7.93:25840 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.74.15.96:30748 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.74.15.96:30752 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     195.184.76.93:47145 - "GET / HTTP/1.1" 404 Not Found
+INFO:     195.184.76.208:40289 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.250.184.67:11836 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.250.184.67:11850 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.190:25576 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.190:21762 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.186.190:21768 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.186.190:21784 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.190:20550 - "GET /wiki HTTP/1.1" 404 Not Found
+INFO:     42.48.38.46:12389 - "GET / HTTP/1.1" 404 Not Found
+INFO:     39.78.138.40:28120 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.21.92.229:38574 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.21.92.229:31244 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     194.187.178.128:8664 - "GET / HTTP/1.1" 404 Not Found
+INFO:     194.187.178.198:8670 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     103.203.58.4:48848 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     188.240.59.57:59556 - "GET / HTTP/1.1" 404 Not Found
+INFO:     69.5.169.153:14410 - "GET / HTTP/1.1" 404 Not Found
+INFO:     69.5.169.219:14392 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.202:39848 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.202:7874 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.186.202:7878 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.186.202:7932 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.186.202:17868 - "GET /wiki HTTP/1.1" 404 Not Found
+INFO:     54.153.108.131:54796 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.227.3.157:35626 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.227.3.157:35634 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     13.59.69.25:26082 - "GET / HTTP/1.1" 404 Not Found
+INFO:     13.59.69.25:52834 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     45.156.128.129:41102 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.156.128.37:47270 - "GET /showLogin.cc HTTP/1.1" 404 Not Found
+INFO:     20.163.27.102:39540 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.142.164:21490 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.84.142.164:25334 - "GET / HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38620 - "GET / HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38640 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38636 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38634 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38658 - "GET /security.txt HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38650 - "GET /favicon HTTP/1.1" 404 Not Found
+INFO:     170.64.228.231:38646 - "GET /.well-known/robots.txt HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8340]
+INFO:     Started server process [29255]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29255]
+INFO:     Started server process [29309]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-05-31 22:24:23 | trained_at=2026-05-31 22:24:22 | data_count=1230 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[HintBandit] 37개 힌트 통계 로드 완료 (Thompson 파라미터 37개 동기화)
+INFO:     47.250.123.22:20428 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.250.123.22:20440 - "GET / HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29309]
+INFO:     Started server process [29448]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+[Model] 로드 완료  loaded_at=2026-05-31 22:44:38 | trained_at=2026-05-31 22:44:37 | data_count=1230 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[HintBandit] 37개 힌트 통계 로드 완료 (Thompson 파라미터 37개 동기화)
+INFO:     66.132.172.47:62404 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.47:16890 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.172.47:16898 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.172.47:16906 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.47:51284 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     18.221.233.203:25038 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.221.233.203:24482 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     159.203.140.4:43008 - "GET /.bash_history HTTP/1.1" 404 Not Found
+INFO:     159.203.140.4:43020 - "GET /config.yaml HTTP/1.1" 404 Not Found
+INFO:     159.203.140.4:43014 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     69.5.169.250:12206 - "GET / HTTP/1.1" 404 Not Found
+INFO:     69.5.169.225:1194 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     8.219.182.204:30012 - "GET / HTTP/1.1" 404 Not Found
+INFO:     8.219.182.204:42454 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     118.193.73.8:33226 - "GET / HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:33228 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:33242 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:33246 - "GET /sitemap.xml HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:33262 - "GET /sse HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:33276 - "GET /mcp HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:33290 - "GET /mcp-sse HTTP/1.1" 404 Not Found
+INFO:     118.193.73.8:58128 - "GET /get_server_info HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.96:28100 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.96:53182 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.172.96:53198 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.172.96:53202 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.96:25056 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     137.184.232.228:40108 - "GET / HTTP/1.1" 404 Not Found
+INFO:     137.184.232.228:40110 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     39.127.110.135:61575 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.135:61575 - "POST /api/submit_code HTTP/1.1" 200 OK
+[Model] 로드 완료  loaded_at=2026-06-02 12:39:46 | trained_at=2026-06-02 11:44:54 | data_count=1230 | features=20 | cluster_rank_map={0: 0, 1: 1, 2: 2}
+[Model] 핫리로드 완료  이전 학습=2026-05-31 22:44:37 → 새 학습=2026-06-02 11:44:54
+[ContextualPolicy] 로드 완료  hint_count=36 | context_dim=8
+INFO:     39.127.110.135:61577 - "POST /api/submit_code HTTP/1.1" 200 OK
+INFO:     39.127.110.135:61586 - "POST /api/submit_code HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     18.216.184.237:24372 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.216.184.237:13508 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     137.184.112.74:45490 - "GET /.bash_history HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.250.121.102:32688 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.250.121.102:57984 - "GET / HTTP/1.1" 404 Not Found
+INFO:     45.79.2.187:59210 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.224.225:64232 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.224.225:11162 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.224.225:11172 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.224.225:11206 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.224.225:5828 - "GET /robots.txt HTTP/1.1" 404 Not Found
+INFO:     3.17.146.111:62718 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     18.189.180.134:41990 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.189.180.134:37414 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     20.65.194.166:39690 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.112.155:32216 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     193.176.31.213:50998 - "GET / HTTP/1.1" 404 Not Found
+INFO:     69.5.169.195:11198 - "GET / HTTP/1.1" 404 Not Found
+INFO:     69.5.169.229:12114 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.195.99:37266 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.195.99:37314 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.195.99:37324 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.195.99:37326 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.195.99:40642 - "GET /.well-known/security.txt HTTP/1.1" 404 Not Found
+INFO:     18.117.108.210:11980 - "GET / HTTP/1.1" 404 Not Found
+INFO:     18.117.108.210:36764 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     87.236.176.49:33793 - "GET / HTTP/1.1" 404 Not Found
+INFO:     134.199.224.90:36312 - "GET /config.yaml HTTP/1.1" 404 Not Found
+INFO:     134.199.224.90:36318 - "GET /.bash_history HTTP/1.1" 404 Not Found
+INFO:     134.199.224.90:36326 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     165.232.140.84:56992 - "GET /.bash_history HTTP/1.1" 404 Not Found
+INFO:     165.232.140.84:57018 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     165.232.140.84:57004 - "GET /config.yaml HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     3.138.107.230:16358 - "GET / HTTP/1.1" 404 Not Found
+INFO:     3.138.107.230:54314 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.150.55.5:45536 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     185.242.226.74:52908 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     34.95.187.61:47656 - "GET /.git/config HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.65.247.202:55088 - "GET /wp-json/gravitysmtp/v1/tests/mock-data?page=gravitysmtp-settings HTTP/1.1" 404 Not Found
+INFO:     34.65.247.202:55090 - "GET /wp-json/gravitysmtp/v1/settings HTTP/1.1" 404 Not Found
+INFO:     34.65.247.202:55098 - "GET /wp-json/gravitysmtp/v1/config HTTP/1.1" 404 Not Found
+INFO:     34.65.247.202:55106 - "GET /wp-json/gravitysmtp/v1/tests/mock-data HTTP/1.1" 404 Not Found
+INFO:     34.65.247.202:55116 - "GET /wp-json/wp/v2/settings HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     47.237.197.88:42478 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.237.197.88:42642 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     159.89.118.132:48102 - "GET / HTTP/1.1" 404 Not Found
+INFO:     159.89.118.132:48114 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     64.62.197.77:47094 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.62.197.83:60755 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     64.62.197.85:10791 - "GET /?format=json HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     34.130.137.5:38740 - "GET /server/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38724 - "GET /app/.env.staging HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38762 - "GET /apps/frontend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38756 - "GET /laravel/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38808 - "GET /symfony/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38802 - "GET /public/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38822 - "GET /wp/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38782 - "GET /app/backend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38794 - "GET /www/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38772 - "GET /app/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38770 - "GET /app/.env.dev HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38836 - "GET /html/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38826 - "GET /web/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38910 - "GET /storage/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38860 - "GET /wordpress/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38902 - "GET /backend/.env.old HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38838 - "GET /data/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38840 - "GET /backend/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38928 - "GET /backend/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38892 - "GET /backend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38878 - "GET /htdocs/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38846 - "GET /uploads/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38924 - "GET /backend/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38862 - "GET /backend/.env.prod HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38950 - "GET /.env.local.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38938 - "GET /.env.production.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38960 - "GET /.env.development.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38956 - "GET /.env.docker HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38962 - "GET /.env.dev.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38988 - "GET /backend/.env.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38980 - "GET /api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38974 - "GET /env.old HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:38994 - "GET /env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39106 - "GET /.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39046 - "GET /env.txt HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39076 - "GET /api/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39090 - "GET /env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39074 - "GET /dist/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39018 - "GET /.env.txt HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39056 - "GET /deploy/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39088 - "GET /tmp/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39006 - "GET /.env~ HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39066 - "GET /env.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39030 - "GET /.env.orig HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39104 - "GET /temp/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39128 - "GET /build/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39122 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39108 - "GET /release/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39138 - "GET /.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39214 - "GET /.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39226 - "GET /.env.prod HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39174 - "GET /.env.copy HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39148 - "GET /apps/backend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39182 - "GET /.env.prod.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39144 - "GET /production/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39202 - "GET /.env.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39200 - "GET /.env.save HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39164 - "GET /.env.production.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39188 - "GET /.env.backup.txt HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39248 - "GET /api/.env.prod HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39242 - "GET /.env.old HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39262 - "GET /portal/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39274 - "GET /api/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39288 - "GET /backend/.env.staging HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39298 - "GET /dashboard/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39414 - "GET /api/v2/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39416 - "GET /.env.qa HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39404 - "GET /api/v3/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39338 - "GET /api/.env.dev HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39422 - "GET /.env.staging HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39350 - "GET /frontend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39340 - "GET /.env.development HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39436 - "GET /api/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39376 - "GET /backend/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39384 - "GET /api/.env.old HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39388 - "GET /backend/.env.dev HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39330 - "GET /api/v1/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39312 - "GET /var/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39306 - "GET /cms/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39442 - "GET /.env.stage HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39366 - "GET /api/.env.staging HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39354 - "GET /api/.env.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39398 - "GET /apps/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39314 - "GET /.env.dev HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39458 - "GET /dev/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39464 - "GET /staging/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39466 - "GET /frontend/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39480 - "GET /development/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39508 - "GET /uat/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39582 - "GET /app/.env.prod HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39520 - "GET /frontend/.env.dev HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39606 - "GET /app/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39542 - "GET /frontend/.env.prod HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39532 - "GET /src/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39548 - "GET /frontend/.env.staging HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39502 - "GET /test/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39496 - "GET /qa/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39550 - "GET /frontend/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39592 - "GET /stage/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39564 - "GET /app/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39570 - "GET /app/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39604 - "GET /frontend/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39674 - "GET /src/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39654 - "GET /admin/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39646 - "GET /app/.env.bak HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39632 - "GET /app/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39680 - "GET /admin/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39686 - "GET /app/.env.old HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39808 - "GET /.env.live HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39794 - "GET /internal/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39792 - "GET /services/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39768 - "GET /services/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39758 - "GET /.env.test HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39784 - "GET /.env.testing HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39822 - "GET /.env.example HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39816 - "GET /admin/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39746 - "GET /server/.env.backup HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39826 - "GET /prod/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39670 - "GET /.env.pre-production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39692 - "GET /src/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39694 - "GET /.env.preprod HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39718 - "GET /src/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39706 - "GET /v2/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39730 - "GET /server/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39616 - "GET /.env.uat HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39588 - "GET /src/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39832 - "GET /.env.default HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39842 - "GET /.env.template HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39858 - "GET /services/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39872 - "GET /.env.sample HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39906 - "GET /admin/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39926 - "GET /server/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39918 - "GET /packages/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39912 - "GET /private/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39952 - "GET /docker/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39940 - "GET /v1/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39942 - "GET /.env.demo HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39934 - "GET /internal/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39970 - "GET /service/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:40004 - "GET /api/backend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39972 - "GET /v3/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39974 - "GET /config/.env.local HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39988 - "GET /services/backend/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39962 - "GET /services/api/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39994 - "GET /config/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39984 - "GET /config/.env.production HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39982 - "GET /services/auth/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39986 - "GET /conf/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39888 - "GET /.env.dist HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:39892 - "GET /private/.env HTTP/1.1" 404 Not Found
+INFO:     34.130.137.5:40014 - "GET /admin/.env HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     47.84.138.13:49488 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.84.138.13:18524 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.104:41264 - "GET / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.104:36212 - "POST /mcp HTTP/1.1" 404 Not Found
+INFO:     66.132.172.104:53942 - "POST /jsonrpc HTTP/1.1" 404 Not Found
+INFO:     66.132.172.104:30182 - "POST / HTTP/1.1" 404 Not Found
+WARNING:  Invalid HTTP request received.
+INFO:     66.132.172.104:4906 - "GET /robots.txt HTTP/1.1" 404 Not Found
