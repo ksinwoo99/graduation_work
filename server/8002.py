@@ -20,7 +20,7 @@ app = FastAPI()
 SMTP_SERVER    = "smtp.gmail.com"
 SMTP_PORT      = 587
 SENDER_EMAIL   = os.getenv("SMTP_SENDER_EMAIL", "py.factory26@gmail.com")
-SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD", "REDACTED_SMTP_PASSWORD")
+SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD")
 
 # 이메일 형식 검증 정규식 (send_register_auth_code, send_auth_code 공통 사용)
 _EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
@@ -76,7 +76,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("DB_HOST", "127.0.0.1"),
         user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", "REDACTED_DB_PASSWORD"),
+        password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME", "game_db"),
     )
 

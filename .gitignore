@@ -54,3 +54,4 @@ server/*.pkl
 server/*.log
 server/*.out
 server/~*.out
+server/*.sql
