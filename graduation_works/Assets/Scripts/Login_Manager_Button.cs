@@ -87,6 +87,10 @@ public class Login_Manager_Button : MonoBehaviour
                 Shared_Manager_Session.CurrentUserId = id; 
                 SceneManager.LoadScene("Menu_Scene");
             }
+            else if (response == null)
+            {
+                uiManager.ShowNetworkError();
+            }
             else
             {
                 uiManager.ShowLoginError();
@@ -114,6 +118,10 @@ public class Login_Manager_Button : MonoBehaviour
                 isIdFoundByEmail = true;
                 foundIdForPwFind = response.user_id; 
                 uiManager.ShowAlertMessage($"<color=#00FFFF>ID: {foundIdForPwFind}</color>");
+            }
+            else if (response == null)
+            {
+                uiManager.ShowNetworkError();
             }
             else
             {
@@ -150,9 +158,13 @@ public class Login_Manager_Button : MonoBehaviour
             {
                 uiManager.ShowAlertMessage("<color=#4CAF50>메일로 인증번호가\n발송되었습니다.</color>");
             }
+            else if (response == null)
+            {
+                uiManager.ShowNetworkError();
+            }
             else
             {
-                string errorMsg = response != null ? response.msg : "오류가 발생했습니다.";
+                string errorMsg = response.msg;
                 uiManager.ShowAlertMessage($"<color=#FF5A5A>{errorMsg}</color>");
             }
         }));
@@ -180,6 +192,10 @@ public class Login_Manager_Button : MonoBehaviour
             if (response != null && response.status == "SUCCESS")
             {
                 uiManager.ShowAlertMessage($"<color=#00FFFF>PW: {response.password}</color>");
+            }
+            else if (response == null)
+            {
+                uiManager.ShowNetworkError();
             }
             else
             {
@@ -211,6 +227,11 @@ public class Login_Manager_Button : MonoBehaviour
                 uiManager.ShowRegisterIdCheckResult(true);
                 isIdChecked = true;
                 lastCheckedId = id;
+            }
+            else if (response == null)
+            {
+                isIdChecked = false;
+                uiManager.ShowNetworkError();
             }
             else
             {
@@ -248,9 +269,13 @@ public class Login_Manager_Button : MonoBehaviour
             {
                 uiManager.ShowAlertMessage("<color=#4CAF50>입력하신 메일로 인증번호가\n발송되었습니다.</color>");
             }
+            else if (response == null)
+            {
+                uiManager.ShowNetworkError();
+            }
             else
             {
-                string errorMsg = response != null ? response.msg : "인증번호 발송 실패";
+                string errorMsg = response.msg;
                 uiManager.ShowAlertMessage($"<color=#FF5A5A>{errorMsg}</color>");
             }
         }));
@@ -314,9 +339,13 @@ public class Login_Manager_Button : MonoBehaviour
                 registerAuthCodeField.text = ""; 
                 isIdChecked = false;
             }
+            else if (response == null)
+            {
+                uiManager.ShowNetworkError();
+            }
             else
             {
-                string msg = (response != null) ? response.msg : "알 수 없는 오류";
+                string msg = response.msg;
                 uiManager.ShowAlertMessage("회원가입 실패:\n" + msg);
             }
         }));

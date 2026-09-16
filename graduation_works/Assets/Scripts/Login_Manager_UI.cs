@@ -130,6 +130,11 @@ public class Login_Manager_UI : MonoBehaviour {
         ShowTempPanel(errorPanel);
     }
 
+    public void ShowNetworkError() {
+        if (errorText != null) errorText.text = "네트워크 상태가\n불안정합니다.\n네트워크를 확인해주세요.";
+        ShowTempPanel(errorPanel);
+    }
+
     public void ShowRegisterIdCheckResult(bool available) {
         if (errorText != null) {
             errorText.text = available

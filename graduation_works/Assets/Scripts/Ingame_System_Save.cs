@@ -285,17 +285,29 @@ public class Ingame_System_Save : MonoBehaviour {
     IEnumerator LoadFromServerCoroutine(string userId) {
         if (loadingPanel != null) {
             loadingPanel.SetActive(true);
-            // ✨ 1. 로딩 시작할 때는 정상적인 문구 출력
             if (loadingText != null) loadingText.text = "맵을 불러오는 중입니다...\n잠시만 기다려주세요.";
         }
 
         UnityWebRequest www = UnityWebRequest.Get($"{serverUrl}/load/game?user_id={userId}");
-        yield return www.SendWebRequest();
-        
+        // yield return www.SendWebRequest();
+        UnityWebRequestAsyncOperation asyncOp = www.SendWebRequest();
+
+        float elapsed = 0f;
+        bool unstableWarningShown = false;
+        while (!asyncOp.isDone) {
+            elapsed += Time.unscaledDeltaTime;
+            if (!unstableWarningShown && elapsed >= 10f) {
+                unstableWarningShown = true;
+                if (loadingText != null) {
+                    loadingText.text = "네트워크 상태가\n불안정합니다.";
+                }
+            }
+            yield return null;
+        }
+
         if (www.result == UnityWebRequest.Result.Success) {
             GameLoadResponse response = JsonUtility.FromJson<GameLoadResponse>(www.downloadHandler.text);
             if (response.status == "SUCCESS") {
-                
                 yield return StartCoroutine(ApplyGameDataCoroutine(response)); 
 
                 string currentId = Shared_Manager_Session.IsVisiting ? Shared_Manager_Session.VisitTargetId : Shared_Manager_Session.CurrentUserId;
@@ -306,24 +318,15 @@ public class Ingame_System_Save : MonoBehaviour {
                 Debug.LogError($"데이터를 불러오지 못했습니다.: {response.msg}");
                 
                 if (loadingText != null) {
-                    loadingText.text = "<color=red>데이터를 불러오지 못했습니다.</color>\n메인 화면으로 돌아갑니다.";
+                    loadingText.text = "네트워크 상태를 확인해주세요";
                 }
-                
-                yield return new WaitForSeconds(2.5f);
-                Menu_Manager_UI.pendingErrorMessage = "데이터를 불러오지 못하여\n초기 화면으로 이동되었습니다.";
-                SceneManager.LoadScene("Menu_Scene");
             }
         } else {
             Debug.LogError("네트워크 에러로 데이터를 불러오지 못했습니다.: " + www.error);
             
-            // ✨ 3. 네트워크 에러 시에도 동일하게 텍스트만 변경!
             if (loadingText != null) {
-                loadingText.text = "<color=red>네트워크 에러가 발생했습니다.</color>\n메인 화면으로 돌아갑니다.";
+                loadingText.text = "네트워크 에러가 발생했습니다.";
             }
-            
-            yield return new WaitForSeconds(2.5f);
-            Menu_Manager_UI.pendingErrorMessage = "서버와의 연결이 끊어져\n초기 화면으로 이동되었습니다.";
-            SceneManager.LoadScene("Menu_Scene");
         }
     }
     

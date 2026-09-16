@@ -38,11 +38,21 @@ public class login_DbManager : MonoBehaviour
             
             www.SetRequestHeader("Content-Type", "application/json");
 
+            // 10초 안에 응답이 없으면 네트워크 실패로 처리
+            www.timeout = 10;
+
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("통신 에러: " + www.error);
+                if (www.result == UnityWebRequest.Result.ConnectionError && www.error.Contains("timeout"))
+                {
+                    Debug.LogError("통신 타임아웃(10초 초과): " + url);
+                }
+                else
+                {
+                    Debug.LogError("통신 에러: " + www.error);
+                }
                 onResponse?.Invoke(null);
             }
             else
