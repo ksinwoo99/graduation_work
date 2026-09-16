@@ -38,7 +38,7 @@ public class UserRankingResponse {
 
 public class UI_Leaderboard : MonoBehaviour
 {
-    private string serverUrl = "http://13.237.51.219:8000";
+    private string serverUrl = "http://129.225.166.182:8000";
 
     [Header("UI 연결 - 리더보드 (Menu Scene)")]
     public TMP_Text textTopRecommends; // 추천수 1~5등 텍스트를 보여줄 곳

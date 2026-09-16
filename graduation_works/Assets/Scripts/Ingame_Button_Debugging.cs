@@ -135,10 +135,10 @@ public class Ingame_Button_Debugging : MonoBehaviour
     // private const string ML_SERVER_URL = "http://127.0.0.1:8001/api/submit_code";
 
     // AWS 배포용
-    private const string ML_SERVER_URL = "http://13.237.51.219:8001/api/submit_code";
+    private const string ML_SERVER_URL = "http://129.225.166.182:8001/api/submit_code";
 
     // Server A 주소 (게임 실행 서버, 별도 관리 — 항상 AWS)
-    private const string EXECUTE_SERVER_URL = "http://13.237.51.219:8000/execute";
+    private const string EXECUTE_SERVER_URL = "http://129.225.166.182:8000/execute";
 
     // ──────────────────────────────────────────────────────
 

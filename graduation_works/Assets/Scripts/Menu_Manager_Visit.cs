@@ -13,7 +13,7 @@ public class Menu_Manager_Visit : MonoBehaviour {
     public Button btnGoVisit; // '방문하기' 버튼을 여기에 연결해주세요.
     public GameObject leaderboardPanel;
 
-    private string serverUrl = "http://13.237.51.219:8000"; 
+    private string serverUrl = "http://129.225.166.182:8000"; 
 
     void Start() {
         // 입력창의 값이 바뀔 때마다 감지하도록 리스너 등록

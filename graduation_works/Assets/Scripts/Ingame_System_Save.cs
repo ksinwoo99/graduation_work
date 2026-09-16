@@ -40,7 +40,7 @@ public class Ingame_System_Save : MonoBehaviour {
     public static bool isLoadRequested = false; 
     public static bool isNewGameRequested = false;
 
-    private string serverUrl = "http://13.237.51.219:8000";
+    private string serverUrl = "http://129.225.166.182:8000";
 
     [Header("튜토리얼 UI 연결")]
     public GameObject tutorialPanel; 

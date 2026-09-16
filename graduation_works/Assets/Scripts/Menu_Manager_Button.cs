@@ -13,7 +13,7 @@ public class Menu_Manager_Button : MonoBehaviour {
     public Menu_Manager_UI uiManager; 
     public GameObject leaderboardPanel;
 
-    private string serverUrl = "http://13.237.51.219:8000"; 
+    private string serverUrl = "http://129.225.166.182:8000"; 
 
     public void OnClick_Logout() {
         Shared_Manager_Session.CurrentUserId = "";
